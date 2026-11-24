@@ -1,0 +1,6 @@
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.002s
+
+OK

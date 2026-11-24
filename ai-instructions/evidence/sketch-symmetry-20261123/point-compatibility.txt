@@ -1,0 +1,6 @@
+test_standalone_point_selected_after_open (TestSketchSymmetry.TestSketchSymmetry.test_standalone_point_selected_after_open) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.303s
+
+OK

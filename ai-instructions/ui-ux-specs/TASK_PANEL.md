@@ -1355,14 +1355,26 @@ and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
 ### Sketcher symmetric geometry task - November 23, 2026
 
-Owner requests a Geometry list, single-line Axis of symmetry selection field and
-Apply for creating mirrored sketch geometry. Proposed: open without preselection,
-click/Shift collection, native axis/line/point support, highlighted invalid-input
-feedback, native existing symmetry options and Apply-only creation. Owner clarified:
-Apply stays open, clearing geometry while retaining the axis; adjacent Done closes
-symmetry without applying pending inputs and preserves previously applied sets.
-Owner further requests a dedicated symmetry task: hide ordinary Sketch Edit,
-Constraints, Elements/lines and advanced solver panels while active; restore their
-prior visibility on leaving symmetry. Keep viewport geometry selectable.
-Cancel/Exit Sketch retain their existing roles. Implementation awaits approval of
-the [native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).
+Approved, including the owner's larger-list revision: Mirror opens its own symmetry
+task while a sketch is being edited, with or without preselection. Its large,
+scrollable Geometry list has a 360 logical-pixel minimum height and expands with
+available space. Click adds once, Shift-click removes; Delete/Remove/Clear are
+available without Select/Confirm toggles. A single-line Axis of symmetry field
+collects native sketch axes, straight sketch/construction/external lines or a point
+center; new valid references replace old ones, Shift-click clears a matching input.
+Invalid picks retain valid references and show prominent feedback.
+
+Apply alone creates mirrored geometry and remains open, clearing geometry while
+retaining the axis for another set. Adjacent Done closes symmetry without applying
+pending inputs. Previously applied sets remain. Native Delete original geometries
+and Create symmetry constraints remain mutually exclusive and off by default.
+No automatic dimensions are introduced; native copied constraints are preserved.
+
+The dedicated symmetry task hides ordinary Sketch Edit, Constraints, Elements/lines
+and advanced solver panels while active, restoring their prior visibility on exit.
+Viewport sketch geometry remains selectable. Cancel/Escape discards pending picks
+and preview; Exit Sketch retains its existing role. Undo/Redo clears pending
+references so stale indices cannot be reused. A reference removed by Delete original
+geometries is cleared; surviving internal references are remapped.
+
+See the [approved native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).

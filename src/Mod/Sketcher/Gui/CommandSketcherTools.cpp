@@ -1116,17 +1116,20 @@ CmdSketcherSymmetry::CmdSketcherSymmetry()
 void CmdSketcherSymmetry::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    std::vector<int> listOfGeoIds = getListOfSelectedGeoIds(true);
-
-    if (!listOfGeoIds.empty()) {
-        ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerSymmetry>(listOfGeoIds));
+    std::vector<int> listOfGeoIds;
+    const auto selected = getSelection().getSelectionEx(0, Sketcher::SketchObject::getClassTypeId());
+    auto* editing = dynamic_cast<SketcherGui::ViewProviderSketch*>(getActiveGuiDocument()->getInEdit());
+    if (selected.size() == 1 && editing && selected.front().getObject() == editing->getObject()) {
+        listOfGeoIds = getGeoIdsOfEdgesFromNames(editing->getSketchObject(), selected.front().getSubNames());
     }
+
+    ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerSymmetry>(listOfGeoIds));
     getSelection().clearSelection();
 }
 
 bool CmdSketcherSymmetry::isActive()
 {
-    return isCommandNeedingGeometryActive(getActiveGuiDocument());
+    return isCommandActive(getActiveGuiDocument());
 }
 
 // ================================================================================

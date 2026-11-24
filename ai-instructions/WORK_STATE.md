@@ -1,15 +1,17 @@
 # FreeCAD Plus: Current work state
 
-## Sketcher symmetry task preview awaiting approval - November 23, 2026
+## Sketcher symmetry workflow installed - November 23, 2026
 
-Owner requests Geometry list, single-line symmetry-axis selection and Apply within
-sketch editing. Isolated native-widget prototype retains native symmetry options
-and Cancel/Exit Sketch. Owner clarified: Apply stays open, clears geometry and keeps
-the axis; Done closes symmetry without applying pending inputs. Revised preview
-awaits approval. Dedicated symmetry task hides Sketch Edit, Constraints and Elements
-while active, restoring prior visibility on exit. Native prototype checks passed.
-No production or installed change.
-See [direct preview and scope](evidence/sketch-symmetry-preview-20261123/README.md).
+Approved dedicated task with an enlarged scrollable Geometry list, single-line
+symmetry reference and Apply/Done. Mirror opens without preselection. Apply creates
+the set and stays open; Done closes only symmetry. Native sketch sections hide
+during the tool and restore afterward. Click adds, Shift-click removes, and native
+geometry/options/Undo remain. No automatic dimensions are introduced.
+
+All 41 installed regression checks passed, including 12 symmetry cases and 29
+related sketch regressions. The existing desktop shortcut also passed a fresh-process
+check; owner config hashes are unchanged. Installed native module hash matches the build and its
+previous version is retained for rollback. See [acceptance and direct screenshots](evidence/sketch-symmetry-20261123/README.md).
 
 ## Feature click/Shift-click selection installed - November 23, 2026
 

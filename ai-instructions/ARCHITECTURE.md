@@ -2336,3 +2336,25 @@ sketch and stores native boundary-edge links, retaining immediate nested holes.
 
 See the [approved UI and geometry boundaries](ui-ux-specs/TASK_PANEL.md#extrude-implementation--november-22-2026)
 and [acceptance record](WORK_STATE.md#extrude-implementation--november-22-2026).
+
+## Sketcher symmetry task - November 23, 2026
+
+Sketcher_Symmetry keeps its command identity and native Sketcher handler lifecycle.
+DrawSketchHandlerSymmetry stages native sketch geometry IDs and a geometry/point
+reference in its task widget; hover/click collection never commits geometry.
+Apply uses SketchObject::getSymmetric for preview and addSymmetric for the native
+transaction, preserving construction geometry, existing copied constraints and
+the optional native symmetry constraints. Conic/spline internal alignment inputs
+are included as in the former command. No geometry engine or persistence schema
+is duplicated. Delete originals remaps surviving references; Undo/Redo drops
+pending references to avoid stale IDs.
+
+TaskDlgEditSketch scopes visibility changes to DSH_Symmetry, storing and restoring
+the previous hidden state of its normal sections. The native handler owns callbacks,
+the task owns its widget, and handler destruction detaches callbacks. Native
+Cancel/Escape and Done purge the handler without closing sketch edit or applying
+pending input. The native inline error label matches TaskStatus styling; the
+C++ widget cannot directly instantiate the Python TaskStatus subclass.
+
+See the [owner workflow](ui-ux-specs/TASK_PANEL.md#sketcher-symmetric-geometry-task---november-23-2026)
+and [acceptance evidence](evidence/sketch-symmetry-20261123/README.md).

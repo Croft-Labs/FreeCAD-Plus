@@ -103,6 +103,19 @@ TaskDlgEditSketch::~TaskDlgEditSketch()
 
 void TaskDlgEditSketch::slotToolChanged(const std::string& toolname)
 {
+    if (toolname == "DSH_Symmetry" && symmetryPanelVisibility.empty()) {
+        for (QWidget* panel : {static_cast<QWidget*>(Messages), static_cast<QWidget*>(Constraints),
+                               static_cast<QWidget*>(Elements), static_cast<QWidget*>(SolverAdvanced)}) {
+            symmetryPanelVisibility.emplace_back(panel, !panel->isHidden());
+            panel->hide();
+        }
+    }
+    else if (toolname != "DSH_Symmetry" && !symmetryPanelVisibility.empty()) {
+        for (const auto& [panel, visible] : symmetryPanelVisibility) {
+            panel->setVisible(visible);
+        }
+        symmetryPanelVisibility.clear();
+    }
     bool widgetvisible = false;
 
     if (toolname != "DSH_None") {

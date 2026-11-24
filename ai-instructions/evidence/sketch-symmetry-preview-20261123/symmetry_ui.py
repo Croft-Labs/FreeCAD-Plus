@@ -9,9 +9,9 @@ class SymmetryPanel(QtWidgets.QWidget):
         super().__init__(parent);self.pick='geometry';self.invalid=False
         layout=QtWidgets.QVBoxLayout(self);layout.setContentsMargins(0,0,0,0)
         layout.addWidget(QtWidgets.QLabel('Geometry'))
-        self.items=SelectionList();self.items.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.items=QtWidgets.QListWidget();self.items.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.items.installEventFilter(self);self.items.viewport().installEventFilter(self)
-        layout.addWidget(self.items)
+        self.items.setMinimumHeight(360);self.items.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding);layout.addWidget(self.items,1)
         row=QtWidgets.QHBoxLayout();self.remove=QtWidgets.QPushButton('Remove');self.clear=QtWidgets.QPushButton('Clear')
         row.addWidget(self.remove);row.addWidget(self.clear);layout.addLayout(row)
         self.remove.clicked.connect(self.remove_rows);self.clear.clicked.connect(self.clear_geometry)

@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Sketcher symmetry task installed - November 23, 2026
+
+Approved dedicated symmetry task with enlarged Geometry list, reference field and
+Apply/Done. Native geometry, constraints and Undo remain; normal sketch sections
+restore on leaving the tool. All 41 installed regression checks passed.
+See [acceptance and native captures](evidence/sketch-symmetry-20261123/README.md).
+
 ## Consistent feature input gestures installed - November 23, 2026
 
 Plain click adds without duplicates; Shift-click removes feature inputs. Shared

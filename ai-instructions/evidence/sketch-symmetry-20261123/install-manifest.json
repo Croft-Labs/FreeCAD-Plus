@@ -1,0 +1,16 @@
+[
+  {
+    "source": "C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/Sketcher/SketcherGui.pyd",
+    "path": "lib/SketcherGui.pyd",
+    "previous_sha256": "8E14E15BA622F20FA7824D93EDFAEAEF7AA0FA6824E7A4AF8B56CA5FC0561E06",
+    "rollback": "C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/validation/sketch-symmetry-20261123/install-backup/lib/SketcherGui.pyd",
+    "sha256": "F61BDBC13044AB853B8EE38A50E633BD7A3AC5E55BA2276BE340403BCB0A065C"
+  },
+  {
+    "source": "C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestSketchSymmetry.py",
+    "path": "Mod/FreeCADPlus/TestSketchSymmetry.py",
+    "previous_sha256": null,
+    "rollback": "C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/validation/sketch-symmetry-20261123/install-backup/Mod/FreeCADPlus/TestSketchSymmetry.py",
+    "sha256": "74052199DAC03ABC57D1F7466A68B742489620985A956FEAA45037B050D91326"
+  }
+]

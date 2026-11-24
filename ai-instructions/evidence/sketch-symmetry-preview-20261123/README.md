@@ -11,7 +11,7 @@ geometries and Create symmetry constraints. Proposed workflow:
   Elements/lines and advanced solver sections. Restore prior section visibility
   when leaving symmetry. Keep viewport geometry visible for selection.
 - Open with no preselection or prefill eligible selected internal sketch geometry.
-- Five-row scrollable Geometry list; activate it to collect, click adds once,
+- Large scrollable Geometry list (360 logical-pixel minimum, expanding); activate it to collect, click adds once,
   Shift-click removes; retain Delete/Remove/Clear, without Select/Confirm toggles.
 - Activate the single-line Axis of symmetry field to pick a sketch horizontal or
   vertical axis, straight sketch/construction/external line; retain native point
@@ -46,9 +46,9 @@ annotation, not a proposed product control.
 
 Companion session aef4e2a28b5b supersedes c5ec4798c9a1 with the dedicated task layout; adapter baseline
 be7bf70c1f925f182d1eb8fc6c90b3109d049cb4; fingerprint
-8cbe727921cf6509587d4c22e9fdc7286e6f428349daf9cc5d13b53068f9fd96.
+1ce61a8d2dc097e09a48e07851110902b55f88894eca1578fedf97e6bcf5d1ba.
 Only symmetry_ui.py changed in candidate. Preview valid, scope violations empty.
-Owner preview approval is pending; tool approval state was not modified.
+Owner approved with a larger list: "make the list box larger. there is plenty of room. then approved. implement". The enlargement was rendered and inspected; chat approval is authoritative. Tool approval state was not modified.
 
 Implementation should extend the existing native symmetry handler/controller so
 its task participates in native sketch tool lifecycle and Cancel/Exit behavior.

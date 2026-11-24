@@ -99,6 +99,7 @@ protected:
 private:
     Connection connectionToolSettings;
     QPointer<QPushButton> cancelButton;
+    std::vector<std::pair<QWidget*, bool>> symmetryPanelVisibility;
 };
 
 
