@@ -105,6 +105,7 @@ class PatternControls(QtWidgets.QWidget):
         self.angular=Extent('Angular direction',self,'angular'); self.radial=Extent('Radial direction',self,'radial')
         for w in (self.d1,self.d2,self.angular,self.radial): layout.addWidget(w)
         self.lock=QtWidgets.QCheckBox('Create dimensions'); layout.addWidget(self.lock)
+        self.lock.setChecked(True)
         self.lock.setToolTip('Constrain the pattern spacing and placement relative to the original geometry.')
         self.summary=QtWidgets.QLabel(); self.summary.setWordWrap(True); layout.addWidget(self.summary)
         self.status=TaskStatus(); layout.addWidget(self.status)

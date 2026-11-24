@@ -3,6 +3,15 @@
 Owner approved the [native-widget proposal and workflow](../sketch-pattern-preview-20261124/README.md)
 in chat: **"approved. implement"**. Companion approval state was not modified.
 
+Owner follow-up: **Create dimensions is selected by default** when Sketch Pattern
+opens. Users can still turn it off. This supersedes the earlier default-off proposal.
+The installed Python task was updated without a native rebuild; all
+[six GUI acceptance checks passed](default-dimensions-result.json), including
+default constraint creation and explicitly opting out. [Updated working task screenshot](default-dimensions.png).
+The original installation manifest below describes the first delivery; the two
+updated Python files were verified against source and retained separately under
+`validation/sketch-pattern-20261124/default-dimensions-backup` for rollback.
+
 ## Implementation
 
 `Sketcher_Translate` retains its command identity, icon and W shortcut, and opens

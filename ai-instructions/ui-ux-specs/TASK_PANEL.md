@@ -1362,6 +1362,8 @@ spacing and counts), or Symmetric. Circular uses the same extent options for
 Angular, Radial, or Angular + radial directions. Counts include the original;
 angular extents offer angular pitch or total angle. A compact click-add/Shift-remove
 collector, reference pickers, reverse and optional dimensions are required.
+Owner follow-up: **Create dimensions is selected by default**, creating relative
+dimensions and constraints. Users can clear it to create copies without those dimensions.
 
 The owner approved the [concrete workflow and screenshots](../evidence/sketch-pattern-preview-20261124/README.md)
 in chat: "approved. implement". Each side of Two dimensions counts the original,

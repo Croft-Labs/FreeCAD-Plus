@@ -250,6 +250,7 @@ class TestPatternTask(unittest.TestCase):
         self.p = self.win.findChild(self.QtWidgets.QWidget, 'SketchPatternPanel')
         self.assertIsNotNone(self.p)
         self.assertTrue(self.p.isVisible())
+        self.assertTrue(self.p.lock.isChecked())
 
     def pick(self, field, name, remove=False):
         self.p.activate_pick(field)
@@ -267,6 +268,7 @@ class TestPatternTask(unittest.TestCase):
         self.pick(self.p.items, 'Edge1'); self.pick(self.p.d1.reference, 'H_Axis')
         self.p.d1.count.setValue(3); self.assertTrue(self.p.apply.isEnabled(), self.p.status.text())
         self.p.apply.click(); self.assertEqual(self.s.GeometryCount, 4, self.p.status.text())
+        self.assertGreater(self.s.ConstraintCount, 0)
         self.assertEqual(self.p.items.count(), 0); self.assertTrue(self.p.d1.reference.text())
         self.doc.undo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 2)
         self.doc.redo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 4)
@@ -276,6 +278,7 @@ class TestPatternTask(unittest.TestCase):
 
     def test_radial_and_angular_reference_and_cancel(self):
         self.enter(); self.pick(self.p.items, 'Edge2')
+        self.p.lock.setChecked(False)  # Users can still request unconstrained copies.
         self.p.mode.setCurrentText('Circular'); self.p.layout_mode.setCurrentText('Angular + radial')
         self.pick(self.p.center, 'RootPoint'); self.pick(self.p.radial.reference, 'Edge2')
         self.p.angular.count.setValue(4); self.p.angular.spacing.setCurrentText('Total angle'); self.p.angular.value.setValue(360)
