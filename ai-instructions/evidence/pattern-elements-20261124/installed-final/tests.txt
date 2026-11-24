@@ -1,0 +1,11 @@
+test_angular_radial_membership_survives_renumber (TestPatternGroups.TestPatternElements.test_angular_radial_membership_survives_renumber) ... ok
+test_dense_grids_single_row_preserve_geometry (TestPatternGroups.TestPatternElements.test_dense_grids_single_row_preserve_geometry) ... ok
+test_double_click_edit_cancel_apply_done_and_keyboard (TestPatternGroups.TestPatternElements.test_double_click_edit_cancel_apply_done_and_keyboard) ... ok
+test_free_copies_remain_one_editable_pattern (TestPatternGroups.TestPatternElements.test_free_copies_remain_one_editable_pattern) ... ok
+test_multiple_patterns_filter_and_viewport_selection (TestPatternGroups.TestPatternElements.test_multiple_patterns_filter_and_viewport_selection) ... ok
+test_visibility_selection_delete_and_undo (TestPatternGroups.TestPatternElements.test_visibility_selection_delete_and_undo) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 33.685s
+
+OK

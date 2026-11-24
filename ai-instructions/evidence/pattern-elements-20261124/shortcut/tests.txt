@@ -1,0 +1,6 @@
+test_double_click_edit_cancel_apply_done_and_keyboard (TestPatternGroups.TestPatternElements.test_double_click_edit_cancel_apply_done_and_keyboard) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.592s
+
+OK

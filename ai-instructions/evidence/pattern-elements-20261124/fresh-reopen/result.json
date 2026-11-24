@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "files": [
+    {
+      "file": "elements-grid20.FCStd",
+      "rows": 3,
+      "edited_count": 21
+    },
+    {
+      "file": "elements-free.FCStd",
+      "rows": 3,
+      "edited_count": 6
+    },
+    {
+      "file": "elements-angular-radial.FCStd",
+      "rows": 2,
+      "edited_count": 5
+    },
+    {
+      "file": "dense-grid20.FCStd",
+      "rows": 4,
+      "edited_count": 21
+    }
+  ]
+}

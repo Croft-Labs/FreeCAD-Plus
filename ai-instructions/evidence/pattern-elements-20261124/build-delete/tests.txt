@@ -1,0 +1,6 @@
+test_visibility_selection_delete_and_undo (TestPatternGroups.TestPatternElements.test_visibility_selection_delete_and_undo) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.349s
+
+OK

@@ -22,6 +22,10 @@
 
 #include <QContextMenuEvent>
 #include <QImage>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <set>
 #include <QLineEdit>
 #include <QMenu>
 #include <QPainter>
@@ -223,6 +227,20 @@ public:
     ~ElementItem() override
     {}
 
+    std::string patternGroup;
+    std::vector<int> patternMembers;
+    std::set<int> patternHelpers;
+    std::set<std::string> selectedMembers;
+    bool hideHelpers = false;
+
+    bool spacingIsHidden() const
+    {
+        if (patternGroup.empty()) return false;
+        for (const auto* c : getSketchObject()->Constraints.getValues())
+            if (c->PatternGroup == patternGroup) return !c->isVisible;
+        return hideHelpers;
+    }
+
     bool canBeHidden() const
     {
         return State != GeometryState::External;
@@ -230,6 +248,15 @@ public:
 
     bool isVisible() const
     {
+        if (!patternGroup.empty()) {
+            for (int id : patternMembers) {
+                if (patternHelpers.contains(id)) continue;
+                const auto* geo = getSketchObject()->getGeometry(id);
+                if (geo && getSafeGeomLayerId(geo) != static_cast<unsigned int>(Layer::Hidden))
+                    return true;
+            }
+            return false;
+        }
         if (State != GeometryState::External) {
             const auto geo = sketchView->getSketchObject()->getGeometry(ElementNbr);
             if (geo) {
@@ -611,6 +638,14 @@ void ElementView::changeLayer(int layer)
         auto sketchobject = ft->getObject<Sketcher::SketchObject>();
 
         auto geoids = getGeoIdsOfEdgesFromNames(sketchobject, ft->getSubNames());
+        for (auto* row : selectedItems()) {
+            auto* item = static_cast<ElementItem*>(row);
+            if (item->getSketchObject() == sketchobject && !item->patternGroup.empty()) {
+                geoids.insert(geoids.end(), item->patternMembers.begin(), item->patternMembers.end());
+            }
+        }
+        std::sort(geoids.begin(), geoids.end());
+        geoids.erase(std::unique(geoids.begin(), geoids.end()), geoids.end());
 
         auto geometry = sketchobject->Geometry.getValues();
         auto newgeometry(geometry);
@@ -619,10 +654,16 @@ void ElementView::changeLayer(int layer)
         for (auto geoid : geoids) {
             if (geoid
                 >= 0) {// currently only internal geometry can be changed from one layer to another
+                int targetLayer = layer;
+                for (auto* row : selectedItems()) {
+                    auto* item = static_cast<ElementItem*>(row);
+                    if (item->getSketchObject() == sketchobject && item->spacingIsHidden()
+                        && item->patternHelpers.contains(geoid)) targetLayer = 2;
+                }
                 auto currentlayer = getSafeGeomLayerId(geometry[geoid]);
-                if (currentlayer != layer) {
+                if (currentlayer != targetLayer) {
                     auto geo = geometry[geoid]->clone();
-                    setSafeGeomLayerId(geo, layer);
+                    setSafeGeomLayerId(geo, targetLayer);
                     newgeometry[geoid] = geo;
                     anychanged = true;
                 }
@@ -649,6 +690,25 @@ void ElementView::changeLayer(ElementItem* item, int layer)
     App::Document* doc = App::GetApplication().getActiveDocument();
 
     if (!doc) {
+        return;
+    }
+
+    if (!item->patternGroup.empty()) {
+        auto* sketch = item->getSketchObject();
+        auto geometry = sketch->Geometry.getValues();
+        const auto members = item->patternMembers;
+        const auto helpers = item->patternHelpers;
+        const bool hideHelpers = item->spacingIsHidden();
+        doc->openTransaction("Pattern visibility");
+        for (int id : members) {
+            auto* geo = geometry[id]->clone();
+            setSafeGeomLayerId(geo, hideHelpers && helpers.contains(id) ? 2 : layer);
+            geometry[id] = geo;
+        }
+        // Updating geometry rebuilds the list. Do not access item afterward.
+        sketch->Geometry.setValues(std::move(geometry));
+        sketch->solve();
+        doc->commitTransaction();
         return;
     }
 
@@ -714,6 +774,20 @@ void ElementView::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu menu;
     QList<QListWidgetItem*> items = selectedItems();
+    if (std::any_of(items.begin(), items.end(), [](auto* item) {
+            return !static_cast<ElementItem*>(item)->patternGroup.empty();
+        })) {
+        // A pattern is an operation, not a single curve to constrain or rename.
+        auto* edit = menu.addAction(tr("Edit Pattern"), this, [this] {
+            Q_EMIT itemActivated(currentItem());
+        });
+        edit->setEnabled(items.size() == 1);
+        menu.addAction(tr("Show"), this, [this] { changeLayer(0); });
+        menu.addAction(tr("Hide"), this, [this] { changeLayer(2); });
+        menu.addAction(tr("Delete"), this, &ElementView::deleteSelectedItems);
+        menu.exec(event->globalPos());
+        return;
+    }
 
     // NOTE: If extending this context menu, be sure to add the items to the translation block at
     // the top of this file
@@ -912,7 +986,14 @@ void ElementView::deleteSelectedItems()
     for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
         Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(ft->getObject());
         if (vp) {
-            vp->onDelete(ft->getSubNames());
+            auto names = ft->getSubNames();
+            for (auto* row : selectedItems()) {
+                auto* item = static_cast<ElementItem*>(row);
+                if (item->getSketchObject() == ft->getObject() && !item->patternGroup.empty()) {
+                    for (int id : item->patternMembers) names.push_back(fmt::format("Edge{}", id + 1));
+                }
+            }
+            vp->onDelete(names);
         }
     }
     doc->commitTransaction();
@@ -971,9 +1052,11 @@ void ElementItemDelegate::paint(
 
     drawSubControl(SubControl::CheckBox, painter, option, index);
     drawSubControl(SubControl::LineSelect, painter, option, index);
-    drawSubControl(SubControl::StartSelect, painter, option, index);
-    drawSubControl(SubControl::EndSelect, painter, option, index);
-    drawSubControl(SubControl::MidSelect, painter, option, index);
+    if (item->patternGroup.empty()) {
+        drawSubControl(SubControl::StartSelect, painter, option, index);
+        drawSubControl(SubControl::EndSelect, painter, option, index);
+        drawSubControl(SubControl::MidSelect, painter, option, index);
+    }
     drawSubControl(SubControl::Label, painter, option, index);
 }
 
@@ -1003,6 +1086,7 @@ QRect ElementItemDelegate::subControlRect(
               .translated(checkBoxRect.right() + gap, 0);
 
     unsigned pos = element - SubControl::LineSelect;
+    if (element == SubControl::Label && !getElementItem(index)->patternGroup.empty()) pos = 1;
 
     auto rect = selectRect.translated((selectRect.width() + gap) * pos, 0);
 
@@ -1086,7 +1170,10 @@ void ElementItemDelegate::drawSubControl(
         }
 
         case LineSelect: {
-            drawSelectIcon(Sketcher::PointPos::none);
+            if (!item->patternGroup.empty())
+                Gui::BitmapFactory().iconFromTheme("Sketcher_RectangularArray").paint(painter, rect);
+            else
+                drawSelectIcon(Sketcher::PointPos::none);
             break;
         }
 
@@ -1130,6 +1217,7 @@ bool ElementItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
     auto item = getElementItem(index);
 
     auto getSubElementType = [&](QPoint pos) {
+        if (!item->patternGroup.empty()) return SubElementType::edge;
         if (subControlRect(SubControl::LineSelect, option, index).contains(pos)) {
             return SubElementType::edge;
         } else if (subControlRect(SubControl::StartSelect, option, index).contains(pos)) {
@@ -1154,7 +1242,11 @@ bool ElementItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
             QRect checkboxRect = subControlRect(SubControl::CheckBox, option, index);
 
             if (mouseEvent->button() == Qt::LeftButton && checkboxRect.contains(mouseEvent->pos())) {
-                Q_EMIT itemChecked(index, item->isVisible() ? Qt::Unchecked : Qt::Checked);
+                const QPersistentModelIndex persistent(index);
+                const auto state = item->isVisible() ? Qt::Unchecked : Qt::Checked;
+                QTimer::singleShot(0, this, [this, persistent, state] {
+                    if (persistent.isValid()) Q_EMIT itemChecked(persistent, state);
+                });
             }
         }
     }
@@ -1345,6 +1437,11 @@ void TaskSketcherElements::connectSignals()
         ui->filterButton, &QToolButton::clicked, ui->filterButton, &QToolButton::showMenu);
 
     //NOLINTBEGIN
+    QObject::connect(ui->listWidgetElements, &QListWidget::itemActivated, this,
+                     [this](QListWidgetItem* row) {
+        const auto& group = static_cast<ElementItem*>(row)->patternGroup;
+        if (!group.empty()) sketchView->editPattern(group);
+    });
     connectionElementsChanged = sketchView->signalElementsChanged.connect(
         std::bind(&SketcherGui::TaskSketcherElements::slotElementsChanged, this));
     //NOLINTEND
@@ -1428,49 +1525,58 @@ void TaskSketcherElements::setItemVisibility(QListWidgetItem* it)
 
     using GeometryState = ElementItem::GeometryState;
 
-    if ((filterList->item(static_cast<int>(GeoFilterType::NormalGeos))->checkState()
+    auto filtered = [&](GeometryState state, Base::Type type) {
+    return ((filterList->item(static_cast<int>(GeoFilterType::NormalGeos))->checkState()
              == Qt::Unchecked
-         && item->State == GeometryState::Normal)
+         && state == GeometryState::Normal)
         || (filterList->item(static_cast<int>(GeoFilterType::ConstructionGeos))->checkState()
                 == Qt::Unchecked
-            && item->State == GeometryState::Construction)
+            && state == GeometryState::Construction)
         || (filterList->item(static_cast<int>(GeoFilterType::InternalGeos))->checkState()
                 == Qt::Unchecked
-            && item->State == GeometryState::InternalAlignment)
+            && state == GeometryState::InternalAlignment)
         || (filterList->item(static_cast<int>(GeoFilterType::ExternalGeos))->checkState()
                 == Qt::Unchecked
-            && item->State == GeometryState::External)
+            && state == GeometryState::External)
         || (filterList->item(static_cast<int>(GeoFilterType::PointGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomPoint::getClassTypeId())
+            && type == Part::GeomPoint::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::LineGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomLineSegment::getClassTypeId())
+            && type == Part::GeomLineSegment::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::CircleGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomCircle::getClassTypeId())
+            && type == Part::GeomCircle::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::EllipseGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomEllipse::getClassTypeId())
+            && type == Part::GeomEllipse::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::ArcGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomArcOfCircle::getClassTypeId())
+            && type == Part::GeomArcOfCircle::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::ArcOfEllipseGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomArcOfEllipse::getClassTypeId())
+            && type == Part::GeomArcOfEllipse::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::HyperbolaGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomArcOfHyperbola::getClassTypeId())
+            && type == Part::GeomArcOfHyperbola::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::ParabolaGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomArcOfParabola::getClassTypeId())
+            && type == Part::GeomArcOfParabola::getClassTypeId())
         || (filterList->item(static_cast<int>(GeoFilterType::BSplineGeos))->checkState()
                 == Qt::Unchecked
-            && item->GeometryType == Part::GeomBSplineCurve::getClassTypeId())) {
-        item->setHidden(true);
+            && type == Part::GeomBSplineCurve::getClassTypeId()));
+    };
+    if (item->patternGroup.empty()) {
+        item->setHidden(filtered(item->State, item->GeometryType));
         return;
     }
-    item->setHidden(false);
+    const auto& geometry = item->getSketchObject()->Geometry.getValues();
+    item->setHidden(std::all_of(item->patternMembers.begin(), item->patternMembers.end(), [&](int id) {
+        auto* geo = geometry[id];
+        const auto state = Sketcher::GeometryFacade::isInternalAligned(geo) ? GeometryState::InternalAlignment
+            : Sketcher::GeometryFacade::getConstruction(geo) ? GeometryState::Construction : GeometryState::Normal;
+        return filtered(state, geo->getTypeId());
+    }));
 }
 
 void TaskSketcherElements::updateVisibility()
@@ -1546,6 +1652,14 @@ void TaskSketcherElements::onSelectionChanged(const Gui::SelectionChanges& msg)
                     break;
             }
         }
+    }
+
+    if (modified_item && !modified_item->patternGroup.empty()) {
+        if (select) modified_item->selectedMembers.insert(subName);
+        else modified_item->selectedMembers.erase(subName);
+        modified_item->isLineSelected = !modified_item->selectedMembers.empty();
+        modified_item->isStartingPointSelected = modified_item->isEndPointSelected
+            = modified_item->isMidPointSelected = false;
     }
 
     // 3. Queue the UI update instead of applying immediately
@@ -1647,7 +1761,10 @@ void TaskSketcherElements::onListWidgetElementsItemPressed(QListWidgetItem* it)
             }
 
             if (item == itf) {
-                if (item->clickedOn == SubElementType::mid
+                if (!item->patternGroup.empty()) {
+                    item->isLineSelected = !item->isLineSelected;
+                }
+                else if (item->clickedOn == SubElementType::mid
                     && (item->GeometryType == Part::GeomArcOfCircle::getClassTypeId()
                         || item->GeometryType == Part::GeomArcOfEllipse::getClassTypeId()
                         || item->GeometryType == Part::GeomArcOfHyperbola::getClassTypeId()
@@ -1710,6 +1827,19 @@ void TaskSketcherElements::onListWidgetElementsItemPressed(QListWidgetItem* it)
                 else {
                     item->setSelected(selected);
                 }
+            }
+
+            // Expand the operation only in the selection, never into visible child rows.
+            if (!item->patternGroup.empty()) {
+                item->selectedMembers.clear();
+                if (item->isLineSelected) {
+                    for (int id : item->patternMembers) {
+                        const auto name = fmt::format("Edge{}", id + 1);
+                        elementSubNames.push_back(name);
+                        item->selectedMembers.insert(name);
+                    }
+                }
+                continue;
             }
 
             // now the scene
@@ -1877,9 +2007,69 @@ void TaskSketcherElements::slotElementsChanged()
 
     using GeometryState = ElementItem::GeometryState;
 
+    struct PatternRow {
+        std::string group;
+        QString label;
+        std::vector<int> members;
+        std::set<int> helpers;
+        bool hidden = false;
+        ElementItem* item = nullptr;
+    };
+    std::vector<PatternRow> patterns;
+    std::unordered_map<int, size_t> owners;
+    if (auto* definitions = dynamic_cast<App::PropertyMap*>(sketch->getPropertyByName("PatternDefinitions"))) {
+        std::map<QString, int> ids;
+        for (size_t n = 0; n < vals.size(); ++n)
+            ids[QString::number(Sketcher::GeometryFacade::getId(vals[n]))] = int(n);
+        for (const auto& [group, json] : definitions->getValues()) {
+            const auto record = QJsonDocument::fromJson(QByteArray::fromStdString(json)).object();
+            if (record.value(QStringLiteral("version")).toInt() != 1) continue;
+            PatternRow row;
+            row.group = group;
+            std::set<int> members;
+            std::set<int> a{0}, b{0};
+            auto add = [&](const QJsonValue& value, bool helper) {
+                const auto found = ids.find(value.toString());
+                if (found == ids.end()) return;
+                members.insert(found->second);
+                if (helper) row.helpers.insert(found->second);
+            };
+            for (const auto& value : record.value(QStringLiteral("helpers")).toArray()) add(value, true);
+            for (const auto& value : record.value(QStringLiteral("instances")).toArray()) {
+                const auto instance = value.toObject();
+                const auto slot = instance.value(QStringLiteral("slot")).toArray();
+                if (slot.size() == 2) { a.insert(slot[0].toInt()); b.insert(slot[1].toInt()); }
+                const auto geometry = instance.value(QStringLiteral("geometry")).toObject();
+                for (auto it = geometry.begin(); it != geometry.end(); ++it) add(it.value(), false);
+            }
+            if (members.empty()) continue;
+            row.label = record.value(QStringLiteral("label")).toString(tr("Pattern"));
+            row.label += b.size() > 1 ? tr(" — %1 × %2").arg(a.size()).arg(b.size())
+                                     : tr(" — %1 instances").arg(a.size());
+            row.hidden = record.value(QStringLiteral("options")).toObject().value(QStringLiteral("hide_spacing")).toBool();
+            for (const auto* c : sketch->Constraints.getValues()) {
+                if (c->PatternGroup == group) {
+                    row.label = QString::fromUtf8(c->PatternLabel.c_str());
+                    row.hidden = !c->isVisible;
+                    break;
+                }
+            }
+            for (int id : members) {
+                if (!owners.contains(id)) { owners[id] = patterns.size(); row.members.push_back(id); }
+            }
+            patterns.push_back(std::move(row));
+        }
+    }
+
     int i = 1;
     for (std::vector<Part::Geometry*>::const_iterator it = vals.begin(); it != vals.end();
          ++it, ++i) {
+        const auto owner = owners.find(i - 1);
+        PatternRow* pattern = owner == owners.end() ? nullptr : &patterns[owner->second];
+        if (pattern && pattern->item) {
+            elementMap[i - 1] = pattern->item;
+            continue;
+        }
         Base::Type type = (*it)->getTypeId();
         GeometryState state = GeometryState::Normal;
 
@@ -1979,6 +2169,17 @@ void TaskSketcherElements::slotElementsChanged()
                                       : (QStringLiteral("%1-").arg(i) + tr("Other"))),
             sketchView);
 
+        if (pattern) {
+            pattern->item = itemN;
+            itemN->patternGroup = pattern->group;
+            itemN->patternMembers = pattern->members;
+            itemN->patternHelpers = pattern->helpers;
+            itemN->hideHelpers = pattern->hidden;
+            itemN->label = pattern->label;
+            itemN->setText(pattern->label);
+            itemN->setData(Qt::UserRole + 1, QString::fromStdString(pattern->group));
+            itemN->setToolTip(tr("Double-click to edit pattern. %1 generated elements.").arg(pattern->members.size()));
+        }
         ui->listWidgetElements->addItem(itemN);
 
         elementMap[itemN->ElementNbr] = itemN;
@@ -2106,6 +2307,7 @@ void TaskSketcherElements::clearWidget()
     for (int i = 0; i < countItems; i++) {
         auto* item = static_cast<ElementItem*>(ui->listWidgetElements->item(i));
 
+        item->selectedMembers.clear();
         item->isLineSelected = false;
         item->isStartingPointSelected = false;
         item->isEndPointSelected = false;

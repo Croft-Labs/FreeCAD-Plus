@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Single Pattern item in Elements — November 24, 2026
+
+- [x] Owner directs completion of the existing single-row preview; verify freshness.
+- [x] Resolve stable saved membership into one native row with no child items.
+- [x] Integrate selection, visibility, filters, Delete/Undo and the existing editor.
+- [x] Retain operation identity for free copies and clean up deleted recipes.
+- [x] Pass 102 affected checks, six final installed Elements checks, four saved-file
+  edits/reopens and the existing shortcut. Install with verified hashes/backups.
+  See [evidence](evidence/pattern-elements-20261124/README.md).
+
 ## Persistent pattern allocation failure — November 24, 2026
 
 - [x] Correct the earlier GUI harness: commit and assert 0.100 in values;
@@ -12,7 +22,7 @@
   fresh-process editing/reopening at 420 instances and the existing shortcut.
   Preserve the original file, chains, Equal sizes, units and Undo/Redo. See
   [correction and evidence](evidence/pattern-label-allocation-20261124/README.md).
-- [ ] Obtain approval for the separate Elements-list single Pattern-row preview.
+- [x] Owner directs completing the Elements-list single Pattern row; tracked above.
 
 ## Large circle-pattern memory — November 24, 2026
 

@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Sketch pattern geometry and constraints. All persisted output is native Sketcher data."""
 import math
+import json
 import uuid
 from itertools import groupby
 import FreeCAD as App
@@ -675,13 +676,15 @@ def _spacing_chains(sketch, ids, instances, options, chain=None):
 
 def _group_pattern_constraints(sketch, first, options, chain, identity=None, previous_label=''):
     constraints = sketch.Constraints
-    if first == len(constraints): return
+    # Even free copies are a pattern operation in the Elements list.
+    if first == len(constraints): return identity or uuid.uuid4().hex
     if not hasattr(constraints[first], 'PatternGroup'):
         raise RuntimeError('Restart FreeCAD Plus with the updated Sketcher module to create pattern groups.')
     groups = {c.PatternGroup for c in constraints if c.PatternGroup}
     number = len(groups) + 1
     labels = {c.PatternLabel for c in constraints if c.PatternGroup}
-    while any(label.startswith('Pattern %d ' % number) for label in labels): number += 1
+    labels.update(json.loads(raw).get('label','') for raw in getattr(sketch,'PatternDefinitions',{}).values())
+    while any(label.split(' — ')[0] == 'Pattern %d' % number for label in labels): number += 1
     circular = options.get('pattern') == 'Circular'
     if circular:
         layout = options.get('directions','Angular')

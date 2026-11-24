@@ -72,7 +72,11 @@ def save_definition(sketch,group,ids,options,dimensions,instances,helpers):
     if PROPERTY not in sketch.PropertiesList:
         sketch.addProperty('App::PropertyMap',PROPERTY,'Pattern','Saved sketch pattern definitions')
         sketch.setEditorMode(PROPERTY,2)
-    definitions=dict(getattr(sketch,PROPERTY));definitions[group]=json.dumps(record,separators=(',',':'))
+    definitions=dict(getattr(sketch,PROPERTY))
+    previous=json.loads(definitions[group]) if group in definitions else {}
+    record['label']=next((c.PatternLabel.split(' — ')[0] for c in sketch.Constraints if c.PatternGroup==group),
+                         previous.get('label','Pattern %d'%(len(definitions)+1)))
+    definitions[group]=json.dumps(record,separators=(',',':'))
     setattr(sketch,PROPERTY,definitions)
 
 
@@ -110,9 +114,9 @@ def current_options(sketch,group,record):
 
 
 def load(sketch,group):
-    if not any(c.PatternGroup==group for c in sketch.Constraints):
-        raise ValueError('This pattern group no longer exists. Undo its deletion before editing it.')
     raw=getattr(sketch,PROPERTY,{}).get(group)
+    if not raw and not any(c.PatternGroup==group for c in sketch.Constraints):
+        raise ValueError('This pattern group no longer exists. Undo its deletion before editing it.')
     record=json.loads(raw) if raw else recover(sketch,group)
     if record.get('version')!=1:raise ValueError('This pattern was saved by an unsupported recipe version.')
     indexed=identities(sketch)
@@ -172,10 +176,10 @@ def update(sketch,group,ids,options,dimensions):
                 for link in links or []:
                     if not isinstance(link,tuple) or len(link)!=2 or link[0]!=sketch:continue
                     if any(link[1]):raise ValueError('A downstream feature references individual sketch elements. Keep those references intact before removing pattern instances.')
-    label=next(c.PatternLabel for c in cs if c.PatternGroup==group)
+    label=next((c.PatternLabel for c in cs if c.PatternGroup==group),record.get('label','Pattern'))
     doc=sketch.Document;doc.openTransaction('Edit Sketch Pattern')
     try:
-        sketch.delConstraints(members,False,True)
+        if members:sketch.delConstraints(members,False,True)
         # Apply only relative rigid motion, retaining every surviving native tag.
         facades=sketch.GeometryFacadeList
         for slot,new_transform in zip(new_slots,transforms):

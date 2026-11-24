@@ -1,0 +1,22 @@
+[
+  {
+    "file": "lib/SketcherGui.pyd",
+    "sha256": "1c212177df472be60a4468170f46f2982a9020aab276a2555ac6665938ae58c3",
+    "backup_sha256": "e7af5dcbe3643eed2198134fe659e83bf8f2115dbb726d421b7dc01e59b16b4c"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestPatternGroups.py",
+    "sha256": "6bb0fa33fce272a60bcc475b30e2d9079249f0f56aa9b20428b0efd7333608d7",
+    "backup_sha256": "1db47552b91f67a86a87d6bb2b7912a60c04ac5ac73c312b352d087805d4ccaf"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/sketch_pattern.py",
+    "sha256": "b945816993f74556c6ca91efa1ba300115f84f295ec0db7195b3779cd65aea80",
+    "backup_sha256": "b3fc3c8efe2934cb9697f9b86f0276e94d02e41ebca632bb92d699fa9cfc22a5"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py",
+    "sha256": "2872eb8bc32ff28ce38051959505e319765ff449fc55e8852103aa11bc7ee492",
+    "backup_sha256": "64db3a6cd2f5dfa87ef7e49669cc773d16497e33d8c7e2fcae4d760493f720e0"
+  }
+]

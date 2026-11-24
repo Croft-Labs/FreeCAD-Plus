@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Single Pattern item in Elements — installed
+
+Native Elements groups saved pattern membership into one row, preserving originals
+and unrelated rows, aggregate selection/visibility/filtering, native Delete/Undo
+and the populated pattern editor. Free copies now save a recipe without adding
+constraints. Fully deleted recipes are removed transactionally. The 102-case
+affected suite, final six-case Elements rerun, four saved-file edits/reopens and
+existing-shortcut check pass. Restart the app. See
+[the owning evidence](evidence/pattern-elements-20261124/README.md).
+
 ## Persistent memory error — corrected and installed
 
 The saved owner sketch reproduces the failure at verified 0.100 in pitches.

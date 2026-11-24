@@ -1353,6 +1353,22 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Approved single Pattern item in Elements — November 24, 2026
+
+Owner instructed: “also finish making the pattern show as a single item in the
+elements list instead of listing all the curves”, authorizing completion of the
+previously presented Elements preview. Show one non-expandable Pattern row with
+the existing Pattern icon and counts for generated curves and spacing helpers.
+Original inputs and unrelated geometry retain normal rows. Select the operation's
+members together; retain individual viewport picking. Double-click or keyboard
+activation opens the existing populated Pattern task with its approved completion
+and Cancel behavior. Group visibility respects Hide spacing chain. Filters inspect
+member types while retaining at most one row. Delete removes generated members and
+their relationships, keeps originals, and supports Undo. Preserve equations, native
+geometry identities and save/reopen. Free copies also retain their operation identity.
+Use saved membership; never guess unrelated legacy curves into a group.
+See [implementation and validation](../evidence/pattern-elements-20261124/README.md).
+
 ### Approved existing Sketch Pattern editor — November 24, 2026
 
 Owner requested double-clicking either the Pattern icon in the sketch or its

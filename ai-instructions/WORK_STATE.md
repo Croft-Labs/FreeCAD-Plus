@@ -1,5 +1,19 @@
 # FreeCAD Plus: Current work state
 
+## Single Pattern item in Elements — installed
+
+November 24, 2026. Owner directed completion of the existing preview. Native
+Elements now represents generated curves and spacing helpers with one actual
+non-expandable Pattern row. Source/unrelated geometry stays separate; selection,
+visibility, member filtering and the existing editor are integrated. Free-copy
+patterns retain operation identity without acquiring constraints. Deleting an
+operation removes its recipe with the geometry in the same Undo transaction.
+All 102 affected regression checks pass, followed by six focused checks on the
+final installation, four saved-file edit/reopen cases and the existing shortcut.
+12-by-12 and 20-by-20 grids retain chains, Equal sizes and one Elements operation
+row. Restart FreeCAD Plus to load the native update. See
+[implementation and results](evidence/pattern-elements-20261124/README.md).
+
 ## Persistent pattern memory error — reproduced, corrected and installed
 
 November 24, 2026. The owner's saved sketch reproduces the allocation error at
@@ -13,8 +27,7 @@ desktop shortcut check. The original desktop file is unchanged. Restart the app.
 Earlier GUI reproduction probes accidentally retained 20 mm pitches; the harness
 now commits and asserts actual inch values. See
 [correction and validation](evidence/pattern-label-allocation-20261124/README.md).
-The Elements-list Pattern row proposal remains pending approval, with no production
-changes; handoff is ../pattern-elements-preview/README.md from the repository root.
+The subsequent Elements-list implementation is tracked above.
 
 ## Large circle-pattern memory — installed
 

@@ -34,6 +34,9 @@
 #include <QApplication>
 #include <QFontMetricsF>
 #include <QListWidget>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QMenu>
 #include <QMessageBox>
 #include <QScreen>
@@ -4222,6 +4225,29 @@ bool ViewProviderSketch::onDelete(const std::vector<std::string>& subList)
 
             try {
                 Gui::cmdAppObjectArgs(getObject(), "delGeometries([%s])", stream.str().c_str());
+                // Drop a deleted operation's recipe in the same Undo transaction.
+                // Otherwise IDs reused after reopening could group unrelated new curves.
+                auto* definitions = dynamic_cast<App::PropertyMap*>(
+                    getSketchObject()->getPropertyByName("PatternDefinitions"));
+                if (definitions) {
+                    std::set<QString> remaining;
+                    for (auto* geo : getSketchObject()->Geometry.getValues())
+                        remaining.insert(QString::number(Sketcher::GeometryFacade::getId(geo)));
+                    auto records = definitions->getValues();
+                    std::erase_if(records, [&](const auto& entry) {
+                        const auto record = QJsonDocument::fromJson(QByteArray::fromStdString(entry.second)).object();
+                        if (record.value(QStringLiteral("version")).toInt() != 1) return false;
+                        for (const auto& value : record.value(QStringLiteral("helpers")).toArray())
+                            if (remaining.contains(value.toString())) return false;
+                        for (const auto& value : record.value(QStringLiteral("instances")).toArray()) {
+                            const auto geometry = value.toObject().value(QStringLiteral("geometry")).toObject();
+                            for (auto it = geometry.begin(); it != geometry.end(); ++it)
+                                if (remaining.contains(it.value().toString())) return false;
+                        }
+                        return true;
+                    });
+                    if (records != definitions->getValues()) definitions->setValues(records);
+                }
             }
             catch (const Base::Exception& e) {
                 Base::Console().developerError("ViewProviderSketch", "%s\n", e.what());

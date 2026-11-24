@@ -1,0 +1,51 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import sketch_pattern_edit as editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'files':[]}
+    try:
+        cases=[(out.parent/'installed/elements-grid20.FCStd',3),
+               (out.parent/'installed/elements-free.FCStd',3),
+               (out.parent/'installed/elements-angular-radial.FCStd',2),
+               (out.parent.parent/'pattern-label-allocation-20261124/installed/dense-grid20.FCStd',4)]
+        Gui.activateWorkbench('SketcherWorkbench')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1600,1200)
+        for source,count in cases:
+            doc=App.openDocument(str(source));s=doc.Sketch
+            Gui.activeDocument().setEdit(s.Name);QtTest.QTest.qWait(100)
+            rows=win.findChild(QtWidgets.QListWidget,'listWidgetElements')
+            assert rows.count()==count,(source,rows.count())
+            grouped=[rows.item(i) for i in range(rows.count()) if rows.item(i).data(257)]
+            assert len(grouped)==1
+            row=grouped[0];group=row.data(257);original=editing.load(s,group)
+            rows.scrollToItem(row);rows.setFocus()
+            pos=rows.visualItemRect(row).center()
+            QtTest.QTest.mouseClick(rows.viewport(),QtCore.Qt.LeftButton,pos=pos)
+            QtTest.QTest.mouseDClick(rows.viewport(),QtCore.Qt.LeftButton,pos=pos)
+            QtTest.QTest.qWait(120)
+            panel=win.findChild(QtWidgets.QWidget,'SketchPatternPanel');assert panel.isVisible()
+            assert panel.items.count()==len(original[1])
+            extent=panel.angular if original[2]['pattern']=='Circular' else panel.d1
+            target=extent.count.value()+1;extent.count.setValue(target);panel.done.click();QtTest.QTest.qWait(100)
+            panel=win.findChild(QtWidgets.QWidget,'SketchPatternPanel')
+            assert (panel is None or not panel.isVisible()) and s.solve()==0
+            updated=out/('updated-'+source.name);doc.saveAs(str(updated))
+            Gui.activeDocument().resetEdit();App.closeDocument(doc.Name)
+            doc=App.openDocument(str(updated));s=doc.Sketch
+            axis='angular' if original[2]['pattern']=='Circular' else 'd1'
+            assert editing.load(s,group)[2][axis]['count']==target
+            Gui.activeDocument().setEdit(s.Name);QtTest.QTest.qWait(100)
+            rows=win.findChild(QtWidgets.QListWidget,'listWidgetElements');assert rows.count()==count
+            assert s.solve()==0
+            result['files'].append(dict(file=source.name,rows=count,edited_count=target))
+            Gui.activeDocument().resetEdit();App.closeDocument(doc.Name)
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,win.close)
+QtCore.QTimer.singleShot(1500,run)

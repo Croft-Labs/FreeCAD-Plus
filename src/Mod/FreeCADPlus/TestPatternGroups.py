@@ -127,6 +127,185 @@ class TestPatternGroups(unittest.TestCase):
         self.assertTrue(all(not visible(c) for c in self.s.Constraints if c.PatternGroup))
 
 
+class TestPatternElements(unittest.TestCase):
+    setUp = fixtures.TestPatternTask.setUp
+    tearDown = fixtures.TestPatternTask.tearDown
+
+    def listing(self):
+        return self.win.findChild(self.QtWidgets.QListWidget,'listWidgetElements')
+
+    def groups(self):
+        from PySide6 import QtCore
+        rows=self.listing()
+        return [rows.item(i) for i in range(rows.count()) if rows.item(i).data(QtCore.Qt.UserRole+1)]
+
+    def seed(self,n=4,hidden=True):
+        self.s.addConstraint(Sketcher.Constraint('Diameter',1,4.))
+        options=fixtures.linear(directions='Two directions',hide_spacing=hidden,
+            d1=fixtures.extent(count=n),d2=fixtures.extent(count=n,reference=(-2,0)))
+        pattern.apply(self.s,[1],options,True)
+        self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.listing().count(),3)
+        self.assertEqual(len(self.groups()),1)
+        self.assertEqual(self.groups()[0].text(),'Pattern 1 — %d × %d'%(n,n))
+        return self.groups()[0].data(257)
+
+    def click(self,row=None,checkbox=False,double=False):
+        from PySide6 import QtCore
+        rows=self.listing();row=row or self.groups()[0]
+        rows.scrollToItem(row);rows.setFocus()
+        rect=rows.visualItemRect(row)
+        pos=QtCore.QPoint(10,rect.center().y()) if checkbox else rect.center()
+        self.QtTest.QTest.mouseClick(rows.viewport(),QtCore.Qt.LeftButton,pos=pos)
+        if double:self.QtTest.QTest.mouseDClick(rows.viewport(),QtCore.Qt.LeftButton,pos=pos)
+        self.QtTest.QTest.qWait(150)
+
+    def test_dense_grids_single_row_preserve_geometry(self):
+        from freecad_plus import sketch_pattern_edit as editing
+        for n in (12,20):
+            with self.subTest(n=n):
+                group=self.seed(n)
+                record,ids,options=editing.load(self.s,group)
+                self.assertEqual(len(record['instances']),n*n-1)
+                self.assertEqual(len(record['helpers']),n*n-1)
+                self.assertEqual(self.s.GeometryCount,2+2*(n*n-1))
+                self.assertEqual(sum(c.Type=='Equal' and c.First==1 for c in self.s.Constraints),n*n-1)
+                self.assertEqual(self.s.solve(),0)
+                if os.environ.get('PLUS_TEST_DIR'):
+                    out=Path(os.environ['PLUS_TEST_DIR'])
+                    self.doc.saveAs(str(out/('elements-grid%d.FCStd'%n)))
+                    rows=self.listing()
+                    rows.grab().save(str(out/('elements-grid%d.png'%n)))
+                self.doc.undo();self.QtTest.QTest.qWait(80)
+                self.assertEqual(self.listing().count(),2)
+                self.doc.redo();self.QtTest.QTest.qWait(80)
+                self.assertEqual(self.listing().count(),3)
+                self.doc.undo();self.s.delConstraint(0)
+
+    def test_visibility_selection_delete_and_undo(self):
+        from freecad_plus import sketch_pattern_edit as editing
+        group=self.seed()
+        record,_,_=editing.load(self.s,group);indexed=editing.identities(self.s)
+        members={indexed[t] for t in editing.owned(record)}
+        helpers={indexed[t] for t in record['helpers']}
+        self.click()
+        selected={int(name[4:])-1 for entry in self.Gui.Selection.getSelectionEx()
+                  for name in entry.SubElementNames if name.startswith('Edge')}
+        self.assertEqual(selected,members)
+        self.click(checkbox=True)
+        self.assertTrue(all(pattern.visual_layer(self.s.GeometryFacadeList[i])==2 for i in members))
+        self.assertEqual(pattern.visual_layer(self.s.GeometryFacadeList[0]),0)
+        self.assertEqual(pattern.visual_layer(self.s.GeometryFacadeList[1]),0)
+        self.click(checkbox=True)
+        self.assertTrue(all(pattern.visual_layer(self.s.GeometryFacadeList[i])==(2 if i in helpers else 0) for i in members))
+        pattern.set_chain_hidden(self.s,False);self.QtTest.QTest.qWait(80)
+        self.click(checkbox=True);self.click(checkbox=True)
+        self.assertTrue(all(pattern.visual_layer(self.s.GeometryFacadeList[i])==0 for i in members))
+        self.click();self.Gui.runCommand('Std_Delete');self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.s.GeometryCount,2)
+        self.assertEqual(self.s.ConstraintCount,1)
+        self.assertEqual(self.listing().count(),2)
+        self.assertFalse(self.s.PatternDefinitions)
+        self.doc.undo();self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.listing().count(),3)
+        self.assertEqual(len(self.s.PatternDefinitions),1)
+        self.assertEqual(self.s.solve(),0)
+        # The row's Delete action still targets the group after a partial viewport pick.
+        from PySide6 import QtCore
+        self.Gui.Selection.clearSelection();self.Gui.Selection.addSelection(self.s,'Edge3')
+        self.QtTest.QTest.qWait(80)
+        QtCore.QMetaObject.invokeMethod(self.listing(),'deleteSelectedItems')
+        self.QtTest.QTest.qWait(80)
+        self.assertEqual(self.s.GeometryCount,2);self.assertFalse(self.s.PatternDefinitions)
+        self.doc.undo();self.QtTest.QTest.qWait(80)
+        self.assertEqual(self.listing().count(),3)
+
+    def test_multiple_patterns_filter_and_viewport_selection(self):
+        from PySide6 import QtCore
+        self.seed(3,False)
+        pattern.apply(self.s,[0],fixtures.linear(),True);self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.listing().count(),4)
+        self.assertEqual(len(self.groups()),2)
+        self.Gui.Selection.addSelection(self.s,'Edge3')
+        self.Gui.Selection.addSelection(self.s,'Edge4')
+        self.Gui.Selection.removeSelection(self.s,'Edge3');self.QtTest.QTest.qWait(100)
+        self.assertTrue(self.groups()[0].isSelected())
+        self.Gui.Selection.clearSelection();self.QtTest.QTest.qWait(100)
+        self.assertFalse(any(row.isSelected() for row in self.groups()))
+        panel=self.listing().parentWidget()
+        checkbox=panel.findChild(self.QtWidgets.QCheckBox,'filterBox');checkbox.setChecked(True)
+        button=panel.findChild(self.QtWidgets.QToolButton,'filterButton')
+        filter_action=button.actions()[0]
+        filters=filter_action.defaultWidget()
+        # Circle-only filtering retains the circle pattern, without helper child rows.
+        for i in range(5,filters.count()):filters.item(i).setCheckState(QtCore.Qt.Checked if i==7 else QtCore.Qt.Unchecked)
+        self.QtTest.QTest.qWait(100)
+        self.assertEqual(sum(not row.isHidden() for row in self.groups()),1)
+        checkbox.setChecked(False)
+        self.assertEqual(sum(not row.isHidden() for row in self.groups()),2)
+
+    def test_free_copies_remain_one_editable_pattern(self):
+        from freecad_plus import sketch_pattern_edit as editing
+        pattern.apply(self.s,[1],fixtures.linear(),False)
+        self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.s.ConstraintCount,0)
+        self.assertEqual(self.listing().count(),3)
+        group=self.groups()[0].data(257)
+        record,ids,options=editing.load(self.s,group)
+        self.assertFalse(record['dimensions']);self.assertEqual(ids,[1])
+        self.click(double=True)
+        panel=self.win.findChild(self.QtWidgets.QWidget,'SketchPatternPanel')
+        self.assertTrue(panel.isVisible());self.assertFalse(panel.lock.isChecked())
+        panel.d1.count.setValue(5);panel.done.click();self.QtTest.QTest.qWait(100)
+        self.assertEqual(self.s.GeometryCount,6)
+        self.assertEqual(self.s.ConstraintCount,0)
+        self.assertEqual(self.listing().count(),3)
+        self.assertIn('5',self.groups()[0].text())
+        if os.environ.get('PLUS_TEST_DIR'):
+            self.doc.saveAs(str(Path(os.environ['PLUS_TEST_DIR'])/'elements-free.FCStd'))
+        pattern.apply(self.s,[0],fixtures.linear(),True);self.QtTest.QTest.qWait(80)
+        self.assertEqual({r.text().split(' — ')[0] for r in self.groups()},{'Pattern 1','Pattern 2'})
+
+    def test_angular_radial_membership_survives_renumber(self):
+        from freecad_plus import sketch_pattern_edit as editing
+        options=fixtures.circular(directions='Angular + radial',
+            angular=fixtures.extent(spacing='Angular pitch',value=30,count=4),
+            radial=fixtures.extent(reference=(1,3),value=5,count=3))
+        pattern.apply(self.s,[1],options,True);self.QtTest.QTest.qWait(80)
+        self.assertEqual(self.listing().count(),3)
+        self.assertEqual(self.groups()[0].text(),'Pattern 1 — 4 × 3')
+        group=self.groups()[0].data(257)
+        self.s.delGeometry(0);self.doc.recompute();self.QtTest.QTest.qWait(80)
+        self.assertEqual(self.listing().count(),2)
+        self.assertEqual(editing.load(self.s,group)[1],[0])
+        self.assertEqual(self.s.solve(),0)
+        if os.environ.get('PLUS_TEST_DIR'):
+            self.doc.saveAs(str(Path(os.environ['PLUS_TEST_DIR'])/'elements-angular-radial.FCStd'))
+
+    def test_double_click_edit_cancel_apply_done_and_keyboard(self):
+        from PySide6 import QtCore
+        self.seed()
+        before=self.s.GeometryCount
+        self.click(double=True)
+        panel=self.win.findChild(self.QtWidgets.QWidget,'SketchPatternPanel')
+        self.assertIsNotNone(panel);self.assertTrue(panel.isVisible())
+        self.assertEqual(panel.d1.count.value(),4)
+        panel.d1.count.setValue(5)
+        self.QtTest.QTest.keyClick(panel.d1.count,QtCore.Qt.Key_Escape);self.QtTest.QTest.qWait(120)
+        self.assertEqual(self.s.GeometryCount,before)
+        self.click(double=True)
+        panel=self.win.findChild(self.QtWidgets.QWidget,'SketchPatternPanel')
+        panel.d1.count.setValue(5);panel.done.click();self.QtTest.QTest.qWait(120)
+        self.assertEqual(self.groups()[0].text(),'Pattern 1 — 5 × 4')
+        rows=self.listing();rows.setCurrentItem(self.groups()[0]);rows.setFocus()
+        self.QtTest.QTest.keyClick(rows,QtCore.Qt.Key_Return);self.QtTest.QTest.qWait(150)
+        panel=self.win.findChild(self.QtWidgets.QWidget,'SketchPatternPanel')
+        self.assertTrue(panel.isVisible());panel.d2.count.setValue(3);panel.apply.click()
+        self.assertEqual(panel.items.count(),0,panel.status.text())
+        panel.done.click();self.QtTest.QTest.qWait(120)
+        self.assertEqual(self.groups()[0].text(),'Pattern 1 — 5 × 3')
+
+
 class TestPatternGroupView(unittest.TestCase):
     setUp = fixtures.TestPatternTask.setUp
     tearDown = fixtures.TestPatternTask.tearDown
