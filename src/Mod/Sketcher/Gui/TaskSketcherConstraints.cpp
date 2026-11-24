@@ -128,6 +128,15 @@ public:
             return QVariant();
         }
 
+        if (!constraint->PatternGroup.empty()) {
+            if (role == Qt::DisplayRole || role == Qt::ToolTipRole)
+                return QString::fromStdString(constraint->PatternLabel.empty() ? "Pattern" : constraint->PatternLabel);
+            if (role == Qt::DecorationRole)
+                return Gui::BitmapFactory().iconFromTheme("Sketcher_RectangularArray");
+            if (role == Qt::ForegroundRole && !constraint->isVisible)
+                return QBrush(Qt::gray);
+        }
+
         if (role == Qt::EditRole) {
             if (value.isValid())
                 return value;
@@ -1175,6 +1184,24 @@ void TaskSketcherConstraints::onListWidgetConstraintsItemActivated(QListWidgetIt
     if (!it)
         return;
 
+    const auto* sketch = sketchView->getSketchObject();
+    const auto& group = sketch->Constraints[it->ConstraintNbr]->PatternGroup;
+    if (!group.empty()) {
+        QMenu menu;
+        for (int id : sketch->expandPatternConstraints({it->ConstraintNbr})) {
+            const auto* c = sketch->Constraints[id];
+            if (c->PatternDriver.empty()) continue;
+            auto* action = menu.addAction(QString::fromStdString(c->PatternDriver));
+            action->setData(id);
+        }
+        if (menu.isEmpty()) return;
+        if (auto* action = menu.exec(QCursor::pos())) {
+            EditDatumDialog dialog(sketchView, action->data().toInt());
+            dialog.exec(false);
+        }
+        return;
+    }
+
     // if its the right constraint
     if (it->isDimensional()) {
         EditDatumDialog* editDatumDialog = new EditDatumDialog(this->sketchView, it->ConstraintNbr);
@@ -1483,11 +1510,13 @@ void TaskSketcherConstraints::onListWidgetConstraintsItemSelectionChanged()
     Gui::Selection().clearSelection();
 
     std::vector<std::string> constraintSubNames;
+    std::vector<int> selectedIds;
     QList<QListWidgetItem*> items = ui->listWidgetConstraints->selectedItems();
     for (QList<QListWidgetItem*>::iterator it = items.begin(); it != items.end(); ++it) {
-        std::string constraint_name(Sketcher::PropertyConstraintList::getConstraintName(
-            static_cast<ConstraintItem*>(*it)->ConstraintNbr));
-        constraintSubNames.push_back(constraint_name);
+        selectedIds.push_back(static_cast<ConstraintItem*>(*it)->ConstraintNbr);
+    }
+    for (int id : sketchView->getSketchObject()->expandPatternConstraints(selectedIds)) {
+        constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(id));
     }
 
     if (!constraintSubNames.empty())
@@ -1511,9 +1540,20 @@ void TaskSketcherConstraints::change3DViewVisibilityToTrackFilter(bool filterEna
     std::vector<int> constrIdsToSetVisible;
     std::vector<int> constrIdsToSetHidden;
 
+    std::map<std::string, bool> patternVisible;
+    for (std::size_t i = 0; i < vals.size(); ++i) {
+        if (!vals[i]->PatternGroup.empty()) {
+            auto* item = static_cast<ConstraintItem*>(ui->listWidgetConstraints->item(i));
+            patternVisible[vals[i]->PatternGroup] |= !filterEnabled || !isConstraintFiltered(item);
+        }
+    }
+
     for (std::size_t i = 0; i < vals.size(); ++i) {
         ConstraintItem* it = static_cast<ConstraintItem*>(ui->listWidgetConstraints->item(i));
         bool visible = !filterEnabled || !isConstraintFiltered(it);
+        if (!vals[i]->PatternGroup.empty()) {
+            visible = patternVisible[vals[i]->PatternGroup];
+        }
 
         // If the constraint is filteredout and it was previously shown in 3D view
         if (!visible) {
@@ -1743,11 +1783,15 @@ void TaskSketcherConstraints::slotConstraintsChanged()
     ui->listWidgetConstraints->blockSignals(tmpBlock);
 
     /* Update filtering */
+    std::set<std::string> displayedPatterns;
     for (std::size_t i = 0; i < vals.size(); ++i) {
         const Sketcher::Constraint* constraint = vals[i];
         ConstraintItem* it = static_cast<ConstraintItem*>(ui->listWidgetConstraints->item(i));
 
         bool visible = !isConstraintFiltered(it);
+        if (!constraint->PatternGroup.empty()) {
+            visible = visible && displayedPatterns.insert(constraint->PatternGroup).second;
+        }
 
         // block signals as there is no need to invoke the
         // on_listWidgetConstraints_itemChanged() slot in
@@ -1755,6 +1799,8 @@ void TaskSketcherConstraints::slotConstraintsChanged()
         // called after changing the constraint list property
         QAbstractItemModel* model = ui->listWidgetConstraints->model();
         auto tmpBlock = model->blockSignals(true);
+        it->setFlags(constraint->PatternGroup.empty() ? (it->flags() | Qt::ItemIsEditable)
+                                                    : (it->flags() & ~Qt::ItemIsEditable));
         it->setHidden(!visible);
         it->setData(Qt::EditRole, QString::fromStdString(constraint->Name));
         model->blockSignals(tmpBlock);

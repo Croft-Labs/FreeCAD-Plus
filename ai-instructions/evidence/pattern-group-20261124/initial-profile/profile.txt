@@ -1,0 +1,31 @@
+         62876 function calls (62864 primitive calls) in 4.410 seconds
+
+   Ordered by: internal time
+   List reduced from 228 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    1.542    0.308    1.542    0.308 {method 'solve' of 'Sketcher.SketchObject' objects}
+        1    0.969    0.969    0.990    0.990 {method 'recompute' of 'App.Document' objects}
+        1    0.903    0.903    2.263    2.263 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:515(finish)
+        1    0.900    0.900    1.360    1.360 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:406(set_chain_hidden)
+      576    0.045    0.000    0.045    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:54(geometry)
+      143    0.007    0.000    0.007    0.000 {method 'restoreContent' of 'Base.Persistence' objects}
+     1710    0.006    0.000    0.012    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+     1710    0.003    0.000    0.004    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+      856    0.003    0.000    0.003    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:447(constrain)
+        2    0.002    0.001    0.002    0.001 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+      143    0.002    0.000    0.039    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:193(_copy_constraints)
+     1710    0.001    0.000    0.003    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\numeric_fields.py:13(eventFilter)
+     3430    0.001    0.000    0.003    0.000 {method 'type' of 'PySide6.QtCore.QEvent' objects}
+     3885    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+     2005    0.001    0.000    0.002    0.000 shibokensupport/feature.py:88(feature_import)
+      286    0.001    0.000    0.007    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:462(line)
+      286    0.001    0.000    0.002    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:151(transformed)
+      286    0.001    0.000    0.001    0.000 {method 'getExtensionOfType' of 'Sketcher.GeometryFacade' objects}
+      286    0.001    0.000    0.001    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:547(addGeometry)
+     3430    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:720(__call__)
+      572    0.001    0.000    0.001    0.000 C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\freecad_plus\sketch_pattern.py:540(getPoint)
+     2005    0.001    0.000    0.003    0.000 shibokensupport/signature/loader.py:59(feature_import)
+      430    0.001    0.000    0.001    0.000 {method 'getExtensionOfName' of 'Sketcher.GeometryFacade' objects}
+        3    0.001    0.000    0.001    0.000 {built-in method _io.open}
+     3006    0.001    0.000    0.001    0.000 {method 'inherits' of 'PySide6.QtCore.QObject' objects}

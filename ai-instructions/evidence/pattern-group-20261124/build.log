@@ -1,0 +1,18 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/21] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPatternGroups.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPatternGroups.py
+[2/21] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern.py
+[3/21] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[4/12] Automatic MOC and UIC for target SketcherGui
+[5/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherElements.cpp.obj
+[6/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherToolDefaultWidget.cpp.obj
+[7/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherConstraints.cpp.obj
+[8/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherSolverAdvanced.cpp.obj
+[9/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherValidation.cpp.obj
+[10/11] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\ViewProviderSketch.cpp.obj
+[11/11] Linking CXX shared library Mod\Sketcher\SketcherGui.pyd

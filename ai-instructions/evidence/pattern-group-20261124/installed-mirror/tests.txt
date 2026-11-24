@@ -1,0 +1,18 @@
+test_apply_repeated_and_undo_redo (TestSketchSymmetry.TestSketchSymmetry.test_apply_repeated_and_undo_redo) ... ok
+test_component_sketch_both_presentations (TestSketchSymmetry.TestSketchSymmetry.test_component_sketch_both_presentations) ... ok
+test_constraints_cancel_escape_and_other_tool (TestSketchSymmetry.TestSketchSymmetry.test_constraints_cancel_escape_and_other_tool) ... ok
+test_delete_original_and_axis_remapping (TestSketchSymmetry.TestSketchSymmetry.test_delete_original_and_axis_remapping) ... ok
+test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat (TestSketchSymmetry.TestSketchSymmetry.test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat) ... ok
+test_empty_entry_large_list_and_done_restore (TestSketchSymmetry.TestSketchSymmetry.test_empty_entry_large_list_and_done_restore) ... ok
+test_empty_sketch_can_open_and_cancel (TestSketchSymmetry.TestSketchSymmetry.test_empty_sketch_can_open_and_cancel) ... ok
+test_external_line_reference_and_scrollable_many_inputs (TestSketchSymmetry.TestSketchSymmetry.test_external_line_reference_and_scrollable_many_inputs) ... ok
+test_native_options_construction_and_point_center (TestSketchSymmetry.TestSketchSymmetry.test_native_options_construction_and_point_center) ... ok
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+test_save_reopen (TestSketchSymmetry.TestSketchSymmetry.test_save_reopen) ... ok
+test_shift_delete_clear_and_invalid_axis_recovery (TestSketchSymmetry.TestSketchSymmetry.test_shift_delete_clear_and_invalid_axis_recovery) ... ok
+test_standalone_point_selected_after_open (TestSketchSymmetry.TestSketchSymmetry.test_standalone_point_selected_after_open) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 29.475s
+
+OK

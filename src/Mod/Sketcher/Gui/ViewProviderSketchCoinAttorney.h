@@ -140,7 +140,7 @@ inline const std::vector<Sketcher::Constraint*> ViewProviderSketchCoinAttorney::
     const ViewProviderSketch& vp
 )
 {
-    return vp.getConstraints();
+    return vp.getDisplayConstraints();
 }
 
 inline const GeoList ViewProviderSketchCoinAttorney::getGeoList(const ViewProviderSketch& vp)

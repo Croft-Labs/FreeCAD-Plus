@@ -1,6 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
-## Pattern batching — November 24, 2026
+## Pattern groups and fixed-length grid speed — November 24, 2026
+
+- [x] Obtain approval of the single entry/icon and complete hidden-chain presentation.
+- [x] Eliminate redundant fixed-length line endpoint equations while retaining helpers and Equal sizes.
+- [x] Persist group identity, present one icon/row, retain pitch editing, group deletion and Undo.
+- [x] Hide all associated viewport constraint graphics with spacing chains.
+- [x] Build/install and pass 79 application checks, 88 native tests and fresh-process persistence checks.
+  Installed fixed-line 12-by-12 Apply: 4.12 seconds, resolving the earlier 57.28-second case.
+  See [results](evidence/pattern-group-20261124/README.md).
+
+## Pattern batching — prior update, November 24, 2026
 
 - [x] Profile the 12-by-12 grid and identify repeated solves and visibility redraws.
 - [x] Implement approved batching with protected source/Equal constraints and conflict rollback.

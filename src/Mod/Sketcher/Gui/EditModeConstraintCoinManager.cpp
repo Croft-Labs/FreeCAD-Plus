@@ -2867,6 +2867,7 @@ void EditModeConstraintCoinManager::drawTypicalConstraintIcon(const constrIconQu
 
 QString EditModeConstraintCoinManager::iconTypeFromConstraint(Constraint* constraint)
 {
+    if (!constraint->PatternGroup.empty()) return QStringLiteral("Sketcher_RectangularArray");
     /*! TODO: Consider pushing this functionality up into Constraint
      *
      Abdullah: Please, don't. An icon is visualisation information and

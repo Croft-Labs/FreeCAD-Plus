@@ -1,6 +1,21 @@
 # FreeCAD Plus: Programming Summary
 
-## Pattern batching — installed
+## Pattern groups and fixed-length grid speed — installed
+
+November 24, 2026. The owner approved one Pattern entry/icon without expandable
+children. Fixed-length 12-by-12 line grids now apply in 4.12 seconds through the
+installed task (3.81 seconds through the service), versus the previous 57.28 seconds.
+Both endpoint spacing chains, 143 Equal copy lengths and two pitch drivers remain;
+source length/orientation and pitch edits propagate correctly. Hide spacing chain
+also hides all grouped constraint graphics while retaining the Pattern list entry.
+Double-click the entry to edit its pitches with the normal unit-aware editor.
+All 79 installed application checks and 88 native Sketcher tests pass. Fresh-process
+reopening verifies grouped line/circle grids, renumbered constraints and legacy files.
+The existing desktop shortcut passed both task/editor checks (4.04-second Apply).
+Restart FreeCAD Plus to load the native update. See
+[implementation, captures and delivery](evidence/pattern-group-20261124/README.md).
+
+## Pattern batching — prior update (line slowdown resolved above)
 
 November 24, 2026. Owner-approved batching groups geometry, constraints and spacing
 visibility updates. The installed 12-by-12 circle grid applies in 1.54–1.57 seconds

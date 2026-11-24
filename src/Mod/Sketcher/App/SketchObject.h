@@ -393,6 +393,7 @@ public:
     int setVisibility(int ConstrId, bool isVisible);
     /// set the visibility of a group of constraints at once
     int setVisibility(std::vector<int> constrIds, bool isVisible);
+    std::vector<int> expandPatternConstraints(const std::vector<int>& ids) const;
     /// move this point to a new location and solve
     int moveGeometries(
         const std::vector<GeoElementId>& geoEltIds,

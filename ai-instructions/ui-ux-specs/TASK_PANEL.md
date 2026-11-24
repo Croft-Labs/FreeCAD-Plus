@@ -1353,6 +1353,20 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Approved Pattern constraint presentation — November 24, 2026
+
+Owner approved the concrete single-icon/list presentation in chat: “Approve this
+presentation”. Each newly created sketch pattern represents all its generated
+constraints with one Pattern icon in the viewer and one Pattern row in the constraint
+list. There are no expandable children. Source constraints remain separate. The group
+is selectable; deleting it removes its relationships while retaining geometry, and
+Undo restores them. Double-click provides the independent pitches through the native
+dimension editor, including explicit-unit persistence. Hide spacing chain hides the
+helper geometry and every associated constraint graphic, including the Pattern icon;
+the list entry remains available. Showing it restores one icon. Existing legacy
+patterns retain their independent constraints rather than guessing membership.
+See [approved screenshots and actual implementation evidence](../evidence/pattern-group-20261124/README.md).
+
 ### Approved and installed pattern/task corrections — November 24, 2026
 
 Owner requests fields that fit narrow docks, previews for each ready direction

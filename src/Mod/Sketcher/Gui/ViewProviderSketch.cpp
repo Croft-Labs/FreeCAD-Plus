@@ -41,6 +41,7 @@
 #include <QWindow>
 
 #include <limits>
+#include <map>
 
 #include <fmt/format.h>
 
@@ -1399,6 +1400,21 @@ void ViewProviderSketch::editDoubleClicked()
         for (int id : sels) {
 
             Constraint* Constr = constrlist[id];
+
+            if (!Constr->PatternGroup.empty()) {
+                QMenu menu;
+                for (int member : getSketchObject()->expandPatternConstraints({id})) {
+                    const auto* c = constrlist[member];
+                    if (c->PatternDriver.empty()) continue;
+                    auto* action = menu.addAction(QString::fromStdString(c->PatternDriver));
+                    action->setData(member);
+                }
+                if (auto* action = menu.exec(QCursor::pos())) {
+                    EditDatumDialog dialog(this, action->data().toInt());
+                    dialog.exec(false);
+                }
+                return;
+            }
 
             // if its the right constraint
             if (Constr->isDimensional()) {
@@ -3248,6 +3264,11 @@ void ViewProviderSketch::drawEditMarkers(const std::vector<Base::Vector2d>& Edit
 }
 
 void ViewProviderSketch::updateData(const App::Property* prop) {
+    if (prop == &getSketchObject()->Constraints || prop == &getSketchObject()->Geometry) {
+        patternDisplaySources.clear();
+        patternDisplayConstraints.clear();
+        patternDisplayCopies.clear();
+    }
     if (std::string(prop->getName()) != "ShapeMaterial") {
         // We don't want material to override the colors of sketches.
         ViewProvider2DObject::updateData(prop);
@@ -4142,7 +4163,20 @@ bool ViewProviderSketch::onDelete(const std::vector<std::string>& subList)
 
         std::set<int>::const_reverse_iterator rit;
 
-        for (rit = delConstraints.rbegin(); rit != delConstraints.rend(); ++rit) {
+        const bool grouped = std::any_of(delConstraints.begin(), delConstraints.end(), [&](int id) {
+            return id >= 0 && id < int(vals.size()) && !vals[id]->PatternGroup.empty();
+        });
+        if (grouped) {
+            const auto expanded = getSketchObject()->expandPatternConstraints(
+                {delConstraints.begin(), delConstraints.end()});
+            std::stringstream ids;
+            for (size_t i = 0; i < expanded.size(); ++i) {
+                if (i) ids << ',';
+                ids << expanded[i];
+            }
+            Gui::cmdAppObjectArgs(getObject(), "delConstraints([%s])", ids.str().c_str());
+        }
+        for (rit = delConstraints.rbegin(); !grouped && rit != delConstraints.rend(); ++rit) {
             try {
                 Gui::cmdAppObjectArgs(getObject(), "delConstraint(%d)", *rit);
             }
@@ -4380,6 +4414,46 @@ bool ViewProviderSketch::setPreselect(const std::string& subNameSuffix, float x,
 const std::vector<Sketcher::Constraint*> ViewProviderSketch::getConstraints() const
 {
     return getSketchObject()->Constraints.getValues();
+}
+
+const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstraints() const
+{
+    const auto& values = getSketchObject()->Constraints.getValues();
+    if (values == patternDisplaySources) return patternDisplayConstraints;
+    patternDisplaySources = values;
+    patternDisplayCopies.clear();
+    patternDisplayConstraints.clear();
+    std::map<std::string, int> anchors;
+    for (const auto* c : values) {
+        if (c->PatternGroup.empty()) continue;
+        for (int geo : {c->First, c->Second, c->Third}) {
+            if (geo < 0 || geo >= getSketchObject()->Geometry.getSize()) continue;
+            const auto facade = getSketchObject()->getGeometryFacade(geo);
+            if (facade && !facade->getConstruction())
+                anchors[c->PatternGroup] = std::max(anchors[c->PatternGroup], geo);
+        }
+    }
+    std::set<std::string> seen;
+    for (const auto* c : values) {
+        if (c->PatternGroup.empty()) {
+            patternDisplayConstraints.push_back(const_cast<Sketcher::Constraint*>(c));
+            continue;
+        }
+        auto display = std::unique_ptr<Sketcher::Constraint>(c->clone());
+        const bool first = seen.insert(c->PatternGroup).second;
+        // Display-only Block layout supplies a single pickable icon. The real
+        // solver constraint type and its persisted equations are untouched.
+        display->Type = Sketcher::Block;
+        display->First = anchors.contains(c->PatternGroup) ? anchors[c->PatternGroup] : c->First;
+        display->FirstPos = Sketcher::PointPos::none;
+        display->Second = display->Third = Sketcher::GeoEnum::GeoUndef;
+        display->SecondPos = display->ThirdPos = Sketcher::PointPos::none;
+        display->Name.clear();
+        display->isVisible = first && c->isVisible;
+        patternDisplayConstraints.push_back(display.get());
+        patternDisplayCopies.push_back(std::move(display));
+    }
+    return patternDisplayConstraints;
 }
 
 Sketcher::Constraint* ViewProviderSketch::getConstraint(int constid) const

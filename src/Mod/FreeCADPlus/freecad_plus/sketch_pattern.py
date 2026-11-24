@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Sketch pattern geometry and constraints. All persisted output is native Sketcher data."""
 import math
+import uuid
 from itertools import groupby
 import FreeCAD as App
 import Part
@@ -169,7 +170,28 @@ def preview(sketch, ids, options, spacing=False, helpers=None):
     return copies
 
 
-def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batch=None):
+def _fixed_length_lines(sketch, ids):
+    """Lines whose copied Equal size relationship can carry the second endpoint."""
+    constraints = sketch.Constraints
+    result = set()
+    for i in ids:
+        if not isinstance(geometry(sketch, i), Part.LineSegment): continue
+        orientations = {c.Type for c in constraints if c.First == i and c.Second == UNDEFINED
+                        and c.Driving and c.IsActive}
+        for c in constraints:
+            if c.First != i or not c.Driving or not c.IsActive: continue
+            endpoints = ((c.FirstPos == 0 and c.Second == UNDEFINED) or
+                         (c.Second == i and {c.FirstPos,c.SecondPos} == {1,2}))
+            size = (c.Type == 'Distance' or
+                    (c.Type == 'DistanceX' and 'Horizontal' in orientations) or
+                    (c.Type == 'DistanceY' and 'Vertical' in orientations))
+            if endpoints and size:
+                result.add(i)
+                break
+    return result
+
+
+def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batch=None, rigid_lines=()):
     angle = transform[0]
     copied = []
     equal=set()
@@ -180,6 +202,8 @@ def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batc
         equal.update(i for i in mapping if isinstance(geometry(sketch,i),Part.Circle))
     for blob in source:
         c = Sketcher.Constraint(); c.restoreContent(blob)
+        if hasattr(c, 'PatternGroup'):
+            c.PatternGroup = c.PatternLabel = c.PatternDriver = ''
         if c.First not in mapping: continue
         if any(i != UNDEFINED and i not in mapping for i in (c.Second, c.Third)): continue
         g=geometry(sketch,c.First)
@@ -225,6 +249,14 @@ def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batc
     else:
         batch.required.extend(copied)
         batch.optional.extend(Sketcher.Constraint('Equal',i,mapping[i]) for i in sorted(equal))
+        for i in rigid_lines:
+            # With Equal length and matching direction, a single endpoint's
+            # translation determines the other. Relative Parallel keeps the
+            # original's free rotation; copied absolute orientations already
+            # provide this relationship when the original is angle-locked.
+            locked = any(c.First == i and c.Second == UNDEFINED and c.Driving and c.IsActive
+                         and c.Type in ('Horizontal','Vertical','Angle') for c in sketch.Constraints)
+            if not locked: batch.optional.append(Sketcher.Constraint('Parallel',i,mapping[i]))
 
 
 def _independent(sketch, c):
@@ -374,10 +406,10 @@ def chain_is_hidden(sketch):
     return any(visual_layer(f) == 2 for f in sketch.GeometryFacadeList if spacing_tag(f) in tags)
 
 
-def set_chain_hidden(sketch, hidden):
+def set_chain_hidden(sketch, hidden, facades=None):
     """Use stable native geometry tags, not indices that change after deletion."""
     tags = set(getattr(sketch, 'PatternSpacingTags', []))
-    facades = sketch.GeometryFacadeList
+    if facades is None: facades = sketch.GeometryFacadeList
     helpers = set()
     for i, facade in enumerate(facades):
         if spacing_tag(facade) in tags:
@@ -393,11 +425,13 @@ def set_chain_hidden(sketch, hidden):
     if helpers:
         sketch.GeometryFacadeList = facades
         sketch.solve()
-        visibility = []
-        for i, c in enumerate(sketch.Constraints):
-            if c.Type not in ('Distance', 'Angle', 'Radius', 'Diameter', 'DistanceX', 'DistanceY'):
-                if any(g in helpers for g in (c.First, c.Second, c.Third)):
-                    visibility.append(i)
+        constraints = sketch.Constraints
+        related = {i for i,c in enumerate(constraints) if any(g in helpers for g in (c.First,c.Second,c.Third))}
+        groups = {getattr(constraints[i],'PatternGroup','') for i in related} - {''}
+        expressions = {str(path) for path,expression in sketch.ExpressionEngine}
+        visibility = [i for i,c in enumerate(constraints)
+                      if (i in related or getattr(c,'PatternGroup','') in groups)
+                      and (hidden or getattr(c,'PatternGroup','') or 'Constraints[%d]' % i not in expressions)]
         # Each call redraws the complete sketch while editing. Update once.
         if visibility: sketch.setVisibility(visibility, not hidden)
 
@@ -430,11 +464,15 @@ class SpacingChains:
         self.helpers.extend(range(first,self.sketch.GeometryCount))
         return result
 
-    def line(self, source, target, key, vector, reference=None):
+    def line(self, source, target, key, vector, reference=None, shape_linked=False):
         s = self.sketch
         a, b = s.getPoint(*source), s.getPoint(*target)
         line = self.add(Part.LineSegment(a, b))
         self.connect(source, (line, 1)); self.connect(target, (line, 2))
+        # This endpoint already translates with its line's first endpoint.
+        # Keep its visible connected helper, without repeating implied Equal
+        # and Parallel equations that would require expensive redundancy repair.
+        if shape_linked: return
         if key in self.masters:
             self.constrain('Equal', self.masters[key], line)
             self.constrain('Parallel', self.masters[key], line)
@@ -489,8 +527,7 @@ class SpacingChains:
         for i in self.helpers:
             facades[i].setExtension(Part.GeometryStringExtension(facades[i].Tag, 'FreeCADPlusPatternSpacing'))
         s.PatternSpacingTags = list(s.PatternSpacingTags) + [facades[i].Tag for i in self.helpers]
-        s.GeometryFacadeList = facades
-        set_chain_hidden(s, hidden)
+        set_chain_hidden(s, hidden, facades)
 
 
 class _PreviewGeometry:
@@ -569,9 +606,10 @@ class _BatchedLineChains(SpacingChains):
 
 def _spacing_chains(sketch, ids, instances, options, chain=None):
     circular = options.get('pattern') == 'Circular'
+    line_only = not circular or options.get('directions') == 'Radial'
+    rigid_lines = _fixed_length_lines(sketch.source if isinstance(sketch, _PreviewGeometry) else sketch, ids) if line_only else set()
     if chain is None:
         # Angular chains retain their ordered expression/constraint indices.
-        line_only = not circular or options.get('directions') == 'Radial'
         chain = _BatchedLineChains(sketch) if line_only else SpacingChains(sketch)
     if circular:
         layout = options.get('directions', 'Angular')
@@ -624,13 +662,52 @@ def _spacing_chains(sketch, ids, instances, options, chain=None):
                             if circular and axis == 0:
                                 chain.arc(a,b,center_ref,value-previous,key)
                             else:
-                                chain.line(a,b,key,vectors[axis]*sign,reference)
+                                chain.line(a,b,key,vectors[axis]*sign,reference,source in rigid_lines and pos == 2)
                 previous = value
     chain.finish(options.get('hide_spacing', False))
+    return chain
+
+
+def _group_pattern_constraints(sketch, first, options, chain):
+    constraints = sketch.Constraints
+    if first == len(constraints): return
+    if not hasattr(constraints[first], 'PatternGroup'):
+        raise RuntimeError('Restart FreeCAD Plus with the updated Sketcher module to create pattern groups.')
+    groups = {c.PatternGroup for c in constraints if c.PatternGroup}
+    number = len(groups) + 1
+    labels = {c.PatternLabel for c in constraints if c.PatternGroup}
+    while any(label.startswith('Pattern %d ' % number) for label in labels): number += 1
+    circular = options.get('pattern') == 'Circular'
+    if circular:
+        layout = options.get('directions','Angular')
+        counts = ([len(extent_values(options['angular'],True))] if layout != 'Radial' else [])
+        if layout != 'Angular': counts.append(len(extent_values(options['radial'])))
+    else:
+        counts = [len(extent_values(options['d1']))]
+        if options.get('directions') == 'Two directions': counts.append(len(extent_values(options['d2'])))
+    label = 'Pattern %d — ' % number + ' × '.join(map(str,counts))
+    identity = uuid.uuid4().hex
+    for c in constraints[first:]:
+        c.PatternGroup = identity
+        c.PatternLabel = label
+        c.PatternDriver = ''
+    if chain:
+        for (axis,sign),master in chain.masters.items():
+            title = ('Angular pitch' if axis == 0 else 'Radial pitch') if circular else 'Direction %d pitch' % (axis+1)
+            if sign: title += ' (+)' if sign > 0 else ' (−)'
+            if circular and axis == 0:
+                if first <= master < len(constraints): constraints[master].PatternDriver = title
+            else:
+                for c in constraints[first:]:
+                    if c.Type == 'Distance' and c.First == master and c.Second == UNDEFINED:
+                        c.PatternDriver = title
+                        break
+    sketch.Constraints = constraints
+    sketch.setVisibility(list(range(first,len(constraints))),not options.get('hide_spacing',False))
 
 
 def apply(sketch, ids, options, dimensions=False):
-    """Apply atomically; no new feature/property schema, source deletion or fixed source."""
+    """Apply atomically, preserving source freedom and grouping new constraints."""
     ids = operation_geometry(sketch, ids)
     placements = transforms(sketch, options)
     preview(sketch, ids, options) # Validate bounds and geometry before opening a transaction.
@@ -646,6 +723,8 @@ def apply(sketch, ids, options, dimensions=False):
             if len(ids) * len(placements) > 10000:
                 raise ValueError('Including internal geometry, the pattern exceeds 10,000 generated elements.')
         source = [c.dumpContent() for c in sketch.Constraints]
+        line_only = options.get('pattern','Linear') != 'Circular' or options.get('directions') == 'Radial'
+        rigid_lines = _fixed_length_lines(sketch, ids) if dimensions and line_only else set()
         originals = [(i, geometry(sketch, i), sketch.getConstruction(i)) for i in ids]
         generated = [(transformed(g, transform), construction)
                      for transform in placements for _, g, construction in originals]
@@ -658,11 +737,12 @@ def apply(sketch, ids, options, dimensions=False):
         batch = _ConstraintBatch(sketch)
         for n, transform in enumerate(placements):
             mapping = dict(zip(ids, range(first+n*len(ids), first+(n+1)*len(ids))))
-            _copy_constraints(sketch, source, mapping, transform, dimensions, batch)
+            _copy_constraints(sketch, source, mapping, transform, dimensions, batch, rigid_lines)
             instances.append(mapping)
             result.extend(mapping.values())
         batch.flush()
-        if dimensions: _spacing_chains(sketch, ids, instances, options)
+        chain = _spacing_chains(sketch, ids, instances, options) if dimensions else None
+        _group_pattern_constraints(sketch, len(source), options, chain)
         if sketch.solve() != 0: raise ValueError('The generated pattern could not be solved.')
         doc.recompute()
         doc.commitTransaction()

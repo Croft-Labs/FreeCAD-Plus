@@ -157,6 +157,9 @@ void Constraint::Save(Writer& writer) const
     }
     writer.Stream() << "Value=\"" << Value << "\" "
                     << "PresentationUnit=\"" << encodeAttribute(PresentationUnit) << "\" "
+                    << "PatternGroup=\"" << encodeAttribute(PatternGroup) << "\" "
+                    << "PatternLabel=\"" << encodeAttribute(PatternLabel) << "\" "
+                    << "PatternDriver=\"" << encodeAttribute(PatternDriver) << "\" "
                     << "LabelDistance=\"" << LabelDistance << "\" "
                     << "LabelPosition=\"" << LabelPosition << "\" "
                     << "IsDriving=\"" << (int)isDriving << "\" "
@@ -195,6 +198,9 @@ void Constraint::Restore(XMLReader& reader)
 {
     reader.readElement("Constrain");
     Name = reader.getAttribute<const char*>("Name");
+    PatternGroup = reader.hasAttribute("PatternGroup") ? reader.getAttribute<const char*>("PatternGroup") : "";
+    PatternLabel = reader.hasAttribute("PatternLabel") ? reader.getAttribute<const char*>("PatternLabel") : "";
+    PatternDriver = reader.hasAttribute("PatternDriver") ? reader.getAttribute<const char*>("PatternDriver") : "";
     Type = reader.getAttribute<ConstraintType>("Type");
     Value = reader.getAttribute<double>("Value");
     PresentationUnit = reader.hasAttribute("PresentationUnit") ? reader.getAttribute<const char*>("PresentationUnit") : "";

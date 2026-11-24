@@ -1262,6 +1262,9 @@ std::string SketchObject::reverseAngleConstraintExpression(std::string expressio
 
 int SketchObject::setVirtualSpace(int ConstrId, bool isinvirtualspace)
 {
+    if (ConstrId >= 0 && ConstrId < Constraints.getSize()
+        && !Constraints[ConstrId]->PatternGroup.empty())
+        return setVirtualSpace(std::vector<int>{ConstrId}, isinvirtualspace);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -1289,6 +1292,7 @@ int SketchObject::setVirtualSpace(int ConstrId, bool isinvirtualspace)
 
 int SketchObject::setVirtualSpace(std::vector<int> constrIds, bool isinvirtualspace)
 {
+    constrIds = expandPatternConstraints(constrIds);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -1362,8 +1366,25 @@ int SketchObject::toggleVirtualSpace(int ConstrId)
 }
 
 
+std::vector<int> SketchObject::expandPatternConstraints(const std::vector<int>& ids) const
+{
+    std::set<int> expanded(ids.begin(), ids.end());
+    std::set<std::string> groups;
+    const auto& values = Constraints.getValues();
+    for (int id : ids) {
+        if (id >= 0 && id < int(values.size()) && !values[id]->PatternGroup.empty())
+            groups.insert(values[id]->PatternGroup);
+    }
+    if (!groups.empty()) {
+        for (size_t i = 0; i < values.size(); ++i)
+            if (groups.contains(values[i]->PatternGroup)) expanded.insert(int(i));
+    }
+    return {expanded.begin(), expanded.end()};
+}
+
 int SketchObject::setVisibility(std::vector<int> constrIds, bool isVisible)
 {
+    constrIds = expandPatternConstraints(constrIds);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -1399,6 +1420,9 @@ int SketchObject::setVisibility(std::vector<int> constrIds, bool isVisible)
 
 int SketchObject::setVisibility(int ConstrId, bool isVisible)
 {
+    if (ConstrId >= 0 && ConstrId < Constraints.getSize()
+        && !Constraints[ConstrId]->PatternGroup.empty())
+        return setVisibility(std::vector<int>{ConstrId}, isVisible);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 

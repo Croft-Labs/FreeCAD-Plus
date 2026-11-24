@@ -1,0 +1,53 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtOpenGLWidgets,QtTest
+from pivy import coin
+from freecad_plus import sketch_pattern as pattern
+from TestPatternGroups import visible
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'files':[]}
+    try:
+        Gui.activateWorkbench('SketcherWorkbench')
+        for filename in ('fixed-line-grid12.FCStd','grid12.FCStd','group-renumber.FCStd'):
+            doc=App.openDocument(str(out.parent/'installed'/filename));s=doc.Sketch
+            groups={c.PatternGroup for c in s.Constraints if c.PatternGroup}
+            assert len(groups)==1
+            assert s.solve()==0
+            Gui.activeDocument().setEdit(s.Name);QtTest.QTest.qWait(80)
+            rows=Gui.getMainWindow().findChild(QtWidgets.QListWidget,'listWidgetConstraints')
+            assert len([rows.item(i) for i in range(rows.count()) if not rows.item(i).isHidden()
+                        and rows.item(i).text().startswith('Pattern')])==1
+            if filename!='group-renumber.FCStd':
+                before=s.DoF
+                s.setDatum(0,App.Units.Quantity('8 mm'))
+                drivers=[i for i,c in enumerate(s.Constraints) if c.PatternDriver]
+                assert len(drivers)==2
+                for i,value in zip(drivers,('12 mm','14 mm')):s.setDatum(i,App.Units.Quantity(value))
+                doc.recompute();assert s.solve()==0 and s.DoF==before
+                for i in range(1,144):
+                    assert any(c.Type=='Equal' and {c.First,c.Second}=={0,i} for c in s.Constraints)
+                    if filename.startswith('fixed'):
+                        g=s.Geometry[i];base=s.Geometry[0]
+                        assert abs(g.length()-8)<1e-5
+                        assert (g.EndPoint-g.StartPoint-(base.EndPoint-base.StartPoint)).Length<1e-5
+                    else:assert abs(s.Geometry[i].Radius-4)<1e-5
+            for hidden in (True,False):
+                pattern.set_chain_hidden(s,hidden);assert pattern.chain_is_hidden(s)==hidden
+                assert all(visible(c)==(not hidden) for c in s.Constraints if c.PatternGroup)
+            Gui.activeDocument().resetEdit();App.closeDocument(doc.Name)
+            result['files'].append(filename)
+        # Legacy native constraints remain ungrouped; no guessed pattern membership.
+        legacy=out.parents[1]/'pattern-batching-20261124/installed/grid12.FCStd'
+        doc=App.openDocument(str(legacy));assert doc.Sketch.solve()==0
+        assert all(not c.PatternGroup for c in doc.Sketch.Constraints)
+        App.closeDocument(doc.Name);result['files'].append('legacy grid12')
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    (out/'tests.txt').write_text('Fresh-process groups, pitch/size edits, visibility and legacy checks: '+str(result['ok']))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)

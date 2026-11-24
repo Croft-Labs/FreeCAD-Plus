@@ -121,6 +121,10 @@ public:
     Base::Quantity getPresentationValue() const;
     // Optional presentation only; absent in legacy files. Copied with constraints.
     std::string PresentationUnit;
+    // Presentation group only: every member remains a native solver equation.
+    std::string PatternGroup;
+    std::string PatternLabel;
+    std::string PatternDriver;
     inline void setValue(double newValue)
     {
         Value = newValue;

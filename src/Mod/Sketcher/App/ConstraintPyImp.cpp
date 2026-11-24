@@ -1104,6 +1104,12 @@ Py::Boolean ConstraintPy::getIsActive() const
 
 PyObject* ConstraintPy::getCustomAttributes(const char* attr) const
 {
+    if (std::string(attr) == "PatternGroup")
+        return PyUnicode_FromString(getConstraintPtr()->PatternGroup.c_str());
+    if (std::string(attr) == "PatternLabel")
+        return PyUnicode_FromString(getConstraintPtr()->PatternLabel.c_str());
+    if (std::string(attr) == "PatternDriver")
+        return PyUnicode_FromString(getConstraintPtr()->PatternDriver.c_str());
     if (std::string(attr) == "PresentationUnit")
         return PyUnicode_FromString(getConstraintPtr()->PresentationUnit.c_str());
     return nullptr;
@@ -1111,6 +1117,16 @@ PyObject* ConstraintPy::getCustomAttributes(const char* attr) const
 
 int ConstraintPy::setCustomAttributes(const char* attr, PyObject* obj)
 {
+    if (std::string(attr) == "PatternGroup" || std::string(attr) == "PatternLabel" || std::string(attr) == "PatternDriver") {
+        if (!PyUnicode_Check(obj)) {
+            PyErr_SetString(PyExc_TypeError, "Pattern group metadata must be a string");
+            return -1;
+        }
+        auto& value = std::string(attr) == "PatternGroup" ? getConstraintPtr()->PatternGroup :
+            (std::string(attr) == "PatternLabel" ? getConstraintPtr()->PatternLabel : getConstraintPtr()->PatternDriver);
+        value = PyUnicode_AsUTF8(obj);
+        return 1;
+    }
     if (std::string(attr) == "PresentationUnit") {
         if (!PyUnicode_Check(obj)) {
             PyErr_SetString(PyExc_TypeError, "PresentationUnit must be a string");

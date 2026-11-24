@@ -880,6 +880,7 @@ private:
     bool constraintHasExpression(int constrid) const;
 
     const std::vector<Sketcher::Constraint*> getConstraints() const;
+    const std::vector<Sketcher::Constraint*> getDisplayConstraints() const;
     /// gets the corresponding constraint to the given \a constid
     /// or null if it doesn't exist.
     Sketcher::Constraint* getConstraint(int constid) const;
@@ -1010,6 +1011,9 @@ private:
     int viewOrientationFactor;  // stores if sketch viewed from front or back
 
     bool blockContextMenu;
+    mutable std::vector<Sketcher::Constraint*> patternDisplaySources;
+    mutable std::vector<std::unique_ptr<Sketcher::Constraint>> patternDisplayCopies;
+    mutable std::vector<Sketcher::Constraint*> patternDisplayConstraints;
 };
 
 }  // namespace SketcherGui

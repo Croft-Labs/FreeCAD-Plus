@@ -1,0 +1,7 @@
+test_group_pitch_editor_preserves_units (TestPatternGroups.TestPatternGroupView.test_group_pitch_editor_preserves_units) ... ok
+test_single_icon_list_hide_selection_delete_undo (TestPatternGroups.TestPatternGroupView.test_single_icon_list_hide_selection_delete_undo) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 26.554s
+
+OK
