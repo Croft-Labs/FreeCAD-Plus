@@ -108,13 +108,13 @@ public:
         apply->setObjectName(QStringLiteral("SymmetryApply"));
         auto* done = new QPushButton(tr("Done"), this);
         done->setObjectName(QStringLiteral("SymmetryDone"));
-        row->addWidget(apply);
         row->addWidget(done);
+        row->addWidget(apply);
         layout->addLayout(row);
         connect(remove, &QPushButton::clicked, this, [this] { invoke(removeSelection); });
         connect(clear, &QPushButton::clicked, this, [this] { invoke(clearSelection); });
         connect(apply, &QPushButton::clicked, this, [this] { invoke(applySelection); });
-        connect(done, &QPushButton::clicked, this, [this] { invoke(finish); });
+        connect(done, &QPushButton::clicked, this, [this] { invoke(acceptSelection); });
         setAxisPicking(false);
     }
 
@@ -164,7 +164,7 @@ public:
 
     void detach()
     {
-        removeSelection = clearSelection = clearAxis = applySelection = finish = {};
+        removeSelection = clearSelection = clearAxis = applySelection = acceptSelection = finish = {};
     }
 
     QListWidget* geometry;
@@ -174,7 +174,7 @@ public:
     QLabel* status;
     QPushButton* apply;
     bool axisPicking = false;
-    std::function<void()> removeSelection, clearSelection, clearAxis, applySelection, finish;
+    std::function<void()> removeSelection, clearSelection, clearAxis, applySelection, acceptSelection, finish;
 
 private:
     static void invoke(std::function<void()> fn)
@@ -286,6 +286,14 @@ protected:
         widget->clearSelection = [this] { geometryIds.clear(); refresh(); };
         widget->clearAxis = [this] { refGeoId = Sketcher::GeoEnum::GeoUndef; refresh(); };
         widget->applySelection = [this] { apply(); };
+        widget->acceptSelection = [this] {
+            if (geometryIds.empty()) { quit(); return; }
+            if (!widget->apply->isEnabled()) {
+                widget->message(tr("Complete the mirror inputs before choosing Done, or Cancel to discard them."), true);
+                return;
+            }
+            if (apply()) quit();
+        };
         widget->finish = [this] { quit(); };
         refresh();
     }
@@ -401,9 +409,9 @@ private:
         }
     }
 
-    void apply()
+    bool apply()
     {
-        if (!widget || !widget->apply->isEnabled()) return;
+        if (!widget || !widget->apply->isEnabled()) return false;
         auto* sketch = getSketchObject();
         const auto ids = operationGeometry();
         const int previousReference = refGeoId;
@@ -428,18 +436,22 @@ private:
             tryAutoRecomputeIfNotSolve(sketch);
             Gui::Command::commitCommand();
             geometryIds.clear();
+            refGeoId = Sketcher::GeoEnum::GeoUndef;
+            refPosId = Sketcher::PointPos::none;
             widget->setAxisPicking(false);
             syncing = true;
             Gui::Selection().clearSelection();
             syncing = false;
             refresh();
             widget->message(tr("Mirrored geometry created. Select geometry for another set."));
+            return true;
         }
         catch (const Base::Exception& e) {
             Gui::Command::abortCommand();
             refGeoId = previousReference;
             refresh();
             widget->message(tr("Could not create mirrored geometry: %1").arg(QString::fromUtf8(e.what())), true);
+            return false;
         }
     }
 

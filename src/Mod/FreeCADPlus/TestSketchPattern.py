@@ -272,7 +272,7 @@ class TestPatternTask(unittest.TestCase):
         self.p.d1.count.setValue(3); self.assertTrue(self.p.apply.isEnabled(), self.p.status.text())
         self.p.apply.click(); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4, self.p.status.text())
         self.assertGreater(self.s.ConstraintCount, 0)
-        self.assertEqual(self.p.items.count(), 0); self.assertTrue(self.p.d1.reference.text())
+        self.assertEqual(self.p.items.count(), 0); self.assertFalse(self.p.d1.reference.text())
         self.doc.undo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 2)
         self.doc.redo(); self.QtTest.QTest.qWait(100); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4)
         self.p.done.click(); self.QtTest.QTest.qWait(100)

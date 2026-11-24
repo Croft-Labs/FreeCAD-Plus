@@ -8,6 +8,7 @@ set(FreeCADPlus_SRCS
     TestSketchConstraintSymmetry.py
     TestSketchPattern.py
     TestSpacingUnits.py
+    TestPatternCorrections.py
     TestShellWorkflow.py
     TestComponentPilot.py
     TestLegacyConversion.py
@@ -104,6 +105,7 @@ install(FILES
     TestSketchConstraintSymmetry.py
     TestSketchPattern.py
     TestSpacingUnits.py
+    TestPatternCorrections.py
     TestShellWorkflow.py
     TestLoftWorkflow.py
     TestThickenWorkflow.py TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestTaskEntryWorkflows.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)

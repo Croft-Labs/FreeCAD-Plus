@@ -1,11 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
-## Pattern/task corrections — preview awaiting approval
+## Pattern/task corrections — installed
 
-November 24, 2026. Owner requests narrow fields, partial-direction previews including
+November 24, 2026. Owner-approved narrow fields, partial-direction previews including
 spacing helpers, Equal sizes instead of repeated copy dimensions, and Done-left/apply-close
-versus Apply-right/apply-reset. [Native Qt simulations and scope](evidence/pattern-corrections-preview-20261124/README.md)
-are ready for direct chat approval. Production and installation remain at `9a17cbdd93`.
+versus Apply-right/apply-reset are installed. All 68 installed application checks and
+88 native sketch tests pass, plus five fresh-process saved-file checks and four
+existing-shortcut checks. Restart FreeCAD Plus to load the native update. See
+[implementation and actual native screenshots](evidence/pattern-corrections-20261124/README.md).
 
 ## Spacing chains and quantities — installed
 

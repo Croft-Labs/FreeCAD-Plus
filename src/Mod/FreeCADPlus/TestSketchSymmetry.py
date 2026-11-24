@@ -82,6 +82,7 @@ class TestSketchSymmetry(unittest.TestCase):
 
     def test_empty_entry_large_list_and_done_restore(self):
         self.enter()
+        self.assertLess(self.done.x(),self.apply.x())
         self.assertFalse(self.apply.isEnabled())
         self.assertGreaterEqual(self.items.height(),360)
         self.assertTrue(all(w.isHidden() for w,visible in self.sections))
@@ -89,7 +90,16 @@ class TestSketchSymmetry(unittest.TestCase):
         self.assertTrue(self.apply.isEnabled());self.capture('symmetry-ready')
         self.assertEqual(self.sketch.GeometryCount,4)
         self.done.click();self.assert_restored()
+        self.assertEqual(self.sketch.GeometryCount,5)
+
+    def test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat(self):
+        self.enter(('Edge1',))
+        self.done.click();self.settle()
+        self.assertTrue(self.items.isVisible());self.assertEqual(self.items.count(),1)
         self.assertEqual(self.sketch.GeometryCount,4)
+        self.pick('V_Axis',axis=True);self.apply.click();self.settle()
+        self.assertFalse(self.axis.text());self.assertEqual(self.items.count(),0)
+        self.done.click();self.assert_restored();self.assertEqual(self.sketch.GeometryCount,5)
 
     def test_apply_repeated_and_undo_redo(self):
         self.enter(('Edge1','Edge2'))
@@ -99,13 +109,13 @@ class TestSketchSymmetry(unittest.TestCase):
         self.assertAlmostEqual(self.sketch.Geometry[4].StartPoint.x,-5)
         self.assertEqual(self.sketch.ConstraintCount,0)
         self.assertEqual(self.items.count(),0);self.assertTrue(self.items.isVisible())
-        self.assertTrue(self.axis.text())
-        self.pick('Edge3');self.apply.click();self.settle()
+        self.assertFalse(self.axis.text())
+        self.pick('Edge3');self.pick('V_Axis',axis=True);self.apply.click();self.settle()
         self.assertEqual(self.sketch.GeometryCount,7)
         self.doc.undo();self.settle();self.assertEqual(self.sketch.GeometryCount,6)
         self.doc.redo();self.settle();self.assertEqual(self.sketch.GeometryCount,7)
-        self.pick('Edge1');self.done.click();self.assert_restored()
-        self.assertEqual(self.sketch.GeometryCount,7)
+        self.pick('Edge1');self.pick('V_Axis',axis=True);self.done.click();self.assert_restored()
+        self.assertEqual(self.sketch.GeometryCount,8)
 
     def test_shift_delete_clear_and_invalid_axis_recovery(self):
         self.enter()
@@ -149,7 +159,7 @@ class TestSketchSymmetry(unittest.TestCase):
         self.child(QtWidgets.QCheckBox,'SymmetryDeleteOriginal').setChecked(True)
         self.apply.click();self.settle()
         self.assertEqual(self.sketch.GeometryCount,4)
-        self.assertEqual(self.axis.text(),'Edge2')
+        self.assertFalse(self.axis.text())
         self.assertAlmostEqual(self.sketch.Geometry[3].StartPoint.y,19)
         self.done.click()
 

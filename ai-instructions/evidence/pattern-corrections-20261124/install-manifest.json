@@ -1,0 +1,44 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\SketcherGui.pyd",
+    "path": "lib/SketcherGui.pyd",
+    "previous_sha256": "d97905c23f1d21d2f9a1662d09e992339d6a32961d168fde5fc0d84d93fe18a7",
+    "sha256": "48b61158a08ae5f1787bc94fef2ee9c94c6452ab7fbbaa90c27625499b2f66d1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-corrections-20261124\\install-backup\\lib\\SketcherGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPatternCorrections.py",
+    "path": "Mod/FreeCADPlus/TestPatternCorrections.py",
+    "previous_sha256": null,
+    "sha256": "b1f864c0d4efae355cc00864abfa10689050883538d0ecb64173be6b75caba6e",
+    "rollback": null
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSketchPattern.py",
+    "path": "Mod/FreeCADPlus/TestSketchPattern.py",
+    "previous_sha256": "9595d32718884d77956126ce4fb1f0f61edc14e0b807a0eceb6035d79513b8d7",
+    "sha256": "005ae42add943e98b050fe9f81fe484b64256a418ab5ce12d0f771ffc47f5faf",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-corrections-20261124\\install-backup\\Mod\\FreeCADPlus\\TestSketchPattern.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSketchSymmetry.py",
+    "path": "Mod/FreeCADPlus/TestSketchSymmetry.py",
+    "previous_sha256": "74052199dac03abc57d1f7466a68b742489620985a956feaa45037b050d91326",
+    "sha256": "e49eccedcc66efbe4b20096850857d937325cddd6f9b54cfb4bdfc2ce221ad4a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-corrections-20261124\\install-backup\\Mod\\FreeCADPlus\\TestSketchSymmetry.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern.py",
+    "previous_sha256": "fa1031b7f0f76c36ae94660efcce6d3ec3e315a246e07f3ad6154d2ff0180308",
+    "sha256": "cceec4151d7d7641907cc7157277f38845babfe5f0b744cea1ed474c1e41158b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-corrections-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py",
+    "previous_sha256": "4a32838d4bafecdf222a3282fec1cb5a882d93cc25c3409a9141d4f5fd4e06dc",
+    "sha256": "ff5b908fea3fec6a7a9d396c81dbf3f03cd31a14c5a0a411db43d7e0273dfce6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-corrections-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern_task.py"
+  }
+]

@@ -154,20 +154,49 @@ def transformed(g, transform):
     return copy
 
 
-def preview(sketch, ids, options):
+def preview(sketch, ids, options, spacing=False, helpers=None):
     ids = operation_geometry(sketch, ids)
     placements = transforms(sketch, options)
     if len(ids) * len(placements) > 10000: raise ValueError('Use at most 10,000 generated geometry elements.')
-    return [transformed(geometry(sketch, i), transform) for transform in placements for i in ids]
+    copies=[transformed(geometry(sketch, i), transform) for transform in placements for i in ids]
+    if spacing and not options.get('hide_spacing',False):
+        staged=_PreviewGeometry(sketch,copies)
+        first=sketch.GeometryCount
+        instances=[dict(zip(ids,range(first+n*len(ids),first+(n+1)*len(ids)))) for n in range(len(placements))]
+        _spacing_chains(staged,ids,instances,options,_PreviewChains(staged))
+        (copies if helpers is None else helpers).extend(staged.helpers)
+    return copies
 
 
-def _copy_constraints(sketch, source, mapping, transform):
+def _copy_constraints(sketch, source, mapping, transform, dimensions=False):
     angle = transform[0]
     copied = []
+    equal=set()
+    if dimensions:
+        # Circle centers alone do not carry size. Free line/arc endpoints already
+        # share their shape through spacing chains; adding redundant Equal there
+        # would constrain the source at singular initial configurations.
+        equal.update(i for i in mapping if isinstance(geometry(sketch,i),Part.Circle))
     for blob in source:
         c = Sketcher.Constraint(); c.restoreContent(blob)
         if c.First not in mapping: continue
         if any(i != UNDEFINED and i not in mapping for i in (c.Second, c.Third)): continue
+        g=geometry(sketch,c.First)
+        projected=c.Type in ('DistanceX','DistanceY')
+        axis_locked=projected and any(r.First==c.First and r.Second==UNDEFINED and
+            r.Type==('Horizontal' if c.Type=='DistanceX' else 'Vertical') and r.Driving and r.IsActive
+            for r in sketch.Constraints)
+        size=(c.Type in ('Radius','Diameter') and isinstance(g,(Part.Circle,Part.ArcOfCircle))) or (
+            (c.Type=='Distance' or axis_locked) and isinstance(g,Part.LineSegment) and (
+                (c.FirstPos==0 and c.Second==UNDEFINED) or
+                (c.Second==c.First and {c.FirstPos,c.SecondPos}=={1,2})))
+        if size and c.Driving and c.IsActive:
+            equal.add(c.First)
+            continue
+        if dimensions and projected and isinstance(g,Part.LineSegment) and c.Second==c.First and c.Driving and c.IsActive:
+            # A projected distance is not a curve length when rotation is free.
+            # The endpoint chains carry it without an extra dimension or Equal.
+            continue
         if c.Type in ('DistanceX', 'DistanceY') and c.Second == UNDEFINED:
             # Absolute coordinates are not transferable to a new instance.
             continue
@@ -190,6 +219,7 @@ def _copy_constraints(sketch, source, mapping, transform):
         c.Name = ''
         copied.append(c)
     if copied: sketch.addConstraint(copied)
+    for i in sorted(equal): _independent(sketch,Sketcher.Constraint('Equal',i,mapping[i]))
 
 
 def _independent(sketch, c):
@@ -338,6 +368,12 @@ class SpacingChains:
     def connect(self, source, target):
         self.constrain('Coincident', *source, *target)
 
+    def ray(self, source, target):
+        first=self.sketch.GeometryCount
+        result=_ray(self.sketch,source,target)
+        self.helpers.extend(range(first,self.sketch.GeometryCount))
+        return result
+
     def line(self, source, target, key, vector, reference=None):
         s = self.sketch
         a, b = s.getPoint(*source), s.getPoint(*target)
@@ -401,8 +437,54 @@ class SpacingChains:
         set_chain_hidden(s, hidden)
 
 
-def _spacing_chains(sketch, ids, instances, options):
-    chain = SpacingChains(sketch)
+class _PreviewGeometry:
+    """Read-only source plus transient geometry; never an App document object."""
+    def __init__(self,source,copies):
+        self.source=source
+        self.Geometry=list(source.Geometry)+copies
+        self.ExternalGeo=source.ExternalGeo
+        self.helpers=[]
+
+    @property
+    def GeometryCount(self): return len(self.Geometry)
+
+    def getPoint(self,geo,pos):
+        if geo<self.source.GeometryCount: return self.source.getPoint(geo,pos)
+        g=self.Geometry[geo]
+        if isinstance(g,Part.Point): return App.Vector(g.X,g.Y,g.Z)
+        if pos==3:return g.Center
+        return g.StartPoint if pos==1 else g.EndPoint
+
+    def addGeometry(self,g,construction=True):
+        # Mark helpers for the native preview bridge without persisting them.
+        extension=Sketcher.GeometryFacade(g)
+        extension.Construction=construction
+        g=extension.Geometry
+        self.Geometry.append(g);self.helpers.append(g)
+        return len(self.Geometry)-1
+
+
+class _PreviewChains(SpacingChains):
+    def constrain(self,*args): pass
+    def finish(self,hidden): pass
+    def line(self,source,target,*args):
+        self.add(Part.LineSegment(self.sketch.getPoint(*source),self.sketch.getPoint(*target)))
+    def ray(self,source,target):
+        return self.add(Part.LineSegment(self.sketch.getPoint(*source),self.sketch.getPoint(*target)))
+    def arc(self,source,target,center,angle,key):
+        a,b,c=(self.sketch.getPoint(*ref) for ref in (source,target,center))
+        if (a-c).Length<EPS:
+            if source!=center:
+                offset=App.Vector(10,0,0)
+                self.add(Part.LineSegment(c,a+offset))
+                self.add(Part.LineSegment(c,b+App.Rotation(App.Vector(0,0,1),angle).multVec(offset)))
+            return
+        start=math.atan2((a-c).y,(a-c).x)+(math.radians(angle) if angle<0 else 0)
+        self.add(Part.ArcOfCircle(Part.Circle(c,App.Vector(0,0,1),(a-c).Length),start,start+math.radians(abs(angle))))
+
+
+def _spacing_chains(sketch, ids, instances, options, chain=None):
+    if chain is None: chain = SpacingChains(sketch)
     circular = options.get('pattern') == 'Circular'
     if circular:
         layout = options.get('directions', 'Angular')
@@ -430,14 +512,10 @@ def _spacing_chains(sketch, ids, instances, options):
         extent = extents[axis]
         reference = None
         if circular and axis == 1:
-            first = sketch.GeometryCount
-            reference = _ray(sketch, center_ref, point_reference(sketch, extent['reference'])[1])
-            chain.helpers.extend(range(first, sketch.GeometryCount))
+            reference = chain.ray(center_ref, point_reference(sketch, extent['reference'])[1])
         elif not circular:
             if extent.get('method') == 'Two points':
-                first = sketch.GeometryCount
-                reference = _ray(sketch, point_reference(sketch, extent['start'])[1], point_reference(sketch, extent['end'])[1])
-                chain.helpers.extend(range(first, sketch.GeometryCount))
+                reference = chain.ray(point_reference(sketch, extent['start'])[1], point_reference(sketch, extent['end'])[1])
             elif extent.get('method', 'Axis or line') == 'Axis or line':
                 reference = extent['reference'][0]
         for sign in (1, -1):
@@ -461,10 +539,6 @@ def _spacing_chains(sketch, ids, instances, options):
                             else:
                                 chain.line(a,b,key,vectors[axis]*sign,reference)
                 previous = value
-    for mapping in instances:
-        for source, target in mapping.items():
-            if isinstance(geometry(sketch, source), Part.Circle):
-                chain.constrain('Equal', source, target)
     chain.finish(options.get('hide_spacing', False))
 
 
@@ -491,7 +565,7 @@ def apply(sketch, ids, options, dimensions=False):
             mapping = {}
             for i in ids:
                 mapping[i] = sketch.addGeometry(transformed(geometry(sketch, i), transform), sketch.getConstruction(i))
-            _copy_constraints(sketch, source, mapping, transform)
+            _copy_constraints(sketch, source, mapping, transform, dimensions)
             if sketch.solve() != 0: raise ValueError('The copied constraints could not be solved.')
             instances.append(mapping)
             result.extend(mapping.values())

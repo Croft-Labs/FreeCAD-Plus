@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "files": [
+    "native-units.FCStd",
+    "spacing-hidden.FCStd",
+    "circular-hidden.FCStd",
+    "feature-units.FCStd",
+    "equal-pattern.FCStd"
+  ]
+}

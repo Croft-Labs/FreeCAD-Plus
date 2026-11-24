@@ -1,7 +1,10 @@
 # Pattern and task completion corrections — UI proposal
 
-November 24, 2026. UI-only proposal awaiting direct chat approval. Production source,
-installed app and saved documents are unchanged from `9a17cbdd93`.
+November 24, 2026. Historical UI-only proposal: production source, installed app and
+saved documents were unchanged from `9a17cbdd93` when these simulations were captured.
+The owner subsequently approved this proposal with “Approved. Implement”. See the
+[implemented update and actual native screenshots](../pattern-corrections-20261124/README.md).
+The images below remain simulations, not evidence of the installed implementation.
 
 ## Requested workflow
 

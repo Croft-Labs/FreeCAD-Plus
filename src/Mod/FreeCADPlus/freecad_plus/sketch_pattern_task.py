@@ -6,24 +6,24 @@ from .quantity_fields import QuantityNumber
 
 
 def combo(items):
-    w=QtWidgets.QComboBox(); w.addItems(items); return w
+    w=QtWidgets.QComboBox(); w.addItems(items); w.setMinimumContentsLength(8); w.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon); w.setSizePolicy(QtWidgets.QSizePolicy.Ignored,QtWidgets.QSizePolicy.Fixed); return w
 def count(value):
-    w=QtWidgets.QSpinBox(); w.setRange(2,999); w.setValue(value); return w
+    w=QtWidgets.QSpinBox(); w.setRange(2,999); w.setValue(value); w.setSizePolicy(QtWidgets.QSizePolicy.Ignored,QtWidgets.QSizePolicy.Fixed); return w
 def amount(value, angular=False):
     w=QuantityNumber(); w.setRange(.000001,360 if angular else 100000)
-    w.setSuffix('deg' if angular else 'mm'); w.setValue(value); return w
+    w.setSuffix('deg' if angular else 'mm'); w.setValue(value); w.setSizePolicy(QtWidgets.QSizePolicy.Ignored,QtWidgets.QSizePolicy.Fixed); return w
 def reference(text):
-    w=QtWidgets.QLineEdit(); w.setReadOnly(True); w.setPlaceholderText(text); w.setClearButtonEnabled(True); return w
+    w=QtWidgets.QLineEdit(); w.setReadOnly(True); w.setPlaceholderText(text); w.setClearButtonEnabled(True); w.setMinimumWidth(0); w.setSizePolicy(QtWidgets.QSizePolicy.Ignored,QtWidgets.QSizePolicy.Fixed); return w
 
 class Extent(QtWidgets.QGroupBox):
     def __init__(self,title,owner,kind='linear'):
-        super().__init__(title); self.owner=owner; self.kind=kind
+        super().__init__(title); self.owner=owner; self.kind=kind; self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Maximum)
         layout=QtWidgets.QVBoxLayout(self); layout.setSpacing(5); layout.setContentsMargins(8,10,8,8)
         self.reference=None
         if kind=='linear':
-            row=QtWidgets.QHBoxLayout(); self.method=combo(['Axis or line','Two points','Vector'])
-            self.method.setMaximumWidth(125); row.addWidget(self.method)
-            self.picks=QtWidgets.QStackedWidget(); row.addWidget(self.picks,1)
+            row=QtWidgets.QVBoxLayout(); self.method=combo(['Axis or line','Two points','Vector'])
+            row.addWidget(self.method)
+            self.picks=QtWidgets.QStackedWidget(); self.picks.setSizePolicy(QtWidgets.QSizePolicy.Ignored,QtWidgets.QSizePolicy.Preferred); row.addWidget(self.picks)
             self.reference=reference('Select an axis or straight line'); self.picks.addWidget(self.reference)
             points=QtWidgets.QWidget(); pts=QtWidgets.QVBoxLayout(points); pts.setSpacing(4); pts.setContentsMargins(0,0,0,0)
             self.start=reference('From point'); self.end=reference('To point'); pts.addWidget(self.start); pts.addWidget(self.end)
@@ -45,7 +45,7 @@ class Extent(QtWidgets.QGroupBox):
         self.extent=combo(['One dimension','Two dimensions','Symmetric']); row.addWidget(self.extent,1)
         self.reverse=QtWidgets.QCheckBox('Reverse'); row.addWidget(self.reverse); layout.addLayout(row)
         grid=QtWidgets.QGridLayout(); self.grid=grid; grid.setHorizontalSpacing(8); grid.setVerticalSpacing(4)
-        self.forward=QtWidgets.QLabel(); self.backward=QtWidgets.QLabel()
+        self.forward=QtWidgets.QLabel(); self.backward=QtWidgets.QLabel(); self.forward.setWordWrap(True); self.backward.setWordWrap(True)
         grid.addWidget(self.forward,0,1); grid.addWidget(self.backward,0,2)
         choices=['Angular pitch','Total angle'] if kind=='angular' else ['Pitch','Total distance']
         self.spacing=combo(choices); self.spacing2=combo(choices)
@@ -68,12 +68,14 @@ class Extent(QtWidgets.QGroupBox):
 
     def total(self): return self.count.value()+self.count2.value()-1 if self.extent.currentIndex()==1 else self.count.value()
     def valid(self):
+        fields=(self.value,self.count,self.value2,self.count2) if self.extent.currentIndex()==1 else (self.value,self.count)
+        if any(not field.hasAcceptableInput() for field in fields): return False
         if self.extent.currentIndex()==2 and self.count.value()%2==0: return False
         if self.kind=='angular': return True
         if self.kind=='radial': return bool(self.reference.text())
         if self.method.currentIndex()==0: return bool(self.reference.text())
         if self.method.currentIndex()==1: return bool(self.start.text() and self.end.text() and self.start.text()!=self.end.text())
-        return bool(self.x.value() or self.y.value())
+        return self.x.hasAcceptableInput() and self.y.hasAcceptableInput() and bool(self.x.value() or self.y.value())
 
     def sync(self):
         two=self.extent.currentIndex()==1; symmetric=self.extent.currentIndex()==2
@@ -92,7 +94,7 @@ class Extent(QtWidgets.QGroupBox):
 class PatternControls(QtWidgets.QWidget):
     def __init__(self,parent):
         super().__init__(parent); self.building=True
-        layout=QtWidgets.QVBoxLayout(self); layout.setContentsMargins(0,0,0,0); layout.setSpacing(6)
+        layout=QtWidgets.QVBoxLayout(self); layout.setContentsMargins(0,0,0,0); layout.setSpacing(6); layout.setAlignment(QtCore.Qt.AlignTop)
         layout.addWidget(QtWidgets.QLabel('Geometry — click adds; Shift-click removes'))
         self.items=QtWidgets.QListWidget(); self.items.setFixedHeight(60)
         self.items.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection); layout.addWidget(self.items)
@@ -111,14 +113,16 @@ class PatternControls(QtWidgets.QWidget):
         self.lock.setToolTip('Constrain the pattern spacing and placement relative to the original geometry.')
         self.hide_spacing=QtWidgets.QCheckBox('Hide spacing chain'); layout.addWidget(self.hide_spacing)
         self.lock.toggled.connect(self.hide_spacing.setEnabled)
+        self.lock.toggled.connect(self.sync); self.hide_spacing.toggled.connect(self.sync)
         self.summary=QtWidgets.QLabel(); self.summary.setWordWrap(True); layout.addWidget(self.summary)
         self.status=TaskStatus(); layout.addWidget(self.status)
         row=QtWidgets.QHBoxLayout(); self.apply=QtWidgets.QPushButton('Apply'); self.done=QtWidgets.QPushButton('Done')
-        row.addWidget(self.apply); row.addWidget(self.done); layout.addLayout(row)
+        row.addWidget(self.done); row.addWidget(self.apply); layout.addLayout(row)
 
 
         self.mode.currentIndexChanged.connect(self.change_mode); self.layout_mode.currentIndexChanged.connect(self.sync)
         self.center.textChanged.connect(self.sync); self.items.installEventFilter(self)
+        for hint in self.findChildren(QtWidgets.QLabel): hint.setWordWrap(True)
         self.building=False; self.sync()
 
     def change_mode(self):
@@ -161,6 +165,12 @@ class PatternControls(QtWidgets.QWidget):
         else: self.status.setText('Ready to create the pattern.')
         self.status.setVisible(not ready)
         self.apply.setEnabled(ready)
+        complete=[e for e in active if e.valid()]
+        if self.items.count() and complete and not ready and (not circular or self.center.text()):
+            n=1
+            for e in complete:n*=e.total()
+            self.summary.setText(str(n)+' instances previewed.')
+            self.status.setText('Complete the remaining direction to preview and apply the full pattern.')
 
 
 class PatternTask(PatternControls):
@@ -172,6 +182,9 @@ class PatternTask(PatternControls):
         self.references = {}
         self.active_pick = None
         self._preview = []
+        self._helper_preview=[]
+        self._helper_root=None
+        self._helper_node=None
         self.ready = False
         super().__init__(host)
         self.setObjectName('SketchPatternPanel')
@@ -189,13 +202,15 @@ class PatternTask(PatternControls):
         for child in self.findChildren(QtWidgets.QWidget):
             child.installEventFilter(self)
         self.apply.clicked.connect(self.apply_pattern)
-        self.done.clicked.connect(lambda: self.notify('finish'))
+        self.done.clicked.connect(self.finish_pattern)
         for index in ids:
             if 0 <= index < sketch.GeometryCount:
                 self.add_geometry('Edge' + str(index + 1))
         self.ready = True
         self.hide_spacing.setChecked(pattern.chain_is_hidden(sketch))
         self.hide_spacing.toggled.connect(self.toggle_spacing)
+        for spin in self.findChildren(QtWidgets.QAbstractSpinBox):
+            spin.lineEdit().textEdited.connect(self.sync)
         self.activate_pick(self.items)
         self.sync()
 
@@ -205,7 +220,9 @@ class PatternTask(PatternControls):
         self.host.setProperty('patternSerial', int(self.host.property('patternSerial') or 0) + 1)
 
     def toggle_spacing(self, hidden):
-        if getattr(self.sketch, 'PatternSpacingTags', []):
+        # Pending controls affect only the preview. With no pending geometry the
+        # checkbox can still show/hide existing saved chains.
+        if not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
             self.sketch.Document.openTransaction('Hide pattern spacing chain' if hidden else 'Show pattern spacing chain')
             try:
                 pattern.set_chain_hidden(self.sketch, hidden)
@@ -266,6 +283,7 @@ class PatternTask(PatternControls):
             self.sync()
         except (ValueError, RuntimeError) as error:
             self.apply.setEnabled(False)
+            self._helper_preview=[];self.clear_helpers()
             self._preview = []; self.notify('preview')
             self.status.setError(str(error)); self.status.show()
 
@@ -294,47 +312,116 @@ class PatternTask(PatternControls):
                     d2=self.extent_options(self.d2), angular=self.extent_options(self.angular),
                     radial=self.extent_options(self.radial))
 
+    def preview_options(self):
+        options=self.options()
+        active=self.active_extents()
+        if options['pattern']=='Circular' and not options['center']: return None
+        complete=[]
+        for extent in active:
+            if not extent.valid(): continue
+            candidate=dict(options)
+            if extent.kind=='linear':
+                candidate.update(directions='One direction',d1=self.extent_options(extent))
+            else: candidate['directions']='Angular' if extent.kind=='angular' else 'Radial'
+            try: pattern.transforms(self.sketch,candidate)
+            except (ValueError,RuntimeError): continue
+            complete.append((extent,candidate))
+        if len(complete)==len(active): return options
+        if complete: return complete[0][1]
+        return None
+
     def sync(self, *args):
         if not self.ready or self.closed: return
         for field in self.references:
             if not field.text(): self.references[field] = None
         super().sync()
         self._preview = []
+        self._helper_preview=[]
         if self.apply.isEnabled():
-            try:
-                ids, options = self.geometry_ids(), self.options()
-                self._preview = pattern.preview(self.sketch, ids, options)
-                total = len(pattern.transforms(self.sketch, options)) + 1
-                self.summary.setText(str(total) + ' instances, including the original.')
+            try: pattern.transforms(self.sketch,self.options())
             except Exception as error:
+                self.apply.setEnabled(False);self.status.setError(str(error));self.status.show()
+        options=self.preview_options() if self.items.count() else None
+        if options is not None:
+            try:
+                ids = self.geometry_ids()
+                self._preview = pattern.preview(self.sketch, ids, options, self.lock.isChecked(),self._helper_preview)
+                total = len(pattern.transforms(self.sketch, options)) + 1
+                self.summary.setText(str(total) + (' instances, including the original.' if self.apply.isEnabled() else ' instances previewed.'))
+            except Exception as error:
+                self._preview=[];self._helper_preview=[]
                 self.apply.setEnabled(False)
                 self.status.setError(str(error)); self.status.show()
+        self.update_helpers()
         self.notify('preview')
 
     def get_preview(self): return self._preview
 
+    def update_helpers(self):
+        self.clear_helpers()
+        if not self._helper_preview:return
+        import FreeCAD as App, FreeCADGui as Gui
+        from pivy import coin
+        root=Gui.activeDocument().activeView().getSceneGraph()
+        node=coin.SoSeparator();node.setName('FreeCADPlusPatternSpacingPreview')
+        pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;node.addChild(pick)
+        color=coin.SoBaseColor()
+        packed=App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher').GetUnsigned('ConstructionColor',0x0000ffff)
+        color.rgb=((packed>>24&255)/255.,(packed>>16&255)/255.,(packed>>8&255)/255.);node.addChild(color)
+        style=coin.SoDrawStyle();style.lineWidth=1.5;style.linePattern=0xf0f0;node.addChild(style)
+        placement=self.sketch.getGlobalPlacement()
+        points=[];counts=[]
+        for g in self._helper_preview:
+            shape=g.toShape()
+            if not shape.Edges:continue
+            vertices=shape.discretize(Number=65) if hasattr(g,'Radius') else [g.StartPoint,g.EndPoint]
+            counts.append(len(vertices))
+            points.extend(tuple(placement.multVec(v)) for v in vertices)
+        coords=coin.SoCoordinate3();coords.point.setValues(0,len(points),points);node.addChild(coords)
+        lines=coin.SoLineSet();lines.numVertices.setValues(0,len(counts),counts);node.addChild(lines)
+        root.addChild(node);self._helper_root=root;self._helper_node=node
+
+    def clear_helpers(self):
+        if self._helper_node is not None:
+            self._helper_root.removeChild(self._helper_node)
+        self._helper_root=None;self._helper_node=None
+
     def apply_pattern(self):
-        if not self.apply.isEnabled() or self.closed: return
+        if not self.apply.isEnabled() or self.closed: return False
         try:
             pattern.apply(self.sketch, self.geometry_ids(), self.options(), self.lock.isChecked())
             import FreeCADGui as Gui
             Gui.Selection.clearSelection()
-            self.clear_geometry()
-            self.activate_pick(self.items)
+            self.reset_inputs()
+            return True
         except Exception as error:
             self.status.setError(str(error)); self.status.show()
+            return False
+
+    def finish_pattern(self):
+        if self.closed: return
+        if not self.items.count(): self.notify('finish')
+        elif self.apply.isEnabled():
+            if self.apply_pattern(): self.notify('finish')
+        else:
+            self.status.setError('Complete the pattern inputs before choosing Done, or Cancel to discard them.')
+            self.status.show()
 
     def reset_inputs(self):
         if self.closed: return
+        self.ready=False
         self.items.clear()
         for field in self.references:
             self.references[field] = None; field.clear()
         self.activate_pick(self.items)
+        self.ready=True
         self.sync()
 
     def detach(self):
+        self.clear_helpers()
         self.closed = True
         self._preview = []
+        self._helper_preview=[]
 
 
 def create(host, sketch, ids):

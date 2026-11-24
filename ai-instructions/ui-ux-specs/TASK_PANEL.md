@@ -1353,7 +1353,7 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
-### Requested pattern/task corrections — November 24, 2026
+### Approved and installed pattern/task corrections — November 24, 2026
 
 Owner requests fields that fit narrow docks, previews for each ready direction
 before all selected directions are complete, and visible preview spacing lines/arcs
@@ -1363,7 +1363,13 @@ and independent spacing drivers. For task completion Done/Apply pairs: Done is l
 and applies then closes; Apply is right and applies then clears selections/references
 for another operation, retaining settings. Cancel/Escape does not apply pending input.
 See [the concrete workflow, simulations and implementation scope](../evidence/pattern-corrections-preview-20261124/README.md).
-Native Qt UI simulation is ready; direct approval and functional implementation remain pending.
+The owner approved the simulation with “Approved. Implement”. Functional changes are
+installed in Pattern and Mirror, the audited completion pairs. Empty Done closes;
+invalid or failed Done retains input. Geometry/reference selections clear after Apply,
+while numeric and mode settings remain. Preview helpers never mutate the document.
+Projected X/Y distances become Equal lengths only when a driving Horizontal/Vertical
+constraint makes them actual lengths; otherwise endpoint spacing preserves source freedom.
+See [native screenshots and final acceptance](../evidence/pattern-corrections-20261124/README.md).
 
 ### Approved spacing chains and quantity units — November 24, 2026
 

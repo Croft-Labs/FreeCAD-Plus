@@ -1,0 +1,9 @@
+test_apply_reset_done_commit_empty_close_and_cancel (TestPatternCorrections.TestPatternCompletion.test_apply_reset_done_commit_empty_close_and_cancel) ... ok
+test_invalid_entry_and_failed_done_preserve_pending_input (TestPatternCorrections.TestPatternCompletion.test_invalid_entry_and_failed_done_preserve_pending_input) ... ok
+test_partial_directions_helpers_hide_and_narrow_fields (TestPatternCorrections.TestPatternCompletion.test_partial_directions_helpers_hide_and_narrow_fields) ... ok
+test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat (TestSketchSymmetry.TestSketchSymmetry.test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 9.845s
+
+OK

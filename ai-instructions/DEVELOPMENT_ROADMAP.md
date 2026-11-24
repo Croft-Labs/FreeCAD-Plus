@@ -4,9 +4,11 @@
 
 - [x] Audit clipping, preview gating, copied dimensions and completion pairs.
 - [x] Prepare [narrow native Qt simulations and workflow](evidence/pattern-corrections-preview-20261124/README.md).
-- [ ] Obtain direct screenshot approval, then implement the scoped corrections.
-- [ ] Verify native layout, partial/helper previews, size propagation, completion/reset,
-  Undo/reopen and existing-shortcut delivery.
+- [x] Obtain direct screenshot approval, then implement the scoped corrections.
+- [x] Verify native layout, partial/helper previews, size propagation, completion/reset,
+  Undo/reopen and existing-shortcut delivery: 68 installed application checks, 88 native
+  tests, five fresh-process files and four shortcut checks pass. See
+  [installed evidence](evidence/pattern-corrections-20261124/README.md).
 
 ## Spacing chains and persistent quantity units — November 24, 2026
 

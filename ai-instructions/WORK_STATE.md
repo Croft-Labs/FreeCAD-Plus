@@ -1,11 +1,17 @@
 # FreeCAD Plus: Current work state
 
-## Pattern/task corrections — UI review
+## Pattern/task corrections — installed
 
-November 24, 2026. Prepared narrow-width native Qt simulations for the owner's new
-pattern/spacing preview, equal-size and Done/Apply correction requests. See
-[workflow, screenshots, exact scope and remaining acceptance](evidence/pattern-corrections-preview-20261124/README.md).
-Await direct approval before production implementation. Existing installed code is unchanged.
+November 24, 2026. The owner approved the concrete Qt proposal with “Approved. Implement”.
+Pattern fields now fit narrow docks; completed directions and visible spacing helpers
+preview independently. Original size drivers feed copied Equal relationships while
+projected distances preserve source freedom. Pattern and Mirror have Done on the left
+(apply then close) and Apply on the right (apply then clear selections/references).
+Invalid Done retains inputs; empty Done closes; Cancel discards pending work.
+All 68 installed application checks, 88 native tests, five fresh-process saved-file
+checks and four existing-shortcut checks pass. Six installed file hashes match the
+delivery manifest; original installed files are backed up. Restart FreeCAD Plus.
+See [scope, actual native screenshots and verification](evidence/pattern-corrections-20261124/README.md).
 
 ## Spacing chains and quantities — installed
 
