@@ -1,5 +1,19 @@
 # FreeCAD Plus: Current work state
 
+## Sketch Pattern preview awaiting approval - November 24, 2026
+
+Owner requests a dedicated Mirror-style task replacing Move / Array Transform.
+Clarified counts include the original; circular spacing supports angular pitch or
+total angle. Linear has one/two directions; each direction independently offers
+One dimension, Two dimensions (separate forward/backward values), or Symmetric.
+Circular has the same extent modes and Angular, Radial, or Angular + radial.
+
+Native Qt UI simulations and lifecycle checks pass. Direct screenshots, proposed
+count semantics, isolated candidate and implementation boundaries are recorded in
+[the pending review](evidence/sketch-pattern-preview-20261124/README.md).
+No production pattern implementation, app build or installation occurred. Continue
+after explicit screenshot/workflow approval; preserve unrelated project.previewfirst.json.
+
 ## Compatible symmetry redundancy installed - November 24, 2026
 
 The solver accepts compatible full/partial symmetry redundancy without removing

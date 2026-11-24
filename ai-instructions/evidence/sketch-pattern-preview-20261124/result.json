@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "empty_disabled": true,
+  "duplicate_add_noop": true,
+  "shift_removes": true,
+  "linear_and_circular_states": true,
+  "symmetric_even_count_rejected": true,
+  "apply_clears_geometry": true,
+  "done_restores_sections": true,
+  "geometry_unchanged": true,
+  "proposed": true
+}

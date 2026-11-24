@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Sketch Pattern task - November 24, 2026
+
+- [x] Prepare native-widget previews for linear and angular/radial patterns,
+  independent one/two/symmetric extents, and total instance counts.
+- [ ] Obtain explicit approval of [the screenshots and workflow](evidence/sketch-pattern-preview-20261124/README.md).
+- [ ] Implement native pattern creation, reference selection and optional dimensions.
+- [ ] Validate geometry, constraints, native task lifecycle, Undo/Redo, persistence
+  and the updated local application within applicable build authorization.
+
 ## Compatible symmetry redundancy - November 24, 2026
 
 - [x] Reproduce the rectangle constraint failure and correct solver diagnosis.

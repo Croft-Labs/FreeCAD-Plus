@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+## Sketch Pattern UI review pending - November 24, 2026
+
+Dedicated linear/circular task with independent one/two/symmetric extents, total
+instance counts and angular/radial directions. Native-widget proposal only; see
+[screenshots, workflow and implementation scope](evidence/sketch-pattern-preview-20261124/README.md).
+
 ## Compatible symmetry redundancy installed - November 24, 2026
 
 Rectangle symmetry now accepts verified redundant equations while retaining all

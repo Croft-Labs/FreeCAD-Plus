@@ -1353,6 +1353,19 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Sketch Pattern task proposal - November 24, 2026
+
+Owner requests a dedicated geometry-first task replacing Move / Array Transform,
+following Mirror's Apply/Done and task-section isolation. Linear supports one/two
+directions, each with One dimension, Two dimensions (independent forward/backward
+spacing and counts), or Symmetric. Circular uses the same extent options for
+Angular, Radial, or Angular + radial directions. Counts include the original;
+angular extents offer angular pitch or total angle. A compact click-add/Shift-remove
+collector, reference pickers, reverse and optional dimensions are required.
+
+The [concrete workflow, remaining proposed semantics and screenshots](../evidence/sketch-pattern-preview-20261124/README.md)
+await explicit approval. No production implementation is authorized by this record.
+
 ### Compatible symmetry constraints - November 24, 2026
 
 Owner correction: adding symmetry to an already horizontal/vertical rectangle must
