@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Thicken's sheet collector on the common feature task lifecycle."""
+from .selection_list import removing, reference_key
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtWidgets
@@ -88,11 +89,18 @@ class ThickenTask(extrude_task.ExtrudeTask):
         if self.pick != 'profile':return super().addSelection(doc, name, sub, *args)
         try:
             self.check()
-            if not self.require_target():
+            if not removing() and not self.require_target():
                 Gui.Selection.removeSelection(doc, name, sub);return
             ref = thicken.profile_reference(planes.canonical(self.owner, [(App.getDocument(doc).getObject(name), sub)])[0])
+            if removing():
+                self.refs = [old for old in self.refs if reference_key(old) != reference_key(ref)]
+                self.refresh_fields();self.changed();Gui.Selection.removeSelection(doc, name, sub)
+                return
+            if any(reference_key(old) == reference_key(ref) for old in self.refs):
+                Gui.Selection.removeSelection(doc, name, sub)
+                return
             document.require_predecessors(self.owner, self.feature, [ref])
-            refs = [old for old in self.refs if old != ref] if ref in self.refs else self.refs + [ref]
+            refs = self.refs + [ref]
             if refs:thicken.validate_profiles(self.owner, refs)
             if ref not in self.refs and not ref[1]:refs = [ref]
             elif ref not in self.refs:refs = [old for old in refs if old[1]]

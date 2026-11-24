@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Consistent feature input gestures installed - November 23, 2026
+
+Plain click adds without duplicates; Shift-click removes feature inputs. Shared
+Python collectors, native component dress-ups, History and deferred curve chains
+carry the gesture consistently. All 134 installed checks and the existing shortcut
+passed. See [acceptance and source scope](evidence/feature-pick-20261123/README.md).
+
 ## Fillet selection repair installed — November 23, 2026
 
 Deferred guarded curve-chain delivery prevents the native consuming-picker loop;

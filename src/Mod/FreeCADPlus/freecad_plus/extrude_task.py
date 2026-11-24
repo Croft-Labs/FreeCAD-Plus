@@ -8,7 +8,7 @@ from pivy import coin
 from freecad_plus import modeling, planes, extrusion, document, editing, hierarchy, isolation, display, task_visibility
 from freecad_plus.plane_task import Section, label, number, buttons
 from .task_status import TaskStatus
-from freecad_plus.selection_list import SelectionList
+from freecad_plus.selection_list import SelectionList, removing, reference_key
 
 
 _active = None
@@ -193,13 +193,17 @@ class ExtrudeTask(QtCore.QObject):
 
     def pick_region(self,callback):
         event=callback.getEvent()
-        if (self.closed or self.pick!='profile' or not self.refs
-                or event.getState()!=coin.SoButtonEvent.DOWN or event.getButton()!=coin.SoMouseButtonEvent.BUTTON1
+        if (event.getState()!=coin.SoButtonEvent.DOWN or event.getButton()!=coin.SoMouseButtonEvent.BUTTON1
                 or event.wasCtrlDown() or event.wasShiftDown()):return
+        position=event.getPosition()
+        if self.pick_region_at(int(position[0]),int(position[1])):callback.setHandled()
+
+    def pick_region_at(self,x,y,remove=False):
+        if (self.closed or self.pick!='profile' or not self.refs
+                or not hasattr(self.engine,'region_references')):return False
         try:
             self.check()
-            if not self.require_target():return
-            position=event.getPosition();x,y=int(position[0]),int(position[1])
+            if not remove and not self.require_target():return False
             hit=self.view.getObjectInfo((x,y))
             if hit and str(hit.get('Component','')).startswith(('Edge','Vertex')):return
             sketch=self.refs[0][0]
@@ -217,7 +221,14 @@ class ExtrudeTask(QtCore.QObject):
             point += direction*((frame.Base-point).dot(normal)/denominator)
             refs=self.engine.region_references(self.owner,sketch,world.inverse().multVec(point))
             if refs:
-                self.refs=refs;self.refresh_fields();self.changed();callback.setHandled()
+                if not remove and (sketch,'') in self.refs:return True
+                if remove and (sketch,'') in self.refs:
+                    self.refs = [(sketch,'Edge'+str(i+1)) for i in range(len(sketch.Shape.Edges))]
+                keys = {reference_key(ref) for ref in refs}
+                existing = {reference_key(ref) for ref in self.refs}
+                self.refs = ([ref for ref in self.refs if reference_key(ref) not in keys] if remove
+                             else self.refs + [ref for ref in refs if reference_key(ref) not in existing])
+                self.refresh_fields();self.changed();return True
         except (ValueError,RuntimeError):pass
 
     def load_feature(self,feature):
@@ -417,17 +428,36 @@ class ExtrudeTask(QtCore.QObject):
         if self.closed:return
         try:
             self.check()
-            if self.pick=='profile' and not self.require_target():
+            if self.pick=='profile' and not removing() and not self.require_target():
                 Gui.Selection.removeSelection(doc,name,sub)
                 return
             obj=App.getDocument(doc).getObject(name)
             ref=planes.canonical(self.owner,[(obj,sub)])[0]
+            if removing():
+                if self.pick == 'profile':
+                    ref = self.engine.profile_reference(ref)
+                    if (ref[0].isDerivedFrom('Sketcher::SketchObject') and Part.splitSubname(ref[1])[2].startswith('Edge')
+                            and (ref[0],'') in self.refs):
+                        self.refs = [(ref[0],'Edge'+str(i+1)) for i in range(len(ref[0].Shape.Edges))]
+                    self.refs = [old for old in self.refs if reference_key(old) != reference_key(ref)]
+                else:
+                    if self.pick == 'target':
+                        ref = (ref[0].Tip if ref[0].TypeId == 'PartDesign::Body' else ref[0], '')
+                    if self.pick in self.links and reference_key(self.links[self.pick]) == reference_key(ref):
+                        self.links.pop(self.pick)
+                        if self.pick == 'target':self.automatic_target = None
+                self.refresh_fields();self.changed()
+                Gui.Selection.removeSelection(obj,sub)
+                return
             document.require_predecessors(self.owner,self.feature,[ref])
             if self.pick=='profile':
                 ref=self.engine.profile_reference(ref)
                 if self.outputs:self.engine.validate_profiles(self.owner,[ref],self.output())
                 else:self.engine.validate_profiles(self.owner,[ref])
-                if ref in self.refs:self.refs.remove(ref)
+                if (any(reference_key(old) == reference_key(ref) for old in self.refs)
+                        or (ref[0].isDerivedFrom('Sketcher::SketchObject') and (ref[0],'') in self.refs)):
+                    Gui.Selection.removeSelection(obj,sub)
+                    return
                 elif self.refs and (ref[0]!=self.refs[0][0] or (not ref[0].isDerivedFrom('Sketcher::SketchObject')
                                       and not (self.output()=='Sheet' and Part.splitSubname(ref[1])[2].startswith('Edge')
                                                and all(Part.splitSubname(old[1])[2].startswith('Edge') for old in self.refs)))):

@@ -413,6 +413,22 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonDblClick) and event.button() == QtCore.Qt.LeftButton:
                         self._toggle_history_eye(item)
                     return True
+                if (item and event.button() == QtCore.Qt.LeftButton
+                        and tree.columnAt(event.pos().x()) == 0
+                        and event.pos().x() >= tree.visualItemRect(item).left()):
+                    from .selection_list import feature_picker_active, pick_intent
+                    if feature_picker_active():
+                        if event.type() == QtCore.QEvent.MouseButtonPress:
+                            row = item.data(0, _ROLE)
+                            if row.kind != 'history_group':
+                                try:
+                                    _, obj = self._checked(row)
+                                    with pick_intent(bool(event.modifiers() & QtCore.Qt.ShiftModifier)):
+                                        Gui.Selection.clearSelection()
+                                        Gui.Selection.addSelection(*(row.selection or (obj.Document.Name, obj.Name, '')))
+                                except (ValueError, RuntimeError, ReferenceError) as error:
+                                    self._message(str(error))
+                        return True
         if self._history_eyes and watched == self.trees[2] and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
             if event.key() == QtCore.Qt.Key_Space and self.trees[2].currentItem():
                 event.accept()

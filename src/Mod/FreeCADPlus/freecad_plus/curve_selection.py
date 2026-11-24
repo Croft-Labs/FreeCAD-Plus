@@ -128,26 +128,71 @@ class Controller(QtCore.QObject):
         self.busy = False
         self.cache = {}
         self.pending = set()
+        self.gesture_previous = None
+        self.gesture_active = False
         QtWidgets.QApplication.instance().installEventFilter(self)
         Gui.Selection.addObserver(self, 0)  # Keep the original occurrence path.
 
     def eventFilter(self, watched, event):
-        if self.active and event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonRelease):
+        from .selection_list import feature_picker_active, _INTENT
+        if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonRelease) and (self.active or feature_picker_active()):
             if event.button() == QtCore.Qt.LeftButton:
                 widget = watched if isinstance(watched, QtWidgets.QWidget) else None
                 while widget is not None:
                     if widget.inherits('Gui::View3DInventorViewer'):
+                        app = QtWidgets.QApplication.instance()
+                        if not self.gesture_active:
+                            self.gesture_previous = app.property(_INTENT)
+                            self.gesture_active = True
+                        app.setProperty(_INTENT, bool(event.modifiers() & QtCore.Qt.ShiftModifier))
                         self.picking = True
                         QtCore.QTimer.singleShot(0, self.end_pick)
+                        if event.modifiers() & QtCore.Qt.ShiftModifier and feature_picker_active():
+                            # CAD navigation reserves Shift+left. Feature collectors
+                            # own this gesture: ray-pick through the same native gate.
+                            if event.type() == QtCore.QEvent.MouseButtonRelease:
+                                self.remove_pick(watched, event.position().toPoint())
+                            return True
                         break
                     widget = widget.parentWidget()
         return False
 
+    def remove_pick(self, widget, position):
+        try:
+            gui = Gui.activeDocument()
+            if not gui:return
+            view = gui.activeView()
+            viewport = view.graphicsView().viewport()
+            position = viewport.mapFromGlobal(widget.mapToGlobal(position))
+            ratio = viewport.devicePixelRatioF()
+            x, y = round(position.x()*ratio), round((viewport.height()-1-position.y())*ratio)
+            hit = view.getObjectInfo((x,y))
+            if not hit:
+                from . import extrude_task
+                task = extrude_task._active
+                if task is not None:task.pick_region_at(x,y,True)
+                return
+            root = hit.get('ParentObject')
+            if root is not None:
+                doc, name, sub = root.Document.Name, root.Name, hit['SubName']
+            else:
+                doc, name, sub = hit['Document'], hit['Object'], hit.get('Component','')
+            Gui.Selection.addSelection(doc, name, sub)
+        except (RuntimeError, ValueError, AttributeError, KeyError) as exc:
+            App.Console.PrintWarning('Plus feature deselection: %s\n' % exc)
+
     def end_pick(self):
+        if self.gesture_active:
+            from .selection_list import _INTENT
+            QtWidgets.QApplication.instance().setProperty(_INTENT, self.gesture_previous)
+            self.gesture_active = False
+            self.gesture_previous = None
         self.picking = False
         self.cache.clear()
 
     def addSelection(self, doc, name, sub, point):
+        from .selection_list import removing
+        remove = removing()
         mode = intent()
         if not self.active or not self.picking or self.busy or mode == INTENTS[0]:
             return
@@ -178,18 +223,20 @@ class Controller(QtCore.QObject):
             # its queued picks again can therefore refill that queue forever.
             # Start after the seed notification drains, then deliver each extra
             # pick synchronously under the guard, retaining the native gate.
-            QtCore.QTimer.singleShot(0, self, lambda: self.expand(root, extra, keys, gui, editor, task))
+            QtCore.QTimer.singleShot(0, self, lambda: self.expand(root, extra, keys, gui, editor, task, remove))
         except (RuntimeError, ValueError, AttributeError) as exc:
             App.Console.PrintWarning('Plus curve selection: %s\n' % exc)
 
-    def expand(self, root, extra, keys, gui, editor, task):
+    def expand(self, root, extra, keys, gui, editor, task, remove=False):
         self.busy = True
         try:
             if (not self.active or Gui.activeDocument() != gui
                     or (gui and gui.getInEdit() != editor) or Gui.Control.activeDialog() != task):
                 return
-            for candidate in extra:
-                Gui.Selection.addSelection(root.Document.Name, root.Name, candidate)
+            from .selection_list import pick_intent
+            with pick_intent(remove):
+                for candidate in extra:
+                    Gui.Selection.addSelection(root.Document.Name, root.Name, candidate)
         except (RuntimeError, ValueError, AttributeError, ReferenceError) as exc:
             App.Console.PrintWarning('Plus curve selection: %s\n' % exc)
         finally:

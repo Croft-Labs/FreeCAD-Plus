@@ -26,7 +26,8 @@ Companion session 19c92fb00c8b; isolated adapter baseline
 8ea1dc5fd9702bc7a44314bf620e2223ab41c5e9; preview fingerprint
 e07195b4afa79c97923f14b75bd7bb5b8b7d6734db3e35520a17a08e33c0e10a.
 Scope violations empty; preview valid. Only selection_ui.py changed in candidate.
-Owner preview approval is pending; tool approval state was not modified.
+Owner approved with "approved"; tool approval state was not modified.
+See [implementation and acceptance](../feature-pick-20261123/README.md).
 
 Implementation should retain modifier intent across delayed curve expansion and
 native consuming-picker notifications, with actual viewport and History tests,

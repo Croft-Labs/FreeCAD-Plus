@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Shell collector: no model mutation until acceptance, no active Body authority."""
+from .selection_list import removing, reference_key
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
@@ -150,7 +151,8 @@ class ShellTask(extrude_task.ExtrudeTask):
         try:
             self.check()
             candidate = planes.canonical(self.owner, [(App.getDocument(doc).getObject(obj), sub)])
-            refs = shell.validate(self.owner, self.refs + candidate, self.feature)
+            refs = ([ref for ref in self.refs if reference_key(ref) not in {reference_key(value) for value in candidate}] if removing() else
+                    shell.validate(self.owner, self.refs + candidate, self.feature))
             if refs != self.refs:
                 self.refs = refs; self.sync_list(); self.faces.setCurrentRow(len(refs)-1)
                 self.faces.scrollToItem(self.faces.currentItem())

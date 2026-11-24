@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Unified Loft task, sharing target presentation and the feature lifecycle."""
+from .selection_list import removing, reference_key
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
@@ -122,13 +123,19 @@ class LoftTask(extrude_task.ExtrudeTask):
         if self.pick != 'profile':return super().addSelection(doc, name, sub, *args)
         try:
             self.check()
-            if not self.require_target():
+            if not removing() and not self.require_target():
                 Gui.Selection.removeSelection(doc, name, sub);return
             ref = loft.profile_reference(planes.canonical(self.owner, [(App.getDocument(doc).getObject(name), sub)])[0])
+            if removing():
+                self.refs = [old for old in self.refs if reference_key(old) != reference_key(ref)]
+                self.refresh_fields();self.changed();Gui.Selection.removeSelection(doc, name, sub)
+                return
+            if any(reference_key(old) == reference_key(ref) for old in self.refs):
+                Gui.Selection.removeSelection(doc, name, sub)
+                return
             document.require_predecessors(self.owner, self.feature, [ref])
             loft.validate_profiles(self.owner, [ref], self.output())
-            if ref in self.refs:self.refs.remove(ref)
-            else:self.refs.append(ref)
+            self.refs.append(ref)
             self.refresh_fields();self.changed();Gui.Selection.removeSelection(doc, name, sub)
         except Exception as exc:self.status.setError(str(exc))
 

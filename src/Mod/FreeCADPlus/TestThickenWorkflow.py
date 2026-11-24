@@ -128,7 +128,9 @@ class TestThickenWorkflow(unittest.TestCase):
         task.addSelection(self.doc.Name,solid.Name,'Face1');self.assertFalse(task.refs)
         self.assertIn('Shell',task.status.text())
         task.addSelection(self.doc.Name,sheet.Name,'Face1');self.assertTrue(task.valid)
-        task.addSelection(self.doc.Name,sheet.Name,'Face1');self.assertFalse(task.refs)
+        from freecad_plus.selection_list import pick_intent
+        with pick_intent(True):task.addSelection(self.doc.Name,sheet.Name,'Face1')
+        self.assertFalse(task.refs)
         task.addSelection(self.doc.Name,sheet.Name,'');self.assertTrue(task.valid)
         task.modes['Subtract'].click();task.clear_reference('target')
         task.pick='profile';task.addSelection(self.doc.Name,sheet.Name,'Face1')

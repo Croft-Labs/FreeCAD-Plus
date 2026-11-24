@@ -1,0 +1,101 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\selection_list.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/selection_list.py",
+    "source_sha256": "028b63d3c9d26b9ad4d651c2c1c0807df0c27663d0603590320a8fcaab71f720",
+    "built_sha256": "028b63d3c9d26b9ad4d651c2c1c0807df0c27663d0603590320a8fcaab71f720",
+    "installed_sha256": "028b63d3c9d26b9ad4d651c2c1c0807df0c27663d0603590320a8fcaab71f720",
+    "previous_sha256": "54c62751f11b9010e50a04e4b4b3db1a3840b0c397cf3c67d96065bd7bddb5f2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\selection_list.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\curve_selection.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/curve_selection.py",
+    "source_sha256": "ea40ee6a5dde64187e453b64b886582d6515f7cb97123cfbe0e586e5630f00cc",
+    "built_sha256": "ea40ee6a5dde64187e453b64b886582d6515f7cb97123cfbe0e586e5630f00cc",
+    "installed_sha256": "ea40ee6a5dde64187e453b64b886582d6515f7cb97123cfbe0e586e5630f00cc",
+    "previous_sha256": "9c65523f957bcbf0fecbf1e2dbad76e06ddb5f0237237ba96bf656445b6c63e6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\curve_selection.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "0a8cff0f04cf75c51a3653176f8310c316a1215335c956012979f96d93617bb8",
+    "built_sha256": "0a8cff0f04cf75c51a3653176f8310c316a1215335c956012979f96d93617bb8",
+    "installed_sha256": "0a8cff0f04cf75c51a3653176f8310c316a1215335c956012979f96d93617bb8",
+    "previous_sha256": "2706e6e9011335cd330e15af82adea34bd7078b117d9c118ac54dc602626a3e3",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "4ec380aa9394f6833803037ae99e68721dc96d9c21e8652ba08f7b50c2e9ef0a",
+    "built_sha256": "4ec380aa9394f6833803037ae99e68721dc96d9c21e8652ba08f7b50c2e9ef0a",
+    "installed_sha256": "4ec380aa9394f6833803037ae99e68721dc96d9c21e8652ba08f7b50c2e9ef0a",
+    "previous_sha256": "f3b094d8a9a2868211409b155a8645f36165ddb1e9cf26094810e556208b53ec",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\loft_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/loft_task.py",
+    "source_sha256": "fcf43a862143c59e07a0d55bec252780ad331e010ace5d869e67a77282b93d65",
+    "built_sha256": "fcf43a862143c59e07a0d55bec252780ad331e010ace5d869e67a77282b93d65",
+    "installed_sha256": "fcf43a862143c59e07a0d55bec252780ad331e010ace5d869e67a77282b93d65",
+    "previous_sha256": "084801a6bd0a83c7cd8abe135b4b3993ab39e925363a4bbcc80500a42970952c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\loft_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\thicken_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/thicken_task.py",
+    "source_sha256": "aa98ef709804aa671f8b4d6c7e052d50d3856d2f4168cf8c45b4c86a768b6aa2",
+    "built_sha256": "aa98ef709804aa671f8b4d6c7e052d50d3856d2f4168cf8c45b4c86a768b6aa2",
+    "installed_sha256": "aa98ef709804aa671f8b4d6c7e052d50d3856d2f4168cf8c45b4c86a768b6aa2",
+    "previous_sha256": "471890c84645b4c771b3a992406e11c543719349d9d84fef6e54b98a484ed0e9",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\thicken_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\shell_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/shell_task.py",
+    "source_sha256": "85cc30c71329c043788a5fb7542de74089dde212356099c5648ce3dd322cbf64",
+    "built_sha256": "85cc30c71329c043788a5fb7542de74089dde212356099c5648ce3dd322cbf64",
+    "installed_sha256": "85cc30c71329c043788a5fb7542de74089dde212356099c5648ce3dd322cbf64",
+    "previous_sha256": "c3d0cd940e206eabba7a8c971f216097755675b15409eddd23cf399e5a96faf7",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\shell_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/plane_task.py",
+    "source_sha256": "9407f72a09bcf4508ae67e05d6f0281a2ff0d4b40c0eeaa7e03f9cd565b596d1",
+    "built_sha256": "9407f72a09bcf4508ae67e05d6f0281a2ff0d4b40c0eeaa7e03f9cd565b596d1",
+    "installed_sha256": "9407f72a09bcf4508ae67e05d6f0281a2ff0d4b40c0eeaa7e03f9cd565b596d1",
+    "previous_sha256": "41df099ff74a62fafe91c326e29eb4ec36ac4b583d3b40e9599cb15bcdc44ce2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestFilletWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestFilletWorkflow.py",
+    "source_sha256": "a01cbe0168f4bf329b45ab1d46fd9f41bc8152a046ba6819ba45ff24fef59227",
+    "built_sha256": "a01cbe0168f4bf329b45ab1d46fd9f41bc8152a046ba6819ba45ff24fef59227",
+    "installed_sha256": "a01cbe0168f4bf329b45ab1d46fd9f41bc8152a046ba6819ba45ff24fef59227",
+    "previous_sha256": "31d343353f5eeb58886454a1eec21e51337c97c200d36d14bf8a2522383da6bc",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\TestFilletWorkflow.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestThickenWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestThickenWorkflow.py",
+    "source_sha256": "c241c4f5af3fcdeeeeff3930ba2fc34a7ea485eb1751fae0f469b2e7cbc5a639",
+    "built_sha256": "c241c4f5af3fcdeeeeff3930ba2fc34a7ea485eb1751fae0f469b2e7cbc5a639",
+    "installed_sha256": "c241c4f5af3fcdeeeeff3930ba2fc34a7ea485eb1751fae0f469b2e7cbc5a639",
+    "previous_sha256": "852d5366342a827aabc1557c60c481ea19663f2d449a39ee2b0271e32c13d447",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\Mod\\FreeCADPlus\\TestThickenWorkflow.py"
+  },
+  {
+    "path": "lib\\PartDesignGui.pyd",
+    "build_path": "Mod/PartDesign/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "936baec90133c1a64a97ad1940a68eeb10eb364e65e4e696478f83acc5acf5ba",
+    "installed_sha256": "936baec90133c1a64a97ad1940a68eeb10eb364e65e4e696478f83acc5acf5ba",
+    "previous_sha256": "c2209ece3df86cc4137f1a3923fb18e890f86ea8a1df8791c1f454c6ee1a03bb",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\feature-pick-20261123\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

@@ -1345,9 +1345,10 @@ and [native implementation checks](../evidence/dimension-enter-20261123/README.m
 
 ### Feature input click and Shift-click - November 23, 2026
 
-Owner requests click to add/select and Shift-click to remove/deselect in feature
-collectors. Proposed: repeated plain clicks retain existing entries, Shift-click
+Approved and installed: click to add/select and Shift-click to remove/deselect in feature
+collectors: repeated plain clicks retain existing entries, Shift-click
 on an absent entry does nothing, and curve-chain selection carries the gesture
 through expansion. Apply across profile/edge/face/section/reference collectors;
 preserve validation, History ordering, single-input replacement and existing list
-controls. Implementation awaits approval of the [native-list preview](../evidence/feature-pick-preview-20261123/README.md).
+controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
+and [implementation acceptance](../evidence/feature-pick-20261123/README.md).

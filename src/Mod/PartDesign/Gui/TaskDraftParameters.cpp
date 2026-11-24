@@ -31,6 +31,7 @@
 #include <Base/Interpreter.h>
 #include <App/Document.h>
 #include <App/DocumentObject.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Command.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/ViewProvider.h>
@@ -125,6 +126,10 @@ void TaskDraftParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
     // adds/deletes the selection accordingly
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
+        if ((selectionMode == plane || selectionMode == line)
+            && Gui::isComponentModelingDocument(getObject()->getDocument())) {
+            Gui::Selection().clearSelection();
+        }
         if (selectionMode == refSel) {
             referenceSelected(msg, ui->listWidgetReferences);
         }
@@ -135,6 +140,13 @@ void TaskDraftParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
             getReferencedSelection(pcDraft, msg, selObj, planes);
             if (!selObj) {
                 return;
+            }
+            if (isRemovingReference()) {
+                if (pcDraft->NeutralPlane.getValue() != selObj || pcDraft->NeutralPlane.getSubValues() != planes) {
+                    return;
+                }
+                selObj = nullptr;
+                planes.clear();
             }
             setupTransaction();
             pcDraft->NeutralPlane.setValue(selObj, planes);
@@ -153,6 +165,13 @@ void TaskDraftParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
             getReferencedSelection(pcDraft, msg, selObj, edges);
             if (!selObj) {
                 return;
+            }
+            if (isRemovingReference()) {
+                if (pcDraft->PullDirection.getValue() != selObj || pcDraft->PullDirection.getSubValues() != edges) {
+                    return;
+                }
+                selObj = nullptr;
+                edges.clear();
             }
             setupTransaction();
             pcDraft->PullDirection.setValue(selObj, edges);

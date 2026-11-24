@@ -1,0 +1,19 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/feature-pick-validation/regression.FCMacro:9: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+Fillet: Fillet not possible on selected shapes
+Fillet: Fillet not possible on selected shapes
+Chamfer: No edges specified
+<TopoShape> TopoShapeExpansion.cpp(4756): Failed to add some face for drafting, skip
+Fillet: Fillet not possible on selected shapes
+Fillet: Fillet not possible on selected shapes
+Fillet: Fillet not possible on selected shapes
+Fillet: Fillet not possible on selected shapes
+Chamfer: No edges specified
+Pad: Wire is not closed.
+Evaluation: Revolve axis intersects the sketch
+Change Part Type before using Excluded geometry
+Change Part Type before using Excluded geometry
+Edit a component before using modeling geometry
+Edit a component before using modeling geometry
+Edit a component before using modeling geometry
+Edit a component before using modeling geometry

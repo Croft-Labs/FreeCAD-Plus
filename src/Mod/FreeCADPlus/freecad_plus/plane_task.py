@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Approved New Plane task; model changes occur only on acceptance."""
 import math
+from .selection_list import removing, reference_key
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -273,23 +274,24 @@ class PlaneTask(QtCore.QObject):
             self.check()
             obj = App.getDocument(doc_name).getObject(obj_name)
             ref = planes.canonical(self.definition, [(obj, sub)])[0]
+            if removing():
+                refs = self.origin_refs if self.pick_target == 'origin' else self.axis_refs if self.pick_target == 'axis' else self.refs
+                refs[:] = [old for old in refs if reference_key(old) != reference_key(ref)]
+                self.refresh_fields();self.update();self.release_selection(obj, sub)
+                return
             kind = planes.describe(self.definition, ref)[0]
             document.require_predecessors(self.definition, self.feature, [ref])
             if self.pick_target == 'origin':
                 if kind != 'point': raise ValueError('Origin accepts a point only')
-                self.origin_refs = [] if self.reference_guidance and ref in self.origin_refs else [ref]
+                self.origin_refs = [ref]
             elif self.pick_target == 'axis':
                 if kind not in ('line','point'): raise ValueError('Select a line, edge or two points')
-                if self.reference_guidance and ref in self.axis_refs: self.axis_refs.remove(ref)
-                elif kind == 'line': self.axis_refs = [ref]
-                elif ref not in self.axis_refs:
+                if kind == 'line': self.axis_refs = [ref]
+                elif not any(reference_key(old) == reference_key(ref) for old in self.axis_refs):
                     if len(self.axis_refs) >= 2 or (self.axis_refs and planes.describe(self.definition,self.axis_refs[0])[0] != 'point'):
                         self.axis_refs = []
                     self.axis_refs.append(ref)
-            elif self.reference_guidance and ref in self.refs:
-                self.refs.remove(ref)
-                self.normal_to_line = True
-            elif ref not in self.refs:
+            elif not any(reference_key(old) == reference_key(ref) for old in self.refs):
                 self.refs = planes.collect(self.definition, self.refs, ref)
                 self.normal_to_line = True
             self.refresh_fields(); self.update()

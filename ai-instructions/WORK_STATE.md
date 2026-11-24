@@ -1,11 +1,18 @@
 # FreeCAD Plus: Current work state
 
-## Feature selection gestures preview awaiting approval - November 23, 2026
+## Feature click/Shift-click selection installed - November 23, 2026
 
-Owner requests plain click to add and Shift-click to remove feature inputs.
-Native-list prototype demonstrates repeated click retaining rows and Shift-click
-removing them. Production selection handlers are unchanged. Scope and direct
-captures: [feature picker preview](evidence/feature-pick-preview-20261123/README.md).
+Approved: plain click adds eligible feature inputs once; Shift-click removes them.
+Shared Extrude/Revolve, Loft, Thicken, Shell, Fillet/Chamfer/Draft and plane/sketch
+placement collectors apply the rule, including History and connected/tangent picks.
+Single-reference inputs clear on matching Shift-click; region and whole-sketch
+edge removal preserve native mapped references. Existing list controls remain.
+
+All 12 final focused development and 134 installed regression checks passed, plus
+the existing desktop shortcut's fresh-process viewport gesture check. Eleven
+payloads have verified hashes and retained rollback copies. Owner sessions/settings
+and unrelated project.previewfirst.json were preserved. Restart older processes.
+See [native acceptance and captures](evidence/feature-pick-20261123/README.md).
 
 ## Sketch dimension single Enter installed - November 23, 2026
 

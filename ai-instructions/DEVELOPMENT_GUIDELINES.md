@@ -35,7 +35,7 @@ their implementation priorities and proposed feature lists are not an active que
     operation selected. Apply the same rule to future Pipe/Helix migrations;
     do not merge their task entries before their shared workflows exist.
 
-## Component routing without an active Body — November 23, 2026
+## Component routing without an active Body â€” November 23, 2026
 
 For Shell, Fillet/Radius and comparable feature collectors, use the owner's
 [list-driven selection pattern](ui-ux-specs/TASK_PANEL.md#shell-selection-after-opening--november-23-2026)
@@ -65,3 +65,14 @@ presentation to Classic within a Plus document does not change Plus routing.
 A clean checkout does not itself establish runtime stability or resolve the jitter
 reported for the archived fork. Those comparisons need separately authorized build
 and interaction verification with suitable settings profiles.
+
+## Feature input selection gestures - November 23, 2026
+
+For feature input collectors, click adds an eligible item once; repeated clicks
+retain it. Shift-click removes a matching selected input and never adds an absent
+one. Preserve input order and carry the original gesture through connected/tangent
+curve expansion, including deferred deliveries. Single-reference fields replace
+on click and clear a matching Shift-click. Apply the same rule to comparable
+feature workflows as they are implemented; retain Delete/Remove/Clear and the
+existing list activation rules. History clicks must identify only the clicked
+input during a feature task, without Shift range selection or visibility-eye changes.

@@ -125,6 +125,16 @@ bool TaskDressUpParameters::isComponentInputAllowed(const Gui::SelectionChanges*
     return true;
 }
 
+bool TaskDressUpParameters::isRemovingReference() const
+{
+    if (!referenceList) {
+        return false;
+    }
+    const auto intent = qApp->property("FreeCADPlusSelectionRemove");
+    return intent.isValid() ? intent.toBool()
+                            : QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+}
+
 void TaskDressUpParameters::referenceSelected(const Gui::SelectionChanges& msg, QListWidget* widget)
 {
     if (strcmp(msg.pDocName, DressUpView->getObject()->getDocument()->getName()) != 0) {
@@ -146,13 +156,16 @@ void TaskDressUpParameters::referenceSelected(const Gui::SelectionChanges& msg, 
     std::vector<std::string> refs = pcDressUp->Base.getSubValues();
 
     if (const auto f = std::ranges::find(refs, subName); f != refs.end()) {
-        if (referenceList) {
-            return; // List collectors add; explicit Remove/Delete owns removal.
+        if (referenceList && !isRemovingReference()) {
+            return; // Repeated plain clicks retain the reference.
         }
         refs.erase(f);  // it's in the list. Remove it
         removeItemFromListWidget(widget, msg.pSubName);
     }
     else {
+        if (isRemovingReference()) {
+            return; // Shift never adds an absent reference.
+        }
         if (!isComponentInputAllowed(&msg)) {
             return;
         }
