@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "proposed": true,
+  "persisted_changes": false,
+  "fields": [
+    "1.29999 mm",
+    "0.100 in",
+    "0.123456 in"
+  ]
+}

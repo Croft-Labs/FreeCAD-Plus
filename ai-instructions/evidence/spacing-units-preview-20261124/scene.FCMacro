@@ -1,0 +1,32 @@
+import os, sys, json, traceback, shutil
+from pathlib import Path
+import FreeCADGui as Gui
+from PySide6 import QtCore, QtGui, QtWidgets, QtTest
+sys.dont_write_bytecode = True
+out = Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result = dict(ok=False, ui_only=True)
+    try:
+        sys.path.insert(0, os.environ['PLUS_PREVIEW_WORKTREE'])
+        import quantity_ui
+        view = quantity_ui.Review()
+        palette = view.palette(); palette.setColor(QtGui.QPalette.Window, QtGui.QColor('#f0f0f0'))
+        palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor('#151515'))
+        view.setPalette(palette); view.setAutoFillBackground(True); view.show()
+        for index, name in enumerate(('preferences', 'values', 'spacing', 'circular')[:view.stack.count()]):
+            view.show_page(index); QtTest.QTest.qWait(100)
+            view.grab().save(str(out/(name+'.png')))
+        if quantity_ui.PROPOSED:
+            view.hide_radial.setChecked(True); QtTest.QTest.qWait(100)
+            view.grab().save(str(out/'circular-hidden.png'))
+            view.hide_radial.setChecked(False)
+            view.show_page(2); view.hide_linear.setChecked(True); QtTest.QTest.qWait(100)
+            view.grab().save(str(out/'spacing-hidden.png'))
+        shutil.copyfile(out/'preferences.png', os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True, proposed=quantity_ui.PROPOSED, persisted_changes=False,
+                      fields=[f.text() for f in view.fields])
+        view.close()
+    except BaseException: result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000, run)

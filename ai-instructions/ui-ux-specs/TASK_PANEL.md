@@ -1353,6 +1353,24 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Requested spacing chains and quantity units — November 24, 2026
+
+Owner follow-up replaces repeated pattern coordinate dimensions with connected,
+equal spacing lines and confirms one driving length per independent pitch. Angular
+spacing uses connected arcs; radial spacing uses connected lines. A Hide spacing
+chain checkbox must hide helpers without disabling constraints or deleting geometry.
+Keep independent positive/negative extents, symmetry and the existing pattern workflow.
+
+All task dimension/value fields must support six-decimal numeric entry independently
+of leader rounding, and accept/retain compatible explicitly entered units through
+editing and save/reopen. Example: `1.29999 mm` displays `1.30 mm` but edits at its
+full value; `0.100 in` remains `0.100 in` on the leader and in the editor even in
+a millimeter document. General preferences need secondary units and their display
+decimal count. Counts remain integers; preserve expressions and physical values.
+
+[The new preference/field/chain previews and detailed contract](../evidence/spacing-units-preview-20261124/README.md)
+await UI approval. They are simulations, not implemented backend behavior.
+
 ### Sketch Pattern task - approved November 24, 2026
 
 Owner requests a dedicated geometry-first task replacing Move / Array Transform,
