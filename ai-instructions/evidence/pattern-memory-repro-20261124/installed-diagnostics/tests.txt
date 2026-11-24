@@ -1,0 +1,12 @@
+test_allocation_failure_logs_trace_retains_inputs_and_allows_retry (TestSketchPattern.TestPatternTask.test_allocation_failure_logs_trace_retains_inputs_and_allows_retry) ... ok
+test_empty_sketch_and_component_presentations (TestSketchPattern.TestPatternTask.test_empty_sketch_and_component_presentations) ... ok
+test_preselection_grid_numeric_input_and_escape (TestSketchPattern.TestPatternTask.test_preselection_grid_numeric_input_and_escape) ... ok
+test_radial_and_angular_reference_and_cancel (TestSketchPattern.TestPatternTask.test_radial_and_angular_reference_and_cancel) ... ok
+test_radius_pick_invalid_reference_and_removal (TestSketchPattern.TestPatternTask.test_radius_pick_invalid_reference_and_removal) ... ok
+test_real_viewport_click_shift_axis_and_apply (TestSketchPattern.TestPatternTask.test_real_viewport_click_shift_axis_and_apply) ... ok
+test_task_picks_apply_undo_done (TestSketchPattern.TestPatternTask.test_task_picks_apply_undo_done) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 16.818s
+
+OK

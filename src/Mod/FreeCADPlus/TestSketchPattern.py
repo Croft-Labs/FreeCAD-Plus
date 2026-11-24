@@ -262,6 +262,29 @@ class TestPatternTask(unittest.TestCase):
         with pick_intent(remove): self.Gui.Selection.addSelection(self.s, name)
         self.QtTest.QTest.qWait(50)
 
+    def test_allocation_failure_logs_trace_retains_inputs_and_allows_retry(self):
+        from unittest.mock import patch
+        self.enter(); self.pick(self.p.items, 'Edge1'); self.pick(self.p.d1.reference, 'H_Axis')
+        self.p.d1.count.setValue(3)
+        before = (self.s.GeometryCount, self.s.ConstraintCount)
+        with patch.object(pattern, '_spacing_chains', side_effect=MemoryError('Not enough memory available')):
+            with patch.object(App.Console, 'PrintError') as report:
+                self.p.apply.click()
+        self.assertEqual((self.s.GeometryCount, self.s.ConstraintCount), before)
+        self.assertEqual(self.p.items.count(), 1)
+        self.assertEqual(self.p.d1.count.value(), 3)
+        self.assertIn('Not enough memory available', self.p.status.text())
+        report.assert_called_once()
+        diagnostic = report.call_args.args[0]
+        self.assertIn('Sketch Pattern Apply failed:', diagnostic)
+        self.assertIn('_spacing_chains', diagnostic)
+        self.assertIn('MemoryError', diagnostic)
+        self.assertEqual(self.s.solve(), 0)
+        self.p.apply.click()
+        self.assertEqual(self.p.items.count(), 0, self.p.status.text())
+        self.assertGreater(self.s.GeometryCount, before[0])
+        self.p.done.click()
+
     def test_task_picks_apply_undo_done(self):
         self.enter(); self.assertEqual(self.p.items.count(), 0)
         self.assertTrue(all(w.isHidden() for w, _ in self.sections))

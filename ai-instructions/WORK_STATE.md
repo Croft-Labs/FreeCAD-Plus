@@ -1,5 +1,19 @@
 # FreeCAD Plus: Current work state
 
+## Persistent pattern memory error — awaiting exact source sketch
+
+November 24, 2026. Owner confirms failure persists after restart; sketch was
+unsaved. Screenshot reconstruction with 20-by-20 circles, 0.100 in pitch, hidden
+chains and source construction lines succeeds in clean/copied owner profiles,
+including an unsaved Plus Component. The actual failure is still unresolved.
+Full traceback logging is installed and rollback/retry is verified. Seven
+installed task tests and the existing-shortcut failure/retry check pass.
+Asked owner to save the source sketch before Apply and provide its local path;
+await that file or a recurrence trace before claiming a fix. See
+[reproduction limits and diagnostic delivery](evidence/pattern-memory-repro-20261124/README.md).
+The Elements-list Pattern row proposal remains pending approval, with no production
+changes; handoff is ../pattern-elements-preview/README.md from the repository root.
+
 ## Large circle-pattern memory — installed
 
 November 24, 2026. Owner reported an allocation error after applying a 20-by-20

@@ -1,0 +1,31 @@
+{"wall_seconds": 1.724456200026907, "phase": "seed", "geometry": "circle-construction-gui", "count": 20, "geometries": 3, "constraints": 8}
+{"wall_seconds": 2.635685800050851, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6361452000564896, "phase": "_spacing_chains end", "elapsed": 0.0001506999833509326}
+{"wall_seconds": 2.6378288000123575, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6381582000176422, "phase": "_spacing_chains end", "elapsed": 0.00010360003216192126}
+{"wall_seconds": 2.6415282000089064, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.642108800006099, "phase": "_spacing_chains end", "elapsed": 0.0003448000061325729}
+{"wall_seconds": 2.6449247000273317, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6454586000181735, "phase": "_spacing_chains end", "elapsed": 0.0003163000219501555}
+{"wall_seconds": 2.648761000018567, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6501206000102684, "phase": "_spacing_chains end", "elapsed": 0.0011334000155329704}
+{"wall_seconds": 2.658890100021381, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6637786000501364, "phase": "_spacing_chains end", "elapsed": 0.004584599984809756}
+{"wall_seconds": 2.809839900000952, "phase": "preview ready", "copies": 399, "helpers": 0}
+{"wall_seconds": 2.8102967000450008, "phase": "apply begin"}
+{"wall_seconds": 3.1171898000175133, "phase": "flush begin"}
+{"wall_seconds": 3.1175193000235595, "phase": "_add_optional begin"}
+{"wall_seconds": 3.173807700048201, "phase": "_add_optional end", "elapsed": 0.05592740001156926}
+{"wall_seconds": 3.174184800009243, "phase": "flush end", "elapsed": 0.056716699968092144}
+{"wall_seconds": 3.1743720000376925, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.2667409000569023, "phase": "flush begin"}
+{"wall_seconds": 3.266994900011923, "phase": "_add_optional begin"}
+{"wall_seconds": 5.383332400000654, "phase": "_add_optional end", "elapsed": 2.1160044000134803}
+{"wall_seconds": 5.383879100030754, "phase": "flush end", "elapsed": 2.11686860001646}
+{"wall_seconds": 5.390939800010528, "phase": "set_chain_hidden begin"}
+{"wall_seconds": 11.604724300035741, "phase": "set_chain_hidden end", "elapsed": 6.213310800027102}
+{"wall_seconds": 11.605525100021623, "phase": "_spacing_chains end", "elapsed": 8.430900700041093}
+{"wall_seconds": 11.605820900003891, "phase": "_group_pattern_constraints begin"}
+{"wall_seconds": 13.623224900045898, "phase": "_group_pattern_constraints end", "elapsed": 2.0169961000210606}
+{"wall_seconds": 19.772084400057793, "phase": "apply end", "elapsed": 16.96137739997357}
+{"wall_seconds": 20.210006600013003, "phase": "finished", "ok": true, "seconds": 17.399321099976078, "geometries": 801, "constraints": 2003, "dof": 1}

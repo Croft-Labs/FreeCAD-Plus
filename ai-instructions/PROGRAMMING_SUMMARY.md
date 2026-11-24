@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Persistent memory error — unresolved
+
+The owner reports recurrence after restart. Screenshot-based reproductions pass,
+but the exact sketch is not available. Full traceback logging is installed in
+sketch_pattern_task.py; allocation rollback/retry and existing task checks pass.
+See [current investigation and evidence](evidence/pattern-memory-repro-20261124/README.md).
+
 ## Large circle-pattern memory — installed
 
 November 24, 2026. Owner reported an allocation error after applying a 20-by-20

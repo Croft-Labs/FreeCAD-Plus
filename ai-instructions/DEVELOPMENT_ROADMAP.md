@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Persistent pattern allocation failure — November 24, 2026
+
+- [x] Reconstruct pictured inch-spaced circle and source construction lines;
+  test clean/copied owner profiles and saved/unsaved Plus Component documents.
+- [x] Install full failure traceback logging; verify rollback, retained inputs,
+  retry, seven installed task checks and the existing shortcut.
+- [ ] Obtain exact source sketch or recurrence trace and reproduce the failure.
+- [ ] Implement and verify the targeted correction. **Not resolved by the passing
+  reconstruction.** See [evidence and limits](evidence/pattern-memory-repro-20261124/README.md).
+- [ ] Obtain approval for the separate Elements-list single Pattern-row preview.
+
 ## Large circle-pattern memory — November 24, 2026
 
 - [x] Measure the reported 20-by-20 circle Apply path in an isolated task.

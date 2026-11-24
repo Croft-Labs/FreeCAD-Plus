@@ -1,0 +1,6 @@
+test_allocation_failure_logs_trace_retains_inputs_and_allows_retry (TestSketchPattern.TestPatternTask.test_allocation_failure_logs_trace_retains_inputs_and_allows_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.039s
+
+OK

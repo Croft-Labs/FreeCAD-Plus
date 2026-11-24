@@ -454,6 +454,15 @@ class PatternTask(PatternControls):
             self.reset_inputs()
             return True
         except Exception as error:
+            # Keep the originating operation (and any rollback exception) in
+            # the application log. The short task message alone cannot locate
+            # native allocation failures reported by the pattern service.
+            try:
+                import traceback
+                import FreeCAD as App
+                App.Console.PrintError('Sketch Pattern Apply failed:\n' + traceback.format_exc())
+            except Exception:
+                pass  # Logging must not prevent recovery under memory pressure.
             self.updating=False;self.notify('preview')
             self.status.setError(str(error)); self.status.show()
             return False

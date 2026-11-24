@@ -1,0 +1,12 @@
+[
+  {
+    "file": "freecad_plus/sketch_pattern_task.py",
+    "sha256": "86bcbcf1e8ca61275f410e2aecc9b5846c8cfabab1f831049a11d0b90e52f332",
+    "backup_sha256": "054e88e4093b9a35baebf75e6ac6822cfe3a2b16ff6f38196b0a928445f8b835"
+  },
+  {
+    "file": "TestSketchPattern.py",
+    "sha256": "8bf4c07a5baa6cecdbc3adc6125d92438a3d425675ef0ebebbf68dee15b28e62",
+    "backup_sha256": "005ae42add943e98b050fe9f81fe484b64256a418ab5ce12d0f771ffc47f5faf"
+  }
+]
