@@ -167,19 +167,19 @@ assembly state, or Undo entries change. Keep individual instances reachable for
 placement, constraint and visibility actions. See
 [implementation and verification](../evidence/instance-display-20261125/README.md).
 
-Quantity creation is implemented below. The separate pending Remove instance
-workflow should remove selected links only, preserve the shared
+Quantity creation and the separate Remove instance workflow are implemented below.
+Remove instance must remove selected links only, preserve the shared
 definition and other links, and handle dependent constraints explicitly in one
 Undo operation. A condensed group must not ambiguously delete every instance.
 Definition deletion remains a separate action. Editing the contents of a shared
 subassembly (including removing its child link) changes every occurrence of that
 subassembly; a unique variant is needed to change just one copy's contents.
 
-## Remove individual instances — requested November 25, 2026
+## Remove individual instances — approved November 25, 2026
 
 Owner also requested Remove individual instances. Its separate
 [native review proposal](../evidence/instance-removal-proposal-20261125/README.md)
-awaits direct screenshot approval: right-click one Assembly occurrence, Remove
+was authorized by the owner’s renewed implementation request: right-click one Assembly occurrence, Remove
 instance, review parent/instance/remaining count, then remove the link in one Undo
 step. The component definition and other links remain. Explicitly include listed
 dependent constraints or leave removal disabled; unsupported references block
@@ -189,8 +189,15 @@ Removing a child inside a shared parent changes that parent's assembly contents
 everywhere, so acknowledge that scope explicitly. Removing a whole subassembly
 occurrence preserves its definition and children. Protect active root/Edit ancestry,
 collectors and definition rows; do not treat condensed groups as remove-all.
-The intended Assembly Delete shortcut uses this same scoped review. This remains
-proposed behavior; the installed app has no new removal command yet.
+Assembly Delete uses this same scoped review and consumes Delete for ineligible
+roots/groups/multiple selections, without native definition-deletion fallback.
+Hidden, Reference and Excluded instances are eligible. Pattern-controlled members
+defer to Edit instance pattern. Revalidate document/view, Edit/assembly context,
+owning file, exact link identity, sibling counts and dependency details at acceptance.
+Unsupported geometry, expression, loaded external references or dependents of listed
+constraints block removal. Preserve selection outside the removed route and prevent
+solver-driven motion during this transaction. Implemented and installed; see
+[acceptance](../evidence/instance-removal-20261125/README.md).
 
 ## Instance quantities and patterns — approved November 25, 2026
 
@@ -213,7 +220,7 @@ Directions can use parent axes or native straight-edge/axis references; Linear a
 accepts a typed vector. The operation supports at most 10,000 new links total.
 Implemented and installed; see [acceptance](../evidence/instance-quantity-20261125/README.md).
 Condensed/expanded display and name enforcement were delivered separately;
-Remove instance remains a pending preview.
+Remove instance is implemented in its separate workflow above.
 
 ## Fixed active assembly — November 25, 2026
 

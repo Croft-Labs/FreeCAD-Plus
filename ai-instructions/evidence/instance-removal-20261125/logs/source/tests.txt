@@ -1,0 +1,46 @@
+test_block_direct_hidden_indirect_expression_and_constraint_dependents (TestInstanceRemoval.TestInstanceRemoval.test_block_direct_hidden_indirect_expression_and_constraint_dependents) ... ok
+test_constraints_opt_in_survivors_fixed_and_collector (TestInstanceRemoval.TestInstanceRemoval.test_constraints_opt_in_survivors_fixed_and_collector) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 89, in test_constraints_opt_in_survivors_fixed_and_collector
+    dialog.constraints.setChecked(True); dialog.accept()
+                                         ^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove_ui.py", line 70, in accept
+    instance_remove.remove(self.dock, self.plan,
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 203, in remove
+    with without_solving(), document.transaction(owner.Document, 'Remove component instance'):
+         ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\bin\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 162, in without_solving
+    exists = any(entry[1] == 'SolveOnRecompute' for entry in prefs.GetContents())
+                                                             ^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 220, in test_external_dependent_and_changed_constraint_plan
+    consumer.addProperty('App::PropertyXLinkSub','Source'); consumer.Source=(target,[''])
+                                                            ^^^^^^^^^^^^^^^
+RuntimeError: Linked document not saved
+test_external_parent_and_source_preservation_fresh_reopen_fixture (TestInstanceRemoval.TestInstanceRemoval.test_external_parent_and_source_preservation_fresh_reopen_fixture) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 202, in test_external_parent_and_source_preservation_fresh_reopen_fixture
+    removal.remove(self.dock,expected,acknowledge_shared=True)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 203, in remove
+    with without_solving(), document.transaction(owner.Document, 'Remove component instance'):
+         ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\bin\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 162, in without_solving
+    exists = any(entry[1] == 'SolveOnRecompute' for entry in prefs.GetContents())
+                                                             ^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+test_hidden_reference_excluded_and_condensed_singletons (TestInstanceRemoval.TestInstanceRemoval.test_hidden_reference_excluded_and_condensed_singletons) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 188, in test_hidden_reference_excluded_and_condensed_singletons
+    display.set_state(self.owner,link,part_type=kind,shown=False)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\display.py", line 71, in set_state
+    raise ValueError('Choose a valid Part Type and Shown/Hidden state')
+ValueError: Choose a valid Part Type and Shown/Hidden state
+test_native_menu_delete_cancel_and_ineligible_delete_routing (TestInstanceRemoval.TestInstanceRemoval.test_native_menu_delete_cancel_and_ineligible_delete_routing) ...

@@ -1,0 +1,17 @@
+test_block_direct_hidden_indirect_expression_and_constraint_dependents (TestInstanceRemoval.TestInstanceRemoval.test_block_direct_hidden_indirect_expression_and_constraint_dependents) ... ok
+test_constraints_opt_in_survivors_fixed_and_collector (TestInstanceRemoval.TestInstanceRemoval.test_constraints_opt_in_survivors_fixed_and_collector) ... ok
+test_dialog_stale_dependencies_and_cancel_default (TestInstanceRemoval.TestInstanceRemoval.test_dialog_stale_dependencies_and_cancel_default) ... ok
+test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan) ... ok
+test_external_parent_and_source_preservation_fresh_reopen_fixture (TestInstanceRemoval.TestInstanceRemoval.test_external_parent_and_source_preservation_fresh_reopen_fixture) ... ok
+test_hidden_reference_excluded_and_condensed_singletons (TestInstanceRemoval.TestInstanceRemoval.test_hidden_reference_excluded_and_condensed_singletons) ... ok
+test_native_menu_delete_cancel_and_ineligible_delete_routing (TestInstanceRemoval.TestInstanceRemoval.test_native_menu_delete_cancel_and_ineligible_delete_routing) ... ok
+test_shared_parent_acknowledgement_and_entire_subassembly_preserved (TestInstanceRemoval.TestInstanceRemoval.test_shared_parent_acknowledgement_and_entire_subassembly_preserved) ... ok
+test_single_last_cancel_undo_redo_and_selection (TestInstanceRemoval.TestInstanceRemoval.test_single_last_cancel_undo_redo_and_selection) ... ok
+test_stale_plan_context_root_group_pattern_and_edit_guards (TestInstanceRemoval.TestInstanceRemoval.test_stale_plan_context_root_group_pattern_and_edit_guards) ... ok
+test_transaction_failure_rolls_back_constraints_link_selection_and_preferences (TestInstanceRemoval.TestInstanceRemoval.test_transaction_failure_rolls_back_constraints_link_selection_and_preferences) ... ok
+test_unused_assembly_and_pattern_reference_and_pending_task (TestInstanceRemoval.TestInstanceRemoval.test_unused_assembly_and_pattern_reference_and_pending_task) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 8.872s
+
+OK

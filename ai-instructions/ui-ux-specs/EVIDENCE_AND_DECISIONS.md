@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Remove individual instances implementation — November 25, 2026
+
+The owner renewed “implement the Remove individual instances workflow” after the
+prepared native proposal. This authorizes its single-instance review, constraint
+opt-in, shared-parent acknowledgement and blocked-reference feedback. Review
+c631e12413ea was inspected fresh without scope violations; fingerprint
+b370f2d705dd001d08bda7ed9d43df68d82222d178babe46a84177be57e2fb0c.
+Companion approval state was untouched; chat authorization governs. See
+[proposal](../evidence/instance-removal-proposal-20261125/README.md) and
+[installed evidence](../evidence/instance-removal-20261125/README.md).
+
 ### Instance quantities and patterns implementation — November 25, 2026
 
 The owner renewed “implement an instance quantity workflow, allowing the user to
@@ -34,7 +45,7 @@ Review `1339cd788f26` was inspected fresh with no scope violations; fingerprint
 Chat approval is authoritative; companion approval state was not modified.
 See [the proposal](../evidence/instance-display-proposal-20261125/README.md) and
 [implemented behavior and checks](../evidence/instance-display-20261125/README.md).
-Quantity/pattern creation was authorized subsequently above. Individual removal and Clone remain pending.
+Quantity/pattern creation was authorized subsequently above. Individual removal was subsequently authorized above; Clone remains pending.
 
 ### Move Components implementation approval — November 25, 2026
 

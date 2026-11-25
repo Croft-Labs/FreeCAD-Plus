@@ -2600,3 +2600,34 @@ host Undo entry is expected, while host objects/placements and active/Edit conte
 remain unchanged. Shared parent occurrences all see the same children. Native export
 remaps metadata references and remains editable. See
 [native acceptance and installed hashes](evidence/instance-quantity-20261125/README.md).
+
+## Remove individual component instances — November 25, 2026
+
+instance_remove.py resolves a panel Row to the exact native App::Link and owning
+App::Part, including anchored unused assemblies and external owning documents.
+The plan captures identities, owning/host files, sibling membership, all live
+Edit/active-assembly routes, and dependency details. Acceptance rebuilds and compares
+the plan, so stale selections cannot become another removal. Shared-parent use is
+derived through native links/ancestors and loaded file imports. No new schema or
+persistent removal metadata is introduced.
+
+Dependency analysis combines native InList with hidden links, native LinkSub paths
+through ancestors and reachable expression references. Only the owning part's listed
+joints can be explicitly included. Other dependencies, including dependents of those
+joints, block removal. Pattern-managed members defer to the pattern editor. The scan
+covers loaded documents; it does not search unrelated unopened files on disk.
+
+One native transaction deletes included joints and then the link, never the shared
+definition. Normal recomputation runs with native Assembly SolveOnRecompute temporarily
+disabled and restored exactly, including absence of the preference. This suppresses
+solver-driven motion during removal and rollback; all other loaded link placements
+are checked before committing. Native Undo/Redo restores IDs and references.
+An empty solver backend is retained; its empty collector is omitted by projection.
+Imports/catalogs remain intact, including after their last placed instance is removed.
+
+instance_remove_ui.py implements the prepared review with Cancel default, constraint
+and shared-impact opt-ins and prominent TaskStatus errors. Assembly context menu and
+Delete share this entry point; Delete on groups, roots or multiple selection is
+consumed safely. Other panel tabs retain their existing behavior. Selection routes
+outside the removed link are restored after commit. See
+[native acceptance and installed hashes](evidence/instance-removal-20261125/README.md).

@@ -521,6 +521,19 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._message(str(error))
 
     def eventFilter(self, watched, event):
+        if (len(self.trees) > 1 and watched in (self.trees[1], self.trees[1].viewport())
+                and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress)
+                and event.key() == QtCore.Qt.Key_Delete):
+            event.accept()  # Never fall through to native definition deletion in Assembly.
+            if event.type() == QtCore.QEvent.KeyPress and not event.isAutoRepeat():
+                try:
+                    rows = tuple(item.data(0, _ROLE) for item in self.trees[1].selectedItems())
+                    if len(rows) != 1:
+                        raise ValueError('Select one individual child instance to remove')
+                    self.remove_instance(rows[0])
+                except (ValueError, RuntimeError, ReferenceError) as error:
+                    self._message(str(error))
+            return True
         if self._history_eyes and watched == self.trees[2].viewport():
             if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonRelease,
                                 QtCore.QEvent.MouseButtonDblClick):
@@ -1427,6 +1440,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             if row.kind == 'occurrence':
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
                 actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
+                actions[menu.addAction('Remove instance…')] = self.remove_instance
             elif row.kind == 'assembly' and row.path:
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
             if row.kind in ('file', 'occurrence', 'assembly'):
@@ -1467,6 +1481,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
         menu.deleteLater()
+
+    def remove_instance(self, row):
+        from .instance_remove_ui import open_dialog
+        return open_dialog(self, row)
 
     def export_rows(self, rows):
         from .part_transfer import ExportDialog

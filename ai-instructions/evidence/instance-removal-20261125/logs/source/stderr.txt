@@ -1,0 +1,20 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/instance-removal-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+0 <App> Document.cpp(2519): The graph must be a DAG.
+Part::Feature: Link(s) to object(s) 'Part001' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'N/A'.
+Part::Feature: Link(s) to object(s) 'Part001' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'N/A'.
+0.0047343 <App> Document.cpp(2775): Removal#Part001 still touched after recompute
+Part::Feature: Link(s) to object(s) 'Joint' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'File Part001'.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove_ui.py", line 70, in accept
+    instance_remove.remove(self.dock, self.plan,
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 203, in remove
+    with without_solving(), document.transaction(owner.Document, 'Remove component instance'):
+         ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\bin\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\instance_remove.py", line 162, in without_solving
+    exists = any(entry[1] == 'SolveOnRecompute' for entry in prefs.GetContents())
+                                                             ^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable

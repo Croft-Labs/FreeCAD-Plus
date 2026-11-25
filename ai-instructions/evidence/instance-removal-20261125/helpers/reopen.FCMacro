@@ -1,0 +1,53 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+from freecad_plus import document, editing, panel, constraints, instance_remove
+from freecad_plus.instance_remove_ui import RemoveDialog
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        base=out.parent/'installed-final'
+        info=json.loads((base/'test_external_parent_and_source_preservation_fresh_reopen_fixture/reopen.json').read_text())
+        doc=document.open_document(info['host'])
+        assert {o.Name:o.ID for o in doc.Objects}==info['host_ids']
+        source=next(d for d in App.listDocuments().values() if Path(d.FileName)==Path(info['source']))
+        assert source.getObject(info['removed']) is None
+        owner=source.getObject(info['owner']); child=source.getObject(info['child'])
+        link=source.getObject(info['remaining']); assert link.ID==info['remaining_id']
+        assert child in document.validate(source).Definitions and link.LinkedObject==child
+        root=document.validate(doc); top=root.Group[0]; active=root.Definitions[0]
+        App.setActiveDocument(doc.Name); editing.edit((top,))
+        dock=panel.show_panel(); QtTest.QTest.qWait(150); dock.refresh()
+        dock.activate_assembly(active,(top,)); dock.tabs.setCurrentIndex(1)
+        row=next(i.data(0,panel._ROLE) for i in dock._maps[1].values()
+                 if i.data(0,panel._ROLE).kind=='occurrence' and i.data(0,panel._ROLE).path[-1]==panel.identity(link))
+        dialog=RemoveDialog(dock,row); assert dialog.shared is not None
+        dialog.show(); QtTest.QTest.qWait(100); dialog.grab().save(str(out/'reopened.png'))
+        dialog.shared.setChecked(True); dialog.accept()
+        assert dialog.result()==1,dialog.status.text()
+        assert source.getObject(info['remaining']) is None
+        source.undo(); source.recompute()
+        assert source.getObject(info['remaining']).ID==info['remaining_id']
+        source.redo(); source.recompute(); assert source.getObject(info['remaining']) is None
+        assert child in document.validate(source).Definitions
+        dialog.deleteLater()
+        unused=json.loads((base/'test_single_last_cancel_undo_redo_and_selection/reopen.json').read_text())
+        retained=document.open_document(unused['file'])
+        part=retained.getObject(unused['part']); shape=retained.getObject(unused['box'])
+        assert part.ID==unused['part_id'] and shape.ID==unused['box_id']
+        assert abs(shape.Shape.Volume-unused['volume'])<1e-9
+        assert part in document.validate(retained).Definitions
+        assert not any(o.TypeId=='App::Link' and o.LinkedObject==part for o in retained.Objects)
+        saved=document.open_document(base/'test_constraints_opt_in_survivors_fixed_and_collector/RemovedConstraints.cadprt')
+        assert not constraints.joints(document.validate(saved).Definitions[0])
+        result.update(ok=True,external_removal_persisted=True,host_ids=True,remaining_id=True,
+                      native_review=True,undo_redo=True,unused_definition_and_geometry=True,no_ghost_constraints=True)
+    except BaseException: result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)

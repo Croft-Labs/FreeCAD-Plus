@@ -1,0 +1,103 @@
+test_block_direct_hidden_indirect_expression_and_constraint_dependents (TestInstanceRemoval.TestInstanceRemoval.test_block_direct_hidden_indirect_expression_and_constraint_dependents) ... ok
+test_constraints_opt_in_survivors_fixed_and_collector (TestInstanceRemoval.TestInstanceRemoval.test_constraints_opt_in_survivors_fixed_and_collector) ... ok
+test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 222, in test_external_dependent_and_changed_constraint_plan
+    consumer.addProperty('App::PropertyXLinkSub','Source'); consumer.Source=(target,[''])
+                                                            ^^^^^^^^^^^^^^^
+RuntimeError: Owner document not saved
+test_external_parent_and_source_preservation_fresh_reopen_fixture (TestInstanceRemoval.TestInstanceRemoval.test_external_parent_and_source_preservation_fresh_reopen_fixture) ... ok
+test_hidden_reference_excluded_and_condensed_singletons (TestInstanceRemoval.TestInstanceRemoval.test_hidden_reference_excluded_and_condensed_singletons) ... ok
+test_native_menu_delete_cancel_and_ineligible_delete_routing (TestInstanceRemoval.TestInstanceRemoval.test_native_menu_delete_cancel_and_ineligible_delete_routing) ... ok
+test_shared_parent_acknowledgement_and_entire_subassembly_preserved (TestInstanceRemoval.TestInstanceRemoval.test_shared_parent_acknowledgement_and_entire_subassembly_preserved) ... ok
+test_single_last_cancel_undo_redo_and_selection (TestInstanceRemoval.TestInstanceRemoval.test_single_last_cancel_undo_redo_and_selection) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 72, in test_single_last_cancel_undo_redo_and_selection
+    self.assertEqual(self.doc.getObject(name).ID,identity); self.assertEqual(self.snapshot()[0],before[0])
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (('Fi[6536 chars]nce002', 4673, (('Removal', 'da29cd68-4f71-43a[324 chars][]')) != (('Fi[6536 chars]nce001', 4672, (('Removal', 'da29cd68-4f71-43a[324 chars][]'))
+
+First differing element 30:
+('ComponentInstance002', 4673, (('Removal', 'da29cd68-4f71-43a[127 chars]'[]')
+('ComponentInstance001', 4672, (('Removal', 'da29cd68-4f71-43a[127 chars]'[]')
+
+Diff is 10411 characters long. Set self.maxDiff to None to see it.
+test_stale_plan_context_root_group_pattern_and_edit_guards (TestInstanceRemoval.TestInstanceRemoval.test_stale_plan_context_root_group_pattern_and_edit_guards) ... FAIL
+ValueError: Invalid or stale component occurrence path
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 167, in test_stale_plan_context_root_group_pattern_and_edit_guards
+    with self.assertRaisesRegex(ValueError,'tab changed'): removal.remove(self.dock,expected)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "tab changed" does not match "Invalid or stale component occurrence path"
+test_transaction_failure_rolls_back_constraints_link_selection_and_preferences (TestInstanceRemoval.TestInstanceRemoval.test_transaction_failure_rolls_back_constraints_link_selection_and_preferences) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 183, in test_transaction_failure_rolls_back_constraints_link_selection_and_preferences
+    self.assertEqual(self.snapshot(),before); self.assertEqual(prefs.GetBool('SolveOnRecompute',True),value)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ((('F[6425 chars]tance001', 2278, (('Removal', 'f91c0b8f-b0d2-4[2893 chars]>,))) != ((('F[6425 chars]tance', 2277, (('Removal', 'f91c0b8f-b0d2-4950[2893 chars]>,)))
+
+First differing element 0:
+(('Fi[6424 chars]tance001', 2278, (('Removal', 'f91c0b8f-b0d2-4[2809 chars][]'))
+(('Fi[6424 chars]tance', 2277, (('Removal', 'f91c0b8f-b0d2-4950[2809 chars][]'))
+
+Diff is 14746 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+ERROR: test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 222, in test_external_dependent_and_changed_constraint_plan
+    consumer.addProperty('App::PropertyXLinkSub','Source'); consumer.Source=(target,[''])
+                                                            ^^^^^^^^^^^^^^^
+RuntimeError: Owner document not saved
+
+======================================================================
+FAIL: test_single_last_cancel_undo_redo_and_selection (TestInstanceRemoval.TestInstanceRemoval.test_single_last_cancel_undo_redo_and_selection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 72, in test_single_last_cancel_undo_redo_and_selection
+    self.assertEqual(self.doc.getObject(name).ID,identity); self.assertEqual(self.snapshot()[0],before[0])
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (('Fi[6536 chars]nce002', 4673, (('Removal', 'da29cd68-4f71-43a[324 chars][]')) != (('Fi[6536 chars]nce001', 4672, (('Removal', 'da29cd68-4f71-43a[324 chars][]'))
+
+First differing element 30:
+('ComponentInstance002', 4673, (('Removal', 'da29cd68-4f71-43a[127 chars]'[]')
+('ComponentInstance001', 4672, (('Removal', 'da29cd68-4f71-43a[127 chars]'[]')
+
+Diff is 10411 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_stale_plan_context_root_group_pattern_and_edit_guards (TestInstanceRemoval.TestInstanceRemoval.test_stale_plan_context_root_group_pattern_and_edit_guards)
+----------------------------------------------------------------------
+ValueError: Invalid or stale component occurrence path
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 167, in test_stale_plan_context_root_group_pattern_and_edit_guards
+    with self.assertRaisesRegex(ValueError,'tab changed'): removal.remove(self.dock,expected)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "tab changed" does not match "Invalid or stale component occurrence path"
+
+======================================================================
+FAIL: test_transaction_failure_rolls_back_constraints_link_selection_and_preferences (TestInstanceRemoval.TestInstanceRemoval.test_transaction_failure_rolls_back_constraints_link_selection_and_preferences)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceRemoval.py", line 183, in test_transaction_failure_rolls_back_constraints_link_selection_and_preferences
+    self.assertEqual(self.snapshot(),before); self.assertEqual(prefs.GetBool('SolveOnRecompute',True),value)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ((('F[6425 chars]tance001', 2278, (('Removal', 'f91c0b8f-b0d2-4[2893 chars]>,))) != ((('F[6425 chars]tance', 2277, (('Removal', 'f91c0b8f-b0d2-4950[2893 chars]>,)))
+
+First differing element 0:
+(('Fi[6424 chars]tance001', 2278, (('Removal', 'f91c0b8f-b0d2-4[2809 chars][]'))
+(('Fi[6424 chars]tance', 2277, (('Removal', 'f91c0b8f-b0d2-4950[2809 chars][]'))
+
+Diff is 14746 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.239s
+
+FAILED (failures=3, errors=1)

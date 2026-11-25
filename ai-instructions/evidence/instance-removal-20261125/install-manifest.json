@@ -1,0 +1,32 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "daa19da6980d5ee3a8f746563601e2279639ed1abbb71288f24bc2639cb6e145",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-instance-removal-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestInstanceRemoval.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestInstanceRemoval.py",
+    "sha256": "89f305d772536460d81745fa115fcb9f2b07ad115bc9c881d457475e455abd91",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "836e3c7993b415a4b4a0f542e8af3e58325d877c89bc3e2b6d1b7dc0c613cee1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-instance-removal-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_remove.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_remove.py",
+    "sha256": "14e05b56f040f9ba7f232e42c92c7fcab874ea60f33f3b81e5353bd30b7b6bd3",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_remove_ui.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_remove_ui.py",
+    "sha256": "653769cc74f1d6a58075711fe9eccec4db380f58275d66d85cc67d9a188e6aa2",
+    "rollback": null
+  }
+]

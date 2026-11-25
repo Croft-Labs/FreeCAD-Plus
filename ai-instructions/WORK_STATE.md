@@ -23,14 +23,19 @@ labels remain. Imports, renames, creation/copies and native saves share the guar
 Older conflicts can be repaired without losing document access. Installed 81/81,
 source focused 15/15, fresh reopen and existing shortcut 5/5 pass. Sixteen installed
 hashes verified; restart the app. See [evidence](evidence/component-names-20261125/README.md).
-Quantity/patterns are now installed; individual removal remains a pending preview.
+Quantity/patterns and individual instance removal are now installed.
 
-## Remove individual instances — native preview awaiting approval
+## Remove individual instances — installed November 25, 2026
 
-November 25: owner requested occurrence removal. Native menu/review proposals
-cover one link, dependent constraints, shared-parent scope and blocked references.
-Presentation checks preserve document, Undo and Edit context. No production or
-installed deletion changes yet. See [screenshots and contract](evidence/instance-removal-proposal-20261125/README.md).
+Assembly occurrence context menu > Remove instance and Assembly Delete now open the
+same native review. One link and explicitly included dependent constraints are removed
+in one owning-file transaction; definitions, other links, imports and geometry survive.
+Shared-parent changes require acknowledgement. References, pattern-controlled members,
+Edit ancestry, active roots and stale reviews are protected. No solver-driven movement
+of survivors occurs during removal. Installed regressions pass 41/41, focused removal
+12/12, final review checks 4/4, fresh reopening and shortcut 3/3. Five Python files
+installed with verified hashes and rollback copies. Restart required. See
+[implementation and evidence](evidence/instance-removal-20261125/README.md).
 
 ## Instance quantity and patterns — installed November 25, 2026
 

@@ -1,0 +1,5 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/instance-removal-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+Part::Feature: Link(s) to object(s) 'ComponentInstance' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'Part001 File'.
+Part::Feature: Link(s) to object(s) 'Part001' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'N/A'.
+Part::Feature: Link(s) to object(s) 'Joint' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'Part001 File'.

@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "external_removal_persisted": true,
+  "host_ids": true,
+  "remaining_id": true,
+  "native_review": true,
+  "undo_redo": true,
+  "unused_definition_and_geometry": true,
+  "no_ghost_constraints": true
+}

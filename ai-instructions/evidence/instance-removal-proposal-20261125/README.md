@@ -1,5 +1,8 @@
 # Remove individual instances: native workflow proposal
 
+Subsequently authorized and implemented: [installed evidence](../instance-removal-20261125/README.md).
+The record below is the historical UI-only proposal.
+
 November 25, 2026. Owner requested implementation of Remove individual instances.
 Required native layout preview is prepared for direct screenshot approval.
 No production deletion behavior or installed payload changes have been made.

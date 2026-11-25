@@ -18,7 +18,7 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md). Restart FreeCAD Plu
 - [x] Install three checked Python files; focused 9/9 and shortcut 3/3 pass.
 
 See [evidence and broader regression limitations](evidence/instance-display-20261125/README.md).
-Restart FreeCAD Plus. Removal and Clone remain separate work; quantities/patterns are installed below.
+Restart FreeCAD Plus. Clone remains separate pending work; removal and quantities/patterns are installed below.
 
 ## Unified Clone and Extract geometry — November 25, 2026
 
@@ -43,13 +43,15 @@ Restart FreeCAD Plus. Removal and Clone remain separate work; quantities/pattern
 
 ## Remove individual instances — November 25, 2026
 
-- [x] Audit current menu and native link/constraint ownership.
-- [x] Render native menu and single/constraint/shared-parent/blocked review states.
-- [ ] Obtain direct layout approval.
-- [ ] Implement identity-based removal plan and dependency/context revalidation.
-- [ ] Verify native links/constraints, Undo/Redo, sharing, persistence and safe Delete routing.
-- [ ] Install checked changes and verify the existing shortcut.
-  See [proposal evidence](evidence/instance-removal-proposal-20261125/README.md).
+- [x] Audit native ownership and render menu/review states.
+- [x] Apply the prepared layout after the owner's renewed implementation instruction.
+- [x] Implement identity-based removal and dependency/context revalidation.
+- [x] Verify native links/constraints, rollback, Undo/Redo, sharing and safe Delete routing.
+- [x] Verify fresh-process persistence, preserved unused geometry and source ownership.
+- [x] Install five checked Python files; installed 41/41, focused 12/12, final review
+  4/4 and existing shortcut 3/3 pass.
+
+See [implementation evidence](evidence/instance-removal-20261125/README.md).
 
 ## Instance quantity and patterns — November 25, 2026
 

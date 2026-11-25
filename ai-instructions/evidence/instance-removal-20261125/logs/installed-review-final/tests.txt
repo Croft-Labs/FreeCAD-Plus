@@ -1,0 +1,9 @@
+test_single_last_cancel_undo_redo_and_selection (TestInstanceRemoval.TestInstanceRemoval.test_single_last_cancel_undo_redo_and_selection) ... ok
+test_block_direct_hidden_indirect_expression_and_constraint_dependents (TestInstanceRemoval.TestInstanceRemoval.test_block_direct_hidden_indirect_expression_and_constraint_dependents) ... ok
+test_dialog_stale_dependencies_and_cancel_default (TestInstanceRemoval.TestInstanceRemoval.test_dialog_stale_dependencies_and_cancel_default) ... ok
+test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.037s
+
+OK
