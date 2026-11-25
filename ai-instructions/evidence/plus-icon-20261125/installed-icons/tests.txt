@@ -1,0 +1,8 @@
+test_actual_open_dialog_provider_and_catalog_icon (TestPlusIcon.TestPlusIcon.test_actual_open_dialog_provider_and_catalog_icon) ... ok
+test_assets_executable_window_and_shell (TestPlusIcon.TestPlusIcon.test_assets_executable_window_and_shell) ... ok
+test_association_registration (TestPlusIcon.TestPlusIcon.test_association_registration) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.521s
+
+OK

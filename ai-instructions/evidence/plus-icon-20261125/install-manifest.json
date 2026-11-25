@@ -1,0 +1,62 @@
+[
+  {
+    "file": "bin/FreeCADBase.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADBase.dll",
+    "sha256": "03564693df9f06ccc9ea80bea6ba05f50c47218947026b7980f420da70cf8325",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADBase.dll.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCADApp.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADApp.dll",
+    "sha256": "0dd15aada5f4b95cbbcb382d292ec2dffab27bb4cf094f0ce625c744d5804f8d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADApp.dll.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCADGui.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.dll",
+    "sha256": "201a10e31dcb2c7c14d7eec648862e809161dcbd29d2c75a06d1137d9326fb91",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.dll.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCAD.exe",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCAD.exe",
+    "sha256": "e088041b0631d9da6be59afcf66dd23fe2618ad1108686234366ff5892a2dd7e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCAD.exe.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCADCmd.exe",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADCmd.exe",
+    "sha256": "56cb254c34122ddb8152c77d0ea18fed8eb5eb20c785d9d8a4b14512e74241af",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADCmd.exe.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCADGui.pyd",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.pyd",
+    "sha256": "2b9810e74c4474ca36a9b9b1cc7e502710103b6b6e19371b5b315afb70926b5a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.pyd.before-plus-icon-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "a1b8ee1739bd0e7840deec7ae62b8480a3b98c99b01b13718e2f8ee5f311fcaa",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-plus-icon-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/component_add.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "sha256": "35e5e327cc112970f485ab9e9b060e79cb3f10a208e81a25d79ec72e25bcdcc3",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py.before-plus-icon-20261125"
+  },
+  {
+    "file": "bin/FreeCADPlus.ico",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Main\\icon.ico",
+    "sha256": "213c44f3639b6bf78bd9d7f070d62e7d33980407b1f19b5e2717b8d0cda07bf3",
+    "rollback": null
+  },
+  {
+    "file": "bin/Register-FreeCADPlus.ps1",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\package\\WindowsInstaller\\Register-FreeCADPlus.ps1",
+    "sha256": "c1c3561f356933e5994f8babb196bf9789494b9b9d55d4474d1d2cbf845de796",
+    "rollback": null
+  }
+]

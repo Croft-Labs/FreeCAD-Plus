@@ -1,5 +1,21 @@
 # Component/document architecture
 
+## Plus icon and Windows association — November 25, 2026
+
+`freecad-plus.svg` is the approved lower-right green-plus overlay, separate from
+retained Classic resources. Native AppIcon configuration, QRC and Plus catalog/file
+rows resolve that name. `.cadprt` receives it explicitly in FileIconProvider;
+Classic thumbnail/fallback behavior is unchanged. `build_plus_icon.py` renders ten
+transparent PNG frames into the ICO used by GUI/CLI executable resources and the
+installed `FreeCADPlus.ico`. CMake tracks explicit RC dependencies on the ICO.
+
+The opt-in Windows registration script writes only current-user `.cadprt` and
+`FreeCADPlus.Document` values, with a backup snapshot, quoted open arguments,
+optional portable user configuration and shell cache notification. It does not
+modify protected UserChoice, Classic associations or existing shortcut launch
+settings. No document schema/identity change is involved. See
+[installed checks](evidence/plus-icon-20261125/README.md).
+
 ## Parent-owned Clone and Extract geometry — November 25, 2026
 
 Schema 8 permits explicit derived geometry; schemas 1–7 remain readable. The first

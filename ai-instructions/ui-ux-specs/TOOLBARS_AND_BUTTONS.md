@@ -1,5 +1,14 @@
 # Toolbars and buttons
 
+## FreeCAD Plus application and file icon — November 25, 2026
+
+The owner selected **B** from the six rendered icon options: the existing FreeCAD
+artwork with a green plus and white outline over its lower-right corner. Use the
+same artwork for the Plus application, desktop shortcut, and `.cadprt` file type.
+Keep a transparent background and legibility at small Windows icon sizes. Plus
+catalog/file chooser rows use this icon too. Classic `.FCStd` keeps its existing
+FreeCAD association and icon. See [approval and delivery](../evidence/plus-icon-20261125/README.md).
+
 ## Unified Clone and Extract geometry - November 25, 2026
 
 Modeling > Other replaces the Add Reference Object placeholder with **Clone**

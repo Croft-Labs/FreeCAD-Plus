@@ -1005,7 +1005,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 name = Path(doc.FileName).name if doc.FileName else doc.Label
                 group = QtWidgets.QTreeWidgetItem(choices, [name, ''])
                 group.setFlags(QtCore.Qt.ItemIsEnabled)
-                group.setIcon(0, QtGui.QIcon(':/icons/freecad.svg'))
+                group.setIcon(0, QtGui.QIcon(':/icons/freecad-plus.svg'))
             for definition in parts:
                 ref = identity(definition)
                 item = QtWidgets.QTreeWidgetItem(group if group is not None else choices,
@@ -1084,7 +1084,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 item.setData(0, _ROLE, row)
                 item.setText(0, row.label)
                 obj = lookup(row.ref)
-                item.setIcon(0, QtGui.QIcon(':/icons/freecad.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
+                item.setIcon(0, QtGui.QIcon(':/icons/freecad-plus.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
                 if row.kind == 'history_group' and row.label in ('Axes', 'Planes') and row.children:
                     item.setIcon(0, lookup(row.children[0].ref).ViewObject.Icon)
                 if index == 2 and obj.TypeId == 'App::Point':

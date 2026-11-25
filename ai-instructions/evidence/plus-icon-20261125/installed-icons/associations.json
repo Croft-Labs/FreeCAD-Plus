@@ -1,0 +1,7 @@
+{
+  "cadprt": "FreeCADPlus.Document",
+  "icon": "\"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADPlus.ico\",0",
+  "command": "\"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCAD.exe\" --single-instance --user-cfg \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg\" \"%1\"",
+  "classic": "FreeCAD.Document",
+  "classic_icon": "C:\\Program Files\\FreeCAD 1.1.4\\bin\\FreeCAD.exe,0"
+}

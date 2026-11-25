@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## FreeCAD Plus icon B - installed November 25, 2026
+
+The approved lower-right green plus now identifies the application, desktop shortcut
+and .cadprt files. Transparent ICO frames cover 16-256 px; original Classic assets
+and .FCStd association remain intact. Native build/resources pass, all 27 file
+workflow checks pass, focused icon checks pass 3/3 and existing-shortcut checks pass
+3/3. Ten installed payload hashes match. Current-user association uses a separate
+FreeCADPlus.Document ProgID with a rollback snapshot. Restart the app to see its
+updated window icon. See [evidence](evidence/plus-icon-20261125/README.md).
+
+
 ## Clone and Extract geometry - installed November 25, 2026
 
 Modeling > Other now offers Clone and Extract geometry. Whole objects from direct

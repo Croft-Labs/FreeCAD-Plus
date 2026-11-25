@@ -1,5 +1,16 @@
 # November 25: file chooser and cursor correction installed
 
+## FreeCAD Plus icon B - installed November 25, 2026
+
+The approved lower-right green plus now identifies the application, desktop shortcut
+and .cadprt files. Transparent ICO frames cover 16-256 px; original Classic assets
+and .FCStd association remain intact. Native build/resources pass, all 27 file
+workflow checks pass, focused icon checks pass 3/3 and existing-shortcut checks pass
+3/3. Ten installed payload hashes match. Current-user association uses a separate
+FreeCADPlus.Document ProgID with a rollback snapshot. Restart the app to see its
+updated window icon. See [evidence](evidence/plus-icon-20261125/README.md).
+
+
 Combined `.cadprt`/`.FCStd` Open/Import defaults and idle conversion pointer are
 implemented. Native build passes; source 27/27, installed 27/27, shortcut 5/5.
 Five installed payload hashes match; rollback copies retained. Restart required.

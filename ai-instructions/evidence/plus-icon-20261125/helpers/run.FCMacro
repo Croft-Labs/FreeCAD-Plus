@@ -1,0 +1,56 @@
+import json,os,sys,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+repo=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus')
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1200,850);win.show();win.raise_();win.activateWindow()
+        if os.environ.get('PLUS_TEST_SOURCE'):
+            global native_search
+            native_search = [os.add_dll_directory(p) for p in (
+                'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/bin',
+                'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app/bin',
+                'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app/lib',
+                'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/Assembly')]
+            import freecad_plus
+            sys.path.insert(0,str(repo/'src/Mod/FreeCADPlus'))
+            freecad_plus.__path__.insert(0,str(repo/'src/Mod/FreeCADPlus/freecad_plus'))
+            sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/Assembly')
+            sys.path.insert(0,str(repo/'src/Mod/Assembly'))
+            from freecad_plus import document,panel,assembly
+            if panel._panel:
+                panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+            importlib.reload(document);importlib.reload(assembly);importlib.reload(panel)
+            from freecad_plus import hierarchy, external, component_add
+            importlib.reload(hierarchy);importlib.reload(external);importlib.reload(component_add)
+        sys.path.insert(0,str(Path(__file__).parent))
+        Gui.activateWorkbench('AssemblyWorkbench')
+        import AssemblyApp,JointObject,UtilsAssembly,CommandCreateJoint
+        names=os.environ.get('PLUS_TEST_NAMES','TestPlusIcon.TestPlusIcon,TestFileWorkflows.TestFileWorkflows').split(',')
+        suite=unittest.defaultTestLoader.loadTestsFromNames(names)
+        with (out/'tests.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import document,panel
+        modules=[AssemblyApp,JointObject,UtilsAssembly,CommandCreateJoint,document,panel]
+        if out.name != 'prior-runtime':
+            from freecad_plus import constraints
+            modules.append(constraints)
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),
+                      modules={m.__name__:m.__file__ for m in modules})
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

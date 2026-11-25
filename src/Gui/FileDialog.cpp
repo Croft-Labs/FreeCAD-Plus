@@ -738,6 +738,9 @@ QIcon FileIconProvider::icon(const QFileInfo& info) const
         return QIcon(QStringLiteral(":/icons/freecad-doc.png"));
     };
 
+    if (info.suffix().compare(QLatin1String("cadprt"), Qt::CaseInsensitive) == 0) {
+        return QIcon(QStringLiteral(":/icons/freecad-plus.svg"));
+    }
     if (info.suffix().toLower() == QLatin1String("fcstd")) {
         // Check if a thumbnail is available
         QString fileName = toUrl(info);

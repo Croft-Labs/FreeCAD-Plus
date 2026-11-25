@@ -1,0 +1,50 @@
+[
+  {
+    "Path": "Software\\Classes\\.cadprt",
+    "Name": "",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  },
+  {
+    "Path": "Software\\Classes\\.cadprt\\OpenWithProgids",
+    "Name": "FreeCADPlus.Document",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  },
+  {
+    "Path": "Software\\Classes\\FreeCADPlus.Document",
+    "Name": "",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  },
+  {
+    "Path": "Software\\Classes\\FreeCADPlus.Document",
+    "Name": "FriendlyTypeName",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  },
+  {
+    "Path": "Software\\Classes\\FreeCADPlus.Document\\DefaultIcon",
+    "Name": "",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  },
+  {
+    "Path": "Software\\Classes\\FreeCADPlus.Document\\shell\\open\\command",
+    "Name": "",
+    "KeyExisted": false,
+    "ValueExisted": false,
+    "Kind": null,
+    "Value": null
+  }
+]

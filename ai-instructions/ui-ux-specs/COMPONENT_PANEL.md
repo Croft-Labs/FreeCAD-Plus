@@ -15,6 +15,11 @@ See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--novem
 
 ## Classic and Plus file formats — November 25, 2026
 
+The owner selected icon option **B**: a green plus with white outline over the
+lower-right of the existing FreeCAD artwork. FreeCAD Plus and `.cadprt` share this
+icon, including file/catalog rows and the desktop shortcut. Classic `.FCStd` keeps
+its existing association and icon. See [icon delivery](../evidence/plus-icon-20261125/README.md).
+
 The owner approved implementation with "implement file extensions and conversions".
 **FreeCAD Plus document** uses `.cadprt`; **FreeCAD Classic document** uses `.FCStd`.
 Format follows document content, independently of Classic/Plus presentation mode.

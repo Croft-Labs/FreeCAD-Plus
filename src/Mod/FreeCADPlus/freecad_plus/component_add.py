@@ -122,7 +122,7 @@ class Picker(QtWidgets.QDialog):
                 group = QtWidgets.QTreeWidgetItem(self.choices, [Path(doc.FileName).name if doc.FileName else doc.Label, ''])
                 group.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsAutoTristate)
                 group.setCheckState(0, QtCore.Qt.Unchecked)
-                group.setIcon(0, Gui.getIcon(':/icons/freecad.svg'))
+                group.setIcon(0, Gui.getIcon(':/icons/freecad-plus.svg'))
                 if any(p not in available for p in parts):
                     try:
                         external.prepare_import(self.owner.Document, doc)

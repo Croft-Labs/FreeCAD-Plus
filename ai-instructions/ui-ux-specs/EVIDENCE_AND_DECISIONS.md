@@ -13,6 +13,16 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### FreeCAD Plus icon B — November 25, 2026
+
+The owner requested several green-plus overlays on the current FreeCAD icon,
+followed by the same icon for `.cadprt`. They selected **“B”**, the lower-right
+green plus with white outline. This authorizes that option for the app and file
+association. Review `f489ddbb8ff8` remains fresh, with no scope violations and
+fingerprint `5bc42a1f80c29b43a7710dbe3f6f4af21f5950e02b91a5e9bcfc14a06f7fbec3`.
+Chat approval governs; companion approval state was untouched. See
+[working installation evidence](../evidence/plus-icon-20261125/README.md).
+
 ### Clone and Extract geometry implementation — November 25, 2026
 
 The owner renewed **“implement the clone and extract geometry workflow”** after the

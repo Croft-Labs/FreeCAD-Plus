@@ -1,0 +1,8 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/icon-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+Document with the UUID 'a7696f2f-d0b4-4083-b652-600521e9288d' already exists, change to '29a23dd6-490d-4e8b-9d57-2b1b62179d03'
+Document with the UUID '26b6ea50-d046-4c50-875c-283cd4bd5c82' already exists, change to 'f6905b2a-ade9-44da-b373-2f85bd708018'
+Document with the UUID '145e5bbc-8fd7-455f-b633-8953b2833efa' already exists, change to 'cdbd6afa-5937-41f9-9416-deaf196b3557'
+Document with the UUID '5faea113-18f0-405b-b2bf-1368621a07d1' already exists, change to '1938d88d-46d3-454a-9d0e-0d3145413b54'
+Document with the UUID '2eb091b3-c167-425d-8a60-9d100b3e9b4b' already exists, change to 'ad8867ee-09c6-41dc-822b-6362cfdbb2c8'
+Document with the UUID 'a405e35b-f509-45a3-ab0c-6b2bc3527e73' already exists, change to 'f8ac9b1c-d1a5-4df6-8faf-cb826bcec16d'

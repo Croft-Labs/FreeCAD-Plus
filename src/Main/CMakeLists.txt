@@ -2,7 +2,17 @@
 
 configure_file(freecad.rc.cmake ${CMAKE_CURRENT_BINARY_DIR}/freecad.rc)
 configure_file(freecadCmd.rc.cmake ${CMAKE_CURRENT_BINARY_DIR}/freecadCmd.rc)
-file(COPY icon.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(icon.ico ${CMAKE_CURRENT_BINARY_DIR}/icon.ico COPYONLY)
+set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/freecad.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/freecadCmd.rc
+    PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/icon.ico
+)
+if(WIN32)
+    install(FILES icon.ico DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME FreeCADPlus.ico)
+    install(FILES ${CMAKE_SOURCE_DIR}/package/WindowsInstaller/Register-FreeCADPlus.ps1
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
 
 ######################## FreeCADMain ########################
 if(BUILD_GUI)

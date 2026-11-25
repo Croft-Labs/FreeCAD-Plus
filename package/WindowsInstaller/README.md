@@ -1,5 +1,22 @@
 # Creating a Windows installer for FreeCAD
 
+## FreeCAD Plus portable file association
+
+The Plus CMake install includes `bin/FreeCADPlus.ico` and
+`bin/Register-FreeCADPlus.ps1`. The icon is generated from
+`src/Gui/Icons/freecad-plus.svg` using `src/Tools/build_plus_icon.py` with the
+FreeCAD/LibPack Python. The original FreeCAD SVG/document icons remain available.
+
+To register `.cadprt` for the current user, run the script explicitly with
+`-Executable <full-path-to-FreeCAD.exe> -BackupFile <new-json-backup-path>`.
+`-Icon` defaults to `FreeCADPlus.ico` alongside the executable; optional
+`-UserConfig` preserves a portable installation's existing user configuration.
+It writes only `.cadprt` and `FreeCADPlus.Document` under HKCU Software/Classes,
+quotes filenames, snapshots prior values and notifies the shell to refresh icons.
+It does not modify Classic `.FCStd`, existing shortcuts, or protected UserChoice
+entries. An existing explicit Windows default must be changed through Default Apps.
+This explicit portable registration is separate from the upstream NSIS recipe below.
+
 These are instructions for building an NSIS-based installer for FreeCAD. They were designed for FreeCAD 0.21 and later,
 and presume that you have cloned a copy of FreeCAD's source code, and therefore have the directory *package/WindowsInstaller*.
 
