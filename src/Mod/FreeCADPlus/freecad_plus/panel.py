@@ -1412,6 +1412,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
                 actions[menu.addAction('Export parts to file…')] = lambda unused: self.export_rows(selected)
         if component_row:
+            if row.kind == 'occurrence':
+                from .instance_patterns import controller
+                if controller(lookup(row.path[-1])) is not None:
+                    from .instance_task import edit_row
+                    actions[menu.addAction('Edit instance pattern')] = edit_row
             actions[menu.addAction('Edit')] = self.edit_row
             if row.kind != 'file':
                 actions[menu.addAction('Open in new window')] = self.open_row
@@ -1565,6 +1570,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         from . import movement
         if movement._active is not None and movement._active.panel is self:
             movement._active.finish()
+        from . import instance_task
+        if instance_task._active is not None:
+            instance_task._active.finish()
         self._closed = True
         isolation.close_all()
         self._timer.stop()

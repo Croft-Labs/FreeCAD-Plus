@@ -23,7 +23,7 @@ labels remain. Imports, renames, creation/copies and native saves share the guar
 Older conflicts can be repaired without losing document access. Installed 81/81,
 source focused 15/15, fresh reopen and existing shortcut 5/5 pass. Sixteen installed
 hashes verified; restart the app. See [evidence](evidence/component-names-20261125/README.md).
-Quantity/patterns and individual removal previews remain pending.
+Quantity/patterns are now installed; individual removal remains a pending preview.
 
 ## Remove individual instances — native preview awaiting approval
 
@@ -32,14 +32,17 @@ cover one link, dependent constraints, shared-parent scope and blocked reference
 Presentation checks preserve document, Undo and Edit context. No production or
 installed deletion changes yet. See [screenshots and contract](evidence/instance-removal-proposal-20261125/README.md).
 
-## Instance quantity and patterns — native preview awaiting approval
+## Instance quantity and patterns — installed November 25, 2026
 
-November 25: owner requested quantity creation including patterns. Native navigator
-and Create instances task proposals cover Quantity, Linear, Grid and Circular,
-with the same form for pattern editing. Final fixture runs preserve document,
-Undo and Edit context. No production/installed changes yet. See
-[screenshots and intended contract](evidence/instance-quantity-proposal-20261125/README.md).
-Condensed/expanded display is implemented separately below.
+Add Component > Add existing/new > Next opens Quantity, Linear, Grid or Circular.
+Counts apply per selected definition; Add new creates one definition. Patterns
+remain editable through a member's Edit instance pattern menu. Shared native links,
+parent-local placements, scene-only preview, atomic Undo and dependency guards are
+implemented. Schema 7 persists parent-owned pattern metadata; schemas 1–6 remain
+readable. Installed regressions pass 54/54; final shortcut checks 3/3 and fresh-process
+reopen/reference/export checks pass. Thirteen Python files installed with verified
+hashes and rollback copies. Restart required. See
+[implementation and evidence](evidence/instance-quantity-20261125/README.md).
 
 ## Condensed/expanded instances — installed November 25, 2026
 

@@ -256,6 +256,10 @@ class TestAddComponent(unittest.TestCase):
             QtCore.QTimer.singleShot(100,lambda m=mode,c=cancel:choose(m,c))
             QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,button.rect().center())
             QtTest.QTest.qWait(160)
+            if not cancel:
+                from freecad_plus import instance_task
+                self.assertIsNotNone(instance_task._active)
+                self.assertTrue(instance_task._active.accept())
             if cancel:self.assertEqual(self.snapshot(),before)
         self.assertEqual(observed,['Add existing','Add new','Add existing'])
         self.assertEqual(editing.context_path(self.doc),context)

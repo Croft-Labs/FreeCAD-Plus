@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\instance_quantity_ui.py", line 92, in resize_page
+    page = self.pages.currentWidget()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Internal C++ object (PySide6.QtWidgets.QStackedWidget) already deleted.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\instance_quantity_ui.py", line 92, in resize_page
+    page = self.pages.currentWidget()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Internal C++ object (PySide6.QtWidgets.QStackedWidget) already deleted.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\instance_quantity_ui.py", line 92, in resize_page
+    page = self.pages.currentWidget()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Internal C++ object (PySide6.QtWidgets.QStackedWidget) already deleted.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\instance_quantity_ui.py", line 92, in resize_page
+    page = self.pages.currentWidget()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Internal C++ object (PySide6.QtWidgets.QStackedWidget) already deleted.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\instance_quantity_ui.py", line 92, in resize_page
+    page = self.pages.currentWidget()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Internal C++ object (PySide6.QtWidgets.QStackedWidget) already deleted.

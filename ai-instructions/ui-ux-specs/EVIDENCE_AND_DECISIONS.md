@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Instance quantities and patterns implementation — November 25, 2026
+
+The owner renewed “implement an instance quantity workflow, allowing the user to
+create several instances at once, including in patterns” after the native proposal.
+This authorizes its navigator, Quantity/Linear/Grid/Circular and shared edit form.
+Review ef9fa8610a64 was inspected fresh with no violations; fingerprint
+9027c86fe3a312851df4dca056c5e4ce1f31059e249a268ff0bd56e209d50046.
+Chat authorization governs; companion approval state was untouched. See
+[proposal](../evidence/instance-quantity-proposal-20261125/README.md) and
+[installed evidence](../evidence/instance-quantity-20261125/README.md).
+
 ### Instance display implementation approval — November 25, 2026
 
 The owner renewed **"implement Condensed/expanded instances"** after the prepared
@@ -23,7 +34,7 @@ Review `1339cd788f26` was inspected fresh with no scope violations; fingerprint
 Chat approval is authoritative; companion approval state was not modified.
 See [the proposal](../evidence/instance-display-proposal-20261125/README.md) and
 [implemented behavior and checks](../evidence/instance-display-20261125/README.md).
-Quantity/pattern creation, individual removal and Clone remain separately pending.
+Quantity/pattern creation was authorized subsequently above. Individual removal and Clone remain pending.
 
 ### Move Components implementation approval — November 25, 2026
 

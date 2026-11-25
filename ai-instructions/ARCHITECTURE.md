@@ -73,7 +73,8 @@ and placements. The backend is not a catalog definition or History feature. Nati
 GeoFeatureGroup flattens joint membership; `owned_children` visits each joint through
 the collector once instead of counting the flattened membership twice.
 
-Schemas 1–5 remain readable. New files use schema 6. Existing files upgrade lazily in
+Schemas 1–6 remain readable; new files now use schema 7 (instance patterns below).
+Older files upgrade to at least schema 6 lazily in
 the first constraint's transaction; Cancel/Undo restores the previous schema and graph.
 Validation checks the fixed backend placement, unique ownership/collector and allowed
 local reference roots. Native save/reopen supplies persistence; no parallel graph or
@@ -2574,3 +2575,28 @@ C++ widget cannot directly instantiate the Python TaskStatus subclass.
 
 See the [owner workflow](ui-ux-specs/TASK_PANEL.md#sketcher-symmetric-geometry-task---november-23-2026)
 and [acceptance evidence](evidence/sketch-symmetry-20261123/README.md).
+
+## Component instance quantities and patterns — November 25, 2026
+
+instance_patterns.py creates shared native App::Links in the edited destination
+App::Part. Quantity creates only independent links. Linear/Grid/Circular additionally
+create parent-owned App::FeaturePython metadata marked FreeCADPlus.InstancePattern.1,
+with JSON Configuration, native Members/Seeds links and native LinkSubList References.
+Schema 7 permits this metadata and omits it from geometry History. Existing files
+upgrade in the first pattern transaction; Undo restores the old schema. Older Plus
+versions reject schema 7 instead of dropping metadata. No geometry/history is copied.
+
+The restored Pattern proxy computes parent-local placements on recompute, including
+native direction-reference changes. No observer stores an alternate assembly graph.
+Count edits retain each definition cohort's prefix links; new links use the same
+definition. Removal checks direct dependencies, resolved indirect LinkSub paths and
+live edited occurrences before mutation. Pattern-member Move and constraint inputs
+are blocked so competing placement owners cannot silently overwrite one another.
+
+instance_task.py owns the native form, identity/context checks, scene-only preview,
+reference picking and cleanup. Creation/editing is one transaction in the destination
+file. External-parent updates use native linked-document recomputation; its matching
+host Undo entry is expected, while host objects/placements and active/Edit contexts
+remain unchanged. Shared parent occurrences all see the same children. Native export
+remaps metadata references and remains editable. See
+[native acceptance and installed hashes](evidence/instance-quantity-20261125/README.md).

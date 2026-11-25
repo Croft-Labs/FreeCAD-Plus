@@ -21,6 +21,8 @@ class IncompleteInput(ValueError):
 
 
 def movable(link, owner):
+    from .instance_patterns import check_independent
+    check_independent(link)
     if link.TypeId != 'App::Link' or link not in owner.Group:
         raise ValueError('Select whole sibling component instances')
     if any(flag in link.getPropertyStatus('LinkPlacement') for flag in ('ReadOnly', 'Immutable')) or 'ReadOnly' in link.getEditorMode('LinkPlacement'):

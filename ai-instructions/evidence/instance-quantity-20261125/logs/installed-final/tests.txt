@@ -1,0 +1,20 @@
+test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import (TestInstanceQuantity.TestInstanceQuantity.test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import) ... ok
+test_external_parent_pattern_shared_across_occurrences (TestInstanceQuantity.TestInstanceQuantity.test_external_parent_pattern_shared_across_occurrences) ... ok
+test_external_patterns_export_and_saved_fixtures (TestInstanceQuantity.TestInstanceQuantity.test_external_patterns_export_and_saved_fixtures) ... ok
+test_indirect_member_reference_blocks_reduction (TestInstanceQuantity.TestInstanceQuantity.test_indirect_member_reference_blocks_reduction) ... ok
+test_linear_grid_circular_math_and_invalid_inputs (TestInstanceQuantity.TestInstanceQuantity.test_linear_grid_circular_math_and_invalid_inputs) ... ok
+test_navigator_next_and_new_component_cancel_never_mutate (TestInstanceQuantity.TestInstanceQuantity.test_navigator_next_and_new_component_cancel_never_mutate) ... ok
+test_older_schema_upgrades_only_for_pattern_and_undo_restores_it (TestInstanceQuantity.TestInstanceQuantity.test_older_schema_upgrades_only_for_pattern_and_undo_restores_it) ... ok
+test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards (TestInstanceQuantity.TestInstanceQuantity.test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards) ... ok
+test_quantity_and_new_component_are_atomic_shared_and_independent (TestInstanceQuantity.TestInstanceQuantity.test_quantity_and_new_component_are_atomic_shared_and_independent) ... ok
+test_real_navigator_next_change_parts_and_quantity_commit (TestInstanceQuantity.TestInstanceQuantity.test_real_navigator_next_change_parts_and_quantity_commit) ... ok
+test_reduction_preserves_edited_occurrence (TestInstanceQuantity.TestInstanceQuantity.test_reduction_preserves_edited_occurrence) ... ok
+test_reference_updates_and_dependency_reduction_block (TestInstanceQuantity.TestInstanceQuantity.test_reference_updates_and_dependency_reduction_block) ... ok
+test_task_create_preview_cancel_edit_and_stale_context (TestInstanceQuantity.TestInstanceQuantity.test_task_create_preview_cancel_edit_and_stale_context) ... ok
+test_ui_all_arrangements_previews_and_errors_preserve_model (TestInstanceQuantity.TestInstanceQuantity.test_ui_all_arrangements_previews_and_errors_preserve_model) ... ok
+test_ui_reference_pick_and_context_menu_edit (TestInstanceQuantity.TestInstanceQuantity.test_ui_reference_pick_and_context_menu_edit) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 9.897s
+
+OK

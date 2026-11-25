@@ -10,8 +10,8 @@ from pathlib import Path
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 6
-SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6)
+SCHEMA = 7
+SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6, 7)
 
 
 @contextmanager
@@ -107,6 +107,10 @@ def _validate_local(doc, external_definitions=()):
             raise ValueError("Place the occurrence, not the stored definition")
         solvers = []
         for obj in definition.Group:
+            if root.PlusSchema >= 7 and 'InstancePatternFormat' in obj.PropertiesList:
+                from .instance_patterns import validate_pattern
+                validate_pattern(definition, obj)
+                continue
             if root.PlusSchema >= 6 and obj.TypeId == 'Assembly::AssemblyObject':
                 from .constraints import validate_solver
                 validate_solver(definition, obj)
@@ -223,7 +227,7 @@ def history(doc, definition=None):
     if definition not in available_definitions(root):
         raise ValueError("Definition does not belong to this file")
     def features(obj):
-        if obj.TypeId in ("App::Link", "Assembly::AssemblyObject"):
+        if obj.TypeId in ("App::Link", "Assembly::AssemblyObject") or 'InstancePatternFormat' in obj.PropertiesList:
             return  # A child component has its own History.
         if obj.TypeId == "PartDesign::Body":
             for child in obj.Group:

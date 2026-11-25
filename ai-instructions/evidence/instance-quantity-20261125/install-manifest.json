@@ -1,0 +1,80 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "4ac5a8ace2c385cd16abfbfc471d047052a98af9928aed9f1247af3a1f6ffa85",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestInstanceQuantity.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestInstanceQuantity.py",
+    "sha256": "bab6e278ac55dba5d303306a22e94e570e553eafd95e420b6ce8fc2600a52fb0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestInstanceQuantity.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestAddComponent.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAddComponent.py",
+    "sha256": "28e46237e079e29cedced21d3a073b96a0be40129ed6b649f58d83b0321829f5",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestAddComponent.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestPartTransfer.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPartTransfer.py",
+    "sha256": "41749b73d3fa68b0a0394d6592d2ff4a00e4a469b741d601e63e96146159e639",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestPartTransfer.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/component_add.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "sha256": "59b5d99ef81f3376f4b8fddd10ab1f5c4629c133f92a2957e12dd7ed28f61355",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "sha256": "e88c67315e15e161d2baefb6d81ae86224b04a6bf991e5829a958694a4e4f4c0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "79d9fd19185640b38ca357ca430d09751d771d40c5fa755386c8a720c378b341",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/hierarchy.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py",
+    "sha256": "abd194e0d0965e668654805d61e1e8ad652ded0e42f5180f9cf0f931f8789402",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/movement.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\movement.py",
+    "sha256": "af9706597906c624d88cbdf226fc71d97b5f7c17b18dd93a6b49768079cf7d4b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\movement.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/constraints.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\constraints.py",
+    "sha256": "56bc0ee544c78cff23f31a30db5b43f1a170c87b737a4a4f37f1f5eb82e07b42",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\constraints.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_patterns.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_patterns.py",
+    "sha256": "1dd94cd293f21f0123e3a1715f9c5fbd282951d8e0251a0ca991f52f0869bfc5",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\instance_patterns.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_quantity_ui.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_quantity_ui.py",
+    "sha256": "9b045041f7c5fe55465145c1f269d5212ed9acf47b17756771f14488f947901d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\instance_quantity_ui.py.before-instance-quantity-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_task.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_task.py",
+    "sha256": "4ffb5f6c3169bb2dc28575d4b17d6ca2b1863aa20ca64b1668bfb2d15bae76ba",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\instance_task.py.before-instance-quantity-20261125"
+  }
+]

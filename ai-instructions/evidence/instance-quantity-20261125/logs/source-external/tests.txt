@@ -1,0 +1,30 @@
+test_external_parent_pattern_shared_across_occurrences (TestInstanceQuantity.TestInstanceQuantity.test_external_parent_pattern_shared_across_occurrences) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceQuantity.py", line 247, in test_external_parent_pattern_shared_across_occurrences
+    self.assertEqual(self.snapshot(), before)
+AssertionError: Tuples differ: ([('F[4500 chars]))], 5, (<Part object>, (<App::Link object>, <[55 chars]>,))) != ([('F[4500 chars]))], 4, (<Part object>, (<App::Link object>, <[55 chars]>,)))
+
+First differing element 1:
+5
+4
+
+Diff is 8112 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_external_parent_pattern_shared_across_occurrences (TestInstanceQuantity.TestInstanceQuantity.test_external_parent_pattern_shared_across_occurrences)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceQuantity.py", line 247, in test_external_parent_pattern_shared_across_occurrences
+    self.assertEqual(self.snapshot(), before)
+AssertionError: Tuples differ: ([('F[4500 chars]))], 5, (<Part object>, (<App::Link object>, <[55 chars]>,))) != ([('F[4500 chars]))], 4, (<Part object>, (<App::Link object>, <[55 chars]>,)))
+
+First differing element 1:
+5
+4
+
+Diff is 8112 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 1.360s
+
+FAILED (failures=1)

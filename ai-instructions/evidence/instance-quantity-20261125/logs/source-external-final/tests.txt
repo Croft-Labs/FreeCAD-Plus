@@ -1,0 +1,6 @@
+test_external_parent_pattern_shared_across_occurrences (TestInstanceQuantity.TestInstanceQuantity.test_external_parent_pattern_shared_across_occurrences) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.370s
+
+OK

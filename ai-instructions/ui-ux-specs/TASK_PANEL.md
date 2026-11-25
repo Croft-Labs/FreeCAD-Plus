@@ -4,6 +4,19 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Create/edit component instances — November 25, 2026
+
+Add existing/new keeps the component navigator and uses Next to open Create instances.
+Quantity, Linear, Grid and Circular share one native form with per-definition counts,
+parent-local coordinates, preview and prominent validation errors. Change parts
+returns to the navigator preserving valid arrangement settings. New Component remains
+separate. Right-click an individual pattern member to Edit instance pattern with the
+same saved controls/references. Cancel leaves documents unchanged; OK commits one
+operation. Preserve surviving identities and block referenced/edited-member removal.
+Use native unit fields and reference collectors. Pattern members are controlled by
+the pattern; independent Quantity links can be moved/constrained. See
+[component contract](COMPONENT_PANEL.md#instance-quantities-and-patterns--approved-november-25-2026).
+
 ### Unified Clone and separate Extract geometry — November 25, 2026
 
 One Clone workflow collects whole geometric objects from direct child occurrences,

@@ -1,0 +1,8 @@
+test_real_navigator_next_change_parts_and_quantity_commit (TestInstanceQuantity.TestInstanceQuantity.test_real_navigator_next_change_parts_and_quantity_commit) ... ok
+test_ui_reference_pick_and_context_menu_edit (TestInstanceQuantity.TestInstanceQuantity.test_ui_reference_pick_and_context_menu_edit) ... ok
+test_ui_all_arrangements_previews_and_errors_preserve_model (TestInstanceQuantity.TestInstanceQuantity.test_ui_all_arrangements_previews_and_errors_preserve_model) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.272s
+
+OK

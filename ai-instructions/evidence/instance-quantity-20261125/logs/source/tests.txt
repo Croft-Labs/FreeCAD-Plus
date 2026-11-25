@@ -1,0 +1,27 @@
+test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import (TestInstanceQuantity.TestInstanceQuantity.test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import) ... ok
+test_external_patterns_export_and_saved_fixtures (TestInstanceQuantity.TestInstanceQuantity.test_external_patterns_export_and_saved_fixtures) ... ok
+test_linear_grid_circular_math_and_invalid_inputs (TestInstanceQuantity.TestInstanceQuantity.test_linear_grid_circular_math_and_invalid_inputs) ... ok
+test_navigator_next_and_new_component_cancel_never_mutate (TestInstanceQuantity.TestInstanceQuantity.test_navigator_next_and_new_component_cancel_never_mutate) ... ok
+test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards (TestInstanceQuantity.TestInstanceQuantity.test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards) ... ok
+test_quantity_and_new_component_are_atomic_shared_and_independent (TestInstanceQuantity.TestInstanceQuantity.test_quantity_and_new_component_are_atomic_shared_and_independent) ... ok
+test_reference_updates_and_dependency_reduction_block (TestInstanceQuantity.TestInstanceQuantity.test_reference_updates_and_dependency_reduction_block) ... ok
+test_task_create_preview_cancel_edit_and_stale_context (TestInstanceQuantity.TestInstanceQuantity.test_task_create_preview_cancel_edit_and_stale_context) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceQuantity.py", line 118, in test_task_create_preview_cancel_edit_and_stale_context
+    self.assertTrue(task.accept(), task.form.status.text())
+                                   ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'status'
+
+======================================================================
+ERROR: test_task_create_preview_cancel_edit_and_stale_context (TestInstanceQuantity.TestInstanceQuantity.test_task_create_preview_cancel_edit_and_stale_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestInstanceQuantity.py", line 118, in test_task_create_preview_cancel_edit_and_stale_context
+    self.assertTrue(task.accept(), task.form.status.text())
+                                   ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'status'
+
+----------------------------------------------------------------------
+Ran 8 tests in 4.424s
+
+FAILED (errors=1)

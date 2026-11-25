@@ -26,12 +26,17 @@ screenshots. One-link identity, dependency handling and shared-parent scope are
 specified; production deletion and installation await direct layout approval.
 See [evidence](evidence/instance-removal-proposal-20261125/README.md).
 
-## Instance quantity and patterns — preview prepared
+## Instance quantity and patterns — installed November 25, 2026
 
-November 25: requested quantity/pattern workflow has native screenshots for the
-navigator and shared create/edit form. Quantity, Linear, Grid and Circular are
-proposed; document behavior is not implemented or installed. Direct layout approval
-is pending. See [evidence](evidence/instance-quantity-proposal-20261125/README.md).
+Add Component > Add existing/new > Next opens Quantity, Linear, Grid or Circular.
+Counts apply per selected definition; Add new creates one definition. Patterns
+remain editable through a member's Edit instance pattern menu. Shared native links,
+parent-local placements, scene-only preview, atomic Undo and dependency guards are
+implemented. Schema 7 persists parent-owned pattern metadata; schemas 1–6 remain
+readable. Installed regressions pass 54/54; final shortcut checks 3/3 and fresh-process
+reopen/reference/export checks pass. Thirteen Python files installed with verified
+hashes and rollback copies. Restart required. See
+[implementation and evidence](evidence/instance-quantity-20261125/README.md).
 
 ## Condensed/expanded instances — installed November 25, 2026
 

@@ -1,0 +1,6 @@
+test_ui_all_arrangements_previews_and_errors_preserve_model (TestInstanceQuantity.TestInstanceQuantity.test_ui_all_arrangements_previews_and_errors_preserve_model) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.387s
+
+OK

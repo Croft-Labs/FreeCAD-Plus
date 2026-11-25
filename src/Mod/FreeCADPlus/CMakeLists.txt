@@ -23,6 +23,7 @@ set(FreeCADPlus_SRCS
     TestComponentNames.py
     TestActiveAssembly.py
     TestInstanceDisplay.py
+    TestInstanceQuantity.py
     TestAddComponent.py
     TestAssemblyConstraints.py
     TestPartTransfer.py
@@ -84,6 +85,9 @@ set(FreeCADPlus_SRCS
     freecad_plus/constraints.py
     freecad_plus/constraint_task.py
     freecad_plus/component_add.py
+    freecad_plus/instance_patterns.py
+    freecad_plus/instance_quantity_ui.py
+    freecad_plus/instance_task.py
     freecad_plus/part_transfer.py
     freecad_plus/part_transfer_ops.py
     freecad_plus/movement.py
@@ -121,6 +125,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/document_import.py
 )
 add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
+install(FILES TestInstanceQuantity.py DESTINATION Mod/FreeCADPlus)
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
 install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
@@ -141,6 +146,9 @@ install(FILES
     TestThickenWorkflow.py TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestTaskEntryWorkflows.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
 install(FILES
     freecad_plus/__init__.py
+    freecad_plus/instance_patterns.py
+    freecad_plus/instance_quantity_ui.py
+    freecad_plus/instance_task.py
     freecad_plus/ui_modes.py
     freecad_plus/toolbar_layout.py
     freecad_plus/toolbars.py

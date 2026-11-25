@@ -167,8 +167,8 @@ assembly state, or Undo entries change. Keep individual instances reachable for
 placement, constraint and visibility actions. See
 [implementation and verification](../evidence/instance-display-20261125/README.md).
 
-Separate pending quantity/removal workflows: Add existing should offer a
-quantity; Remove instance should remove selected links only, preserve the shared
+Quantity creation is implemented below. The separate pending Remove instance
+workflow should remove selected links only, preserve the shared
 definition and other links, and handle dependent constraints explicitly in one
 Undo operation. A condensed group must not ambiguously delete every instance.
 Definition deletion remains a separate action. Editing the contents of a shared
@@ -192,11 +192,11 @@ collectors and definition rows; do not treat condensed groups as remove-all.
 The intended Assembly Delete shortcut uses this same scoped review. This remains
 proposed behavior; the installed app has no new removal command yet.
 
-## Instance quantities and patterns — requested November 25, 2026
+## Instance quantities and patterns — approved November 25, 2026
 
 Owner requested creation of several instances at once, including patterns.
 The [native workflow proposal](../evidence/instance-quantity-proposal-20261125/README.md)
-awaits direct screenshot approval. Add existing keeps its navigator, then opens
+was authorized by the owner’s renewed implementation instruction. Add existing keeps its navigator, then opens
 Create instances with Quantity, Linear, Grid or Circular arrangement. Add new
 creates one shared definition and the requested instances; New Component remains
 the separate definition-creation command. Counts are per selected definition,
@@ -207,10 +207,13 @@ Patterns expose spacing/directions or center/axis/radius/angle/orientation, show
 the total and preview, and save editable parameters in the destination component.
 Edit instance pattern reopens the same controls. Preserve surviving link identities
 and explicitly block removal of referenced members. One Undo step, unchanged Cancel,
-recursive nesting guards and the fixed active assembly are required. This is
-proposed behavior, not current implementation. Condensed/expanded display is now
-implemented separately; Remove instance remains a pending preview. Name enforcement
-was delivered separately and is not implemented by this proposal.
+recursive nesting guards and the fixed active assembly are required. Pattern members
+cannot be moved or newly constrained independently; use Edit instance pattern.
+Directions can use parent axes or native straight-edge/axis references; Linear also
+accepts a typed vector. The operation supports at most 10,000 new links total.
+Implemented and installed; see [acceptance](../evidence/instance-quantity-20261125/README.md).
+Condensed/expanded display and name enforcement were delivered separately;
+Remove instance remains a pending preview.
 
 ## Fixed active assembly — November 25, 2026
 

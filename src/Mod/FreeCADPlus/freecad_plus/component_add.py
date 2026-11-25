@@ -7,8 +7,8 @@ from PySide6 import QtCore, QtWidgets
 from . import assembly, document, editing, external, hierarchy, panel, task_status
 
 
-def target():
-    if Gui.Control.activeDialog() or any(Gui.getDocument(d.Name).getInEdit() for d in App.listDocuments().values()):
+def target(*, allow_task=False):
+    if (Gui.Control.activeDialog() and not allow_task) or any(Gui.getDocument(d.Name).getInEdit() for d in App.listDocuments().values()):
         raise ValueError('Finish the current task before adding a component')
     if App.getActiveTransaction() or any(d.HasPendingTransaction for d in App.listDocuments().values()):
         raise ValueError('Finish the current operation before adding a component')
@@ -58,8 +58,8 @@ class Picker(QtWidgets.QDialog):
         title = QtWidgets.QLabel('Add to: ' + assembly.label(self.owner, App.ActiveDocument))
         font = title.font(); font.setBold(True); title.setFont(font)
         box.addWidget(title)
-        note = QtWidgets.QLabel('Add one child component at the parent origin.' if new_component else
-                               'Select parts to add as children at the parent origin.')
+        note = QtWidgets.QLabel('Choose a name, then set the instance quantity and arrangement.' if new_component else
+                               'Select parts, then set the instance quantity and arrangement.')
         note.setWordWrap(True); box.addWidget(note)
         self.choices = None
         self.name = None
@@ -101,8 +101,7 @@ class Picker(QtWidgets.QDialog):
         self.status = task_status.TaskStatus()
         self.status.hide(); box.addWidget(self.status)
         buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel)
-        self.submit = buttons.addButton('Create and add' if new_component else 'Add component',
-                                        QtWidgets.QDialogButtonBox.AcceptRole)
+        self.submit = buttons.addButton('Next', QtWidgets.QDialogButtonBox.AcceptRole)
         box.addWidget(buttons)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
@@ -212,30 +211,50 @@ class Picker(QtWidgets.QDialog):
         count = len(self.checked_parts()) if not self.new_component else 0
         self.submit.setEnabled(bool(self.name.text().strip()) if self.new_component else count > 0)
         if not self.new_component:
-            self.submit.setText(f'Add {count} component' + ('' if count == 1 else 's') if count else 'Add components')
+            self.submit.setText('Next')
         self.status.hide()
 
     def accept(self):
         try:
-            if self.new_component:
-                add(self.expected, label=self.name.text().strip())
-            else:
-                add_many(self.expected, [panel.lookup(ref) for ref in self.checked_parts()])
+            if target()[1] != self.expected:
+                raise ValueError('The edited component or file tab changed; reopen Add Component')
+            from .instance_patterns import prepare
+            self.selected_definitions = [] if self.new_component else [panel.lookup(ref) for ref in self.checked_parts()]
+            self.new_label = self.name.text().strip() if self.new_component else None
+            prepare(self.owner, self.selected_definitions, self.new_label)
         except (ValueError, OSError, RuntimeError, ReferenceError) as error:
             self.status.setError(str(error)); self.status.show()
             return
-        self._close_unused()
         super().accept()
 
 
-def open_picker(parent, new_component=False):
+def open_picker(parent, new_component=False, *, selected=(), label=None, opened=(), initial=None):
     try:
         dialog = Picker(parent, new_component)
+        dialog.opened.update(opened)
+        if new_component and label is not None: dialog.name.setText(label)
+        if not new_component:
+            it = QtWidgets.QTreeWidgetItemIterator(dialog.choices)
+            while it.value():
+                item = it.value()
+                if item.data(0, QtCore.Qt.UserRole) in selected and item.flags() & QtCore.Qt.ItemIsEnabled:
+                    item.setCheckState(0, QtCore.Qt.Checked)
+                it += 1
     except (ValueError, OSError, RuntimeError, ReferenceError) as error:
         QtWidgets.QMessageBox.warning(parent, 'Add Component', str(error))
         return
-    dialog.exec_()
+    result = dialog.exec_()
+    task = None
+    if result == QtWidgets.QDialog.Accepted:
+        try:
+            from .instance_task import open_task
+            task = open_task(dialog.selected_definitions, dialog.new_label, dialog.opened, initial=initial)
+            dialog.opened.clear()
+        except (ValueError, OSError, RuntimeError, ReferenceError) as error:
+            dialog._close_unused()
+            QtWidgets.QMessageBox.warning(parent, 'Add Component', str(error))
     dialog.deleteLater()
+    return task
 
 
 def make_button(parent, window):

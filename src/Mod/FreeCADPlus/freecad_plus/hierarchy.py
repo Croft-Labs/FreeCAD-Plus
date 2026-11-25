@@ -243,6 +243,8 @@ def world_placement(doc, path):
 
 
 def move_instance(instance, placement):
+    from .instance_patterns import check_independent
+    check_independent(instance)
     doc = instance.Document
     root = _root(doc)
     if instance.TypeId != "App::Link" or not any(instance in owner.Group for owner in [root, *root.Definitions]):

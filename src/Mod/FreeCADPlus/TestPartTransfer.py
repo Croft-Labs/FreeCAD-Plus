@@ -130,6 +130,9 @@ class TestPartTransfer(unittest.TestCase):
             dialog.grab().save(str(self.out/'add-existing.png'))
             dialog.submit.click()
             self.assertEqual(dialog.result(), QtWidgets.QDialog.Accepted)
+            from freecad_plus import instance_task
+            task = instance_task.open_task(dialog.selected_definitions, dialog.new_label, dialog.opened)
+            self.assertTrue(task.accept())
             self.assertTrue(all(any(x.TypeId == 'App::Link' and x.LinkedObject == p for x in self.drive.Group) for p in (a, b)))
             self.assertIn(source.Name, App.listDocuments())
         finally: dialog.deleteLater()

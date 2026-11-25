@@ -1,5 +1,8 @@
 # Instance quantity and patterns: native UI proposal
 
+Subsequently authorized and implemented: [installed evidence](../instance-quantity-20261125/README.md).
+The record below describes the historical UI-only proposal.
+
 November 25, 2026. Owner requested an instance quantity workflow including patterns.
 Required native layout preview is ready for direct screenshot approval. Production
 source and installed behavior are unchanged; no backend implementation is claimed.

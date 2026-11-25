@@ -81,6 +81,9 @@ def validate_solver(owner, solver):
             raise ValueError('Assembly collectors contain native joints, not anchored children')
         for name in ('Reference1', 'Reference2'):
             ref = getattr(joint, name, None)
+            if ref and ref[0] is not None and ref[0].TypeId == 'App::Link':
+                from .instance_patterns import check_independent
+                check_independent(ref[0])
             if ref and ref[0] is not None and ref[0] not in allowed:
                 raise ValueError('Constraint references must belong to their owning assembly')
 
@@ -118,6 +121,9 @@ def validate_refs(owner, refs):
         raise ValueError('A component cannot be constrained to itself')
     from . import display
     for ref in refs:
+        if ref[0].TypeId == 'App::Link':
+            from .instance_patterns import check_independent
+            check_independent(ref[0])
         if ref[0].TypeId == 'App::Link' and display.state(ref[0])[0] in ('Reference', 'Excluded'):
             raise ValueError('Reference or excluded components cannot participate in assembly constraints')
 

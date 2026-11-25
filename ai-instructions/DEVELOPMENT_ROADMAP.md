@@ -18,7 +18,7 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md). Restart FreeCAD Plu
 - [x] Install three checked Python files; focused 9/9 and shortcut 3/3 pass.
 
 See [evidence and broader regression limitations](evidence/instance-display-20261125/README.md).
-Restart FreeCAD Plus. Quantity/patterns, removal and Clone remain separate work.
+Restart FreeCAD Plus. Removal and Clone remain separate work; quantities/patterns are installed below.
 
 ## Unified Clone and Extract geometry — November 25, 2026
 
@@ -53,14 +53,14 @@ Restart FreeCAD Plus. Quantity/patterns, removal and Clone remain separate work.
 
 ## Instance quantity and patterns — November 25, 2026
 
-- [x] Audit current single-instance-per-part Add existing behavior.
-- [x] Render native navigator and Quantity/Linear/Grid/Circular create/edit controls.
-- [ ] Obtain direct screenshot approval for the new workflow.
-- [ ] Implement quantities, parent-relative patterns, same-form editing and atomic Undo.
-- [ ] Verify cycle/reference guards, stable identities, constraint dependencies,
-  preview/Cancel, save/reopen, linked ownership and editable export.
-- [ ] Install checked changes and verify the existing shortcut.
-  See [proposal evidence](evidence/instance-quantity-proposal-20261125/README.md).
+- [x] Audit existing behavior and render native navigator/create/edit controls.
+- [x] Apply the prepared layout after the owner's renewed implementation instruction.
+- [x] Implement quantities, parent-relative patterns, same-form editing and atomic Undo.
+- [x] Verify cycle/reference guards, stable identities, constraint/Move protection,
+  preview/Cancel, fresh-process persistence, linked ownership and editable export.
+- [x] Install thirteen checked Python files; installed 54/54 and shortcut 3/3 pass.
+
+See [implementation evidence](evidence/instance-quantity-20261125/README.md).
 
 ## Move Components — November 25, 2026
 
