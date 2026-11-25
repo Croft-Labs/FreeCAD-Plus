@@ -1,0 +1,48 @@
+import json, os, sys, traceback, importlib
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False}
+    try:
+        if os.environ.get('PLUS_TEST_SOURCE'):
+            import freecad_plus
+            source = Path(os.environ['PLUS_TEST_SOURCE'])
+            sys.path.insert(0, str(source)); freecad_plus.__path__.insert(0, str(source/'freecad_plus'))
+        Gui.activateWorkbench('AssemblyWorkbench')
+        from TestPartTransfer import verify_fresh_process
+        from freecad_plus import document, editing, constraints, panel
+        mode = 'source-final' if os.environ.get('PLUS_TEST_SOURCE') else 'installed'
+        result.update(verify_fresh_process(out.parent/mode))
+        fixture = out.parent/mode/'test_export_nested_constraints_save_reopen_and_solve/Selected parts.cadprt'
+        exported = next(d for d in App.listDocuments().values() if d.FileName and Path(d.FileName) == fixture)
+        root = document.validate(exported)
+        owner = root.Group[0].LinkedObject
+        App.setActiveDocument(exported.Name); QtTest.QTest.qWait(100)
+        joint = constraints.joints(owner)[0]; joint_id = joint.ID
+        editing.edit((root.Group[0],)); dock = panel.show_panel(); QtTest.QTest.qWait(100)
+        dock.refresh(); dock.activate_assembly(owner)
+        task = constraints.open_task(joint=joint)
+        task.joint.Offset2 = App.Placement(App.Vector(0, 0, 6), App.Rotation())
+        task.updateJoint(); assert task.accept(), task.error
+        assert joint.ID == joint_id
+        exported.undo(); exported.recompute(); document.validate(exported)
+        assert joint.ID == joint_id
+        for name in list(App.listDocuments()): App.closeDocument(name)
+        batch = document.open_document(out.parent/mode/'test_batch_one_undo_preserves_source_and_context/Machine.cadprt')
+        root = document.validate(batch); drive = next(p for p in root.Definitions if p.Label == 'Drive unit')
+        links = [o for o in drive.Group if o.TypeId == 'App::Link']
+        assert [o.LinkedObject.Label for o in links] == ['Mounting plate', 'Bracket', 'Cover', 'Locator']
+        assert len(root.Imports) == 1
+        assert links[1].LinkedObject.Document == links[3].LinkedObject.Document != batch
+        result.update(ok=True, exported_joint_edit_and_undo=True, linked_batch_reopened=True)
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    Gui.getMainWindow().close()
+
+QtCore.QTimer.singleShot(2200, run)

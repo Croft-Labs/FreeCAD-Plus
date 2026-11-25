@@ -1,0 +1,56 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/component_add.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "sha256": "4d3edf39c793d8dcea827adf2f82ea451a247c7f5e5a2bed5031692e5daa8898",
+    "backup_sha256": "70a033ff3ddbff37989bc6f4fa2390b398862e71bb1b6c8790bbb699ec3c3204"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/part_transfer.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\part_transfer.py",
+    "sha256": "85fbe698e454f65f1017f3419f30d5c7e8e0e7ef96f6372fb6bf9497bffe3565",
+    "backup_sha256": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/part_transfer_ops.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\part_transfer_ops.py",
+    "sha256": "784ec438a6369ae07fb34ed90d3a2e9738d8206dfaeb8667144687610be9ed31",
+    "backup_sha256": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "30fb1353157dc40015201384c855666bb74dd6cae37e68d763f547b99393d2c9",
+    "backup_sha256": "4f6bc09e759c47e8a12deda652f68034d624fdaf6bf7b4bf841e69d8db05b3f1"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/hierarchy.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py",
+    "sha256": "a18404d35a2305b182fcbe65a57d112d5f43e1beb34df6769931dc85ee2f3ad1",
+    "backup_sha256": "1c19f7c5a6251f2395fac1e550a2169e691e4eafba93fff5277d96bfe0224b9d"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/external.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\external.py",
+    "sha256": "2af632fe69467cb19fbfa33c8bed9a06eb5d9236439221394462075799941ee3",
+    "backup_sha256": "697e78abe0afb2e3e2434e777867c0564b186ddcb7fee0d37196c4757c7694e4"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/document_import.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document_import.py",
+    "sha256": "077cff356b989c6df7a4dde57dac3de5b976432294463344e055693de0f54902",
+    "backup_sha256": "1e287e34a8db2855d06e66d35f88e273668fec90ab48646ddef043f6c400c16f"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestPartTransfer.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPartTransfer.py",
+    "sha256": "9624f6c9c3f6f2f0152abdab4deda6b1ee5ca07fe5960222d8dd886c1d004f2e",
+    "backup_sha256": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestAddComponent.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAddComponent.py",
+    "sha256": "cbab27efcda5f008afd1edc57d499fcea2a50bd5d0a3481116a31bbd7cada748",
+    "backup_sha256": "300131d0298a3491983f0982a011f58d1071495624498d5746fc60139e052671"
+  }
+]

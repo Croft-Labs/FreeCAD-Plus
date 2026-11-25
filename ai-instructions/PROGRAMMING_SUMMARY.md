@@ -1,5 +1,17 @@
 # FreeCAD Plus: Programming Summary
 
+## Multi-part insertion and editable export — installed
+
+Add Component > Add existing now opens other `.cadprt` files and adds checked parts
+as linked children in one Undo step. Parts multi-selection offers Export parts to
+file for independent editable copies, including shared children, history, expressions
+and assembly constraints. Native File > Import is catalog-only. Source files and
+Edit/active assembly remain unchanged; existing outputs are never replaced.
+All 80 installed affected checks, fresh-process export/batch reopening, exported
+constraint editing/Undo and five existing-shortcut checks pass. Nine Python payload
+files were installed with rollback copies and verified hashes; no native rebuild.
+Restart FreeCAD Plus. See [approval and delivery](evidence/part-transfer-20261125/README.md).
+
 ## Part-owned assembly constraints — installed
 
 Every constrained part/subcomponent has a first-child, initially collapsed Assembly

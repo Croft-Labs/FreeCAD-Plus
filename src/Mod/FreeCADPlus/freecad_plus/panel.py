@@ -1323,6 +1323,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             actions[menu.addAction('Import Models from File')] = self.import_models
             if row is not None and row.kind == 'model':
                 actions[menu.addAction('Make active assembly')] = self.make_active_assembly
+                selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
+                actions[menu.addAction('Export parts to file…')] = lambda unused: self.export_rows(selected)
         if component_row:
             actions[menu.addAction('Edit')] = self.edit_row
             if row.kind != 'file':
@@ -1375,6 +1377,20 @@ class ComponentPanel(QtWidgets.QDockWidget):
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
         menu.deleteLater()
+
+    def export_rows(self, rows):
+        from .part_transfer import ExportDialog
+        _, expected = self._import_target()
+        parts = [self._checked(row)[1] for row in rows if row.kind == 'model']
+        def guard():
+            if self._import_target()[1] != expected:
+                raise ValueError('The editing context changed; reopen Export parts')
+            for row in rows:
+                if row.kind == 'model':
+                    self._checked(row)
+        dialog = ExportDialog(self, parts, guard)
+        dialog.exec_()
+        dialog.deleteLater()
 
     def move_rows(self, rows):
         from .movement import open_task

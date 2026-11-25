@@ -163,7 +163,7 @@ class TestAddComponent(unittest.TestCase):
             self.assertFalse(self.row(dialog,self.parent).flags()&QtCore.Qt.ItemIsEnabled)
             self.assertFalse(self.row(dialog,self.child).flags()&QtCore.Qt.ItemIsEnabled)
             group=self.row(dialog,part).parent();self.assertIsNotNone(group);self.assertFalse(group.isExpanded())
-            tree.setCurrentItem(self.row(dialog,self.unused));self.assertTrue(dialog.submit.isEnabled())
+            self.row(dialog,self.unused).setCheckState(0,QtCore.Qt.Checked);self.assertTrue(dialog.submit.isEnabled())
             self.assertIsNone(dialog.findChild(QtWidgets.QTabWidget))
             dialog.grab().save(str(self.output/'existing.png'))
             dialog.reject();self.assertEqual(self.snapshot(),before);self.assertEqual(self.doc.UndoCount,undo)
@@ -173,7 +173,7 @@ class TestAddComponent(unittest.TestCase):
         source,part=self.library();path=Path(source.FileName);original=path.read_bytes()
         dialog=component_add.Picker(Gui.getMainWindow())
         try:
-            dialog.choices.setCurrentItem(self.row(dialog,part));before=self.snapshot();undo=self.doc.UndoCount
+            self.row(dialog,part).setCheckState(0,QtCore.Qt.Checked);before=self.snapshot();undo=self.doc.UndoCount
             path.write_bytes(b'Invalid fixture archive')
             dialog.accept()
             self.assertTrue(dialog.status.error)
@@ -185,7 +185,7 @@ class TestAddComponent(unittest.TestCase):
     def test_dialog_rechecks_context_deleted_part_and_new_cycle(self):
         dialog=component_add.Picker(Gui.getMainWindow())
         try:
-            dialog.choices.setCurrentItem(self.row(dialog,self.unused))
+            self.row(dialog,self.unused).setCheckState(0,QtCore.Qt.Checked)
             hierarchy.add_instance(self.unused,self.child)
             before=self.snapshot();dialog.accept()
             self.assertIn('cycle',dialog.status.text());self.assertEqual(self.snapshot(),before)
@@ -194,7 +194,7 @@ class TestAddComponent(unittest.TestCase):
         finally:dialog.deleteLater()
         dialog=component_add.Picker(Gui.getMainWindow())
         try:
-            dialog.choices.setCurrentItem(self.row(dialog,self.unused))
+            self.row(dialog,self.unused).setCheckState(0,QtCore.Qt.Checked)
             with document.transaction(self.doc,'Delete unused fixture'):
                 self.root.Definitions=[p for p in self.root.Definitions if p!=self.unused]
                 for child in list(self.unused.Group):self.doc.removeObject(child.Name)
@@ -235,7 +235,7 @@ class TestAddComponent(unittest.TestCase):
                 self.assertIsInstance(dialog,component_add.Picker)
                 if cancel:dialog.reject()
                 elif mode=='Add existing':
-                    dialog.choices.setCurrentItem(self.row(dialog,self.unused));dialog.submit.click()
+                    self.row(dialog,self.unused).setCheckState(0,QtCore.Qt.Checked);dialog.submit.click()
                 else:dialog.name.setText('Menu child');dialog.submit.click()
                 self.assertEqual(dialog.result(),QtWidgets.QDialog.Rejected if cancel else QtWidgets.QDialog.Accepted,
                                  dialog.status.text())

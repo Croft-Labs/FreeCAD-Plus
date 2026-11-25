@@ -1,0 +1,6 @@
+test_picker_open_and_batch_accept_real_native_widgets (TestPartTransfer.TestPartTransfer.test_picker_open_and_batch_accept_real_native_widgets) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.430s
+
+OK

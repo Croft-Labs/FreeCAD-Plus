@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "transfer_actions_are_simulated": true,
+  "simulated_export_creates_no_file": true,
+  "proposed": true,
+  "native_model_and_edit_context_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\559f7b2bb8d1\\candidate\\component_add.py",
+  "screenshots": [
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\part-transfer-preview-20261125\\candidate\\add-existing.png",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\part-transfer-preview-20261125\\candidate\\parts-menu.png",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\part-transfer-preview-20261125\\candidate\\export-parts.png"
+  ]
+}

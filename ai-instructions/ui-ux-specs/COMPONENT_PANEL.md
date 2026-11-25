@@ -1,5 +1,37 @@
 # Component panel
 
+## Transfer sets of parts — November 25, 2026
+
+The owner renewed the previously cancelled import/export request and approved the
+native dialog screenshots with **"approved. implement"**. This approval supersedes
+the earlier cancellation for this scope.
+
+**Add Component > Add existing** keeps its always-open dropdown and adds **Open
+file…** plus checkboxes for multiple parts. Current-file parts appear directly;
+other loaded `.cadprt` files are collapsed groups with eligible-part selection.
+Component counts and blocked self/ancestor rows remain. Add the selected parts as
+linked children at the edited component's origin in one Undo operation, including
+necessary catalog imports. Preserve Edit, active assembly, source identities and
+the separate Add new/New Component behavior. Opening a source alone places nothing;
+Cancel closes only unused files opened by this chooser. Both files must already be
+saved for external linking; never save a source implicitly.
+
+In **Parts**, select one or more part rows and right-click **Export parts to file…**.
+The dialog reviews the selected parts and component counts, then chooses a new
+`.cadprt` filename. Export independent editable definitions with their complete child
+graphs, history, expressions, display/reference states and assembly constraints.
+Copy shared child definitions once; distinct definitions with conflicting labels
+receive unique destination labels. Place each explicitly selected definition once
+in the output file, using its local component frame. Source files and placements
+remain unchanged, as do the current Edit and active-assembly contexts.
+
+Do not replace an existing output file or append into one. Validate and finish the
+new native archive before publishing it; remove temporary output on failure. Export
+must have no remaining source-file dependencies. File > Import for `.cadprt` uses
+the existing catalog-only import service; geometry-only File > Export is unchanged.
+
+See [approval, implementation and runtime evidence](../evidence/part-transfer-20261125/README.md).
+
 ## Assembly constraints and padded tabs — November 25, 2026
 
 Every part with assembly constraints has an **Assembly constraints** collector as

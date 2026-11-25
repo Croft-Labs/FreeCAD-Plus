@@ -33,19 +33,34 @@ def add(expected, definition=None, *, label=None):
     return instance
 
 
+def add_many(expected, definitions):
+    owner, current = target()
+    if current != expected:
+        raise ValueError('The edited component or file tab changed; reopen Add Component')
+    instances = hierarchy.add_children(owner, definitions)
+    if owner.Document != App.ActiveDocument:
+        App.ActiveDocument.recompute()
+    if panel._panel is not None:
+        panel._panel.refresh()
+    return instances
+
+
 class Picker(QtWidgets.QDialog):
     def __init__(self, parent, new_component=False):
         self.owner, self.expected = target()
         super().__init__(parent)
         self.new_component = new_component
+        self.opened = set()
         self.setWindowTitle('Add new component' if new_component else 'Add existing component')
         self.setObjectName('AddComponentPicker')
-        self.resize(460, 185 if new_component else 420)
+        self.resize(520, 185 if new_component else 470)
         box = QtWidgets.QVBoxLayout(self)
         title = QtWidgets.QLabel('Add to: ' + assembly.label(self.owner, App.ActiveDocument))
         font = title.font(); font.setBold(True); title.setFont(font)
         box.addWidget(title)
-        box.addWidget(QtWidgets.QLabel('Add one child component at the parent origin.'))
+        note = QtWidgets.QLabel('Add one child component at the parent origin.' if new_component else
+                               'Select parts to add as children at the parent origin.')
+        note.setWordWrap(True); box.addWidget(note)
         self.choices = None
         self.name = None
         if new_component:
@@ -63,6 +78,13 @@ class Picker(QtWidgets.QDialog):
             note.setWordWrap(True); form.addRow(note)
             box.addLayout(form)
         else:
+            open_row = QtWidgets.QHBoxLayout()
+            open_row.addWidget(QtWidgets.QLabel('Current file and loaded files'))
+            open_row.addStretch()
+            self.open_file = QtWidgets.QPushButton('Open file…')
+            self.open_file.setObjectName('OpenComponentFile')
+            self.open_file.clicked.connect(self.open_source)
+            open_row.addWidget(self.open_file); box.addLayout(open_row)
             self.choices = QtWidgets.QTreeWidget()
             self.choices.setObjectName('ComponentChoices')
             self.choices.setColumnCount(2)
@@ -72,7 +94,7 @@ class Picker(QtWidgets.QDialog):
             self.choices.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
             self.choices.setToolTip('Unavailable components explain the reason in their tooltip.')
             box.addWidget(self.choices)
-            hint = QtWidgets.QLabel('The active component and its ancestors cannot be added.')
+            hint = QtWidgets.QLabel('Parts remain linked to their source file. Assemblies include their children.\nThe active component and its ancestors cannot be added.')
             hint.setWordWrap(True); box.addWidget(hint)
             self.populate()
         self.status = task_status.TaskStatus()
@@ -87,7 +109,7 @@ class Picker(QtWidgets.QDialog):
             self.name.textChanged.connect(self.update_enabled)
             self.name.selectAll()
         else:
-            self.choices.currentItemChanged.connect(self.update_enabled)
+            self.choices.itemChanged.connect(self.update_enabled)
         self.update_enabled()
 
     def populate(self):
@@ -98,7 +120,8 @@ class Picker(QtWidgets.QDialog):
             group, file_reason = None, None
             if doc != self.owner.Document:
                 group = QtWidgets.QTreeWidgetItem(self.choices, [Path(doc.FileName).name if doc.FileName else doc.Label, ''])
-                group.setFlags(QtCore.Qt.ItemIsEnabled)
+                group.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsAutoTristate)
+                group.setCheckState(0, QtCore.Qt.Unchecked)
                 group.setIcon(0, Gui.getIcon(':/icons/freecad.svg'))
                 if any(p not in available for p in parts):
                     try:
@@ -117,18 +140,78 @@ class Picker(QtWidgets.QDialog):
                 except ValueError:
                     reason = ('A component cannot be its own child.' if part == self.owner else
                               part.Label + ' contains ' + self.owner.Label + '. Adding it would create a cycle.')
+                if not reason:
+                    item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+                    item.setCheckState(0, QtCore.Qt.Unchecked)
                 if reason:
                     item.setFlags(QtCore.Qt.NoItemFlags)
                     item.setToolTip(0, reason)
                     item.setData(0, QtCore.Qt.AccessibleDescriptionRole, reason)
             if group is not None:
                 group.setExpanded(False)
+                if not any(group.child(i).flags() & QtCore.Qt.ItemIsEnabled for i in range(group.childCount())):
+                    group.setFlags(QtCore.Qt.NoItemFlags)
+
+    def checked_parts(self):
+        selected = []
+        it = QtWidgets.QTreeWidgetItemIterator(self.choices)
+        while it.value():
+            item = it.value()
+            if (item.flags() & QtCore.Qt.ItemIsEnabled and item.data(0, QtCore.Qt.UserRole)
+                    and item.checkState(0) == QtCore.Qt.Checked):
+                selected.append(item.data(0, QtCore.Qt.UserRole))
+            it += 1
+        return selected
+
+    def open_source(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open component file', '',
+                                                         'FreeCAD Plus component (*.cadprt)')
+        if not filename:
+            return
+        before = set(App.listDocuments())
+        try:
+            if target()[1] != self.expected:
+                raise ValueError('The edited component or file tab changed; reopen Add Component')
+            external.open_catalog(self.owner.Document, filename)
+            self.opened.update(set(App.listDocuments()) - before)
+            selected = set(self.checked_parts())
+            self.choices.blockSignals(True)
+            try:
+                self.choices.clear(); self.populate()
+                it = QtWidgets.QTreeWidgetItemIterator(self.choices)
+                while it.value():
+                    item = it.value()
+                    if item.data(0, QtCore.Qt.UserRole) in selected and item.flags() & QtCore.Qt.ItemIsEnabled:
+                        item.setCheckState(0, QtCore.Qt.Checked)
+                    it += 1
+            finally:
+                self.choices.blockSignals(False)
+            self.update_enabled()
+        except (ValueError, OSError, RuntimeError, ReferenceError) as error:
+            self._close_unused(set(App.listDocuments()) - before)
+            self.status.setError(str(error)); self.status.show()
+
+    def _close_unused(self, names=None):
+        remaining = set(self.opened if names is None else names)
+        while remaining:
+            closable = [name for name in remaining if name not in App.listDocuments()
+                        or not App.getDocument(name).InList]
+            if not closable:
+                break
+            for name in closable:
+                if name in App.listDocuments():
+                    App.closeDocument(name)
+                remaining.discard(name); self.opened.discard(name)
+
+    def reject(self):
+        self._close_unused()
+        super().reject()
 
     def update_enabled(self, *args):
-        item = self.choices.currentItem() if self.choices is not None else None
-        enabled = (bool(self.name.text().strip()) if self.new_component else
-                   bool(item and item.flags() & QtCore.Qt.ItemIsEnabled and item.data(0, QtCore.Qt.UserRole)))
-        self.submit.setEnabled(enabled)
+        count = len(self.checked_parts()) if not self.new_component else 0
+        self.submit.setEnabled(bool(self.name.text().strip()) if self.new_component else count > 0)
+        if not self.new_component:
+            self.submit.setText(f'Add {count} component' + ('' if count == 1 else 's') if count else 'Add components')
         self.status.hide()
 
     def accept(self):
@@ -136,13 +219,11 @@ class Picker(QtWidgets.QDialog):
             if self.new_component:
                 add(self.expected, label=self.name.text().strip())
             else:
-                item = self.choices.currentItem()
-                if not item or not item.flags() & QtCore.Qt.ItemIsEnabled or not item.data(0, QtCore.Qt.UserRole):
-                    raise ValueError('Choose an available component to add')
-                add(self.expected, panel.lookup(item.data(0, QtCore.Qt.UserRole)))
+                add_many(self.expected, [panel.lookup(ref) for ref in self.checked_parts()])
         except (ValueError, OSError, RuntimeError, ReferenceError) as error:
             self.status.setError(str(error)); self.status.show()
             return
+        self._close_unused()
         super().accept()
 
 

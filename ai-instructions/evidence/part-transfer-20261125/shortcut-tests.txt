@@ -1,0 +1,10 @@
+test_picker_open_and_batch_accept_real_native_widgets (TestPartTransfer.TestPartTransfer.test_picker_open_and_batch_accept_real_native_widgets) ... ok
+test_parts_context_menu_exports_multiple_selected_parts (TestPartTransfer.TestPartTransfer.test_parts_context_menu_exports_multiple_selected_parts) ... ok
+test_export_dialog_cancel_and_accept (TestPartTransfer.TestPartTransfer.test_export_dialog_cancel_and_accept) ... ok
+test_picker_open_cancel_closes_only_new_files (TestPartTransfer.TestPartTransfer.test_picker_open_cancel_closes_only_new_files) ... ok
+test_ribbon_always_dropdown_both_real_add_paths_and_cancel (TestAddComponent.TestAddComponent.test_ribbon_always_dropdown_both_real_add_paths_and_cancel) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 6.182s
+
+OK

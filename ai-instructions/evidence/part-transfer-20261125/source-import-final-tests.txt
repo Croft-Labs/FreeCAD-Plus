@@ -1,0 +1,6 @@
+test_native_file_import_is_catalog_only (TestPartTransfer.TestPartTransfer.test_native_file_import_is_catalog_only) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.210s
+
+OK

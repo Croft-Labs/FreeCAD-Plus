@@ -179,6 +179,22 @@ def import_path(doc, filename):
         raise
 
 
+def open_catalog(doc, filename):
+    """Open and preflight a picker source without importing or placing anything."""
+    before = set(App.listDocuments())
+    try:
+        _saved(doc)
+        source = document.open_document(filename, hidden=True)
+        prepare_import(doc, source)
+        return source
+    except Exception as error:
+        for name in set(App.listDocuments()) - before:
+            App.closeDocument(name)
+        if isinstance(error, (OSError, zipfile.BadZipFile, ET.ParseError, KeyError)):
+            raise ValueError('Cannot open component file: ' + str(error)) from error
+        raise
+
+
 def save_definition(definition):
     """Save the owning file, not whichever assembly tab supplied Edit context."""
     owner = definition.Document

@@ -1,5 +1,16 @@
 # FreeCAD Plus: Current work state
 
+## Part-file transfer — installed November 25, 2026
+
+The owner renewed the external-file/export request and approved both native dialogs.
+Batch Add existing and independent selected-part `.cadprt` export are implemented
+and installed. Shared children and native constraints survive copying; no source-file
+dependency remains in an export. Cancel, transactional rollback, recursive/file-cycle
+guards and exclusive new-file publication are verified. All 80 installed affected
+checks, source/installed fresh reopening and five existing-shortcut checks pass.
+The Python-only update retains rollback files; all nine installed hashes match.
+Restart running sessions. See [evidence](evidence/part-transfer-20261125/README.md).
+
 ## Assembly constraints and component tabs — installed
 
 November 25: the owner-approved native joint integration, recursive collectors and

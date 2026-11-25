@@ -94,6 +94,33 @@ def add_child(owner, definition=None, *, label=None):
         return _place_instance(owner, definition)
 
 
+def add_children(owner, definitions):
+    """Import the necessary catalogs and place a checked batch in one Undo step."""
+    import json
+    from . import external
+    root = _root(owner.Document)
+    if owner not in root.Definitions:
+        raise ValueError('Edit a component before adding children')
+    definitions = tuple(dict.fromkeys(definitions))
+    if not definitions:
+        raise ValueError('Choose at least one available component to add')
+    available = set(external.available_definitions(root))
+    imports = []
+    for definition in definitions:
+        if definition not in validate(definition.Document).Definitions:
+            raise ValueError('The selected component is no longer available')
+        check_nesting(owner, definition)
+        if definition not in available:
+            _, imported = external.prepare_import(owner.Document, definition.Document)
+            imports.append(imported)
+            available.update(external.available_definitions(imported))
+    with transaction(owner.Document, 'Add existing components'):
+        if imports:
+            root.Imports = [*root.Imports, *imports]
+            root.ImportIdentities = json.dumps([str(o.Document.Uid) for o in root.Imports])
+        return [_place_instance(owner, definition) for definition in definitions]
+
+
 def new_part():
     """Native New Part adapter: create and activate a definition, showing History.
 

@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Multi-part insertion and editable export — November 25, 2026
+
+- [x] Owner approves direct native dialog screenshots after renewing the request.
+- [x] Open source files and select multiple linked children in Add existing.
+- [x] Export selected definitions and their shared children into an independent file.
+- [x] Preserve native history, expressions, display states and nested constraints.
+- [x] Verify one-step batch Undo, Cancel, cycles, failed saves and no-overwrite races.
+- [x] Pass 80 installed cases, fresh saved reopening and five desktop-shortcut checks.
+- [x] Install nine Python files with rollback copies and matching payload hashes.
+  See [approval and delivery evidence](evidence/part-transfer-20261125/README.md).
+
 ## Part-owned assembly constraints — November 25, 2026
 
 - [x] Owner approves first-child collectors at every nesting level and the assembly frame.
