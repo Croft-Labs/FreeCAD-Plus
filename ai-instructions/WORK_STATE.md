@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Unified Clone — native task preview awaiting approval
+
+November 25: whole-object-only Clone and lowercase result labels are recorded.
+Native screenshots cover Clone, direct-child selection, same-form editing and
+separate Extract geometry creating extracted surface from a face of cloned body.
+Fixture checks preserve source objects/placements, Undo and Edit state. No production
+or installed Clone/Extract changes. See [proposal](evidence/unified-clone-proposal-20261125/README.md).
+
 ## Assembly-wide component names — installed November 25, 2026
 
 Complete imported catalogs now enforce unique definition names across local and

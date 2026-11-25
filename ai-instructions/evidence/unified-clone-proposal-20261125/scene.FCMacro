@@ -1,0 +1,71 @@
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+out=Path(os.environ['PLUS_PREVIEW_OUT']);worktree=Path(os.environ['PLUS_PREVIEW_WORKTREE'])
+
+def run():
+    result={'ok':False};doc=None;task=None
+    try:
+        win=Gui.getMainWindow();win.resize(1450,1050);win.show();win.raise_()
+        import freecad_plus
+        from freecad_plus import toolbar_layout,toolbars,document,hierarchy,editing,panel,display
+        freecad_plus.__path__.insert(0,str(worktree));importlib.reload(toolbar_layout)
+        candidate=(worktree/'clone_ui.py').exists()
+        if candidate:
+            from freecad_plus.clone_ui import GeometryTask,PreviewCommand
+            Gui.addCommand('Plus_Clone',PreviewCommand());Gui.addCommand('Plus_ExtractGeometry',PreviewCommand(True))
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('ClonePreview');root=document.validate(doc);parent=root.Definitions[0];parent.Label='assy_1'
+        bracket=hierarchy.create_definition(doc,'Bracket');cover=hierarchy.create_definition(doc,'Cover')
+        link=hierarchy.add_instance(parent,bracket);hierarchy.add_instance(parent,cover)
+        with document.transaction(doc,'Disposable source geometry'):
+            body=bracket.newObject('PartDesign::Body','Body');base=body.newObject('PartDesign::Feature','SourceSolid');base.Shape=Part.makeBox(20,15,8)
+            sketch=bracket.newObject('Sketcher::SketchObject','Layout');sketch.addGeometry(Part.LineSegment(App.Vector(),App.Vector(10,0,0)),False)
+            plane=body.newObject('PartDesign::Plane','DatumPlane');plane.Label='Datum plane'
+            sheet=cover.newObject('Part::Feature','Sheet');sheet.Shape=Part.makePlane(25,20)
+        display.set_state(parent,link,part_type='Reference')
+        editing.edit((root.Group[0],));dock=panel.show_panel();dock.refresh();dock.activate_assembly(parent)
+        controller=toolbars._controller;controller.tab='Modeling';controller.refresh();QtTest.QTest.qWait(200)
+        group=win.findChild(QtWidgets.QWidget,'PlusGroup_Other');assert group is not None
+        group.grab().save(str(out/'commands.png'))
+        snapshot=lambda:[(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '',[x.Name for x in o.OutList]) for o in doc.Objects]
+        before=snapshot();undo=doc.UndoCount;context=editing.context_path(doc)
+        images=[]
+        if candidate:
+            task=GeometryTask();Gui.Control.showDialog(task)
+            taskdock=win.findChild(QtWidgets.QDockWidget,'Tasks');taskdock.show();win.resizeDocks([taskdock],[470],QtCore.Qt.Horizontal)
+            def capture(name,title):
+                QtTest.QTest.qWait(130);img=taskdock.grab().toImage();img.setDevicePixelRatio(1);img.save(str(out/(name+'.png')));images.append((title,img))
+            capture('clone','Clone: whole objects')
+            assert [task.objects.topLevelItem(i).text(1) for i in range(4)]==['cloned body','cloned surface','cloned sketch','cloned plane']
+            def capture_browser():
+                dialog=QtWidgets.QApplication.activeModalWidget()
+                if dialog:dialog.grab().save(str(out/'direct-children.png'));dialog.reject()
+            QtCore.QTimer.singleShot(150,capture_browser);task.browse()
+            assert (out/'direct-children.png').exists()
+            task.invalid_face();capture('whole-object-only','Clone: face refused')
+            task.reject();task=GeometryTask(edit=True);Gui.Control.showDialog(task);capture('edit-clone','Edit cloned body')
+            task.reject();task=GeometryTask(extract=True);Gui.Control.showDialog(task);capture('extract','Extract geometry: face to surface')
+            assert task.objects.topLevelItem(0).text(1)=='extracted surface'
+            task.reject();task=GeometryTask(extract=True,edit=True);Gui.Control.showDialog(task);capture('edit-extract','Edit extracted surface')
+            task.reject();task=None
+        else:
+            img=QtGui.QImage(str(out/'commands.png'));img.setDevicePixelRatio(1);images=[('Current Modeling / Other',img)]
+        assert snapshot()==before and undo==doc.UndoCount and context==editing.context_path(doc)
+        chosen=[images[0],images[3]] if candidate else images
+        width=sum(img.width()+16 for _,img in chosen)+16;height=max(img.height() for _,img in chosen)+50
+        canvas=QtGui.QImage(width,height,QtGui.QImage.Format_ARGB32);canvas.fill(QtGui.QColor('#eeeeee'))
+        painter=QtGui.QPainter(canvas);x=16
+        for title,img in chosen:
+            painter.setPen(QtGui.QColor('#202020'));painter.drawText(x,24,title);painter.drawImage(x,38,img);x+=img.width()+16
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,candidate=candidate,module=toolbar_layout.__file__,result_names_checked=True,
+                      document_and_undo_unchanged=True,edit_context_unchanged=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if task:task.reject()
+    if doc:App.closeDocument(doc.Name)
+    QtCore.QTimer.singleShot(100,win.close)
+QtCore.QTimer.singleShot(1800,run)

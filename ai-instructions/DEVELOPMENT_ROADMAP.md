@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Unified Clone and Extract geometry — November 25, 2026
+
+- [x] Record whole-object input, direct-child scope and cloned body/surface/sketch/plane names.
+- [x] Render native Clone/browser/edit and separate Extract geometry/edit proposals.
+- [ ] Obtain direct layout approval.
+- [ ] Implement parent-owned derived geometry without transferring child history.
+- [ ] Implement separate face extraction yielding extracted surface.
+- [ ] Verify source updates, native feature use, reference guards, Undo and persistence.
+- [ ] Install checked functionality and verify the existing shortcut.
+  See [preview and functional boundaries](evidence/unified-clone-proposal-20261125/README.md).
+
 ## Assembly-wide component names — November 25, 2026
 
 - [x] Verify the archived and current defining-file label convention.

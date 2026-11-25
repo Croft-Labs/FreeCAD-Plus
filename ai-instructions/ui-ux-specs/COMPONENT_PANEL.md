@@ -41,6 +41,22 @@ See [approval and acceptance evidence](../evidence/file-formats-20261125/README.
 
 ## Clone from direct children — November 25, 2026
 
+Owner refinement: **only whole objects** can be cloned. Default result labels are
+lowercase `cloned body`, `cloned surface`, `cloned sketch`, `cloned plane`, according
+to geometry type. Do not reuse the child's source label as the result's default.
+These geometry labels do not create or rename component definitions.
+
+To obtain a face from child geometry, clone the whole body first, then use the
+separate **Extract geometry** operation in the parent. A selected face becomes an
+`extracted surface`; the cloned body remains. There is no face/edge/vertex Clone
+mode and no implicit extraction during Clone. Source history remains in the child.
+
+The [native task proposal](../evidence/unified-clone-proposal-20261125/README.md)
+shows one Clone collector, a direct-child browser, exact result names, separate
+face-to-surface Extract geometry, and the same forms for editing results. Layout
+approval and functional implementation remain pending. No runtime Clone/Extract
+feature has been installed by this proposal.
+
 The owner specifies one operation named **Clone**, without separate single-element
 and whole-part modes. While editing a parent component, the user may choose
 geometric objects (sketches, bodies, sheets and other geometry) owned by a **direct

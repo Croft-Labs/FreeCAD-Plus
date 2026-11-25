@@ -65,14 +65,18 @@ installed app, as do six fresh-process reopen/edit/Undo cases and four shortcut
 checks. Source regression and final workflow checks also pass. Restart FreeCAD
 Plus to load the native DLL update. See [delivery evidence](evidence/file-formats-20261125/README.md).
 
-## Clone ownership — specified, not implemented
+## Unified Clone and Extract geometry — native preview prepared
 
 November 25 owner direction: one Clone workflow selects geometric objects from
 direct children only and creates native history-free geometry in the edited
 parent. Child construction history remains in the child; only parent feature
 operations modify/combine cloned geometry. This defines the earlier Add Reference
 Feature concept. Follow the [current Clone contract](ui-ux-specs/COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026);
-task controls and runtime implementation remain pending.
+Owner's latest refinement requires whole objects only and default labels cloned
+body/surface/sketch/plane. Separate Extract geometry turns a face on cloned body
+into extracted surface. Native create/edit task and browser screenshots are ready
+for direct layout approval; runtime implementation remains pending. See
+[proposal evidence](evidence/unified-clone-proposal-20261125/README.md).
 
 ## Responsive component tabs — installed
 

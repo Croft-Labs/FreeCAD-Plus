@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Unified Clone and separate Extract geometry — November 25, 2026
+
+One Clone workflow collects whole geometric objects from direct child occurrences,
+with parent-owned results named cloned body/surface/sketch/plane. Faces, edges and
+vertices cannot be Clone inputs. Extraction is a later, separate operation: select
+a face on a parent-owned cloned body to produce an extracted surface. Keep the
+source body and child construction history intact. The native proposal uses the
+existing list gestures, Remove/Clear, source/result columns, preview controls and
+shared TaskStatus feedback. Creation and editing use the same task with saved
+references. See [owner contract and pending preview](COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026).
+These forms are not functionally implemented or installed yet.
+
 ### Part-owned assembly constraints — November 25, 2026
 
 Use the native joint tools and editor for constraints in the selected active assembly,
