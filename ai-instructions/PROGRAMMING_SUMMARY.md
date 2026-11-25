@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Instance quantity and patterns — preview prepared
+
+November 25: requested quantity/pattern workflow has native screenshots for the
+navigator and shared create/edit form. Quantity, Linear, Grid and Circular are
+proposed; document behavior is not implemented or installed. Direct layout approval
+is pending. See [evidence](evidence/instance-quantity-proposal-20261125/README.md).
+
 ## Condensed/expanded instances — preview prepared
 
 November 25: implementation requested; required native presentation preview is

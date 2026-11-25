@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Instance quantity and patterns — November 25, 2026
+
+- [x] Audit current single-instance-per-part Add existing behavior.
+- [x] Render native navigator and Quantity/Linear/Grid/Circular create/edit controls.
+- [ ] Obtain direct screenshot approval for the new workflow.
+- [ ] Implement quantities, parent-relative patterns, same-form editing and atomic Undo.
+- [ ] Verify cycle/reference guards, stable identities, constraint dependencies,
+  preview/Cancel, save/reopen, linked ownership and editable export.
+- [ ] Install checked changes and verify the existing shortcut.
+  See [proposal evidence](evidence/instance-quantity-proposal-20261125/README.md).
+
 ## Move Components — November 25, 2026
 
 - [x] Owner authorizes the reviewed Type/Method workflow.

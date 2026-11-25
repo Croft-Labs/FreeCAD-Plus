@@ -1,0 +1,61 @@
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+out=Path(os.environ['PLUS_PREVIEW_OUT']);worktree=Path(os.environ['PLUS_PREVIEW_WORKTREE'])
+
+def run():
+    result={'ok':False};doc=None;task=None
+    try:
+        win=Gui.getMainWindow();win.resize(1450,1180);win.show();win.raise_()
+        import freecad_plus
+        from freecad_plus import component_add,document,hierarchy,editing,panel
+        freecad_plus.__path__.insert(0,str(worktree));importlib.reload(component_add)
+        Gui.activateWorkbench('AssemblyWorkbench')
+        doc=document.new_document('QuantityPreview');root=document.validate(doc)
+        parent=root.Definitions[0];parent.Label='Machine'
+        bolt=hierarchy.create_definition(doc,'Bolt');plate=hierarchy.create_definition(doc,'Plate')
+        editing.edit((root.Group[0],));dock=panel.show_panel();dock.activate_assembly(parent)
+        QtTest.QTest.qWait(200)
+        snapshot=lambda:[(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '',[x.Name for x in o.OutList]) for o in doc.Objects]
+        before=snapshot();undo=doc.UndoCount;context=editing.context_path(doc)
+        candidate=hasattr(component_add,'preview_picker')
+        dialog=component_add.preview_picker(win) if candidate else component_add.Picker(win)
+        for i in range(dialog.choices.topLevelItemCount()):
+            item=dialog.choices.topLevelItem(i)
+            if item.text(0)=='Bolt':item.setCheckState(0,QtCore.Qt.Checked)
+        dialog.show();QtTest.QTest.qWait(150)
+        dialog.grab().save(str(out/'navigator.png'));dialog.reject()
+        images=[]
+        if candidate:
+            from freecad_plus.instance_quantity_ui import InstanceTask
+            task=InstanceTask();task.count.setValue(6);Gui.Control.showDialog(task)
+            taskdock=win.findChild(QtWidgets.QDockWidget,'Tasks');taskdock.show()
+            win.resizeDocks([taskdock],[480],QtCore.Qt.Horizontal)
+            QtTest.QTest.qWait(200)
+            for index,name in enumerate(('quantity','linear','grid','circular')):
+                task.mode.setCurrentIndex(index);QtTest.QTest.qWait(100)
+                img=taskdock.grab().toImage();img.setDevicePixelRatio(1);img.save(str(out/(name+'.png')))
+                images.append((name.title(),img))
+                assert '6 new instances' in task.summary.text()
+            task.reject();task=InstanceTask(edit=True);task.mode.setCurrentText('Circular');task.count.setValue(8);Gui.Control.showDialog(task)
+            QtTest.QTest.qWait(100);taskdock.grab().save(str(out/'edit-pattern.png'))
+            assert '8 instances in pattern' in task.summary.text()
+            task.reject();task=None
+        else:
+            img=QtGui.QImage(str(out/'navigator.png'));img.setDevicePixelRatio(1);images=[('Current Add existing',img)]
+        assert before==snapshot() and undo==doc.UndoCount and context==editing.context_path(doc)
+        width=sum(img.width()+16 for _,img in images)+16;height=max(img.height() for _,img in images)+50
+        canvas=QtGui.QImage(width,height,QtGui.QImage.Format_ARGB32);canvas.fill(QtGui.QColor('#eeeeee'))
+        painter=QtGui.QPainter(canvas);x=16
+        for title,img in images:
+            painter.setPen(QtGui.QColor('#202020'));painter.drawText(x,24,title);painter.drawImage(x,38,img);x+=img.width()+16
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,candidate=candidate,module=component_add.__file__,document_and_undo_unchanged=True,edit_context_unchanged=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if task:task.reject()
+    if doc:App.closeDocument(doc.Name)
+    QtCore.QTimer.singleShot(100,win.close)
+QtCore.QTimer.singleShot(1800,run)

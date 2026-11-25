@@ -134,6 +134,26 @@ Definition deletion remains a separate action. Editing the contents of a shared
 subassembly (including removing its child link) changes every occurrence of that
 subassembly; a unique variant is needed to change just one copy's contents.
 
+## Instance quantities and patterns — requested November 25, 2026
+
+Owner requested creation of several instances at once, including patterns.
+The [native workflow proposal](../evidence/instance-quantity-proposal-20261125/README.md)
+awaits direct screenshot approval. Add existing keeps its navigator, then opens
+Create instances with Quantity, Linear, Grid or Circular arrangement. Add new
+creates one shared definition and the requested instances; New Component remains
+the separate definition-creation command. Counts are per selected definition,
+include the first new placement, and exclude existing links.
+
+Quantity places independent links at the entered parent-relative position.
+Patterns expose spacing/directions or center/axis/radius/angle/orientation, show
+the total and preview, and save editable parameters in the destination component.
+Edit instance pattern reopens the same controls. Preserve surviving link identities
+and explicitly block removal of referenced members. One Undo step, unchanged Cancel,
+recursive nesting guards and the fixed active assembly are required. This is
+proposed behavior, not current implementation. Condensed/expanded display remains
+a separate pending preview; Remove instance and name enforcement are not implemented
+by this proposal.
+
 ## Fixed active assembly — November 25, 2026
 
 The owner reiterated that the active assembly automatically becomes the locked

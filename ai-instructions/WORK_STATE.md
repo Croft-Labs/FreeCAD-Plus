@@ -1,5 +1,14 @@
 # FreeCAD Plus: Current work state
 
+## Instance quantity and patterns — native preview awaiting approval
+
+November 25: owner requested quantity creation including patterns. Native navigator
+and Create instances task proposals cover Quantity, Linear, Grid and Circular,
+with the same form for pattern editing. Final fixture runs preserve document,
+Undo and Edit context. No production/installed changes yet. See
+[screenshots and intended contract](evidence/instance-quantity-proposal-20261125/README.md).
+Condensed/expanded view approval remains pending separately.
+
 ## Condensed/expanded instances — native preview awaiting approval
 
 November 25: owner requested implementation. The required native screenshot
