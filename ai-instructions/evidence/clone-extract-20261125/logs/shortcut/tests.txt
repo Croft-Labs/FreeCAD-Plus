@@ -1,0 +1,8 @@
+test_real_commands_unresolved_picks_and_stale_task (TestDerivedGeometry.TestDerivedGeometry.test_real_commands_unresolved_picks_and_stale_task) ... ok
+test_task_preview_selection_cancel_and_history_edit (TestDerivedGeometry.TestDerivedGeometry.test_task_preview_selection_cancel_and_history_edit) ... ok
+test_browser_exact_occurrence_and_no_grandchildren (TestDerivedGeometry.TestDerivedGeometry.test_browser_exact_occurrence_and_no_grandchildren) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.774s
+
+OK

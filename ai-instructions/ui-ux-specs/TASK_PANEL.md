@@ -26,8 +26,11 @@ a face on a parent-owned cloned body to produce an extracted surface. Keep the
 source body and child construction history intact. The native proposal uses the
 existing list gestures, Remove/Clear, source/result columns, preview controls and
 shared TaskStatus feedback. Creation and editing use the same task with saved
-references. See [owner contract and pending preview](COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026).
-These forms are not functionally implemented or installed yet.
+references. See [owner contract](COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026).
+The owner subsequently authorized implementation. Modeling > Other opens these forms;
+History Edit reopens the existing result with its source. Direct-child browsing retains
+occurrence identity. Preview creates no model objects; OK is atomic and Cancel leaves
+no Undo entry. Saved source associations update independently of the preview toggle.
 
 ### Part-owned assembly constraints — November 25, 2026
 

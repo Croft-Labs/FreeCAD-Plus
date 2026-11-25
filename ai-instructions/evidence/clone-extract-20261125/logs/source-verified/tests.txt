@@ -1,0 +1,18 @@
+test_archive_rejects_unrelated_external_geometry (TestDerivedGeometry.TestDerivedGeometry.test_archive_rejects_unrelated_external_geometry) ... ok
+test_browser_exact_occurrence_and_no_grandchildren (TestDerivedGeometry.TestDerivedGeometry.test_browser_exact_occurrence_and_no_grandchildren) ... ok
+test_direct_child_whole_object_boundary (TestDerivedGeometry.TestDerivedGeometry.test_direct_child_whole_object_boundary) ... ok
+test_external_parent_owns_results_and_cancel_is_clean (TestDerivedGeometry.TestDerivedGeometry.test_external_parent_owns_results_and_cancel_is_clean) ... ok
+test_external_sources_export_and_raw_foreign_guard (TestDerivedGeometry.TestDerivedGeometry.test_external_sources_export_and_raw_foreign_guard) ... ok
+test_instances_updates_extract_and_edit (TestDerivedGeometry.TestDerivedGeometry.test_instances_updates_extract_and_edit) ... ok
+test_missing_source_repair_and_schema_undo (TestDerivedGeometry.TestDerivedGeometry.test_missing_source_repair_and_schema_undo) ... ok
+test_native_boolean_and_body_coordinate_frame (TestDerivedGeometry.TestDerivedGeometry.test_native_boolean_and_body_coordinate_frame) ... ok
+test_native_features_and_dumb_sketch (TestDerivedGeometry.TestDerivedGeometry.test_native_features_and_dumb_sketch) ... ok
+test_origin_plane_and_multiple_whole_surfaces (TestDerivedGeometry.TestDerivedGeometry.test_origin_plane_and_multiple_whole_surfaces) ... ok
+test_real_commands_unresolved_picks_and_stale_task (TestDerivedGeometry.TestDerivedGeometry.test_real_commands_unresolved_picks_and_stale_task) ... ok
+test_task_preview_selection_cancel_and_history_edit (TestDerivedGeometry.TestDerivedGeometry.test_task_preview_selection_cancel_and_history_edit) ... ok
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 10.495s
+
+OK

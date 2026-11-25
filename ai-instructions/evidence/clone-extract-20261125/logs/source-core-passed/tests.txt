@@ -1,0 +1,6 @@
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.873s
+
+OK

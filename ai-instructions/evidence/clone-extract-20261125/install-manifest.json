@@ -1,0 +1,116 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "4001ee85516981bb49963cb0473b72492c23864017b4fe0704cf64ed01b68422",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/InitGui.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\InitGui.py",
+    "sha256": "6ae47d73553975ca67a504de194eb41fb65814ff2135a5b0e1cd6ed59b2d134b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\InitGui.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestDerivedGeometry.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestDerivedGeometry.py",
+    "sha256": "17f3f3a1231521203687e5f890d3dc1c699b0f1a37e4055f007a82ea81a733a4",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentBooleanInputs.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentBooleanInputs.py",
+    "sha256": "8bde37419d88ea1711b1c6d71589631d76c0f438c08e20f9d2140f552c35fdbe",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentBooleanInputs.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentEligibility.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentEligibility.py",
+    "sha256": "a57f1443943ddb0c5240cccf32aa1d8fb368714e289b04d002d8e4109a3adc0a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentEligibility.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestFeatureCenteredModeling.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestFeatureCenteredModeling.py",
+    "sha256": "d603a203835ee96f16b8225edc784627b62408be7ae94c56ef27a513b94e69c7",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestFeatureCenteredModeling.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentDisplay.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentDisplay.py",
+    "sha256": "65781b95c1c016fd965abf8d5c90cc8c4f577be691431c3b218d5b36677fdc98",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentDisplay.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "sha256": "b00b9185ab10690e8de7542b0d142246966733a8f438a5b5bac1b971d33ae517",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/external.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\external.py",
+    "sha256": "e5fc9a931af2c21eba24232ccd50d72d26a61bfbe74303a52851a52fe170ba75",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\external.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/display.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\display.py",
+    "sha256": "565379cc0cb2c8b42fb200464b6c2907afff7256679e7df2013e06fc8acd8db2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\display.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/derived_geometry.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\derived_geometry.py",
+    "sha256": "88080c07615b975b2a2dcfb4543c4ecc17d7e8b83845bf07aaaa8f2a486072e8",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/clone_task.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py",
+    "sha256": "897011df4c5c0d44c9f8d0c6425183b038f635e7f6bd527bc70404aec95fe172",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/clone_ui.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_ui.py",
+    "sha256": "b7e34834636b8b59e9dbd5d244cb4f4913c29834fbc400bc7858ad9904ea56c0",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/editing.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "sha256": "79d702325c42d109be834358f6a0070a6d789ece9a715c38d3d53c1af97df95a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\editing.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/modeling.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\modeling.py",
+    "sha256": "00004be2cc4ac706d47dfecf76401a979e9297c60135126c4aa1bb76c9840a01",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\modeling.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/selection_list.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\selection_list.py",
+    "sha256": "663d11bf6d2c5da8b443eff982013756827fa76d3f04b181c4ee330aa6ee7db6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\selection_list.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "a2ed1c727f127f03e0cd0198d4b6a429756c0fab1652ce62140c5e85126ccf0d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/geometry.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\geometry.py",
+    "sha256": "217be429128e176e3a690ad79303325355ecdaac693bb3c8b50442609a6aaa90",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\geometry.py.before-clone-extract-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/toolbar_layout.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py",
+    "sha256": "b5d5ce2a9b8cfbc135e72fca2225c6891278818f1267bbff7b4b4162fbdd2a8d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py.before-clone-extract-20261125"
+  }
+]

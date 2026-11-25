@@ -142,6 +142,7 @@ class TestFeatureCenteredModeling(unittest.TestCase):
     def test_external_unused_result_is_owned_and_undone_in_source(self):
         document.save_document(self.doc, self.output / 'Assembly.cadprt')
         source = document.new_document('FeatureSource')
+        document.validate(source).Definitions[0].Label = 'Feature source default'
         definition = hierarchy.create_definition(source, 'External feature component')
         document.save_document(source, self.output / 'Source.cadprt')
         external.import_file(self.doc, source)

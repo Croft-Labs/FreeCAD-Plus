@@ -1,0 +1,49 @@
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 43, in test_whole_body_surface_sketch_plane
+    results=derived.save(self.doc,refs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 243, in save
+    values = [evaluate(definition, ref, operation, feature=feature) for ref in refs]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 106, in evaluate
+    source = whole_source(definition, ref, admission=admission) if operation == 'Clone' else face_source(definition, ref)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 52, in whole_source
+    raise ValueError('Clone accepts whole objects only. Clone the body, then use Extract geometry for faces.')
+ValueError: Clone accepts whole objects only. Clone the body, then use Extract geometry for faces.
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 30, in tearDown
+    from freecad_plus import clone_task
+ImportError: cannot import name 'clone_task' from 'freecad_plus' (C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\__init__.py). Did you mean: 'plane_task'?
+
+======================================================================
+ERROR: test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 43, in test_whole_body_surface_sketch_plane
+    results=derived.save(self.doc,refs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 243, in save
+    values = [evaluate(definition, ref, operation, feature=feature) for ref in refs]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 106, in evaluate
+    source = whole_source(definition, ref, admission=admission) if operation == 'Clone' else face_source(definition, ref)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 52, in whole_source
+    raise ValueError('Clone accepts whole objects only. Clone the body, then use Extract geometry for faces.')
+ValueError: Clone accepts whole objects only. Clone the body, then use Extract geometry for faces.
+
+======================================================================
+ERROR: test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 30, in tearDown
+    from freecad_plus import clone_task
+ImportError: cannot import name 'clone_task' from 'freecad_plus' (C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\__init__.py). Did you mean: 'plane_task'?
+
+----------------------------------------------------------------------
+Ran 1 test in 0.735s
+
+FAILED (errors=2)

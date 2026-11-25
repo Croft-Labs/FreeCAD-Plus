@@ -62,7 +62,7 @@ def extrude(doc, sketch, length, *, operation='new', target=None):
 
 
 def _require_profile(definition, sketch):
-    if (sketch not in definition.Group or sketch.TypeId != 'Sketcher::SketchObject'
+    if (sketch not in definition.Group or not sketch.isDerivedFrom('Sketcher::SketchObject')
             or sketch.getParentGeoFeatureGroup() != definition):
         raise ValueError('Use an unconsumed sketch owned by the edited component')
     geometry.require_modeling_inputs(definition, [(sketch, '')])
@@ -188,7 +188,7 @@ def extrusion_request(which='Pad'):
     definition, path = _context(doc)
     geometry.require_modeling_inputs(definition)
     selected = Gui.Selection.getSelection('*')
-    standalone = [obj for obj in definition.Group if obj.TypeId == 'Sketcher::SketchObject']
+    standalone = [obj for obj in definition.Group if obj.isDerivedFrom('Sketcher::SketchObject')]
     if len(selected) == 1 and not standalone:
         if document.owned_path(definition, selected[0]) is None:
             raise ValueError('The profile must belong to the edited component')
@@ -197,7 +197,7 @@ def extrusion_request(which='Pad'):
     for obj in selected:
         if document.owned_path(definition, obj) is None:
             raise ValueError('Profiles and targets must belong to the edited component')
-        if obj.TypeId == 'Sketcher::SketchObject' and obj in definition.Group:
+        if obj.isDerivedFrom('Sketcher::SketchObject') and obj in definition.Group:
             profiles.append(obj)
         elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
             target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj

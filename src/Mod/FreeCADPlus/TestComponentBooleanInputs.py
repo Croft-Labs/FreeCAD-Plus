@@ -49,10 +49,10 @@ class TestComponentBooleanInputs(unittest.TestCase):
     def test_command_reference_excluded_and_mixed_batch_are_atomic(self):
         self.fixture(); path = self.reference_child()
         self.select(self.root, path)
-        self.command_denied('Add Reference Feature')
+        self.command_denied('Clone the whole object')
         # A valid first item must not be consumed when a later reference is refused.
         self.select(self.tool); Gui.Selection.addSelection(self.doc.Name, self.root.Name, path)
-        self.command_denied('Add Reference Feature')
+        self.command_denied('Clone the whole object')
         display.set_state(self.child, self.reference_link, part_type='Excluded'); settle()
         self.select(self.root, path); self.command_denied('Excluded')
         # The same tool definition selected through a forbidden shared occurrence
@@ -89,7 +89,7 @@ class TestComponentBooleanInputs(unittest.TestCase):
             except ValueError as error: denied.append(str(error)); raise
         with patch.object(geometry, 'require_modeling_inputs', side_effect=observe), messages():
             self.select(self.root, path); settle()
-        self.assertTrue(any('Add Reference Feature' in error for error in denied), denied)
+        self.assertTrue(any('Clone the whole object' in error for error in denied), denied)
         self.assertTrue(any(refs and refs[0] == (self.root,path) for refs in inputs_seen), inputs_seen)
         self.assertEqual(self.snapshot(), before); self.assertEqual(list(target.Group),groups)
         self.assertEqual(self.control(QtWidgets.QListWidget,'listWidgetBodies').count(),0)

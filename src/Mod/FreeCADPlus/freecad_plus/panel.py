@@ -905,7 +905,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                         item.setToolTip(0, 'Part Type: ' + effective + (' (saved: ' + part_type + ')' if effective != part_type else '')
                                         + '\nVisibility: ' + ('Shown' if shown else 'Hidden')
                                         + ('\nExcluded cannot be shown or used as geometry.' if effective == 'Excluded' else '')
-                                        + ('\nAdd Reference Feature before using this geometry.' if part_type == 'Reference' else ''))
+                                        + ('\nClone the whole object before using this geometry.' if part_type == 'Reference' else ''))
             if not drawing:
                 self._update_display_views()  # Sketcher owns its editing view overrides.
             self.refresh_count += 1
@@ -1591,6 +1591,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         from . import instance_task
         if instance_task._active is not None:
             instance_task._active.finish()
+        from . import clone_task
+        if clone_task._active is not None:
+            clone_task._active.reject()
         self._closed = True
         isolation.close_all()
         self._timer.stop()

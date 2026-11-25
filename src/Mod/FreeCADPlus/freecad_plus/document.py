@@ -10,8 +10,8 @@ from pathlib import Path
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 7
-SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6, 7)
+SCHEMA = 8
+SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6, 7, 8)
 
 
 @contextmanager
@@ -165,6 +165,11 @@ def _validate_local(doc, external_definitions=()):
         collect(definition)
     if owned != set(doc.Objects):
         raise ValueError("Document contains content outside component ownership")
+    for obj in owned:
+        if 'DerivedGeometryFormat' in obj.PropertiesList:
+            if root.PlusSchema < 8: raise ValueError('Derived geometry requires component schema 8')
+            from .derived_geometry import structural_check
+            structural_check(obj)
     return root
 
 

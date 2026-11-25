@@ -125,6 +125,7 @@ class TestComponentDisplay(unittest.TestCase):
     def test_external_source_owned_undo_and_save(self):
         document.save_document(self.doc,self.output/'Assembly.cadprt')
         source=document.new_document('Hardware');root=document.validate(source);parent=root.Definitions[0]
+        parent.Label='Hardware assembly'
         child=hierarchy.create_definition(source,'Pin');link=hierarchy.add_instance(parent,child)
         document.save_document(source,self.output/'Hardware.cadprt');external.import_file(self.doc,source)
         imported=hierarchy.add_instance(self.root,parent);document.save_document(self.doc)

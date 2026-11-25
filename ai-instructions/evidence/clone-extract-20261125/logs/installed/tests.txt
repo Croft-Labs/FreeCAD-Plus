@@ -1,0 +1,154 @@
+test_archive_rejects_unrelated_external_geometry (TestDerivedGeometry.TestDerivedGeometry.test_archive_rejects_unrelated_external_geometry) ... ok
+test_browser_exact_occurrence_and_no_grandchildren (TestDerivedGeometry.TestDerivedGeometry.test_browser_exact_occurrence_and_no_grandchildren) ... ok
+test_direct_child_whole_object_boundary (TestDerivedGeometry.TestDerivedGeometry.test_direct_child_whole_object_boundary) ... ok
+test_external_parent_owns_results_and_cancel_is_clean (TestDerivedGeometry.TestDerivedGeometry.test_external_parent_owns_results_and_cancel_is_clean) ... ok
+test_external_sources_export_and_raw_foreign_guard (TestDerivedGeometry.TestDerivedGeometry.test_external_sources_export_and_raw_foreign_guard) ... ok
+test_instances_updates_extract_and_edit (TestDerivedGeometry.TestDerivedGeometry.test_instances_updates_extract_and_edit) ... ok
+test_missing_source_repair_and_schema_undo (TestDerivedGeometry.TestDerivedGeometry.test_missing_source_repair_and_schema_undo) ... ok
+test_native_boolean_and_body_coordinate_frame (TestDerivedGeometry.TestDerivedGeometry.test_native_boolean_and_body_coordinate_frame) ... ok
+test_native_features_and_dumb_sketch (TestDerivedGeometry.TestDerivedGeometry.test_native_features_and_dumb_sketch) ... ok
+test_origin_plane_and_multiple_whole_surfaces (TestDerivedGeometry.TestDerivedGeometry.test_origin_plane_and_multiple_whole_surfaces) ... ok
+test_real_commands_unresolved_picks_and_stale_task (TestDerivedGeometry.TestDerivedGeometry.test_real_commands_unresolved_picks_and_stale_task) ... ok
+test_task_preview_selection_cancel_and_history_edit (TestDerivedGeometry.TestDerivedGeometry.test_task_preview_selection_cancel_and_history_edit) ... ok
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestFeatureCenteredModeling.py", line 147, in test_external_unused_result_is_owned_and_undone_in_source
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 162, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 156, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_consumer_rejects_before_shape_read_but_panel_edit_remains (TestComponentEligibility.TestComponentEligibility.test_consumer_rejects_before_shape_read_but_panel_edit_remains) ... ok
+test_edit_override_owned_feature_and_no_foreign_bypass (TestComponentEligibility.TestComponentEligibility.test_edit_override_owned_feature_and_no_foreign_bypass) ... ok
+test_external_unused_source_and_occurrence_validation (TestComponentEligibility.TestComponentEligibility.test_external_unused_source_and_occurrence_validation) ... ok
+test_reference_excluded_aggregate_and_shared_occurrence (TestComponentEligibility.TestComponentEligibility.test_reference_excluded_aggregate_and_shared_occurrence) ... ok
+test_visibility_is_not_eligibility_and_persistence (TestComponentEligibility.TestComponentEligibility.test_visibility_is_not_eligibility_and_persistence) ... ok
+test_command_reference_excluded_and_mixed_batch_are_atomic (TestComponentBooleanInputs.TestComponentBooleanInputs.test_command_reference_excluded_and_mixed_batch_are_atomic) ... ok
+test_empty_selection_requires_component_context (TestComponentBooleanInputs.TestComponentBooleanInputs.test_empty_selection_requires_component_context) ... ok
+test_legacy_command_and_picker_bypass_component_policy (TestComponentBooleanInputs.TestComponentBooleanInputs.test_legacy_command_and_picker_bypass_component_policy) ... ok
+test_picker_rejects_reference_then_allows_owned_tool_and_cleanup (TestComponentBooleanInputs.TestComponentBooleanInputs.test_picker_rejects_reference_then_allows_owned_tool_and_cleanup) ... ok
+test_batch_creation_failure_rolls_back_catalog_and_all_links (TestPartTransfer.TestPartTransfer.test_batch_creation_failure_rolls_back_catalog_and_all_links) ... ok
+test_batch_cycle_and_file_cycle_leave_no_partial_changes (TestPartTransfer.TestPartTransfer.test_batch_cycle_and_file_cycle_leave_no_partial_changes) ... ok
+test_batch_one_undo_preserves_source_and_context (TestPartTransfer.TestPartTransfer.test_batch_one_undo_preserves_source_and_context) ... ok
+test_export_dialog_cancel_and_accept (TestPartTransfer.TestPartTransfer.test_export_dialog_cancel_and_accept) ... ok
+test_export_duplicate_roots_and_selected_descendant (TestPartTransfer.TestPartTransfer.test_export_duplicate_roots_and_selected_descendant) ... ok
+test_export_external_children_domesticates_and_deduplicates_labels (TestPartTransfer.TestPartTransfer.test_export_external_children_domesticates_and_deduplicates_labels) ... ok
+test_export_native_sketch_pad_history_expression_and_display (TestPartTransfer.TestPartTransfer.test_export_native_sketch_pad_history_expression_and_display) ... ok
+test_export_nested_constraints_save_reopen_and_solve (TestPartTransfer.TestPartTransfer.test_export_nested_constraints_save_reopen_and_solve) ... ok
+test_export_pending_operation_rejected (TestPartTransfer.TestPartTransfer.test_export_pending_operation_rejected) ... ok
+test_export_refuses_existing_file_and_preserves_source (TestPartTransfer.TestPartTransfer.test_export_refuses_existing_file_and_preserves_source) ... ok
+test_export_shared_child_once_and_editable_geometry (TestPartTransfer.TestPartTransfer.test_export_shared_child_once_and_editable_geometry) ... ok
+test_export_target_created_during_copy_is_not_overwritten (TestPartTransfer.TestPartTransfer.test_export_target_created_during_copy_is_not_overwritten) ... ok
+test_export_write_failure_cleans_private_files_and_document (TestPartTransfer.TestPartTransfer.test_export_write_failure_cleans_private_files_and_document) ... ok
+test_native_file_import_is_catalog_only (TestPartTransfer.TestPartTransfer.test_native_file_import_is_catalog_only) ... ok
+test_open_invalid_file_keeps_existing_selection_and_documents (TestPartTransfer.TestPartTransfer.test_open_invalid_file_keeps_existing_selection_and_documents) ... ok
+test_parts_context_menu_exports_multiple_selected_parts (TestPartTransfer.TestPartTransfer.test_parts_context_menu_exports_multiple_selected_parts) ... ok
+test_picker_open_and_batch_accept_real_native_widgets (TestPartTransfer.TestPartTransfer.test_picker_open_and_batch_accept_real_native_widgets) ... ok
+test_picker_open_cancel_closes_only_new_files (TestPartTransfer.TestPartTransfer.test_picker_open_cancel_closes_only_new_files) ... ok
+test_picker_stale_context_and_self_ancestor_are_blocked (TestPartTransfer.TestPartTransfer.test_picker_stale_context_and_self_ancestor_are_blocked) ... ok
+test_copy_native_ids_and_saved_choices (TestComponentDisplay.TestComponentDisplay.test_copy_native_ids_and_saved_choices) ... ok
+test_excluded_show_guard_noop_and_stale_context (TestComponentDisplay.TestComponentDisplay.test_excluded_show_guard_noop_and_stale_context) ... ok
+test_external_source_owned_undo_and_save (TestComponentDisplay.TestComponentDisplay.test_external_source_owned_undo_and_save) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentDisplay.py", line 129, in test_external_source_owned_undo_and_save
+    document.save_document(source,self.output/'Hardware.cadprt');external.import_file(self.doc,source)
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 162, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 156, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+test_invalid_state_and_atomic_rollback (TestComponentDisplay.TestComponentDisplay.test_invalid_state_and_atomic_rollback) ... ok
+test_menu_shared_owner_reset_context_undo_and_persistence (TestComponentDisplay.TestComponentDisplay.test_menu_shared_owner_reset_context_undo_and_persistence) ... ok
+test_schema_four_lazy_defaults_and_undo_upgrade (TestComponentDisplay.TestComponentDisplay.test_schema_four_lazy_defaults_and_undo_upgrade) ... ok
+test_explicit_schema_upgrade_and_unsaved_import_preflight (TestExternalDefinitions.TestExternalDefinitions.test_explicit_schema_upgrade_and_unsaved_import_preflight) ... ok
+test_external_edit_stays_in_tab_and_saves_defining_file (TestExternalDefinitions.TestExternalDefinitions.test_external_edit_stays_in_tab_and_saves_defining_file) ... ok
+test_independent_nested_copy_and_explicit_replacements_undo (TestExternalDefinitions.TestExternalDefinitions.test_independent_nested_copy_and_explicit_replacements_undo) ... ok
+test_missing_wrong_future_and_missing_target_fail_then_recover (TestExternalDefinitions.TestExternalDefinitions.test_missing_wrong_future_and_missing_target_fail_then_recover) ... ok
+test_nested_catalog_is_not_placement_and_file_cycles_preflight (TestExternalDefinitions.TestExternalDefinitions.test_nested_catalog_is_not_placement_and_file_cycles_preflight) ... ok
+test_unsaved_nested_import_cannot_publish_unresolvable_assembly (TestExternalDefinitions.TestExternalDefinitions.test_unsaved_nested_import_cannot_publish_unresolvable_assembly) ... ok
+test_unsaved_source_target_and_failed_save_are_recoverable (TestExternalDefinitions.TestExternalDefinitions.test_unsaved_source_target_and_failed_save_are_recoverable) ... ok
+test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import (TestInstanceQuantity.TestInstanceQuantity.test_cycles_invalid_batches_and_rollback_leave_no_definition_or_import) ... ok
+test_external_parent_pattern_shared_across_occurrences (TestInstanceQuantity.TestInstanceQuantity.test_external_parent_pattern_shared_across_occurrences) ... ok
+test_external_patterns_export_and_saved_fixtures (TestInstanceQuantity.TestInstanceQuantity.test_external_patterns_export_and_saved_fixtures) ... ok
+test_indirect_member_reference_blocks_reduction (TestInstanceQuantity.TestInstanceQuantity.test_indirect_member_reference_blocks_reduction) ... ok
+test_linear_grid_circular_math_and_invalid_inputs (TestInstanceQuantity.TestInstanceQuantity.test_linear_grid_circular_math_and_invalid_inputs) ... ok
+test_navigator_next_and_new_component_cancel_never_mutate (TestInstanceQuantity.TestInstanceQuantity.test_navigator_next_and_new_component_cancel_never_mutate) ... ok
+test_older_schema_upgrades_only_for_pattern_and_undo_restores_it (TestInstanceQuantity.TestInstanceQuantity.test_older_schema_upgrades_only_for_pattern_and_undo_restores_it) ... ok
+test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards (TestInstanceQuantity.TestInstanceQuantity.test_pattern_edit_preserves_ids_undo_and_movement_constraint_guards) ... ok
+test_quantity_and_new_component_are_atomic_shared_and_independent (TestInstanceQuantity.TestInstanceQuantity.test_quantity_and_new_component_are_atomic_shared_and_independent) ... ok
+test_real_navigator_next_change_parts_and_quantity_commit (TestInstanceQuantity.TestInstanceQuantity.test_real_navigator_next_change_parts_and_quantity_commit) ... ok
+test_reduction_preserves_edited_occurrence (TestInstanceQuantity.TestInstanceQuantity.test_reduction_preserves_edited_occurrence) ... ok
+test_reference_updates_and_dependency_reduction_block (TestInstanceQuantity.TestInstanceQuantity.test_reference_updates_and_dependency_reduction_block) ... ok
+test_task_create_preview_cancel_edit_and_stale_context (TestInstanceQuantity.TestInstanceQuantity.test_task_create_preview_cancel_edit_and_stale_context) ... ok
+test_ui_all_arrangements_previews_and_errors_preserve_model (TestInstanceQuantity.TestInstanceQuantity.test_ui_all_arrangements_previews_and_errors_preserve_model) ... ok
+test_ui_reference_pick_and_context_menu_edit (TestInstanceQuantity.TestInstanceQuantity.test_ui_reference_pick_and_context_menu_edit) ... ok
+test_block_direct_hidden_indirect_expression_and_constraint_dependents (TestInstanceRemoval.TestInstanceRemoval.test_block_direct_hidden_indirect_expression_and_constraint_dependents) ... ok
+test_constraints_opt_in_survivors_fixed_and_collector (TestInstanceRemoval.TestInstanceRemoval.test_constraints_opt_in_survivors_fixed_and_collector) ... ok
+test_dialog_stale_dependencies_and_cancel_default (TestInstanceRemoval.TestInstanceRemoval.test_dialog_stale_dependencies_and_cancel_default) ... ok
+test_external_dependent_and_changed_constraint_plan (TestInstanceRemoval.TestInstanceRemoval.test_external_dependent_and_changed_constraint_plan) ... ok
+test_external_parent_and_source_preservation_fresh_reopen_fixture (TestInstanceRemoval.TestInstanceRemoval.test_external_parent_and_source_preservation_fresh_reopen_fixture) ... ok
+test_hidden_reference_excluded_and_condensed_singletons (TestInstanceRemoval.TestInstanceRemoval.test_hidden_reference_excluded_and_condensed_singletons) ... ok
+test_native_menu_delete_cancel_and_ineligible_delete_routing (TestInstanceRemoval.TestInstanceRemoval.test_native_menu_delete_cancel_and_ineligible_delete_routing) ... ok
+test_shared_parent_acknowledgement_and_entire_subassembly_preserved (TestInstanceRemoval.TestInstanceRemoval.test_shared_parent_acknowledgement_and_entire_subassembly_preserved) ... ok
+test_single_last_cancel_undo_redo_and_selection (TestInstanceRemoval.TestInstanceRemoval.test_single_last_cancel_undo_redo_and_selection) ... ok
+test_stale_plan_context_root_group_pattern_and_edit_guards (TestInstanceRemoval.TestInstanceRemoval.test_stale_plan_context_root_group_pattern_and_edit_guards) ... ok
+test_transaction_failure_rolls_back_constraints_link_selection_and_preferences (TestInstanceRemoval.TestInstanceRemoval.test_transaction_failure_rolls_back_constraints_link_selection_and_preferences) ... ok
+test_unused_assembly_and_pattern_reference_and_pending_task (TestInstanceRemoval.TestInstanceRemoval.test_unused_assembly_and_pattern_reference_and_pending_task) ... ok
+
+======================================================================
+ERROR: test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestFeatureCenteredModeling.py", line 147, in test_external_unused_result_is_owned_and_undone_in_source
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 162, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 156, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_source_owned_undo_and_save (TestComponentDisplay.TestComponentDisplay.test_external_source_owned_undo_and_save)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentDisplay.py", line 129, in test_external_source_owned_undo_and_save
+    document.save_document(source,self.output/'Hardware.cadprt');external.import_file(self.doc,source)
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 162, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 156, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+----------------------------------------------------------------------
+Ran 87 tests in 77.050s
+
+FAILED (errors=2)

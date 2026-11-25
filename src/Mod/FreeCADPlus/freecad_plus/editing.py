@@ -166,6 +166,10 @@ def edit_feature(doc, feature):
     definition, path = context_path(doc)
     if feature not in history(doc, definition):
         raise ValueError("The feature must belong to the edited component")
+    from . import derived_geometry
+    if derived_geometry.is_derived(feature):
+        from . import clone_task
+        return clone_task.show(feature)
     if feature.TypeId == 'PartDesign::Thickness':
         from . import shell_task
         return shell_task.show(feature)

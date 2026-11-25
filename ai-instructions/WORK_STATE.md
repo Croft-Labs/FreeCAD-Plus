@@ -7,13 +7,18 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md).
 
 # FreeCAD Plus: Current work state
 
-## Unified Clone — native task preview awaiting approval
+## Clone and Extract geometry - installed November 25, 2026
 
-November 25: whole-object-only Clone and lowercase result labels are recorded.
-Native screenshots cover Clone, direct-child selection, same-form editing and
-separate Extract geometry creating extracted surface from a face of cloned body.
-Fixture checks preserve source objects/placements, Undo and Edit state. No production
-or installed Clone/Extract changes. See [proposal](evidence/unified-clone-proposal-20261125/README.md).
+Modeling > Other now offers Clone and Extract geometry. Whole objects from direct
+children become parent-owned associative dumb geometry; selected parent-owned faces
+become extracted surfaces. History uses the same edit form. Child history remains
+intact; native features/Booleans can consume the results. Atomic Undo, scene-only
+preview, exact occurrence/source identities and schema-8 persistence are implemented.
+Source tests pass 13/13. Installed regression checked 87 cases: two old duplicate-name
+fixtures were corrected and pass in the final focused 15/15 run. Final profile-routing
+checks pass 7/7, fresh-process reopen checks pass, and existing-shortcut checks pass 3/3.
+Nineteen Python files installed with matching hashes and rollback copies. No native
+rebuild required. Restart FreeCAD Plus. See [evidence](evidence/clone-extract-20261125/README.md).
 
 ## Assembly-wide component names — installed November 25, 2026
 

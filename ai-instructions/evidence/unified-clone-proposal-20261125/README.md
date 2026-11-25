@@ -2,8 +2,9 @@
 
 November 25, 2026. Owner requested unified Clone with whole-object-only input and
 simple lowercase result names. Face extraction must follow cloning as a separate
-Extract geometry operation. Required native task-layout preview is prepared for
-direct screenshot approval. No production code or installed functionality changed.
+Extract geometry operation. This was the native task-layout proposal; it did not
+change production functionality. The owner subsequently renewed implementation
+authorization. See [implemented functionality and delivery](../clone-extract-20261125/README.md).
 
 ## Direct screenshots
 

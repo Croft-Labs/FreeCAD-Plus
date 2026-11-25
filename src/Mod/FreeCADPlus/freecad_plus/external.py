@@ -96,6 +96,9 @@ def validate_graph(doc):
         # never unpromoted cross-file modeling inputs.
         for obj in current.Objects:
             allowed = imports if obj == root else ([obj.LinkedObject] if obj.TypeId == "App::Link" else [])
+            if 'DerivedGeometryFormat' in obj.PropertiesList:
+                from .derived_geometry import external_source
+                allowed = external_source(obj)
             if any(target.Document != current and target not in allowed for target in obj.OutList):
                 raise ValueError("Unsupported cross-file modeling reference")
         active.remove(current)
@@ -212,7 +215,46 @@ def archive_graph(filename):
     Recovery is restoring the original path/identity and retrying. Relocation UI
     and automatic path searching are deliberately not part of this service.
     """
-    active, done, identities = set(), {}, {}
+    active, done, identities, archives = set(), {}, {}, {}
+    def owned_routes(tree, definition):
+        objects = {o.get('name'): o for o in tree.findall('./ObjectData/Object')}
+        types = {o.get('name'): o.get('type') for o in tree.findall('./Objects/Object')}
+        routes = {}
+        def walk(name, route):
+            if name in routes: return
+            routes[name] = route
+            obj = objects.get(name)
+            if obj is None or types.get(name) not in ('App::Part','PartDesign::Body','App::Origin','PartDesign::Boolean'): return
+            for prop_name in ('Group', 'Origin', 'OriginFeatures'):
+                prop = obj.find("./Properties/Property[@name='"+prop_name+"']")
+                if prop is None: continue
+                for link in prop.findall('.//Link'):
+                    child = link.get('value')
+                    if child: walk(child, route+[child])
+        walk(definition, [])
+        return routes
+    def promoted_source(path, tree, obj, property_node, link, target_path, schema):
+        # Validate the same explicit direct-child association before native restore.
+        if schema < 8 or property_node.get('name') != 'SourceObject' or property_node.get('type') != 'App::PropertyXLink': return False
+        def value(name, tag='String'):
+            node = obj.find("./Properties/Property[@name='"+name+"']/"+tag)
+            return node.get('value') if node is not None else None
+        if value('DerivedGeometryFormat') != 'FreeCADPlus.DerivedGeometry.1' or value('DerivedOperation') != 'Clone': return False
+        source = obj.find("./Properties/Property[@name='Source'][@type='App::PropertyLinkSubGlobal']/LinkSub")
+        if source is None or len(source.findall('Sub')) != 1: return False
+        occurrence = tree.find("./ObjectData/Object[@name='"+source.get('value','')+"']")
+        if occurrence is None: return False
+        occurrence_target = occurrence.find("./Properties/Property[@name='LinkedObject']/XLink")
+        if occurrence_target is None: return False
+        if (path.parent / occurrence_target.get('file','')).resolve() != target_path: return False
+        target_name = link.get('name')
+        route = owned_routes(archives[target_path], occurrence_target.get('name')).get(target_name)
+        if not route or source.find('Sub').get('value') != ''.join(n+'.' for n in route): return False
+        definitions = tree.findall("./ObjectData/Object/Properties/Property[@name='Definitions']/LinkList/Link")
+        for definition in definitions:
+            routes = owned_routes(tree, definition.get('value'))
+            if obj.get('name') in routes and routes.get(occurrence.get('name')) == [occurrence.get('name')]: return True
+        return False
     def visit(filename):
         path = Path(filename).resolve()
         if path in active:
@@ -225,6 +267,7 @@ def archive_graph(filename):
             raise ValueError(f"Missing defining file: {path}. Restore it and retry.")
         with zipfile.ZipFile(path) as archive:
             tree = ET.fromstring(archive.read("Document.xml"))
+        archives[path] = tree
         roots = [o for o in tree.findall("./ObjectData/Object")
                  if o.find("./Properties/Property[@name='PlusFormat']") is not None]
         if len(roots) != 1:
@@ -272,6 +315,8 @@ def archive_graph(filename):
                         raise ValueError("External reference is outside the defining-file catalog")
                     target = done[target_path]
                     is_catalog = obj == root and property_node.get("name") == "Imports"
+                    if promoted_source(path, tree, obj, property_node, link, target_path, int(schema.get('value'))):
+                        continue
                     valid_names = [target["root"]] if is_catalog else target["definitions"]
                     if (not is_catalog and property_node.get("name") != "LinkedObject"
                             or link.get("name") not in valid_names):

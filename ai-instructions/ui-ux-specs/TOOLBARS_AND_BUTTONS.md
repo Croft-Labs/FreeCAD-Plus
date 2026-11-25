@@ -1,5 +1,15 @@
 # Toolbars and buttons
 
+## Unified Clone and Extract geometry - November 25, 2026
+
+Modeling > Other replaces the Add Reference Object placeholder with **Clone**
+(`Plus_Clone`) and adjacent **Extract geometry** (`Plus_ExtractGeometry`). Both use
+medium native ribbon buttons. Clone accepts whole direct-child objects; Extract
+accepts parent-owned faces. Existing Classic/Draft/PartDesign clone tools retain
+their original access. The owner's renewed implementation instruction authorizes
+this prepared layout; see [the component contract](COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026).
+
+
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons

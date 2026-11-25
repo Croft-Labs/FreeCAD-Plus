@@ -1,0 +1,65 @@
+import json,os,sys,traceback,math
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+from freecad_plus import document,derived_geometry as derived,editing,clone_task
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        base=out.parent/'installed-final'
+        doc=document.open_document(base/'test_whole_body_surface_sketch_plane/FourTypes.cadprt')
+        objects=[o for o in doc.Objects if derived.is_derived(o)]
+        assert sorted(o.GeometryKind for o in objects)==['body','plane','sketch','surface']
+        for obj in objects:
+            obj.touch()
+            assert obj.Proxy.__class__.__module__=='freecad_plus.derived_geometry'
+            assert obj.SourceObject is not None
+        doc.recompute()
+        assert all(not o.GeometryError and not o.Shape.isNull() for o in objects)
+        sketch=next(o for o in objects if o.GeometryKind=='sketch')
+        sketch.SourceObject.setDatum(0,App.Units.Quantity('5 mm'));doc.recompute()
+        assert sketch.ConstraintCount==0 and abs(sketch.Geometry[0].Radius-5)<1e-7
+        App.closeDocument(doc.Name)
+        doc=document.open_document(base/'test_native_features_and_dumb_sketch/NativeFeatures.cadprt')
+        sketch=next(o for o in doc.Objects if derived.is_derived(o) and o.GeometryKind=='sketch')
+        sketch.SourceObject.setDatum(0,App.Units.Quantity('5 mm'));doc.recompute()
+        pad=next(o for o in doc.Objects if o.TypeId=='PartDesign::Pad')
+        assert abs(pad.Shape.Volume-25*math.pi*9)<1e-6
+        assert not next(o for o in doc.Objects if o.TypeId=='PartDesign::Fillet').Shape.isNull()
+        App.closeDocument(doc.Name)
+        doc=document.open_document(base/'test_instances_updates_extract_and_edit/Derived.cadprt')
+        surfaces=[o for o in doc.Objects if derived.is_derived(o) and o.DerivedOperation=='Extract']
+        assert len(surfaces)==2
+        clone=surfaces[0].SourceObject;link=derived.saved_ref(clone)[0]
+        before=surfaces[0].Shape.BoundBox.Center
+        link.Placement.Base+=App.Vector(5,0,0);doc.recompute()
+        assert abs(surfaces[0].Shape.BoundBox.Center.x-before.x-5)<1e-6
+        root=document.validate(doc);editing.edit((root.Group[0],))
+        task=editing.edit_feature(doc,surfaces[0]);QtTest.QTest.qWait(100)
+        assert task.extract and not task.form.status.error
+        task.form.grab().save(str(out/'reopened-extract-editor.png'));task.reject();App.closeDocument(doc.Name)
+        doc=document.open_document(base/'test_external_sources_export_and_raw_foreign_guard/Host.cadprt')
+        obj=next(o for o in doc.Objects if derived.is_derived(o));source=obj.SourceObject
+        assert source.Document!=doc and source.TypeId=='Part::Box'
+        source.Length=25;source.Document.recompute();doc.recompute()
+        assert abs(obj.Shape.Volume-2500)<1e-6;document.validate(doc)
+        for name in list(App.listDocuments()):App.closeDocument(name)
+        doc=document.open_document(base/'test_external_sources_export_and_raw_foreign_guard/Exported.cadprt')
+        obj=next(o for o in doc.Objects if derived.is_derived(o))
+        assert obj.SourceObject.Document==doc and not document.validate(doc).Imports
+        obj.SourceObject.Length=22;doc.recompute();assert abs(obj.Shape.Volume-2200)<1e-6
+        App.closeDocument(doc.Name)
+        doc=document.open_document(base/'test_external_parent_owns_results_and_cancel_is_clean/Host.cadprt')
+        source=next(d for d in App.listDocuments().values() if d!=doc)
+        obj=next(o for o in source.Objects if derived.is_derived(o))
+        assert derived.owner(obj).Label=='External assembly';obj.touch();source.recompute();doc.recompute()
+        assert not obj.GeometryError and not obj.Shape.isNull();document.validate(doc)
+        result.update(ok=True,four_types=True,dumb_sketch=True,downstream_native_features=True,
+            extracted_faces_update=True,same_editor=True,external_source=True,independent_export=True,external_parent=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

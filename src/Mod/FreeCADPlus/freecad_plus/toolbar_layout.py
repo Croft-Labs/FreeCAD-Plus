@@ -59,6 +59,7 @@ MODELING = (
     ('Primitives', (('Primitives', 'large', ('PartDesign_CompPrimitiveAdditive',)),)),
     ('Other', (
         ('Delete Face / Defeaturing', 'medium', ('PartDesign_Defeaturing',)),
-        ('Add Reference Object', 'medium', ()),
+        ('Clone', 'medium', ('Plus_Clone',)),
+        ('Extract geometry', 'medium', ('Plus_ExtractGeometry',)),
     )),
 )

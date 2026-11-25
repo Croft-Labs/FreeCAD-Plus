@@ -13,6 +13,18 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Clone and Extract geometry implementation — November 25, 2026
+
+The owner renewed **“implement the clone and extract geometry workflow”** after the
+prepared native proposal. This authorizes the whole-object collector, direct-child
+browser, separate face extraction and shared edit forms. Review `4a3678c76c7b` was
+inspected fresh with no scope violations; fingerprint
+`a74982217414f97465e8e4d10887fffb42efe054dab2c7eb6e1685f292193db8`.
+Chat authorization governs; companion approval state was untouched. The earlier
+[proposal](../evidence/unified-clone-proposal-20261125/README.md) is historical UI
+evidence; [implementation checks](../evidence/clone-extract-20261125/README.md)
+record actual functionality and delivery.
+
 ### Remove individual instances implementation — November 25, 2026
 
 The owner renewed “implement the Remove individual instances workflow” after the
@@ -45,7 +57,7 @@ Review `1339cd788f26` was inspected fresh with no scope violations; fingerprint
 Chat approval is authoritative; companion approval state was not modified.
 See [the proposal](../evidence/instance-display-proposal-20261125/README.md) and
 [implemented behavior and checks](../evidence/instance-display-20261125/README.md).
-Quantity/pattern creation was authorized subsequently above. Individual removal was subsequently authorized above; Clone remains pending.
+Quantity/pattern creation, individual removal and Clone were subsequently authorized above.
 
 ### Move Components implementation approval — November 25, 2026
 

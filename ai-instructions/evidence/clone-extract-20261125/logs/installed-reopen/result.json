@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "four_types": true,
+  "dumb_sketch": true,
+  "downstream_native_features": true,
+  "extracted_faces_update": true,
+  "same_editor": true,
+  "external_source": true,
+  "independent_export": true,
+  "external_parent": true
+}

@@ -58,11 +58,23 @@ separate **Extract geometry** operation in the parent. A selected face becomes a
 `extracted surface`; the cloned body remains. There is no face/edge/vertex Clone
 mode and no implicit extraction during Clone. Source history remains in the child.
 
-The [native task proposal](../evidence/unified-clone-proposal-20261125/README.md)
-shows one Clone collector, a direct-child browser, exact result names, separate
-face-to-surface Extract geometry, and the same forms for editing results. Layout
-approval and functional implementation remain pending. No runtime Clone/Extract
-feature has been installed by this proposal.
+The owner renewed **“implement the clone and extract geometry workflow”** after
+these native proposals. Modeling > Other contains **Clone** and **Extract geometry**.
+Clone uses one whole-object collector and a direct-child occurrence browser. Extract
+uses a face collector on parent-owned geometry. Both use the same form for creation
+and History editing; editing replaces one result's source in place. Source/result
+columns, Remove/Delete/Clear, click-add/Shift-click-remove and preview controls follow
+the shared collector pattern. Cancel leaves the model and Undo history unchanged;
+OK creates the selected results in one owning-file Undo step.
+
+Reference children may supply Clone inputs; Excluded children cannot supply new
+inputs. Saved clones retain their association even if display choices later change.
+Source edits and the chosen occurrence's placement update the parent result. A missing
+or replaced source produces an explicit repair error, never label-based reassignment.
+Default duplicate result names receive a numeric suffix. Recompute on update controls
+the temporary preview; saved results remain associative. Extract creates one separate
+`extracted surface` per selected face; edge/point extraction is outside this workflow.
+See [implementation and native checks](../evidence/clone-extract-20261125/README.md).
 
 The owner specifies one operation named **Clone**, without separate single-element
 and whole-part modes. While editing a parent component, the user may choose
@@ -97,12 +109,12 @@ upstream Draft, Sketcher, PartDesign or BIM commands without a separate UI decis
 
 The earlier contract requires an owned, derived, linked result. Retain that source
 association unless the owner explicitly requests a detached snapshot; "dumb"
-geometry here means no transferred construction history. Proposed update semantics
-for discussion: source geometry/child-placement changes recompute Clone in the
+geometry here means no transferred construction history. Source geometry and
+child-placement changes recompute Clone in the
 parent frame, then recompute parent operations; parent operations never write back
 to the child. Missing sources or invalid downstream results must be reported, not
-silently converted into detached geometry. Exact controls and implementation remain
-pending; no Clone runtime feature is delivered by this documentation update.
+silently converted into detached geometry. The renewed implementation instruction
+authorizes the prepared controls and these associative semantics.
 
 ## Shared instances and names — November 25, 2026
 

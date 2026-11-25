@@ -34,7 +34,7 @@ class TestComponentEligibility(unittest.TestCase):
     def test_reference_excluded_aggregate_and_shared_occurrence(self):
         vis = visibility(self.doc); ids = {o.Name:o.ID for o in self.doc.Objects}
         display.set_state(self.root, self.first, part_type='Reference')
-        with self.assertRaisesRegex(ValueError, 'Add Reference Feature'):
+        with self.assertRaisesRegex(ValueError, 'Clone the whole object'):
             self.access((self.first, self.nested))
         self.assertEqual(self.access((self.second, self.nested)), self.pad)
         with self.assertRaisesRegex(ValueError, 'Reference'):

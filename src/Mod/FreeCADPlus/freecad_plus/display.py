@@ -54,7 +54,7 @@ def enable(root):
     if root.PlusSchema < 4:
         from .external import add_properties
         if 'Imports' not in root.PropertiesList: add_properties(root)
-    root.PlusSchema = 5
+    root.PlusSchema = max(root.PlusSchema, 5)
 
 
 def set_state(owner, child=None, *, part_type=None, shown=None):

@@ -1,0 +1,89 @@
+test_browser_exact_occurrence_and_no_grandchildren (TestDerivedGeometry.TestDerivedGeometry.test_browser_exact_occurrence_and_no_grandchildren) ... ok
+test_direct_child_whole_object_boundary (TestDerivedGeometry.TestDerivedGeometry.test_direct_child_whole_object_boundary) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 76, in test_direct_child_whole_object_boundary
+    display.set_state(self.owner,self.link,part_type='Excluded')
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\display.py", line 83, in set_state
+    with transaction(owner.Document, 'Change component display setting'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\bin\Lib\contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 35, in transaction
+    validate(doc)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 52, in validate
+    return validate_graph(doc)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 107, in validate_graph
+    return visit(doc)
+           ^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 94, in visit
+    document._validate_local(current, external)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 170, in _validate_local
+    if root.PlusSchema < 8: raise ValueError('Derived geometry requires component schema 8')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Derived geometry requires component schema 8
+test_external_sources_export_and_raw_foreign_guard (TestDerivedGeometry.TestDerivedGeometry.test_external_sources_export_and_raw_foreign_guard) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 211, in test_external_sources_export_and_raw_foreign_guard
+    document.save_document(self.doc)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 450, in save_document
+    inspect_archive(path)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 376, in inspect_archive
+    archive_graph(filename)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 289, in archive_graph
+    visit(filename)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 281, in visit
+    raise ValueError("Missing or unsupported external definition target")
+ValueError: Missing or unsupported external definition target
+test_instances_updates_extract_and_edit (TestDerivedGeometry.TestDerivedGeometry.test_instances_updates_extract_and_edit) ... ok
+test_missing_source_repair_and_schema_undo (TestDerivedGeometry.TestDerivedGeometry.test_missing_source_repair_and_schema_undo) ... ok
+test_native_features_and_dumb_sketch (TestDerivedGeometry.TestDerivedGeometry.test_native_features_and_dumb_sketch) ... ok
+test_task_preview_selection_cancel_and_history_edit (TestDerivedGeometry.TestDerivedGeometry.test_task_preview_selection_cancel_and_history_edit) ... ok
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ok
+
+======================================================================
+ERROR: test_direct_child_whole_object_boundary (TestDerivedGeometry.TestDerivedGeometry.test_direct_child_whole_object_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 76, in test_direct_child_whole_object_boundary
+    display.set_state(self.owner,self.link,part_type='Excluded')
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\display.py", line 83, in set_state
+    with transaction(owner.Document, 'Change component display setting'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\bin\Lib\contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 35, in transaction
+    validate(doc)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 52, in validate
+    return validate_graph(doc)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 107, in validate_graph
+    return visit(doc)
+           ^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 94, in visit
+    document._validate_local(current, external)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 170, in _validate_local
+    if root.PlusSchema < 8: raise ValueError('Derived geometry requires component schema 8')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Derived geometry requires component schema 8
+
+======================================================================
+ERROR: test_external_sources_export_and_raw_foreign_guard (TestDerivedGeometry.TestDerivedGeometry.test_external_sources_export_and_raw_foreign_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 211, in test_external_sources_export_and_raw_foreign_guard
+    document.save_document(self.doc)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 450, in save_document
+    inspect_archive(path)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\document.py", line 376, in inspect_archive
+    archive_graph(filename)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 289, in archive_graph
+    visit(filename)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 281, in visit
+    raise ValueError("Missing or unsupported external definition target")
+ValueError: Missing or unsupported external definition target
+
+----------------------------------------------------------------------
+Ran 8 tests in 5.709s
+
+FAILED (errors=2)

@@ -1,5 +1,43 @@
 # Component/document architecture
 
+## Parent-owned Clone and Extract geometry — November 25, 2026
+
+Schema 8 permits explicit derived geometry; schemas 1–7 remain readable. The first
+Clone/Extract transaction lazily upgrades older documents and Undo restores the old
+schema. `display.enable` preserves newer schemas rather than resetting them to 5.
+
+`derived_geometry.py` stores a versioned operation/kind, native PropertyLinkSubGlobal
+Source and PropertyXLink SourceObject identity. Clone Source starts at one direct
+child App::Link and ends at an entire owned BRep object, sketch or plane. Ownership
+traversal may cross native Body/Boolean containers but never another component link.
+Exact source identity prevents deletion/name reuse from silently rebinding. Extract
+stores a face reference on a parent-owned object, retaining native topology mapping.
+Missing sources/topology clear the result and report a repair error. Native topology
+mapping applies; this is not a replacement geometry-matching system.
+
+Solid results are native PartDesign::FeaturePython objects in internal Bodies;
+surfaces/planes and whole curve/point objects are Part::FeaturePython results.
+Sketcher::SketchObjectPython contains only nonconstruction source geometry, with no
+copied driving constraints. Native Sketcher execute builds its Shape. Body geometry
+is transformed into its native container frame; sketches also account for consumed
+Body placement. Source geometry and defining operations remain untouched. Native
+features and Booleans consume the resulting geometry normally. History Edit and
+view-provider double-click reopen the shared source editor without replacing identity.
+
+Runtime and archive catalog validation permit one narrow foreign dependency: a
+marked Clone's exact SourceObject owned by the definition of its direct child link.
+Archive preflight validates the saved occurrence and ownership route against declared
+imports before restoration. Raw cross-file modeling inputs remain rejected. Native
+copy/export remaps both properties into the independent destination. No parallel
+geometry history or label-based source lookup is serialized.
+
+`clone_task.py` binds the original view/edit context and result identity, observes
+native selection with original Shift intent, and renders unpickable Coin previews.
+No preview objects or Undo transactions are created. Creation batches all results in
+one defining-document transaction; editing permits one same-kind source and rejects
+self/downstream/forward references. Recompute on update pauses preview only. The
+same controls handle missing-source repair. See [native evidence](evidence/clone-extract-20261125/README.md).
+
 ## Component names across imported catalogs — November 25, 2026
 
 `naming.py` compares NFC-normalized, stripped, casefolded definition labels.
@@ -73,7 +111,7 @@ and placements. The backend is not a catalog definition or History feature. Nati
 GeoFeatureGroup flattens joint membership; `owned_children` visits each joint through
 the collector once instead of counting the flattened membership twice.
 
-Schemas 1–6 remain readable; new files now use schema 7 (instance patterns below).
+Schemas 1–7 remain readable; new files now use schema 8 (derived geometry above).
 Older files upgrade to at least schema 6 lazily in
 the first constraint's transaction; Cancel/Undo restores the previous schema and graph.
 Validation checks the fixed backend placement, unique ownership/collector and allowed

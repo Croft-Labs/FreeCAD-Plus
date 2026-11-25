@@ -1,5 +1,19 @@
 # FreeCAD Plus: Programming Summary
 
+## Clone and Extract geometry - installed November 25, 2026
+
+Modeling > Other now offers Clone and Extract geometry. Whole objects from direct
+children become parent-owned associative dumb geometry; selected parent-owned faces
+become extracted surfaces. History uses the same edit form. Child history remains
+intact; native features/Booleans can consume the results. Atomic Undo, scene-only
+preview, exact occurrence/source identities and schema-8 persistence are implemented.
+Source tests pass 13/13. Installed regression checked 87 cases: two old duplicate-name
+fixtures were corrected and pass in the final focused 15/15 run. Final profile-routing
+checks pass 7/7, fresh-process reopen checks pass, and existing-shortcut checks pass 3/3.
+Nineteen Python files installed with matching hashes and rollback copies. No native
+rebuild required. Restart FreeCAD Plus. See [evidence](evidence/clone-extract-20261125/README.md).
+
+
 ## Open/import and conversion cursor correction — installed November 25, 2026
 
 Open, Plus Import and component source choosers default to both `.cadprt` and

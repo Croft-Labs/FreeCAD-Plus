@@ -1,0 +1,24 @@
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 44, in test_whole_body_surface_sketch_plane
+    results=derived.save(self.doc,refs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 265, in save
+    raise ValueError(obj.GeometryError or 'Derived geometry failed to recompute')
+ValueError: Derived geometry failed to recompute
+
+======================================================================
+ERROR: test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 44, in test_whole_body_surface_sketch_plane
+    results=derived.save(self.doc,refs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 265, in save
+    raise ValueError(obj.GeometryError or 'Derived geometry failed to recompute')
+ValueError: Derived geometry failed to recompute
+
+----------------------------------------------------------------------
+Ran 1 test in 0.863s
+
+FAILED (errors=1)

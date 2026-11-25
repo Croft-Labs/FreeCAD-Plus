@@ -60,7 +60,7 @@ def require_access(doc, obj, sub='', *, active=None, active_path=()):
         else:
             kind = display.resolved(target, direct=(path[:-1] == active_path))[0]
         if kind == 'Reference':
-            raise ValueError('Add Reference Feature before using Reference geometry')
+            raise ValueError('Clone the whole object before using Reference geometry')
         if kind == 'Excluded':
             raise ValueError('Change Part Type before using Excluded geometry')
 

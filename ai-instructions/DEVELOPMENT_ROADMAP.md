@@ -18,18 +18,20 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md). Restart FreeCAD Plu
 - [x] Install three checked Python files; focused 9/9 and shortcut 3/3 pass.
 
 See [evidence and broader regression limitations](evidence/instance-display-20261125/README.md).
-Restart FreeCAD Plus. Clone remains separate pending work; removal and quantities/patterns are installed below.
+Restart FreeCAD Plus. Clone, removal and quantities/patterns are installed below.
 
-## Unified Clone and Extract geometry — November 25, 2026
+## Unified Clone and Extract geometry - installed November 25, 2026
 
-- [x] Record whole-object input, direct-child scope and cloned body/surface/sketch/plane names.
-- [x] Render native Clone/browser/edit and separate Extract geometry/edit proposals.
-- [ ] Obtain direct layout approval.
-- [ ] Implement parent-owned derived geometry without transferring child history.
-- [ ] Implement separate face extraction yielding extracted surface.
-- [ ] Verify source updates, native feature use, reference guards, Undo and persistence.
-- [ ] Install checked functionality and verify the existing shortcut.
-  See [preview and functional boundaries](evidence/unified-clone-proposal-20261125/README.md).
+- [x] Apply the prepared native forms after renewed owner implementation authorization.
+- [x] Clone whole direct-child objects into parent-owned associative dumb geometry.
+- [x] Separate face extraction yielding extracted surface; shared create/edit forms.
+- [x] Verify source/occurrence updates, native feature/Boolean use, guards and Undo.
+- [x] Verify four result types, external links and independent export after fresh reopening.
+- [x] Install 19 checked Python files and verify the existing shortcut (3/3).
+
+Source focused 13/13; installed 87-case regression initially had two duplicate-name
+fixture errors, corrected and passed in the final 15/15 focused run. Final profile
+routing/native modeling checks pass 7/7. See [evidence](evidence/clone-extract-20261125/README.md).
 
 ## Assembly-wide component names — November 25, 2026
 
