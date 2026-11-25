@@ -92,15 +92,28 @@ instances of the same definition retain the same name.
 
 This supersedes the older rule below wherever it allowed distinct definitions
 with equal names from different files to coexist in an assembly merely by showing
-a filename qualifier. Current code still enforces uniqueness only within the
-defining file; assembly/import collision enforcement remains unimplemented.
+a filename qualifier. November 25 implementation enforces uniqueness across the
+open file's full component catalog, including unused and transitively imported
+definitions. Comparison ignores case and surrounding whitespace and normalizes
+Unicode. Repeated instances/import paths of one identity remain valid. Loaded
+reverse importers also constrain source edits; unrelated open files do not.
 Use persistent definition identity for links, not display-name matching. Do not
 silently merge unrelated source definitions because their names happen to match.
-Collision resolution and a deliberate independent-copy naming workflow need a
-reviewed implementation. Independent export currently creates detached copies;
+Conflicting imports and renames identify both files and require a source Rename
+before retrying. No automatic source renaming. Older conflicting files remain
+navigable for repair, but cannot be saved until conflicts are resolved. Undo and
+restore remain intact; restored conflicts must be repaired before saving.
+Independent export currently creates detached copies;
 it must not be described as a shared linked import or globally synchronized edit.
 Closed dependent files see saved source changes when reopened/refreshed; this
 requirement does not imply rewriting every closed file at edit time.
+
+The reiterated tree convention is retained: domestic definitions show `part_3`;
+external definitions show `part_4 (file_name_A)`. Each nested row identifies its
+actual defining file, including `part_7 (file_name_B)` and `part_8 (file_name_C)`
+inside an imported subassembly. Suffixes identify origin, not a separate name
+namespace. Closed importers are checked on reopening rather than rewritten when
+their source changes. See [implementation evidence](../evidence/component-names-20261125/README.md).
 
 The owner also asked about condensed/expanded instances, adding more instances,
 and removing one instance without deleting the part. Source audit at
@@ -624,7 +637,7 @@ Boolean dependencies as another component container.
 | --- | --- | --- |
 | Models / Part Tree | Edit | Edit definition in the current tab; retain occurrence context. |
 | Models / Part Tree | Open in new window | Open a component file tab. |
-| Models / Part Tree | Rename | Rename the shared definition in its defining file; update all its occurrences, retain identity and support Undo. Names remain unique within that file. |
+| Models / Part Tree | Rename | Rename the shared definition in its defining file; update all occurrences, retain identity and support Undo. Names remain unique across each affected file's complete imported catalog. |
 | Part Tree | Copy / Paste | Create another linked instance for subsequent movement; do not embed Copy in Move Components. |
 | Part Tree instance | Move Components | Open the shared task described in [Task Panel](TASK_PANEL.md#move-components). |
 | Models / storage copy | Copy external to domestic | Independent definition; prompt for placements to replace. |

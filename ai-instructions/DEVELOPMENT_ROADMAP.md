@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Assembly-wide component names — November 25, 2026
+
+- [x] Verify the archived and current defining-file label convention.
+- [x] Enforce uniqueness across imported catalogs and loaded reverse importers.
+- [x] Guard create/import/rename/copy/property edits and native save workflows.
+- [x] Preserve shared identities and allow repair of older conflicting files.
+- [x] Pass 81 installed affected checks, fresh reopening and five shortcut checks.
+- [x] Install with verified hashes and rollback files; restart required.
+  See [evidence](evidence/component-names-20261125/README.md).
+
 ## Remove individual instances — November 25, 2026
 
 - [x] Audit current menu and native link/constraint ownership.

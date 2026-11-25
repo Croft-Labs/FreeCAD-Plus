@@ -1,5 +1,16 @@
 # FreeCAD Plus reference archive
 
+## Component naming review — November 25, 2026
+
+Reviewed local tag `archive/freecad-plus-2026-10-10`, checkpoint
+`29496214b34a53fa1d479f35ab5669b41ed4fb18`, `src/Mod/Part/ComponentModel.py`.
+Its `component_label` returns domestic labels directly and qualifies external
+definitions with their defining-file stem (full path for ambiguous basenames).
+Its `definition_label` uses case-insensitive domestic name checks. Current
+assembly.py already implements the owner's requested source-qualified tree;
+the new naming.py extends uniqueness across imported catalogs and reverse importers.
+No archived implementation was restored or executed.
+
 ## Move Components review — November 25, 2026
 
 At the owner's request, reviewed local tag `archive/freecad-plus-2026-10-10`,

@@ -89,11 +89,15 @@ class TestComponentRename(unittest.TestCase):
         instance = hierarchy.add_instance(self.root, definition); settle()
         ids = [{o.Name:o.ID for o in d.Objects} for d in (self.doc,source)]
         original = definition.Label
-        # Equal labels in different defining files are explicitly allowed.
-        label = self.child.Label
+        # Imported and domestic definitions now share the viewing file's scope.
+        undo = source.UndoCount
+        self.rename(0, self.model(definition), self.child.Label)
+        self.assertEqual(definition.Label, original)
+        self.assertEqual(source.UndoCount, undo)
+        label = 'Imported shared child'
         self.rename(0, self.model(definition), label)
         self.assertEqual(definition.Label, label)
-        self.assertEqual(self.child.Label, label)
+        self.assertNotEqual(self.child.Label, label)
         self.assertEqual(instance.LinkedObject, definition)
         source.undo(); settle(); self.assertEqual(definition.Label, original)
         source.redo(); settle(); self.assertEqual(definition.Label, label)

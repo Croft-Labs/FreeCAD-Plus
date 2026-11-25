@@ -1,0 +1,2 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/naming-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())

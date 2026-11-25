@@ -149,6 +149,8 @@ def prepare_import(doc, source):
             continue
         seen.add(current)
         todo.extend(_imports(current))
+    from . import naming
+    naming.check_imports(doc, [target])
     return root, target
 
 
@@ -328,9 +330,8 @@ def copy_definition(source, destination, label, *, placements_to_replace, child_
                 collect(child.LinkedObject)
     collect(source)
     names = [label] + [(child_labels or {}).get(d, d.Label) for d in definitions[1:]]
-    existing = {d.Label for d in root.Definitions}
-    if any(not name.strip() or name in existing for name in names) or len(set(names)) != len(names):
-        raise ValueError("Choose unique names for every copied definition in the destination file")
+    from . import naming
+    naming.check_copies(destination, names)
     replacements = tuple(placements_to_replace)
     owners = [root, *root.Definitions]
     for instance in replacements:

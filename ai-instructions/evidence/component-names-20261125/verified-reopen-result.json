@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "checks": [
+    "fresh reopen uniqueness",
+    "reverse-import rename refusal",
+    "rename Undo/Redo",
+    "saved source rename propagates",
+    "stable source and component identities"
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\naming.py"
+}

@@ -107,6 +107,7 @@ class TestUnusedModels(unittest.TestCase):
             self.skipTest('Requires the native document-context build')
         document.save_document(self.doc, self.output/'Assembly.cadprt')
         source = document.new_document('Hardware')
+        document.validate(source).Definitions[0].Label = 'Hardware assembly'
         definition = hierarchy.create_definition(source, 'Unused screw')
         document.save_document(source, self.output/'Hardware.cadprt')
         external.import_file(self.doc, source)

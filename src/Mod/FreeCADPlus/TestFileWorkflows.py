@@ -273,6 +273,7 @@ class TestFileWorkflows(unittest.TestCase):
     def test_mislabelled_plus_repair_preserves_links_and_source(self):
         source_doc = document.new_document('Hardware')
         definition = document.validate(source_doc).Definitions[0]
+        definition.Label = 'Hardware component'
         document.save_document(source_doc, self.out / 'hardware.cadprt')
         document.save_document(self.plus, self.out / 'machine.cadprt')
         hierarchy.add_child(self.owner, definition)
@@ -289,6 +290,7 @@ class TestFileWorkflows(unittest.TestCase):
     def test_native_save_as_and_copy_keep_external_links_in_other_directory(self):
         source = document.new_document('Hardware')
         definition = document.validate(source).Definitions[0]
+        definition.Label = 'Hardware component'
         document.save_document(source, self.out / 'hardware.cadprt')
         document.save_document(self.plus, self.out / 'machine.cadprt')
         hierarchy.add_child(self.owner, definition)

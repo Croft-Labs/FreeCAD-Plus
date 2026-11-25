@@ -1683,8 +1683,26 @@ static std::string checkFileName(const Document& doc, const char* file)
     return nativeDocumentFileName(doc, file);
 }
 
+static void checkComponentNames(const Document& doc)
+{
+    if (!isComponentDocument(doc)) {
+        return;
+    }
+    Base::PyGILStateLocker lock;
+    try {
+        Py::Module module(PyImport_ImportModule("freecad_plus.naming"), true);
+        module.callMemberFunction("validate_for_save",
+            Py::TupleN(Py::Object(const_cast<Document&>(doc).getPyObject(), true)));
+    }
+    catch (Py::Exception&) {
+        Base::PyException error;
+        throw Base::RuntimeError(error.what());
+    }
+}
+
 bool Document::saveAs(const char* _file)
 {
+    checkComponentNames(*this); // Reject before changing filename/document label.
     const std::string file = checkFileName(*this, _file);
     const Base::FileInfo fi(file.c_str());
     if (this->FileName.getStrValue() != file) {
@@ -1705,6 +1723,7 @@ bool Document::saveCopy(const char* file) const
 // Save the document under the name it has been opened
 bool Document::save()
 {
+    checkComponentNames(*this);
     if (*FileName.getValue() && nativeDocumentFileName(*this, FileName.getValue()) != FileName.getValue()) {
         throw Base::ValueError("The filename does not match the document format. Use Save As: "
                                "FreeCAD Plus requires .cadprt; FreeCAD Classic requires .FCStd.");
@@ -1752,6 +1771,9 @@ bool Document::save()
 
 bool Document::saveToFile(const char* filename) const
 {
+    // A file suffix identifies a source; it must not disguise conflicting
+    // component names in the complete catalog. Cover native Save/As/Copy too.
+    checkComponentNames(*this);
     signalStartSave(*this, filename);
 
     auto hGrp = GetApplication().GetParameterGroupByPath(

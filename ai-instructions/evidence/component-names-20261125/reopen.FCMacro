@@ -1,0 +1,44 @@
+import os,json,traceback,sys
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,hierarchy,naming,panel,editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1250,950);win.show()
+        fixture=out.parent/'installed/test_exact_tree_qualification_across_nested_sources/reopen.json'
+        info=json.loads(fixture.read_text())
+        host=document.open_document(info['host']);root=document.validate(host)
+        source=next(d for d in App.listDocuments().values() if d.FileName and Path(d.FileName).resolve()==Path(info['source']).resolve())
+        part=source.getObject(info['part']);oldid=part.ID;olduid=str(source.Uid)
+        before=part.Label
+        try:hierarchy.rename_definition(part,'ASSY_1')
+        except ValueError:pass
+        else:raise AssertionError('Reopened source rename did not respect importer')
+        assert part.Label==before
+        updated='part_4_renamed' if before=='part_4_updated' else 'part_4_updated'
+        hierarchy.rename_definition(part,updated);source.undo();assert part.Label==before
+        source.redo();assert part.Label==updated
+        document.save_document(source);document.save_document(host)
+        for name in list(App.listDocuments()):App.closeDocument(name)
+        host=document.open_document(info['host']);root=document.validate(host)
+        source=next(d for d in App.listDocuments().values() if d.FileName and Path(d.FileName).resolve()==Path(info['source']).resolve())
+        part=source.getObject(info['part']);assert part.Label==updated and part.ID==oldid and str(source.Uid)==olduid
+        naming.validate_for_save(host)
+        App.setActiveDocument(host.Name);editing.edit((root.Group[0],));QtTest.QTest.qWait(120)
+        dock=panel.show_panel();dock.refresh();dock.activate_assembly(root.Definitions[0]);dock.tabs.setCurrentIndex(1)
+        win.resizeDocks([dock],[430],QtCore.Qt.Horizontal);dock.trees[1].expandAll();QtTest.QTest.qWait(150)
+        dock.grab().save(str(out/'qualified-tree.png'))
+        try:hierarchy.rename_definition(part,'part_7')
+        except ValueError as error:dock._message(str(error))
+        QtTest.QTest.qWait(100);dock.grab().save(str(out/'conflict-feedback.png'))
+        result.update(ok=True,checks=['fresh reopen uniqueness','reverse-import rename refusal','rename Undo/Redo','saved source rename propagates','stable source and component identities'],module=naming.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

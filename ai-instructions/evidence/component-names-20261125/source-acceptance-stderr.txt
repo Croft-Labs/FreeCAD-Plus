@@ -1,0 +1,14 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/naming-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+Component name "motor" conflicts with "Motor" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document

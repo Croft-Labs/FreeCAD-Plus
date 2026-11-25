@@ -65,9 +65,10 @@ class Picker(QtWidgets.QDialog):
         self.name = None
         if new_component:
             form = QtWidgets.QFormLayout()
-            names = {p.Label for p in document.validate(self.owner.Document).Definitions}
+            from . import naming
+            names = naming.reserved(self.owner.Document)
             index = 1
-            while f'Part{index:03d}' in names:
+            while naming.key(f'Part{index:03d}') in names:
                 index += 1
             self.name = QtWidgets.QLineEdit(f'Part{index:03d}')
             self.name.setObjectName('NewComponentName')

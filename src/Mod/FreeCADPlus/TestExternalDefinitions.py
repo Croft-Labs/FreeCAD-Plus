@@ -43,6 +43,7 @@ class TestExternalDefinitions(unittest.TestCase):
 
     def file(self, name):
         doc = component.new_document(name)
+        component.validate(doc).Definitions[0].Label = name + ' part'
         component.save_document(doc, self.output / (name + '.cadprt'))
         return doc, component.validate(doc)
 
@@ -62,8 +63,8 @@ class TestExternalDefinitions(unittest.TestCase):
         self.assertEqual(len(ar.Group), 1)
         model = external.catalog(assembly)
         self.assertEqual(model['imports'][0]['imports'][0]['definitions'], tuple(cr.Definitions))
-        self.assertEqual(external.qualified_label(ar.Definitions[0], assembly), 'Part001')
-        self.assertEqual(external.qualified_label(sr.Definitions[0], assembly), 'Part001 (Hardware)')
+        self.assertEqual(external.qualified_label(ar.Definitions[0], assembly), 'Assembly part')
+        self.assertEqual(external.qualified_label(sr.Definitions[0], assembly), 'Hardware part (Hardware)')
         self.assertNotEqual(ar.Definitions[0], sr.Definitions[0])
         count, undo = len(child.Objects), child.UndoCount
         with self.assertRaisesRegex(ValueError, 'Circular file'):

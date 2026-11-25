@@ -1,5 +1,15 @@
 # FreeCAD Plus: Current work state
 
+## Assembly-wide component names — installed November 25, 2026
+
+Complete imported catalogs now enforce unique definition names across local and
+external files; repeated instances are allowed. Existing source-qualified tree
+labels remain. Imports, renames, creation/copies and native saves share the guard.
+Older conflicts can be repaired without losing document access. Installed 81/81,
+source focused 15/15, fresh reopen and existing shortcut 5/5 pass. Sixteen installed
+hashes verified; restart the app. See [evidence](evidence/component-names-20261125/README.md).
+Condensed/expanded, quantity/patterns and individual removal previews remain pending.
+
 ## Remove individual instances — native preview awaiting approval
 
 November 25: owner requested occurrence removal. Native menu/review proposals

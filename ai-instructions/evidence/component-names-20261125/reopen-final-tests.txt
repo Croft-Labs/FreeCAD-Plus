@@ -1,0 +1,21 @@
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... ok
+test_atomic_failure_context_and_view_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_atomic_failure_context_and_view_cleanup) ... ok
+test_axes_coincident_parallel_reverse (TestMoveWorkflow.TestMoveWorkflow.test_axes_coincident_parallel_reverse) ... ok
+test_dynamic_native_handles_numeric_snap_pivot_and_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_handles_numeric_snap_pivot_and_cleanup) ... ok
+test_dynamic_native_translation_and_rotation_callbacks (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_translation_and_rotation_callbacks) ... ok
+test_external_parent_owns_move_and_source_persistence (TestMoveWorkflow.TestMoveWorkflow.test_external_parent_owns_move_and_source_persistence) ... ok
+test_fixed_root_toolbar_and_click_collectors (TestMoveWorkflow.TestMoveWorkflow.test_fixed_root_toolbar_and_click_collectors) ... ok
+test_frames_roll_and_degenerate_axes (TestMoveWorkflow.TestMoveWorkflow.test_frames_roll_and_degenerate_axes) ... ok
+test_invalid_values_readonly_expression_constraint_and_scale (TestMoveWorkflow.TestMoveWorkflow.test_invalid_values_readonly_expression_constraint_and_scale) ... ok
+test_native_frame_pick_and_dynamic_plane_snap (TestMoveWorkflow.TestMoveWorkflow.test_native_frame_pick_and_dynamic_plane_snap) ... ok
+test_nested_shared_parent_mixed_parent_rejection (TestMoveWorkflow.TestMoveWorkflow.test_nested_shared_parent_mixed_parent_rejection) ... ok
+test_point_picks_and_orientation_preserved (TestMoveWorkflow.TestMoveWorkflow.test_point_picks_and_orientation_preserved) ... ok
+test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear) ... ok
+test_rotate_two_points_pivot_reverse (TestMoveWorkflow.TestMoveWorkflow.test_rotate_two_points_pivot_reverse) ... ok
+test_unused_assembly_anchor_and_reference_eligibility (TestMoveWorkflow.TestMoveWorkflow.test_unused_assembly_anchor_and_reference_eligibility) ... ok
+test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 30.023s
+
+OK

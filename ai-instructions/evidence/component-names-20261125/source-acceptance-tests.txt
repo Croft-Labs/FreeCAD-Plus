@@ -1,0 +1,168 @@
+test_batch_collisions_are_preflighted_together (TestComponentNames.TestComponentNames.test_batch_collisions_are_preflighted_together) ... ok
+test_exact_tree_qualification_across_nested_sources (TestComponentNames.TestComponentNames.test_exact_tree_qualification_across_nested_sources) ... ok
+test_export_unique_names_without_renaming_sources (TestComponentNames.TestComponentNames.test_export_unique_names_without_renaming_sources) ... ok
+test_generated_new_name_reserves_imports (TestComponentNames.TestComponentNames.test_generated_new_name_reserves_imports) ... ok
+test_import_collision_reports_both_files_before_mutation (TestComponentNames.TestComponentNames.test_import_collision_reports_both_files_before_mutation) ... ok
+test_independent_copy_checks_imported_names (TestComponentNames.TestComponentNames.test_independent_copy_checks_imported_names) ... ok
+test_legacy_conflict_is_repairable_but_native_saves_refuse_it (TestComponentNames.TestComponentNames.test_legacy_conflict_is_repairable_but_native_saves_refuse_it) ... ok
+test_local_create_rename_case_and_unicode (TestComponentNames.TestComponentNames.test_local_create_rename_case_and_unicode) ... ok
+test_native_label_edit_is_rejected_and_valid_rename_shared (TestComponentNames.TestComponentNames.test_native_label_edit_is_rejected_and_valid_rename_shared) ... ok
+test_reverse_importers_block_source_rename_and_creation (TestComponentNames.TestComponentNames.test_reverse_importers_block_source_rename_and_creation) ... ok
+test_same_definition_instances_and_diamond_imports_are_valid (TestComponentNames.TestComponentNames.test_same_definition_instances_and_diamond_imports_are_valid) ... ok
+test_two_imports_collide_even_when_unused_or_nested (TestComponentNames.TestComponentNames.test_two_imports_collide_even_when_unused_or_nested) ... ok
+test_dialog_rechecks_context_deleted_part_and_new_cycle (TestAddComponent.TestAddComponent.test_dialog_rechecks_context_deleted_part_and_new_cycle) ... ok
+test_existing_child_preserves_edit_assembly_identity_and_undo (TestAddComponent.TestAddComponent.test_existing_child_preserves_edit_assembly_identity_and_undo) ... ok
+test_external_file_changed_on_disk_reports_error_without_partial_import (TestAddComponent.TestAddComponent.test_external_file_changed_on_disk_reports_error_without_partial_import) ... ok
+test_external_parent_owns_new_child_and_cannot_import_host (TestAddComponent.TestAddComponent.test_external_parent_owns_new_child_and_cannot_import_host) ... ok
+test_failed_creation_and_import_roll_back_every_object_and_metadata (TestAddComponent.TestAddComponent.test_failed_creation_and_import_roll_back_every_object_and_metadata) ... ok
+test_invalid_duplicate_name_and_pending_operation_preserve_model (TestAddComponent.TestAddComponent.test_invalid_duplicate_name_and_pending_operation_preserve_model) ... ok
+test_loaded_file_import_and_child_are_one_undo_and_save_reopen (TestAddComponent.TestAddComponent.test_loaded_file_import_and_child_are_one_undo_and_save_reopen) ... ok
+test_new_child_is_atomic_and_standalone_new_component_remains_unplaced (TestAddComponent.TestAddComponent.test_new_child_is_atomic_and_standalone_new_component_remains_unplaced) ... ok
+test_picker_counts_blocked_rows_loaded_groups_and_cancel (TestAddComponent.TestAddComponent.test_picker_counts_blocked_rows_loaded_groups_and_cancel) ... ok
+test_ribbon_always_dropdown_both_real_add_paths_and_cancel (TestAddComponent.TestAddComponent.test_ribbon_always_dropdown_both_real_add_paths_and_cancel) ... ok
+test_self_ancestor_and_excluded_reference_cycles_are_rejected_without_changes (TestAddComponent.TestAddComponent.test_self_ancestor_and_excluded_reference_cycles_are_rejected_without_changes) ... ok
+test_unsaved_loaded_file_is_disabled_and_never_silently_saved (TestAddComponent.TestAddComponent.test_unsaved_loaded_file_is_disabled_and_never_silently_saved) ... ok
+test_unused_parent_accepts_geometry_child_without_creating_root_placement (TestAddComponent.TestAddComponent.test_unused_parent_accepts_geometry_child_without_creating_root_placement) ... ok
+test_batch_creation_failure_rolls_back_catalog_and_all_links (TestPartTransfer.TestPartTransfer.test_batch_creation_failure_rolls_back_catalog_and_all_links) ... ok
+test_batch_cycle_and_file_cycle_leave_no_partial_changes (TestPartTransfer.TestPartTransfer.test_batch_cycle_and_file_cycle_leave_no_partial_changes) ... ok
+test_batch_one_undo_preserves_source_and_context (TestPartTransfer.TestPartTransfer.test_batch_one_undo_preserves_source_and_context) ... ok
+test_export_dialog_cancel_and_accept (TestPartTransfer.TestPartTransfer.test_export_dialog_cancel_and_accept) ... ok
+test_export_duplicate_roots_and_selected_descendant (TestPartTransfer.TestPartTransfer.test_export_duplicate_roots_and_selected_descendant) ... ok
+test_export_external_children_domesticates_and_deduplicates_labels (TestPartTransfer.TestPartTransfer.test_export_external_children_domesticates_and_deduplicates_labels) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPartTransfer.py", line 204, in test_export_external_children_domesticates_and_deduplicates_labels
+    hierarchy.add_children(self.drive, [a, b]); before = self.state(source)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\hierarchy.py", line 114, in add_children
+    _, imported = external.prepare_import(owner.Document, definition.Document)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Cover" conflicts with "Cover" in Machine.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Machine.cadprt). Rename one component in its defining file.
+test_export_native_sketch_pad_history_expression_and_display (TestPartTransfer.TestPartTransfer.test_export_native_sketch_pad_history_expression_and_display) ... ok
+test_export_nested_constraints_save_reopen_and_solve (TestPartTransfer.TestPartTransfer.test_export_nested_constraints_save_reopen_and_solve) ... ok
+test_export_pending_operation_rejected (TestPartTransfer.TestPartTransfer.test_export_pending_operation_rejected) ... ok
+test_export_refuses_existing_file_and_preserves_source (TestPartTransfer.TestPartTransfer.test_export_refuses_existing_file_and_preserves_source) ... ok
+test_export_shared_child_once_and_editable_geometry (TestPartTransfer.TestPartTransfer.test_export_shared_child_once_and_editable_geometry) ... ok
+test_export_target_created_during_copy_is_not_overwritten (TestPartTransfer.TestPartTransfer.test_export_target_created_during_copy_is_not_overwritten) ... ok
+test_export_write_failure_cleans_private_files_and_document (TestPartTransfer.TestPartTransfer.test_export_write_failure_cleans_private_files_and_document) ... ok
+test_native_file_import_is_catalog_only (TestPartTransfer.TestPartTransfer.test_native_file_import_is_catalog_only) ... ok
+test_open_invalid_file_keeps_existing_selection_and_documents (TestPartTransfer.TestPartTransfer.test_open_invalid_file_keeps_existing_selection_and_documents) ... ok
+test_parts_context_menu_exports_multiple_selected_parts (TestPartTransfer.TestPartTransfer.test_parts_context_menu_exports_multiple_selected_parts) ... ok
+test_picker_open_and_batch_accept_real_native_widgets (TestPartTransfer.TestPartTransfer.test_picker_open_and_batch_accept_real_native_widgets) ... ok
+test_picker_open_cancel_closes_only_new_files (TestPartTransfer.TestPartTransfer.test_picker_open_cancel_closes_only_new_files) ... ok
+test_picker_stale_context_and_self_ancestor_are_blocked (TestPartTransfer.TestPartTransfer.test_picker_stale_context_and_self_ancestor_are_blocked) ... ok
+test_cancel_same_name_and_invalid_names_make_no_undo (TestComponentRename.TestComponentRename.test_cancel_same_name_and_invalid_names_make_no_undo) ... ok
+test_dialog_rechecks_changed_name_and_native_editor_guard (TestComponentRename.TestComponentRename.test_dialog_rechecks_changed_name_and_native_editor_guard) ... ok
+test_external_model_rename_belongs_to_source_file (TestComponentRename.TestComponentRename.test_external_model_rename_belongs_to_source_file) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentRename.py", line 88, in test_external_model_rename_belongs_to_source_file
+    source, definition = self.external_fixture()
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 112, in external_fixture
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+test_history_heading_context_menu_rename_undo_and_save (TestComponentRename.TestComponentRename.test_history_heading_context_menu_rename_undo_and_save) ... ok
+test_history_heading_has_no_visibility_or_feature_selection (TestComponentRename.TestComponentRename.test_history_heading_has_no_visibility_or_feature_selection) ... ok
+test_history_rename_validation_and_stale_context (TestComponentRename.TestComponentRename.test_history_rename_validation_and_stale_context) ... ok
+test_history_unused_and_external_definition_rename (TestComponentRename.TestComponentRename.test_history_unused_and_external_definition_rename) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentRename.py", line 204, in test_history_unused_and_external_definition_rename
+    source, definition = self.external_fixture()
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 112, in external_fixture
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+test_part001_rename_updates_shared_rows_and_undo (TestComponentRename.TestComponentRename.test_part001_rename_updates_shared_rows_and_undo) ... ok
+test_explicit_schema_upgrade_and_unsaved_import_preflight (TestExternalDefinitions.TestExternalDefinitions.test_explicit_schema_upgrade_and_unsaved_import_preflight) ... ok
+test_external_edit_stays_in_tab_and_saves_defining_file (TestExternalDefinitions.TestExternalDefinitions.test_external_edit_stays_in_tab_and_saves_defining_file) ... ok
+test_independent_nested_copy_and_explicit_replacements_undo (TestExternalDefinitions.TestExternalDefinitions.test_independent_nested_copy_and_explicit_replacements_undo) ... ok
+test_missing_wrong_future_and_missing_target_fail_then_recover (TestExternalDefinitions.TestExternalDefinitions.test_missing_wrong_future_and_missing_target_fail_then_recover) ... ok
+test_nested_catalog_is_not_placement_and_file_cycles_preflight (TestExternalDefinitions.TestExternalDefinitions.test_nested_catalog_is_not_placement_and_file_cycles_preflight) ... ok
+test_unsaved_nested_import_cannot_publish_unresolvable_assembly (TestExternalDefinitions.TestExternalDefinitions.test_unsaved_nested_import_cannot_publish_unresolvable_assembly) ... ok
+test_unsaved_source_target_and_failed_save_are_recoverable (TestExternalDefinitions.TestExternalDefinitions.test_unsaved_source_target_and_failed_save_are_recoverable) ... ok
+
+======================================================================
+ERROR: test_export_external_children_domesticates_and_deduplicates_labels (TestPartTransfer.TestPartTransfer.test_export_external_children_domesticates_and_deduplicates_labels)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPartTransfer.py", line 204, in test_export_external_children_domesticates_and_deduplicates_labels
+    hierarchy.add_children(self.drive, [a, b]); before = self.state(source)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\hierarchy.py", line 114, in add_children
+    _, imported = external.prepare_import(owner.Document, definition.Document)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Cover" conflicts with "Cover" in Machine.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Machine.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_model_rename_belongs_to_source_file (TestComponentRename.TestComponentRename.test_external_model_rename_belongs_to_source_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentRename.py", line 88, in test_external_model_rename_belongs_to_source_file
+    source, definition = self.external_fixture()
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 112, in external_fixture
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_history_unused_and_external_definition_rename (TestComponentRename.TestComponentRename.test_history_unused_and_external_definition_rename)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentRename.py", line 204, in test_history_unused_and_external_definition_rename
+    source, definition = self.external_fixture()
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 112, in external_fixture
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 62, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 39, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+----------------------------------------------------------------------
+Ran 59 tests in 57.783s
+
+FAILED (errors=3)

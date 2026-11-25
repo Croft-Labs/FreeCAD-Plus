@@ -795,6 +795,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 try:
                     active, path = self._context(doc, view)
                     self._message('')
+                    # Old documents remain navigable so conflicting definitions
+                    # can be renamed; saving cannot preserve the conflict.
+                    from . import naming
+                    try:
+                        naming.validate_for_save(doc)
+                    except ValueError as error:
+                        self._message(str(error))
                 except ValueError as error:
                     active, path = None, ()
                     self._message(str(error))

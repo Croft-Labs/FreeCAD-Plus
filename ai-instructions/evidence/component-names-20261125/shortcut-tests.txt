@@ -1,0 +1,10 @@
+test_import_collision_reports_both_files_before_mutation (TestComponentNames.TestComponentNames.test_import_collision_reports_both_files_before_mutation) ... ok
+test_native_label_edit_is_rejected_and_valid_rename_shared (TestComponentNames.TestComponentNames.test_native_label_edit_is_rejected_and_valid_rename_shared) ... ok
+test_generated_new_name_reserves_imports (TestComponentNames.TestComponentNames.test_generated_new_name_reserves_imports) ... ok
+test_legacy_conflict_is_repairable_but_native_saves_refuse_it (TestComponentNames.TestComponentNames.test_legacy_conflict_is_repairable_but_native_saves_refuse_it) ... ok
+test_external_model_rename_belongs_to_source_file (TestComponentRename.TestComponentRename.test_external_model_rename_belongs_to_source_file) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.266s
+
+OK

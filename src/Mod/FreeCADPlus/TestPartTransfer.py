@@ -201,6 +201,10 @@ class TestPartTransfer(unittest.TestCase):
     def test_export_external_children_domesticates_and_deduplicates_labels(self):
         source, a, b = self.library()
         a.Label = 'Cover'; b.Label = 'Mounting plate'
+        with self.assertRaisesRegex(ValueError, 'unique within this file'):
+            hierarchy.add_children(self.drive, [a, b])
+        hierarchy.rename_definition(a, 'Hardware cover')
+        hierarchy.rename_definition(b, 'Hardware mounting plate')
         hierarchy.add_children(self.drive, [a, b]); before = self.state(source)
         path = self.export([self.drive, self.cover])
         self.assertEqual(self.state(source), before)

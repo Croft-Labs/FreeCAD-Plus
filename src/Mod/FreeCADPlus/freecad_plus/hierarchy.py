@@ -22,8 +22,8 @@ def upgrade(doc):
 
 def create_definition(doc, label):
     root = _root(doc)
-    if not label.strip() or any(d.Label == label for d in root.Definitions):
-        raise ValueError("Choose a nonempty component name unique within this file")
+    from . import naming
+    naming.check_name(doc, label)
     with transaction(doc, "Create domestic component"):
         definition = _create_definition(root, label)
     return definition
@@ -77,8 +77,8 @@ def add_child(owner, definition=None, *, label=None):
     imported = None
     if definition is None:
         label = label.strip()
-        if not label or any(d.Label == label for d in root.Definitions):
-            raise ValueError('Choose a nonempty component name unique within this file')
+        from . import naming
+        naming.check_name(owner.Document, label)
     else:
         if definition not in validate(definition.Document).Definitions:
             raise ValueError('The selected component is no longer available')
@@ -114,6 +114,8 @@ def add_children(owner, definitions):
             _, imported = external.prepare_import(owner.Document, definition.Document)
             imports.append(imported)
             available.update(external.available_definitions(imported))
+    from . import naming
+    naming.check_imports(owner.Document, imports)
     with transaction(owner.Document, 'Add existing components'):
         if imports:
             root.Imports = [*root.Imports, *imports]
@@ -150,9 +152,10 @@ def new_part():
         active, unused_path = editing.context_path(doc)
         doc = active.Document
         root = _root(doc)
-    names = {definition.Label for definition in root.Definitions}
+    from . import naming
+    names = naming.reserved(doc)
     index = 1
-    while f'Part{index:03d}' in names:
+    while naming.key(f'Part{index:03d}') in names:
         index += 1
     definition = create_definition(doc, f'Part{index:03d}')
     panel.show_created_component(host, definition)
@@ -165,13 +168,13 @@ def rename_definition(definition, label):
     root = validate(doc)
     if definition not in root.Definitions:
         raise ValueError('Choose a component definition to rename')
-    if not label.strip() or any(d != definition and d.Label == label for d in root.Definitions):
-        raise ValueError('Choose a nonempty component name unique within this file')
+    from . import naming
+    naming.check_name(doc, label, definition)
     if label == definition.Label:
         return False
     if any(flag in definition.getPropertyStatus('Label') for flag in ('ReadOnly', 'Immutable')):
         raise ValueError('This component name is read-only')
-    with transaction(doc, 'Rename component'):
+    with transaction(doc, 'Rename component', check_names=False):
         definition.Label = label
         if definition.Label != label:
             raise ValueError('The native document could not retain the requested component name')

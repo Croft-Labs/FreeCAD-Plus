@@ -1,0 +1,45 @@
+test_batch_collisions_are_preflighted_together (TestComponentNames.TestComponentNames.test_batch_collisions_are_preflighted_together) ... ok
+test_exact_tree_qualification_across_nested_sources (TestComponentNames.TestComponentNames.test_exact_tree_qualification_across_nested_sources) ... ok
+test_export_unique_names_without_renaming_sources (TestComponentNames.TestComponentNames.test_export_unique_names_without_renaming_sources) ... ok
+test_generated_new_name_reserves_imports (TestComponentNames.TestComponentNames.test_generated_new_name_reserves_imports) ... ok
+test_import_collision_reports_both_files_before_mutation (TestComponentNames.TestComponentNames.test_import_collision_reports_both_files_before_mutation) ... ok
+test_independent_copy_checks_imported_names (TestComponentNames.TestComponentNames.test_independent_copy_checks_imported_names) ... ok
+test_legacy_conflict_is_repairable_but_native_saves_refuse_it (TestComponentNames.TestComponentNames.test_legacy_conflict_is_repairable_but_native_saves_refuse_it) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentNames.py", line 129, in test_legacy_conflict_is_repairable_but_native_saves_refuse_it
+    with self.assertRaises(Exception):doc.save()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Exception not raised
+test_local_create_rename_case_and_unicode (TestComponentNames.TestComponentNames.test_local_create_rename_case_and_unicode) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentNames.py", line 48, in test_local_create_rename_case_and_unicode
+    with self.assertRaisesRegex(ValueError,'unique within this file'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+test_native_label_edit_is_rejected_and_valid_rename_shared (TestComponentNames.TestComponentNames.test_native_label_edit_is_rejected_and_valid_rename_shared) ... ok
+test_reverse_importers_block_source_rename_and_creation (TestComponentNames.TestComponentNames.test_reverse_importers_block_source_rename_and_creation) ... ok
+test_same_definition_instances_and_diamond_imports_are_valid (TestComponentNames.TestComponentNames.test_same_definition_instances_and_diamond_imports_are_valid) ... ok
+test_two_imports_collide_even_when_unused_or_nested (TestComponentNames.TestComponentNames.test_two_imports_collide_even_when_unused_or_nested) ... ok
+
+======================================================================
+FAIL: test_legacy_conflict_is_repairable_but_native_saves_refuse_it (TestComponentNames.TestComponentNames.test_legacy_conflict_is_repairable_but_native_saves_refuse_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentNames.py", line 129, in test_legacy_conflict_is_repairable_but_native_saves_refuse_it
+    with self.assertRaises(Exception):doc.save()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Exception not raised
+
+======================================================================
+FAIL: test_local_create_rename_case_and_unicode (TestComponentNames.TestComponentNames.test_local_create_rename_case_and_unicode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentNames.py", line 48, in test_local_create_rename_case_and_unicode
+    with self.assertRaisesRegex(ValueError,'unique within this file'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 12 tests in 6.778s
+
+FAILED (failures=2)

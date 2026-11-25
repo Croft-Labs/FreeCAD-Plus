@@ -25,7 +25,7 @@ def visibility_transaction(doc, label):
 
 
 @contextmanager
-def transaction(doc, label):
+def transaction(doc, label, *, check_names=True):
     """Do not consume or commit a caller's pending transaction."""
     if doc.HasPendingTransaction:
         raise ValueError("Finish the current operation first")
@@ -35,6 +35,9 @@ def transaction(doc, label):
         validate(doc)
         doc.recompute()
         validate(doc)
+        if check_names:
+            from . import naming
+            naming.validate_for_save(doc)
     except Exception:
         doc.abortTransaction()
         doc.recompute()
@@ -410,6 +413,8 @@ def save_document(doc, filename=None, *, label=None):
     root = validate(doc)
     if doc.HasPendingTransaction:
         raise ValueError("Finish the current operation before saving")
+    from . import naming
+    naming.validate_for_save(doc)
     path = Path(filename or doc.FileName)
     if path.suffix.lower() != ".cadprt":
         raise ValueError("Choose a .cadprt filename")

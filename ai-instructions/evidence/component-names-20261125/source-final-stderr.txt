@@ -1,0 +1,19 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/naming-validation/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+Component name "motor" conflicts with "Motor" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+Document with the UUID '18c07c78-366c-4f49-b499-c9416c2eb99a' already exists, change to '5cf4aec7-87d6-4e3c-856c-f90442da45cc'
+Document with the UUID '6cb48533-6002-4a57-9ae1-99d7f1f8b1ba' already exists, change to '068dc9d4-cd60-44e6-b9fe-3dc465ee8129'
+Document with the UUID 'fbfc6123-1bef-4e3c-bbcf-355ba4e2f1d7' already exists, change to 'a44094e5-ee7e-439a-a712-2ab24dea2bd2'
+Document with the UUID '23a7b2e6-4fc6-4cee-9b69-417661c423cf' already exists, change to '16ca04b6-5529-4c50-9351-52718c1539c7'
+Document with the UUID '898c5d14-2446-448d-ad8b-acd1b51b74c6' already exists, change to 'afe6bef3-f6f2-4332-a37f-2adb3f642cb2'

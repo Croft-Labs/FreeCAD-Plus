@@ -20,6 +20,7 @@ set(FreeCADPlus_SRCS
     TestExternalDefinitions.py
     TestComponentPanel.py
     TestComponentRename.py
+    TestComponentNames.py
     TestActiveAssembly.py
     TestAddComponent.py
     TestAssemblyConstraints.py
@@ -62,6 +63,7 @@ set(FreeCADPlus_SRCS
     TestMoveWorkflow.py
     TestComponentClipboard.py
     freecad_plus/__init__.py
+    freecad_plus/naming.py
     freecad_plus/ui_modes.py
     freecad_plus/toolbar_layout.py
     freecad_plus/toolbars.py

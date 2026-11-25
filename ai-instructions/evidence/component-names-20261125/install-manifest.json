@@ -1,0 +1,98 @@
+[
+  {
+    "file": "bin/FreeCADBase.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADBase.dll",
+    "sha256": "a1fe8d69eb9fc6ae1920ebaf82e697cef00af74c544cf27d0eb2aab4aa2582c2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADBase.dll.before-naming-20261125"
+  },
+  {
+    "file": "bin/FreeCADApp.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADApp.dll",
+    "sha256": "97677480c3ce1a87d47ea9908b6a9f630f6635552d00ae29cb2ee32daf6f7304",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADApp.dll.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "ac8deadb9649ede4c02ddf7b0098e031ebb8eff652a742109e7237b3432ed74e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentNames.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentNames.py",
+    "sha256": "bf5c09c75332ce5cd73e88847a6e171210b1db8a66b293c104a7f7a7dd9585b2",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestExternalDefinitions.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestExternalDefinitions.py",
+    "sha256": "95e127d6c07edfcd570e5e971b1bf0375f6df9a84da65a472638ce379bcf7d94",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestExternalDefinitions.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestUnusedModels.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestUnusedModels.py",
+    "sha256": "f75f6ab6f3f13587bb2f4004fc8efaa009b8a184a8deab302162b23530d0f021",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestUnusedModels.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestPartTransfer.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPartTransfer.py",
+    "sha256": "d57d13ff9583d49d860f65a41a72f6194d48d2c1aa43baf7dd76ab374e872808",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestPartTransfer.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestFileWorkflows.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestFileWorkflows.py",
+    "sha256": "86160c28a8b1dda76091f011872468c621b7ff65d41a94ae765e2124b87d3a6f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestFileWorkflows.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentRename.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentRename.py",
+    "sha256": "074af6916017589d63443ddb0b247a0624586996bdb39b6505649904b0c40633",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentRename.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/naming.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\naming.py",
+    "sha256": "010986485228125bc951bc034aafb79c4e62658a51b9200b63419d9081b210ed",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "sha256": "d823e771794b81e6db8af626351f2ecdb54378300f93c9e0a0bf3ce8e82fea10",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/hierarchy.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py",
+    "sha256": "c9c7e2a37a9746841c5ebdcfdbf934e364b3f4af05e2f01170f4d9fe2a052cf6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/external.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\external.py",
+    "sha256": "e96b508ad6e767a98e3c9f09af1cbc26af658bd1e43f74e28484295389c608fa",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\external.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/component_add.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "sha256": "b6a5a0a872bf27c0a6b24212b481da7e014a71cae8a056ff80010ba9a0abc26d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "c5191139bd7ad7fcb54cd2f909215817dae83c31d4cb88dcc5ac3e0f1b67edce",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-naming-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/part_transfer_ops.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\part_transfer_ops.py",
+    "sha256": "eb00372abd10f539b447423b371f31d44923b5542f6516c7852c07b02fa6f60a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\part_transfer_ops.py.before-naming-20261125"
+  }
+]

@@ -1,5 +1,32 @@
 # Component/document architecture
 
+## Component names across imported catalogs — November 25, 2026
+
+`naming.py` compares NFC-normalized, stripped, casefolded definition labels.
+Scopes contain domestic definitions plus transitive Imports, including unused
+definitions; identity deduplicates diamonds and repeated placements. Loaded
+reverse importers participate in source creation, rename, import and save checks.
+Unrelated open files do not share the scope. Diagnostic filenames expand to paths
+when basenames would be ambiguous. Assembly labels retain their actual source stem.
+
+Hierarchy create/add/rename, batch import and independent-copy preflight share this
+service; new-part suggestions reserve the same names. Transaction completion
+validates naming as well as native ownership. Rename preflights its new name and
+permits incremental repair of older conflicts without requiring all conflicting
+definitions to be renamed atomically. Native Label edits are observed and restored
+to their old label on conflict; restore/Undo/Redo are not rewritten by the observer.
+
+Native Document Save/Save As/Save Copy call the same validator, including a check
+before Save As changes filename/label. Classic documents bypass it. Existing
+conflicting files remain structurally navigable and show existing panel feedback;
+save is blocked until repaired. A source change made while an importer is closed
+can only be checked when that importer reopens. No closed-file global registry or
+silent source rename is introduced. Independent export keeps its existing detached
+copy behavior, now with normalized unique destination labels.
+
+No schema or persisted identity changes; no new layout or dialog. See
+[native validation and delivery](evidence/component-names-20261125/README.md).
+
 ## Native document formats and Classic conversion — November 25, 2026
 
 `App/DocumentFormat.h` classifies Plus from the component-document marker and

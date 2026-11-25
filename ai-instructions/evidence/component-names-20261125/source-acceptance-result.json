@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "tests": 59,
+  "failures": 0,
+  "errors": 3,
+  "modules": {
+    "AssemblyApp": "C:\\Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/Assembly\\AssemblyApp.pyd",
+    "JointObject": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\JointObject.py",
+    "UtilsAssembly": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\UtilsAssembly.py",
+    "CommandCreateJoint": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\CommandCreateJoint.py",
+    "freecad_plus.document": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "freecad_plus.panel": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "freecad_plus.constraints": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\FreeCADPlus\\freecad_plus\\constraints.py"
+  }
+}

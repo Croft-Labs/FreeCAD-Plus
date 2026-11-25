@@ -67,13 +67,14 @@ def export_parts(definitions, filename):
             created = set(destination.Objects) - before
             if any(target not in created for obj in created for target in obj.OutList):
                 raise ValueError('The copied parts retain an outside dependency')
+            from . import naming
             names = set()
             for original, copied in zip(definitions, copies):
                 name = original.Label
                 index = 2
-                while name in names:
+                while naming.key(name) in names:
                     name = f'{original.Label} ({index})'; index += 1
-                copied.Label = name; names.add(name)
+                copied.Label = name; names.add(naming.key(name))
                 if App.GuiUp:
                     copied.Visibility = False
             root.Definitions = copies
