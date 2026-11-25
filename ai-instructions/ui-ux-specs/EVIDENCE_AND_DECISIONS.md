@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Component terminology — November 25, 2026
+
+The owner stated in this chat: "a component can be either a part, an assembly, or
+both (although not recommended). I believe that I was reversing the terminology
+yesterday." Component is therefore the general entity; part and assembly describe
+its roles. Both roles together remain supported, with the owner's recommendation
+to avoid combining them. This clarification supersedes reversed terminology in the
+November 24 discussion. It records terminology and does not authorize additional
+UI renaming or change previously approved behavior. COMPONENT_PANEL owns the
+canonical definition, with a pointer in PROGRAMMING_SUMMARY.
+
 Owner messages in this chat, October 10, 2026, request five separate Markdown specifications, all accessible historical conversations, newer-over-older conflict resolution, archiving replaced documents and pointers from UI_UX_SPEC. The owner explicitly requires unconfirmed DOCX content to be flagged and the **original FreeCAD workbench list**, noting that several workbenches were removed without instruction. Components serve as both parts and assemblies; backend Bodies are not independently managed by users.
 
 The owner confirmed that the old F: drive is disconnected. Discussion of a possible fresh fork is a design decision still under consideration, with this fork retained as reference. The owner reports recurring bugs and jittery UI. No application code change, fresh fork or rebuild is part of this documentation migration.

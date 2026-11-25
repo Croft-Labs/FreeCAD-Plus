@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Terminology
+
+Owner clarification, November 25: a **component** can be a **part**, an **assembly**,
+or **both**. Combining modeled geometry and child components is supported but not
+recommended. This corrects potentially reversed terminology in the November 24
+discussion. Follow the [canonical component terminology](ui-ux-specs/COMPONENT_PANEL.md#component-terminology--owner-clarification-november-25-2026).
+
 ## Responsive component tabs — installed
 
 Parts/Assembly/History now shrink equally to the longest complete label, including

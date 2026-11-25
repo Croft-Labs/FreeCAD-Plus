@@ -1,5 +1,18 @@
 # Component panel
 
+## Component terminology — owner clarification, November 25, 2026
+
+**Component** is the general entity. A component can serve as a **part**, an
+**assembly**, or **both**. A part provides modeled geometry; an assembly contains
+child components. A component may contain both its own geometry and child
+components, although combining these roles is not recommended. Mixed components
+remain supported.
+
+The owner clarified that the terminology may have been reversed in the November 24
+discussion. Use this definition when interpreting those messages and in future
+project guidance. Existing approved behavior and UI labels remain in effect.
+See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--november-25-2026).
+
 ## Responsive tab widths — November 25, 2026
 
 Owner-approved native preview: Parts, Assembly and History shrink together with
