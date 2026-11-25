@@ -1,20 +1,23 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Parent-owned component movement; preview lives only in the originating view."""
+"""Occurrence-aware Move Components. Preview never writes document geometry."""
 import math
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide import QtCore, QtGui
-try:
-    from PySide import QtWidgets
-except ImportError:
-    QtWidgets = QtGui
+from PySide6 import QtCore, QtWidgets
 from pivy import coin
-from . import document, editing, external, hierarchy, isolation
+from . import assembly, document, editing, external, hierarchy, isolation, task_status
+from . import movement_math as rigid
+from .movement_handles import AXES, Handles
 
-WORKFLOWS = ('Translate', 'Rotate', 'Point to Point', 'Align Axes',
-             'Align Coordinate Systems', 'Interactive')
+METHODS = {'Move': ('Distance and vector', 'Point to point', 'Dynamic drag'),
+           'Rotate': ('Axis and angle', 'Dynamic drag'),
+           'Align': ('Axes', 'Coordinate systems')}
 _active = None
+
+
+class IncompleteInput(ValueError):
+    """Ordinary collector guidance, rather than an invalid operation."""
 
 
 def movable(link, owner):
@@ -34,222 +37,290 @@ def movable(link, owner):
 def visible_reference(obj, sub):
     if not obj.Visibility: return False
     chain = obj.getSubObjectList(sub)
-    for parent, child in zip(chain, chain[1:]):
-        visible = parent.isElementVisible(child.Name)
-        if visible == 0 or (visible < 0 and not child.Visibility): return False
-    return True
+    return all(parent.isElementVisible(child.Name) != 0 and
+               (parent.isElementVisible(child.Name) >= 0 or child.Visibility)
+               for parent, child in zip(chain, chain[1:]))
+
+
+class Collector(QtWidgets.QListWidget):
+    activated = QtCore.Signal()
+    cleared = QtCore.Signal()
+
+    def __init__(self, placeholder, multi=False):
+        super().__init__()
+        self.placeholder = placeholder
+        self.setFixedHeight(70 if multi else 34)
+        self.setToolTip('Click to pick in the tree or view. Delete removes the selected reference.')
+        if multi: self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+
+    def mousePressEvent(self, event):
+        self.activated.emit(); super().mousePressEvent(event)
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Delete:
+            self.cleared.emit(); event.accept()
+        else: super().keyPressEvent(event)
+
+    def event(self, event):
+        if event.type() == QtCore.QEvent.ShortcutOverride and event.key() == QtCore.Qt.Key_Delete:
+            event.accept(); return True
+        return super().event(event)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if not self.count():
+            from PySide6 import QtGui
+            painter = QtGui.QPainter(self.viewport())
+            painter.setPen(self.palette().placeholderText().color())
+            painter.drawText(self.viewport().rect().adjusted(5, 2, -4, -2), QtCore.Qt.AlignVCenter, self.placeholder)
 
 
 class MoveTask(QtCore.QObject):
     def __init__(self, panel, rows):
         super().__init__(panel)
+        from .panel import identity
         self.panel = panel
-        self.doc, self.view = panel._binding
-        self.binding = panel._binding
-        self.paths = []
-        self.parent_path = None
-        self.parent_ref = None
-        self.direction_snapshot = None
-        self.axis_snapshot = None
-        self.axis_points = [None, None]
-        self.pivot_snapshot = None
-        self.angle_error = None
-        self.closed = False
-        self.busy = False
-        self.overlay = None
-        self.scene = self.view.getSceneGraph()
-        self.form = QtWidgets.QWidget()
-        self.form.setWindowTitle('Move Components')
-        layout = QtWidgets.QVBoxLayout(self.form)
-        layout.addWidget(QtWidgets.QLabel('Workflow'))
-        self.workflow = QtWidgets.QComboBox(); self.workflow.addItems(WORKFLOWS)
-        layout.addWidget(self.workflow)
-        layout.addWidget(QtWidgets.QLabel('Components'))
-        self.components = QtWidgets.QListWidget()
-        self.components.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.components.installEventFilter(self)
-        layout.addWidget(self.components)
-        buttons = QtWidgets.QHBoxLayout()
-        for label, callback in (('Add selected', self.add_selected), ('Remove', self.remove_selected), ('Clear', self.clear)):
-            button = QtWidgets.QPushButton(label); button.clicked.connect(lambda checked=False, c=callback: self.run(c)); buttons.addWidget(button)
-        layout.addLayout(buttons)
-        self.persistent = QtWidgets.QCheckBox('Persistent Selection'); self.persistent.setChecked(True)
-        layout.addWidget(self.persistent)
-        self.translate_form = QtWidgets.QWidget()
-        translate_layout = QtWidgets.QVBoxLayout(self.translate_form)
-        translate_layout.setContentsMargins(0,0,0,0)
-        layout.addWidget(self.translate_form)
-        translate_layout.addWidget(QtWidgets.QLabel('Direction'))
-        self.direction = QtWidgets.QComboBox()
-        self.direction.addItems(('Choose direction', 'Parent X', 'Parent Y', 'Parent Z', 'Picked line / edge / axis'))
-        translate_layout.addWidget(self.direction)
-        self.pick = QtWidgets.QPushButton('Use selected direction'); self.pick.clicked.connect(lambda: self.run(self.pick_direction))
-        translate_layout.addWidget(self.pick)
-        translate_layout.addWidget(QtWidgets.QLabel('Distance'))
-        self.distance = Gui.UiLoader().createWidget('Gui::InputField')
-        self.distance.setProperty('unit', 'mm'); self.distance.setProperty('minimum', 0.0)
-        self.distance.setProperty('rawValue', 0.0)
-        translate_layout.addWidget(self.distance)
-        self.rotate_form = QtWidgets.QWidget()
-        rotate_layout = QtWidgets.QVBoxLayout(self.rotate_form)
-        rotate_layout.setContentsMargins(0,0,0,0)
-        layout.addWidget(self.rotate_form)
-        rotate_layout.addWidget(QtWidgets.QLabel('Axis'))
-        self.axis = QtWidgets.QComboBox()
-        self.axis.addItems(('Choose axis', 'Parent X', 'Parent Y', 'Parent Z', 'Picked line / edge / axis', 'Two points'))
-        rotate_layout.addWidget(self.axis)
-        self.axis_pick = QtWidgets.QPushButton('Use selected line / axis')
-        self.axis_pick.clicked.connect(lambda: self.run(self.pick_axis))
-        rotate_layout.addWidget(self.axis_pick)
-        points = QtWidgets.QHBoxLayout()
-        for index, title in enumerate(('Use selected first point', 'Use selected second point')):
-            button = QtWidgets.QPushButton(title)
-            button.clicked.connect(lambda checked=False, i=index: self.run(lambda: self.pick_axis_point(i)))
-            points.addWidget(button)
-        rotate_layout.addLayout(points)
-        pivot = QtWidgets.QHBoxLayout()
-        self.pivot_pick = QtWidgets.QPushButton('Use selected pivot')
-        self.pivot_pick.clicked.connect(lambda: self.run(self.pick_pivot))
-        pivot.addWidget(self.pivot_pick)
-        self.pivot_clear = QtWidgets.QPushButton('Reset pivot')
-        self.pivot_clear.clicked.connect(self.reset_pivot)
-        pivot.addWidget(self.pivot_clear); rotate_layout.addLayout(pivot)
-        self.resolved_axis = QtWidgets.QLabel('Choose an axis.'); self.resolved_axis.setWordWrap(True)
-        rotate_layout.addWidget(self.resolved_axis)
-        rotate_layout.addWidget(QtWidgets.QLabel('Angle'))
-        self.angle = Gui.UiLoader().createWidget('Gui::InputField')
-        self.angle.setProperty('unit', 'deg'); self.angle.setProperty('minimum', 0.0)
-        self.angle.setProperty('rawValue', 0.0); rotate_layout.addWidget(self.angle)
-        rotate_layout.addWidget(QtWidgets.QLabel('Positive follows the axis arrow by the right-hand rule.'))
-        self.rotate_form.hide()
-        self.reverse = QtWidgets.QCheckBox('Reverse'); layout.addWidget(self.reverse)
-        self.message = QtWidgets.QLabel(); self.message.setWordWrap(True); layout.addWidget(self.message)
-        layout.addWidget(QtWidgets.QLabel('Preview is a temporary wire outline; existing geometry remains selectable.'))
-        self.workflow.currentIndexChanged.connect(self.reset_inputs)
-        self.direction.currentIndexChanged.connect(self.update_preview)
-        self.distance_error = None
-        self.distance.valueChanged.connect(self.valid_distance)
-        self.distance.parseError.connect(self.invalid_distance)
-        self.reverse.toggled.connect(self.update_preview)
-        self.axis.currentIndexChanged.connect(self.update_preview)
-        self.angle.valueChanged.connect(self.valid_angle)
-        self.angle.parseError.connect(self.invalid_angle)
+        self.doc, self.view = panel._binding; self.binding = panel._binding
+        active, active_path = panel._context(*self.binding)
+        chosen, path = panel._assembly_context(self.binding, active, active_path)
+        if chosen is None: raise ValueError('Choose an active assembly first')
+        self.assembly_ref = identity(chosen); self.assembly_path = tuple(identity(o) for o in path)
+        self.edit_context = (identity(active) if active else None, tuple(identity(o) for o in active_path))
+        self.paths = []; self.parent_path = None; self.parent_ref = None
+        self.refs = {}; self.ref_widgets = {}; self.numeric = []
+        self.pending = App.Placement(); self.pivot_snapshot = None; self.plane_direction = App.Vector(1, 0, 0)
+        self.numeric_base = None; self.after_apply = False; self.drag_dirty = False
+        self.collecting = 'components'; self.closed = False; self.busy = True; self.selecting = False
+        self.overlay = None; self.handles = None; self.scene = self.view.getSceneGraph()
+        self.form = QtWidgets.QWidget(); self.form.setWindowTitle('Move Components'); self.form.setMinimumWidth(300)
+        self.form.setAutoFillBackground(True)
+        layout = QtWidgets.QVBoxLayout(self.form); layout.setContentsMargins(8, 8, 8, 8)
+        self.context = QtWidgets.QLabel(); self.context.setWordWrap(True); layout.addWidget(self.context)
+        modes = QtWidgets.QFormLayout()
+        self.kind = QtWidgets.QComboBox(); self.kind.addItems(METHODS); self.method = QtWidgets.QComboBox()
+        modes.addRow('Type', self.kind); modes.addRow('Method', self.method); layout.addLayout(modes)
+        group = QtWidgets.QGroupBox('Components'); box = QtWidgets.QVBoxLayout(group)
+        self.components = Collector('Pick child component instances', multi=True)
+        self.components.activated.connect(lambda: self.collect('components'))
+        self.components.cleared.connect(lambda: self.run(self.remove_selected)); box.addWidget(self.components)
+        hint = QtWidgets.QLabel('Click the list, then pick components in the tree or view.'); hint.setWordWrap(True); box.addWidget(hint)
+        row = QtWidgets.QHBoxLayout()
+        for label, callback in (('Remove', self.remove_selected), ('Clear', self.clear)):
+            button = QtWidgets.QPushButton(label); button.clicked.connect(lambda checked=False, c=callback: self.run(c)); row.addWidget(button)
+        box.addLayout(row)
+        self.persistent = QtWidgets.QCheckBox('Keep selection after Apply'); self.persistent.setChecked(True)
+        box.addWidget(self.persistent); layout.addWidget(group)
+        self.method_host = QtWidgets.QWidget(); self.method_layout = QtWidgets.QVBoxLayout(self.method_host)
+        self.method_layout.setContentsMargins(0, 0, 0, 0); layout.addWidget(self.method_host)
+        self.auto = QtWidgets.QCheckBox('Automatic preview'); self.auto.setChecked(True)
+        update = QtWidgets.QPushButton('Update preview'); update.clicked.connect(lambda: self.update_preview(force=True))
+        self.auto.toggled.connect(self.update_preview)
+        row = QtWidgets.QHBoxLayout(); row.addWidget(self.auto); row.addWidget(update); layout.addLayout(row)
+        self.message = task_status.TaskStatus(); layout.addWidget(self.message); layout.addStretch()
+        self.kind.currentTextChanged.connect(self.change_type); self.method.currentTextChanged.connect(self.change_method)
+        self.change_type('Move'); self.busy = False
         try:
-            self.add_rows(rows)
+            if rows: self.add_rows(rows)
+            else: self.refresh_list()
         except Exception:
-            self.form.deleteLater(); self.deleteLater()
-            raise
+            self.form.deleteLater(); self.deleteLater(); raise
         self.timer = QtCore.QTimer(self); self.timer.setSingleShot(True); self.timer.timeout.connect(self.check_lifecycle)
-        App.addDocumentObserver(self)
-        Gui.addDocumentObserver(self)
-        panel._mdi.subWindowActivated.connect(self.schedule)
-        Gui.getMainWindow().workbenchActivated.connect(self.finish)
-        editing.add_context_observer(self.schedule)
-        self.window = panel._state(self.binding).get('window')
+        self.pick_timer = QtCore.QTimer(self); self.pick_timer.setSingleShot(True); self.pick_timer.timeout.connect(lambda: self.run(self.consume_selection))
+        App.addDocumentObserver(self); Gui.addDocumentObserver(self); Gui.Selection.addObserver(self, 0)
+        panel._mdi.subWindowActivated.connect(self.schedule); Gui.getMainWindow().workbenchActivated.connect(self.finish)
+        editing.add_context_observer(self.schedule); self.window = panel._state(self.binding).get('window')
         if self.window: self.window.destroyed.connect(self.finish)
+        self.update_preview()
+
+    def quantity(self, unit='mm', value=0.0, nonnegative=False):
+        widget = Gui.UiLoader().createWidget('Gui::InputField'); widget.setProperty('unit', unit)
+        if nonnegative: widget.setProperty('minimum', 0.0)
+        widget.setProperty('rawValue', float(value))
+        widget.valueChanged.connect(lambda *unused: widget.setProperty('moveParseError', ''))
+        widget.valueChanged.connect(self.input_changed)
+        def invalid(error):
+            widget.setProperty('moveParseError', str(error)); self.input_changed()
+        widget.parseError.connect(invalid); widget.installEventFilter(self); self.numeric.append(widget)
+        return widget
+
+    def value(self, widget):
+        value = float(widget.property('rawValue'))
+        if widget.property('moveParseError') or not widget.hasAcceptableInput() or not math.isfinite(value):
+            raise ValueError('Enter a valid finite value with the required units')
+        return value
+
+    def combo(self, choices):
+        widget = QtWidgets.QComboBox(); widget.addItems(choices); widget.currentIndexChanged.connect(self.input_changed)
+        return widget
+
+    def reference(self, key, placeholder):
+        widget = Collector(placeholder); widget.activated.connect(lambda: self.collect(key))
+        widget.cleared.connect(lambda: self.clear_reference(key)); self.ref_widgets[key] = widget
+        return widget
+
+    def collect(self, key):
+        self.collecting = key; self.selecting = True
+        try: Gui.Selection.clearSelection()
+        finally: self.selecting = False
+        for name, widget in {'components': self.components, **self.ref_widgets}.items():
+            widget.setStyleSheet('QListWidget { border: 2px solid #2388cf; }' if name == key else '')
+
+    def clear_reference(self, key):
+        self.refs.pop(key, None); self.ref_widgets[key].clear()
+        if key == 'pivot':
+            self.pivot_snapshot = None; self.numeric_base = None; self.rebuild_handles()
+        self.input_changed()
+
+    def change_type(self, kind):
+        self.method.blockSignals(True); self.method.clear(); self.method.addItems(METHODS[kind])
+        self.method.blockSignals(False); self.change_method(self.method.currentText())
+
+    def change_method(self, method):
+        from .movement_ui import build_method
+        was_busy = self.busy; self.busy = True
+        self.close_handles(); self.clear_preview(); self.pending = App.Placement()
+        self.numeric_base = None; self.after_apply = False; self.drag_dirty = False
+        self.refs = {}; self.ref_widgets = {}; self.numeric = []; self.pivot_snapshot = None; self.collecting = 'components'
+        while self.method_layout.count():
+            item = self.method_layout.takeAt(0)
+            if item.widget(): item.widget().deleteLater()
+        build_method(self, method)
+        self.busy = was_busy; self.collect('components')
+        if not self.busy: self.update_preview(); self.rebuild_handles()
 
     def run(self, callback):
         try:
-            callback()
+            callback(); return True
         except (ValueError, RuntimeError, ReferenceError) as error:
-            self.clear_preview(); self.message.setText(str(error))
-            return False
-        return True
+            self.show_error(error); return False
+
+    def show_error(self, error):
+        self.clear_preview(); self.message.setError(str(error)); self.enable_commit(False)
+
+    def enable_commit(self, enabled, ok=None):
+        if _active is not self: return
+        for buttons in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox):
+            if buttons.isVisible():
+                for role in (QtWidgets.QDialogButtonBox.Apply, QtWidgets.QDialogButtonBox.Ok):
+                    button = buttons.button(role)
+                    if button: button.setEnabled((enabled if ok is None else ok) if role == QtWidgets.QDialogButtonBox.Ok else enabled)
 
     def check(self):
+        from .panel import lookup, identity
         if self.closed or self.panel._closed or self.panel._current() != self.binding:
             raise ValueError('The active file tab changed; reopen Move Components')
         self.panel._clipboard_guard()
-        from .panel import lookup
-        root = document.validate(self.doc)
-        owner = lookup(self.parent_ref) if self.parent_ref else root
-        if self.parent_path:
-            resolved, path = hierarchy.resolve(self.doc, tuple(lookup(r) for r in self.parent_path))
-            if resolved != owner: raise ValueError('The parent occurrence changed')
-        if self.parent_ref:
-            current, route = self.panel._context(self.doc, self.view)
-            if (current or root) != owner or tuple(route) != tuple(lookup(r) for r in self.parent_path):
-                raise ValueError('The editing context changed; reopen Move Components')
+        anchor = lookup(self.assembly_ref)
+        active, path = self.panel._context(*self.binding)
+        chosen, route = self.panel._assembly_context(self.binding, active, path)
+        if chosen != anchor or tuple(identity(o) for o in route) != self.assembly_path:
+            raise ValueError('The active assembly changed; reopen Move Components')
+        if (identity(active) if active else None, tuple(identity(o) for o in path)) != self.edit_context:
+            raise ValueError('The editing context changed; reopen Move Components')
+        owner = assembly.resolve(anchor, tuple(lookup(r) for r in (self.parent_path or ())))
+        if self.parent_ref and identity(owner) != self.parent_ref:
+            raise ValueError('The parent occurrence changed; reopen Move Components')
         links = []
         for refs in self.paths:
-            _, path = hierarchy.resolve(self.doc, tuple(lookup(r) for r in refs))
-            if any(abs(getattr(link, 'Scale', 1.0) - 1.0) > 1e-12 or
-                   (getattr(link, 'ScaleVector', App.Vector(1,1,1))-App.Vector(1,1,1)).Length > 1e-12 for link in path):
-                raise ValueError('Scaled component frames are not supported by this movement task')
+            path = tuple(lookup(r) for r in refs); assembly.resolve(anchor, path)
+            for link in (*tuple(lookup(r) for r in self.assembly_path), *path):
+                if (abs(getattr(link, 'Scale', 1.0) - 1) > 1e-12 or
+                    (getattr(link, 'ScaleVector', App.Vector(1, 1, 1)) - App.Vector(1, 1, 1)).Length > 1e-12):
+                    raise ValueError('Scaled component frames are not supported')
             movable(path[-1], owner); links.append(path[-1])
         return owner, links
 
+    def available_rows(self):
+        from .panel import lookup, projection
+        roots = projection(self.doc, assembly_root=lookup(self.assembly_ref),
+                           assembly_path=tuple(lookup(r) for r in self.assembly_path))[1]
+        rows = []
+        def visit(row):
+            if row.kind in ('assembly', 'occurrence'): rows.append(row)
+            for child in row.children: visit(child)
+        for row in roots: visit(row)
+        return rows
+
     def add_rows(self, rows):
         from .panel import lookup, identity
-        rows = tuple(rows)
-        if not rows: raise ValueError('Select placed component instances in Part Tree')
-        # Validate every supplied row before establishing or changing any context.
-        candidates = []
-        parent_path, parent_ref = self.parent_path, self.parent_ref
+        self.check(); candidates = []; parent_path, parent_ref = self.parent_path, self.parent_ref
+        available = {row.key: row for row in self.available_rows()}
         for row in rows:
             self.panel._checked(row)
-            if row.kind != 'occurrence': raise ValueError('Select whole placed component instances')
-            path = tuple(lookup(r) for r in row.path)
-            owner = hierarchy.resolve(self.doc, path[:-1])[0] if len(path) > 1 else document.validate(self.doc)
-            movable(path[-1], owner)
-            if parent_path is None: parent_path, parent_ref = row.path[:-1], identity(owner)
-            if row.path[:-1] != parent_path or identity(owner) != parent_ref:
+            if row.kind != 'occurrence':
+                raise ValueError('The active assembly is fixed; select its child component instances')
+            if row.key not in available or available[row.key] != row:
+                raise ValueError('Choose a child of the current active assembly')
+            relative = row.path if row.anchor else row.path[len(self.assembly_path):]
+            if not relative: raise ValueError('The active assembly is fixed')
+            owner = assembly.resolve(lookup(self.assembly_ref), tuple(lookup(r) for r in relative[:-1]))
+            movable(lookup(relative[-1]), owner)
+            if parent_path is None: parent_path, parent_ref = relative[:-1], identity(owner)
+            if relative[:-1] != parent_path or identity(owner) != parent_ref:
                 raise ValueError('Select only siblings under the same parent occurrence; no components were added')
-            if row.path not in self.paths and row.path not in candidates: candidates.append(row.path)
-        self.panel._clipboard_guard()
-        if self.parent_path is None:
-            if parent_path: editing.edit(tuple(lookup(r) for r in parent_path))
-            else: editing.edit_file(self.doc)
-            self.parent_path, self.parent_ref = parent_path, parent_ref
-        self.paths.extend(candidates)
-        self.refresh_list(); self.select_components(); self.update_preview()
-
-    def add_selected(self):
-        from .panel import projection
-        rows = []
-        available = {}
-        def visit(row):
-            if row.kind == 'occurrence': available[row.selection] = row
-            for child in row.children: visit(child)
-        visit(projection(self.doc)[1][0])
-        for entry in Gui.Selection.getSelectionEx('', 0):
-            for sub in entry.SubElementNames or ('',):
-                row = available.get((entry.DocumentName, entry.ObjectName, sub))
-                if row is None: raise ValueError('Select whole sibling instances in Part Tree')
-                rows.append(row)
-        self.check(); self.add_rows(rows)
+            if relative not in self.paths and relative not in candidates: candidates.append(relative)
+        self.parent_path, self.parent_ref = parent_path, parent_ref; self.paths.extend(candidates)
+        self.refresh_list(); self.update_preview(); self.rebuild_handles()
 
     def refresh_list(self):
         from .panel import lookup
         self.components.clear()
         for refs in self.paths:
             self.components.addItem(external.qualified_label(lookup(refs[-1]).LinkedObject, self.doc))
+        owner = lookup(self.parent_ref) if self.parent_ref else None
+        self.context.setText('Active assembly: ' + lookup(self.assembly_ref).Label + ' — fixed\nParent frame: ' +
+                             (owner.Label if owner else 'Pick child components'))
 
-    def select_components(self):
-        from .panel import lookup
-        Gui.Selection.clearSelection()
-        root = document.validate(self.doc)
-        for path in self.paths:
-            Gui.Selection.addSelection(self.doc.Name, root.Name, hierarchy.subname(tuple(lookup(r) for r in path)))
+    def add_selected(self):
+        rows = []; available = self.available_rows()
+        for entry in Gui.Selection.getSelectionEx('', 0):
+            for sub in entry.SubElementNames or ('',):
+                key = (entry.DocumentName, entry.ObjectName, sub)
+                candidates = [r for r in available if r.selection[:2] == key[:2] and sub.startswith(r.selection[2])]
+                if not candidates: raise ValueError('Pick component instances inside the active assembly')
+                rows.append(max(candidates, key=lambda r: len(r.selection[2])))
+        if not rows: return
+        from .selection_list import removing
+        if removing():
+            keys = {r.path if r.anchor else r.path[len(self.assembly_path):] for r in rows}
+            self.paths = [p for p in self.paths if p not in keys]; self.selection_changed()
+        else: self.add_rows(rows)
+
+    def addSelection(self, *args):
+        if not self.closed and not self.selecting:
+            from .selection_list import removing
+            self.pick_remove = removing(); self.pick_timer.start(0)
+
+    def setSelection(self, *args): self.addSelection()
+
+    def consume_selection(self):
+        if self.closed: return
+        from .selection_list import pick_intent
+        with pick_intent(getattr(self, 'pick_remove', False)):
+            if self.collecting == 'components': self.add_selected()
+            else: self.pick_reference(self.collecting)
 
     def remove_selected(self):
         indexes = {self.components.row(item) for item in self.components.selectedItems()}
-        self.paths = [path for i, path in enumerate(self.paths) if i not in indexes]
-        self.refresh_list(); self.select_components(); self.update_preview()
+        self.paths = [path for i, path in enumerate(self.paths) if i not in indexes]; self.selection_changed()
 
     def clear(self):
-        self.paths.clear(); self.refresh_list(); Gui.Selection.clearSelection(); self.update_preview()
+        self.paths.clear(); self.selection_changed()
 
-    def eventFilter(self, watched, event):
-        if watched == self.components and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress) and event.key() == QtCore.Qt.Key_Delete:
-            event.accept()
-            if event.type() == QtCore.QEvent.KeyPress: self.run(self.remove_selected)
-            return True
-        return super().eventFilter(watched, event)
+    def selection_changed(self):
+        self.pending = App.Placement(); self.pivot_snapshot = None
+        if not self.paths:
+            self.parent_path = self.parent_ref = None
+            self.change_method(self.method.currentText())
+        self.refresh_list(); self.collect('components'); self.update_preview(); self.rebuild_handles()
 
     def parent_frame(self):
         from .panel import lookup
-        return hierarchy.world_placement(self.doc, tuple(lookup(r) for r in self.parent_path)) if self.parent_path else App.Placement()
+        anchor = lookup(self.assembly_ref)
+        route = tuple(lookup(r) for r in (*self.assembly_path, *(self.parent_path or ())))
+        if self.assembly_path: return hierarchy.world_placement(self.doc, route)
+        path = tuple(lookup(r) for r in (self.parent_path or ()))
+        return anchor.getSubObject(hierarchy.subname(path), 3) if path else App.Placement(anchor.Placement)
 
     def selected_reference(self):
         self.check()
@@ -258,27 +329,31 @@ class MoveTask(QtCore.QObject):
         if len(selections) != 1: raise ValueError('Select exactly one visible reference')
         obj, sub = selections[0]
         from . import geometry
-        active, path = self.panel._context(self.doc, self.view)
-        geometry.require_access(self.doc, obj, sub, active=active, active_path=path)
+        from .panel import lookup
+        anchor = lookup(self.assembly_ref)
+        if not self.assembly_path and document.owned_path(anchor, obj) is not None:
+            geometry.require_access(anchor.Document, obj, sub, active=anchor)
+        else:
+            geometry.require_access(self.doc, obj, sub, active=anchor,
+                                    active_path=tuple(lookup(r) for r in self.assembly_path))
         if not visible_reference(obj, sub): raise ValueError('Choose a visible reference')
         return obj, sub
 
-    def selected_line(self):
-        obj, sub = self.selected_reference()
-        shape = Part.getShape(obj, sub, needSubElement=True)
-        if shape.ShapeType != 'Edge' or not isinstance(shape.Curve, (Part.Line, Part.LineSegment)):
+    def selected_line(self, allow_curved_axis=False):
+        obj, sub = self.selected_reference(); shape = Part.getShape(obj, sub, needSubElement=True)
+        if shape.ShapeType == 'Edge' and isinstance(shape.Curve, (Part.Line, Part.LineSegment)):
+            point, vector = shape.valueAt(0.0), shape.tangentAt(0.0)
+        elif allow_curved_axis and shape.ShapeType == 'Edge' and isinstance(shape.Curve, Part.Circle):
+            point, vector = shape.Curve.Center, shape.Curve.Axis
+        elif allow_curved_axis and shape.ShapeType == 'Face' and isinstance(shape.Surface, Part.Cylinder):
+            point, vector = shape.Surface.Center, shape.Surface.Axis
+        else:
             raise ValueError('Choose a straight line or axis, not a curved edge')
-        vector = shape.tangentAt(0.0)
-        if vector.Length < 1e-12: raise ValueError('The selected direction has zero length')
         frame = self.parent_frame()
-        # Infinite native axes have no vertices. Position and direction need
-        # different transforms; translation must never affect a direction.
-        return (frame.inverse().multVec(shape.valueAt(0.0)),
-                frame.Rotation.inverted().multVec(vector).normalize())
+        return (frame.inverse().multVec(point), rigid.direction(frame.Rotation.inverted().multVec(vector)))
 
     def selected_point(self):
-        obj, sub = self.selected_reference()
-        target = obj.getSubObject(sub, 1) if sub else obj
+        obj, sub = self.selected_reference(); target = obj.getSubObject(sub, 1) if sub else obj
         if target is not None and target.TypeId in ('App::Origin', 'App::Placement', 'PartDesign::CoordinateSystem'):
             point = obj.getSubObject(sub, 3).Base if sub else obj.Placement.Base
         else:
@@ -288,179 +363,239 @@ class MoveTask(QtCore.QObject):
             else: raise ValueError('Choose a vertex, point, origin or circular edge center')
         return self.parent_frame().inverse().multVec(point)
 
-    def pick_direction(self):
-        self.direction_snapshot = self.selected_line()[1]
-        self.direction.setCurrentIndex(4); self.update_preview()
+    def selected_frame(self):
+        obj, sub = self.selected_reference(); target = obj.getSubObject(sub, 1) if sub else obj
+        if target is None or target.TypeId not in ('App::Origin', 'App::Placement', 'PartDesign::CoordinateSystem'):
+            raise ValueError('Choose a coordinate system or define its origin, Z and X axes')
+        world = obj.getSubObject(sub, 3) if sub else obj.Placement
+        return self.parent_frame().inverse().multiply(world)
 
-    def pick_axis(self):
-        self.axis_snapshot = self.selected_line()
-        self.axis.setCurrentIndex(4); self.update_preview()
+    def pick_reference(self, key):
+        from .selection_list import removing
+        if removing(): self.clear_reference(key); return
+        if key in ('direction', 'axis', 'source_axis', 'target_axis') or key.endswith(('_x', '_z')):
+            value = self.selected_line(allow_curved_axis=key in ('source_axis', 'target_axis'))
+        elif key.endswith('_frame'): value = self.selected_frame()
+        else: value = self.selected_point()
+        obj, sub = self.selected_reference()
+        self.after_apply = False
+        chain = obj.getSubObjectList(sub)
+        component = next((item.LinkedObject for item in reversed(chain) if item.TypeId == 'App::Link'), None)
+        target = obj.getSubObject(sub, 1) if sub else obj
+        label = ' · '.join(dict.fromkeys(item.Label for item in (component, target) if item is not None))
+        element = Part.splitSubname(sub)[2] if sub else ''
+        self.refs[key] = value; self.ref_widgets[key].clear()
+        self.ref_widgets[key].addItem(label + (' · ' + element if element else ''))
+        self.ref_widgets[key].item(0).setToolTip(' > '.join(item.Label for item in chain) + (' · ' + element if element else ''))
+        if key == 'pivot': self.pivot_snapshot = value
+        self.update_preview(); self.rebuild_handles()
 
-    def pick_axis_point(self, index):
-        point = self.selected_point()
-        other = self.axis_points[1-index]
-        if other is not None and (point-other).Length < 1e-9:
-            raise ValueError('Axis points must be distinct')
-        self.axis_points[index] = point
-        self.axis.setCurrentIndex(5); self.update_preview()
-
-    def pick_pivot(self):
-        self.pivot_snapshot = self.selected_point(); self.update_preview()
-
-    def reset_pivot(self):
-        self.pivot_snapshot = None; self.update_preview()
+    def reference_value(self, key):
+        if key not in self.refs: raise IncompleteInput('Pick ' + key.replace('_', ' ') + ' before previewing')
+        return self.refs[key]
 
     def rotation_axis(self):
         index = self.axis.currentIndex()
-        if index in (1,2,3):
-            point, vector = App.Vector(), (App.Vector(1,0,0),App.Vector(0,1,0),App.Vector(0,0,1))[index-1]
-        elif index == 4 and self.axis_snapshot is not None:
-            point, vector = self.axis_snapshot
-        elif index == 5 and all(p is not None for p in self.axis_points):
-            point, second = self.axis_points
-            vector = second-point
-            if vector.Length < 1e-9: raise ValueError('Axis points must be distinct')
-            vector.normalize()
-        else: raise ValueError('Choose a complete rotation axis')
-        return (self.pivot_snapshot if self.pivot_snapshot is not None else point), vector
+        if index < 3: point, vector = App.Vector(), AXES[index]
+        elif index == 3: point, vector = self.reference_value('axis')
+        else:
+            point = self.reference_value('from'); vector = rigid.direction(self.reference_value('to') - point)
+        return self.refs.get('pivot', point), vector
 
-    def valid_angle(self, *args):
-        self.angle_error = None; self.update_preview()
-
-    def invalid_angle(self, error):
-        self.angle_error = error
-        if not self.angle.hasFocus(): self.update_preview()
+    def frame_value(self, name):
+        if not self.advanced.isChecked(): return self.reference_value(name + '_frame')
+        return rigid.frame(self.reference_value(name + '_o'), self.reference_value(name + '_z')[1], self.reference_value(name + '_x')[1])
 
     def motion(self):
-        if self.workflow.currentIndex() == 0:
-            return App.Placement(self.delta(), App.Rotation())
-        if self.workflow.currentIndex() != 1:
-            raise ValueError('This movement workflow awaits its next implementation increment')
-        if self.angle_error or not self.angle.hasAcceptableInput():
-            raise ValueError('Enter a valid nonnegative angle')
-        angle = float(self.angle.property('rawValue'))
-        if not math.isfinite(angle) or angle < 0: raise ValueError('Enter a valid nonnegative angle')
-        if angle == 0: return App.Placement()
-        point, vector = self.rotation_axis()
-        rotation = App.Rotation(vector, -angle if self.reverse.isChecked() else angle)
-        return App.Placement(point-rotation.multVec(point), rotation)
+        method = self.method.currentText()
+        if method == 'Distance and vector':
+            distance = self.value(self.distance)
+            if distance < 0: raise ValueError('Distance must be nonnegative; use Reverse direction')
+            index = self.direction.currentIndex()
+            if index < 3: vector = AXES[index]
+            elif index == 3: vector = self.reference_value('direction')[1]
+            elif index == 4: vector = self.reference_value('to') - self.reference_value('from')
+            else: vector = App.Vector(*(field.value() for field in self.vector_fields))
+            return rigid.translation(vector, -distance if self.reverse.isChecked() else distance)
+        if method == 'Point to point':
+            return App.Placement(self.reference_value('to') - self.reference_value('from'), App.Rotation())
+        if method == 'Axis and angle':
+            angle = self.value(self.angle)
+            if angle < 0: raise ValueError('Angle must be nonnegative; use Reverse rotation')
+            return rigid.rotation(*self.rotation_axis(), -angle if self.reverse.isChecked() else angle)
+        if method == 'Axes':
+            return rigid.align_axes(self.reference_value('source_axis'), self.reference_value('target_axis'),
+                                    bool(self.alignment.currentIndex()), self.reverse.isChecked())
+        if method == 'Coordinate systems':
+            return rigid.align_frames(self.frame_value('source'), self.frame_value('target'))
+        self.value(self.drag_value); self.snapped(0.0)
+        return App.Placement(self.pending)
 
-    def axis_preview(self, overlay, links):
-        try:
-            point, vector = self.rotation_axis()
-        except ValueError as error:
-            self.resolved_axis.setText(str(error)); return
-        units = lambda value: App.Units.Quantity(value, App.Units.Length).UserString
-        self.resolved_axis.setText('Pivot (parent): ' + ', '.join(units(v) for v in (point.x,point.y,point.z))
-                                  + '\nAxis (parent): ' + ', '.join(f'{v:.4g}' for v in (vector.x,vector.y,vector.z)))
-        frame = self.parent_frame()
-        anchor = frame.multVec(point); direction = frame.Rotation.multVec(vector)
-        length = 10.0
+    def dynamic_pivot(self):
+        if self.pivot_snapshot is not None: return App.Vector(self.pivot_snapshot)
+        owner, links = self.check(); bound = App.BoundBox()
         for link in links:
             shape = Part.getShape(link)
-            if not shape.isNull(): length = max(length, shape.BoundBox.DiagonalLength)
-        side = direction.cross(App.Vector(0,0,1))
-        if side.Length < 1e-6: side = direction.cross(App.Vector(0,1,0))
-        side.normalize(); end = anchor + direction*length
-        points = [anchor-direction*length, end, end-direction*(length*0.18)+side*(length*0.08),
-                  end, end-direction*(length*0.18)-side*(length*0.08)]
-        node = coin.SoSeparator()
-        color = coin.SoBaseColor(); color.rgb=(1.0,0.65,0.0); color.setOverride(True); node.addChild(color)
-        coords = coin.SoCoordinate3(); coords.point.setValues(0,len(points),[tuple(p) for p in points]); node.addChild(coords)
-        lines = coin.SoLineSet(); lines.numVertices.setValue(5); node.addChild(lines)
-        pivot = coin.SoSeparator(); coordinate=coin.SoCoordinate3();coordinate.point.setValue(tuple(anchor));pivot.addChild(coordinate)
-        size=coin.SoDrawStyle();size.pointSize=9;size.setOverride(True);pivot.addChild(size)
-        pivot.addChild(coin.SoPointSet());node.addChild(pivot);overlay.addChild(node)
+            if not shape.isNull(): bound.add(shape.BoundBox)
+        return self.pending.multVec(bound.Center if bound.isValid() else App.Vector())
 
-    def valid_distance(self, *args):
-        self.distance_error = None
-        self.update_preview()
+    def selection_size(self):
+        owner, links = self.check()
+        return max([Part.getShape(link).BoundBox.DiagonalLength for link in links if not Part.getShape(link).isNull()] or [20.0])
 
-    def invalid_distance(self, error):
-        self.distance_error = error
-        if not self.distance.hasFocus(): self.update_preview()
+    def snapped(self, value):
+        if self.snap.isChecked():
+            step = self.value(self.increment)
+            if step <= 0: raise ValueError('Snap increment must be greater than zero')
+            return math.copysign(math.floor(abs(value) / step + .5) * step, value)
+        return value
 
-    def delta(self):
-        if self.workflow.currentIndex() != 0:
-            raise ValueError('This movement workflow awaits its next implementation increment')
-        if self.distance_error or not self.distance.hasAcceptableInput():
-            raise ValueError('Enter a valid nonnegative length')
-        distance = float(self.distance.property('rawValue'))
-        if not math.isfinite(distance) or distance < 0: raise ValueError('Distance must be a nonnegative length')
-        if distance == 0: return App.Vector()
-        index = self.direction.currentIndex()
-        vector = (None, App.Vector(1,0,0), App.Vector(0,1,0), App.Vector(0,0,1), self.direction_snapshot)[index]
-        if vector is None: raise ValueError('Choose a direction before moving')
-        return vector * (-distance if self.reverse.isChecked() else distance)
+    def numeric_drag(self, *args, force=False):
+        if self.busy or self.closed or (self.drag_value.hasFocus() and not force): return
+        def update():
+            self.check()
+            if self.handles is None: self.rebuild_handles()
+            if self.handles is None: return
+            value = self.snapped(self.value(self.drag_value)); index = self.handle.currentIndex()
+            if self.numeric_base is None:
+                self.numeric_base = (App.Placement(self.handles.base_motion), App.Vector(self.handles.base_pivot))
+            base, pivot = self.numeric_base
+            if self.kind.currentText() == 'Rotate': delta = rigid.rotation(pivot, AXES[index], value)
+            else: delta = rigid.translation(AXES[index] if index < 3 else self.plane_direction, value)
+            if self.control.currentIndex() == 1: self.pivot_snapshot = pivot + delta.Base
+            else: self.pending = delta.multiply(base)
+            self.after_apply = False; self.drag_dirty = False
+            self.handles.transform.translation = tuple(self.parent_frame().multVec(self.dynamic_pivot()))
+            self.update_preview(force=True)
+        self.run(update)
+
+    def reset_numeric_drag(self, *args):
+        if self.busy: return
+        self.numeric_base = None
+        self.drag_value.blockSignals(True); self.drag_value.setProperty('rawValue', 0.0); self.drag_value.blockSignals(False)
+        index = self.handle.currentIndex()
+        if index >= 3: self.plane_direction = AXES[(index - 3) % 3]
+        self.rebuild_handles()
+
+    def reset_pivot(self):
+        self.pivot_snapshot = None; self.refs.pop('pivot', None); self.ref_widgets['pivot'].clear()
+        self.rebuild_handles(); self.update_preview()
+
+    def close_handles(self):
+        if self.handles is not None: self.handles.close(); self.handles = None
+
+    def rebuild_handles(self):
+        if self.closed or self.busy: return
+        self.close_handles()
+        if self.method.currentText() == 'Dynamic drag' and self.paths:
+            try: self.check(); self.handles = Handles(self)
+            except (ValueError, RuntimeError, ReferenceError) as error: self.show_error(error)
+        self.view.redraw()
 
     def clear_preview(self):
         if self.overlay is not None:
             if self.scene.findChild(self.overlay) >= 0: self.scene.removeChild(self.overlay)
             self.overlay = None
 
-    def update_preview(self, *args):
+    def reference_guides(self, overlay):
+        frame = self.parent_frame(); size = max(5., self.selection_size() * .7)
+        def line(point, vector, color):
+            node = coin.SoSeparator()
+            material = coin.SoBaseColor(); material.rgb = color; node.addChild(material)
+            draw = coin.SoDrawStyle(); draw.lineWidth = 2.5; draw.pointSize = 7; node.addChild(draw)
+            points = [frame.multVec(point - vector * size), frame.multVec(point + vector * size)]
+            coords = coin.SoCoordinate3(); coords.point.setValues(0, 2, [tuple(p) for p in points]); node.addChild(coords)
+            shape = coin.SoLineSet(); shape.numVertices.setValue(2); node.addChild(shape)
+            center = coin.SoCoordinate3(); center.point.setValue(tuple(frame.multVec(point))); node.addChild(center)
+            marker = coin.SoPointSet(); marker.numPoints = 1; node.addChild(marker); overlay.addChild(node)
+        method = self.method.currentText()
+        if method == 'Axis and angle': line(*self.rotation_axis(), (1., .65, .05))
+        elif method == 'Axes':
+            for key, color in (('source_axis', (.2, .7, 1.)), ('target_axis', (1., .65, .05))):
+                if key in self.refs: line(*self.refs[key], color)
+        elif method == 'Point to point':
+            for key, color in (('from', (.2, .7, 1.)), ('to', (1., .65, .05))):
+                if key in self.refs: line(self.refs[key], App.Vector(), color)
+        elif method == 'Coordinate systems':
+            for name in ('source', 'target'):
+                reference = self.frame_value(name)
+                for axis, color in zip(AXES, ((.9, .2, .2), (.2, .8, .2), (.2, .4, 1.))):
+                    line(reference.Base, reference.Rotation.multVec(axis) * .4, color)
+
+    def input_changed(self, *args):
+        if not self.busy:
+            self.after_apply = False
+            if not any(widget.hasFocus() for widget in self.numeric): self.update_preview()
+
+    def eventFilter(self, watched, event):
+        return super().eventFilter(watched, event)
+
+    def update_preview(self, *args, force=False):
         if self.closed or self.busy: return
         self.clear_preview()
         try:
             owner, links = self.check()
-            motion = self.motion()
-            rotating = self.workflow.currentIndex() == 1
-            if rotating: self.rotation_axis()
-            if not links or (motion.isSame(App.Placement(),1e-12) and not rotating):
-                self.message.setText('Select components and set a direction and distance.'); return
-            root = document.validate(self.doc)
-            parents = isolation.occurrences(self.doc, owner) if owner != root else [()]
+            if not links:
+                self.message.setText('Pick child components. The active assembly stays fixed.'); self.enable_commit(False); return
+            motion = self.motion(); self.enable_commit(True)
+            if not self.auto.isChecked() and not force:
+                self.message.setText('Ready. Click Update preview to view the pending move.'); return
             overlay = coin.SoSeparator()
             pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE; overlay.addChild(pick)
-            style = coin.SoDrawStyle(); style.style = coin.SoDrawStyle.LINES; style.lineWidth = 2; style.setOverride(True); overlay.addChild(style)
-            material = coin.SoBaseColor(); material.rgb = (0.1, 0.8, 1.0); material.setOverride(True); overlay.addChild(material)
-            for parent in parents:
-                frame = hierarchy.world_placement(self.doc, parent) if parent else App.Placement()
+            shapes = coin.SoSeparator(); overlay.addChild(shapes)
+            style = coin.SoDrawStyle(); style.style = coin.SoDrawStyle.LINES; style.lineWidth = 2; style.setOverride(True); shapes.addChild(style)
+            color = coin.SoBaseColor(); color.rgb = (.1, .8, 1.0); color.setOverride(True); shapes.addChild(color)
+            root = document.validate(self.doc)
+            parents = isolation.occurrences(self.doc, owner)
+            scopes = [(root, parent, hierarchy.world_placement(self.doc, parent)) for parent in parents]
+            isolated = isolation.current(self.view)
+            if isolated is not None:
+                definition = isolated.definition()
+                def visit(current, route=()):
+                    if current == owner:
+                        frame = definition.getSubObject(hierarchy.subname(route), 3) if route else definition.Placement
+                        scopes.append((definition, route, frame))
+                    for link in current.Group:
+                        if link.TypeId == 'App::Link': visit(link.LinkedObject, (*route, link))
+                visit(definition)
+            if not scopes:
+                from .panel import lookup
+                anchor = lookup(self.assembly_ref)
+                scopes.append((anchor, tuple(lookup(r) for r in (self.parent_path or ())), self.parent_frame()))
+            for base, parent, frame in scopes:
                 transform = frame.multiply(motion).multiply(frame.inverse())
                 for link in links:
                     sub = hierarchy.subname((*parent, link))
-                    if not visible_reference(root, sub): continue
-                    shape = Part.getShape(root, sub)
+                    if base == root and not visible_reference(base, sub): continue
+                    shape = Part.getShape(base, sub)
                     if shape.isNull(): continue
                     shape.Placement = transform.multiply(shape.Placement)
-                    source = coin.SoInput(); source.setBuffer(shape.writeInventor())
-                    overlay.addChild(coin.SoDB.readAll(source))
-            if rotating: self.axis_preview(overlay, links)
+                    source = coin.SoInput(); source.setBuffer(shape.writeInventor()); shapes.addChild(coin.SoDB.readAll(source))
+            self.reference_guides(overlay)
             self.scene.addChild(overlay); self.overlay = overlay
-            self.message.setText('Preview only. Apply commits one group movement.')
-        except (ValueError, RuntimeError, ReferenceError) as error:
-            self.message.setText(str(error))
-
-    def reset_inputs(self, *args):
-        self.busy = True
-        self.direction_snapshot = None; self.direction.setCurrentIndex(0)
-        self.distance.setProperty('rawValue', 0.0); self.reverse.setChecked(False)
-        self.axis_snapshot = None; self.axis_points = [None,None]; self.pivot_snapshot = None
-        self.axis.setCurrentIndex(0); self.angle.setProperty('rawValue',0.0)
-        self.resolved_axis.setText('Choose an axis.')
-        method = self.workflow.currentIndex()
-        self.translate_form.setVisible(method == 0); self.rotate_form.setVisible(method == 1)
-        self.reverse.setEnabled(method in (0,1))
-        self.busy = False; self.update_preview()
+            note = ('Drag an arrow or plane.' if self.kind.currentText() == 'Move' else 'Drag a ring.') + ' Release keeps preview; Escape cancels the current drag.'
+            self.message.setText(note if self.method.currentText() == 'Dynamic drag' else 'Preview only. Apply commits one group movement.')
+        except IncompleteInput as error:
+            self.message.setText(str(error)); self.enable_commit(False, ok=self.after_apply)
+        except (ValueError, RuntimeError, ReferenceError) as error: self.show_error(error)
 
     def apply(self):
-        owner, links = self.check(); motion = self.motion()
-        if motion.isSame(App.Placement(),1e-12):
-            self.reset_inputs(); return
-        if not links: raise ValueError('Select sibling component instances to move')
-        placements = []
-        for link in links:
-            placements.append(motion.multiply(link.LinkPlacement))
-        self.busy = True
-        self.clear_preview()
+        owner, links = self.check()
+        if not links: raise ValueError('Select sibling child component instances to move')
+        if self.method.currentText() == 'Dynamic drag' and self.drag_dirty:
+            self.numeric_drag(force=True)
+        motion = self.motion()
+        if motion.isSame(App.Placement(), 1e-12): return
+        placements = [motion.multiply(link.LinkPlacement) for link in links]
+        self.busy = True; self.clear_preview(); self.close_handles()
         try:
             with document.transaction(owner.Document, 'Move component instances'):
                 for link, placement in zip(links, placements): link.LinkPlacement = placement
-        finally:
-            self.busy = False
-        if not self.persistent.isChecked(): self.clear()
-        else: self.select_components()
-        self.reset_inputs()
+        finally: self.busy = False
+        if not self.persistent.isChecked(): self.paths.clear(); self.parent_path = self.parent_ref = None
+        self.refresh_list(); self.change_method(self.method.currentText())
+        self.after_apply = True
+        self.enable_commit(bool(self.paths) and self.method.currentText() not in ('Point to point', 'Axes', 'Coordinate systems'), ok=True)
 
     def getStandardButtons(self):
         return QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Apply
@@ -469,7 +604,9 @@ class MoveTask(QtCore.QObject):
         if button == QtWidgets.QDialogButtonBox.Apply: self.run(self.apply)
 
     def accept(self):
-        if self.run(self.apply): self.finish()
+        if self.after_apply:
+            if self.run(self.check): self.finish()
+        elif self.run(self.apply): self.finish()
         return False
 
     def reject(self):
@@ -492,38 +629,33 @@ class MoveTask(QtCore.QObject):
 
     def slotDeletedDocument(self, doc):
         owner = getattr(doc, 'Document', doc)
-        if owner == self.doc or (self.parent_ref and owner.Name == self.parent_ref[0]): self.finish()
+        if owner == self.doc or owner.Name in {self.assembly_ref[0], self.parent_ref[0] if self.parent_ref else ''}: self.finish()
 
     def check_lifecycle(self):
-        try:
-            self.check()
-            self.update_preview()
+        try: self.check(); self.update_preview()
         except (ValueError, RuntimeError, ReferenceError): self.finish()
 
     def finish(self, *args):
         global _active
         if self.closed: return
-        self.closed = True; self.clear_preview(); self.timer.stop()
-        App.removeDocumentObserver(self); Gui.removeDocumentObserver(self)
-        self.panel._mdi.subWindowActivated.disconnect(self.schedule)
-        Gui.getMainWindow().workbenchActivated.disconnect(self.finish)
+        self.closed = True; self.close_handles(); self.clear_preview(); self.timer.stop(); self.pick_timer.stop()
+        App.removeDocumentObserver(self); Gui.removeDocumentObserver(self); Gui.Selection.removeObserver(self)
+        self.panel._mdi.subWindowActivated.disconnect(self.schedule); Gui.getMainWindow().workbenchActivated.disconnect(self.finish)
         editing.remove_context_observer(self.schedule)
         if self.window:
             try: self.window.destroyed.disconnect(self.finish)
             except (RuntimeError, TypeError): pass
-        if _active is self:
-            _active = None; Gui.Control.closeDialog()
-        # Native TaskPanel owns and clears form when closeDialog destroys it.
+        if _active is self: _active = None; Gui.Control.closeDialog()
         self.deleteLater()
 
 
-def open_task(panel, rows):
+def open_task(panel, rows=()):
     global _active
     panel._clipboard_guard()
     if Gui.Control.activeDialog(): raise ValueError('Finish the current task first')
-    task = MoveTask(panel, rows)
-    _active = task
-    try: Gui.Control.showDialog(task)
+    task = MoveTask(panel, rows); _active = task
+    try:
+        Gui.Control.showDialog(task); QtCore.QTimer.singleShot(0, task.update_preview)
     except Exception:
         task.finish(); raise
     return task

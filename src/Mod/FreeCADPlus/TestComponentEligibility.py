@@ -9,7 +9,7 @@ import FreeCADGui as Gui
 import Part
 from freecad_plus import document, display, editing, geometry, hierarchy, panel, movement
 import TestComponentPanel as fixtures
-from TestComponentMove import TestComponentMove
+from TestComponentMove import MovementFixture as TestComponentMove
 from TestUnusedModels import TestUnusedModels, visibility
 settle = fixtures.settle
 
@@ -104,19 +104,18 @@ class TestComponentEligibility(unittest.TestCase):
         # Whole component rows remain navigable; no global SelectionGate is installed.
         display.set_state(self.root,self.first,part_type='Reference');settle()
         item=self.occurrence((self.first,))
-        self.assertIn('Add Reference Feature',item.toolTip(0))
+        self.assertEqual(display.state(self.first)[0], 'Reference')
         self.widget.edit_row(item.data(0,panel._ROLE));settle()
         self.assertEqual(editing.context_path(self.doc),(self.parent,(self.first,)))
-        task=self.task((self.second,))  # File context, moving an ordinary sibling.
+        task=self.task((self.second,self.nested))  # Move a child of the fixed active assembly.
         Gui.Selection.clearSelection()
         Gui.Selection.addSelection(self.doc.Name,self.root.Name,self.sub((self.first,self.nested)))
         ids={o.Name:o.ID for o in self.doc.Objects};undo=self.doc.UndoCount
         with patch.object(movement.Part,'getShape',side_effect=AssertionError('Forbidden raw shape read')):
-            for callback in (task.pick_direction,task.pick_axis,task.pick_pivot):
-                with self.assertRaisesRegex(ValueError,'Reference'):callback()
-            with self.assertRaisesRegex(ValueError,'Reference'):task.pick_axis_point(0)
-        self.assertIsNone(task.direction_snapshot);self.assertIsNone(task.axis_snapshot)
-        self.assertIsNone(task.pivot_snapshot);self.assertEqual(task.axis_points,[None,None])
+            for callback in (task.selected_line,task.selected_point,task.selected_frame):
+                with self.assertRaisesRegex(ValueError,'Reference|Excluded'):callback()
+        self.assertEqual(task.refs, {})
+        self.assertIsNone(task.pivot_snapshot)
         self.assertEqual(self.doc.UndoCount,undo)
         self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
         task.finish();settle()

@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "cases": [
+    "Domestic placement/root frame/geometry edit/Undo",
+    "External source link/reopened move/source Undo/host file unchanged"
+  ]
+}

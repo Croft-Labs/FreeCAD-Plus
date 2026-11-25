@@ -362,7 +362,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 layout.setSpacing(4)
                 self.assembly_button = QtWidgets.QPushButton('Choose active assembly...')
                 self.assembly_button.clicked.connect(self.choose_assembly)
-                layout.addWidget(self.assembly_button)
+                tools = QtWidgets.QHBoxLayout()
+                tools.addWidget(self.assembly_button)
+                self.move_button = QtWidgets.QToolButton()
+                self.move_button.setIcon(Gui.getIcon('Std_TransformManip'))
+                self.move_button.setToolTip('Move Components')
+                self.move_button.setAccessibleName('Move Components')
+                self.move_button.clicked.connect(self.move_selected)
+                tools.addWidget(self.move_button)
+                layout.addLayout(tools)
                 layout.addWidget(tree)
                 self.tabs.addTab(page, 'Assembly')
             else:
@@ -1351,8 +1359,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             menu.addSeparator()
             if row.kind == 'occurrence':
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
-                if not row.anchor:
-                    actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
+                actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
             elif row.kind == 'assembly' and row.path:
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
             if row.kind in ('file', 'occurrence', 'assembly'):
@@ -1411,6 +1418,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def move_rows(self, rows):
         from .movement import open_task
         return open_task(self, rows)
+
+    def move_selected(self):
+        try:
+            rows = [item.data(0, _ROLE) for item in self.trees[1].selectedItems()]
+            self.move_rows([row for row in rows if row.kind == 'occurrence'])
+        except (ValueError, RuntimeError, ReferenceError) as error:
+            self._message(str(error))
 
     def _selection_changed(self, tree):
         if self._updating or self._selecting or self._closed:

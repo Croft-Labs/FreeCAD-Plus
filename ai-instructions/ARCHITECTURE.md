@@ -939,6 +939,36 @@ rejected. File/unused/model/history rows cannot be copied as placed instances; P
 requires a file or placed parent. Closing the panel discards the clipboard. No new
 persistent UI/model metadata is introduced.
 
+### Move Components — active-assembly workflow (November 25, 2026)
+
+`movement.py` now captures the active assembly and its optional file occurrence,
+normalizes selected rows to assembly-relative paths, and validates every sibling
+before accepting the group. It never changes Edit or active assembly. The chosen
+assembly root is fixed. Nested and external parents own LinkPlacement updates in
+their own document; repeated occurrences of a parent share those child placements.
+The immutable panel identities and native occurrence resolution detect stale paths.
+
+`movement_math.py` supplies rigid translation, located rotation, closest-axis
+coincidence/minimal alignment and right-handed frame composition. Reference picks
+snapshot eligible native geometry in the immediate parent's frame. No associative
+objects are added. Raw Reference/Excluded geometry remains unavailable. Existing
+placement expressions, read-only flags and native joint references block movement.
+
+`movement_ui.py` builds the approved Type/Method controls and clickable collectors.
+`movement_handles.py` uses native Coin Translate1/Translate2/RotateDisc draggers
+and native view callbacks. Arrows, plane patches and individually pickable rings
+change pending task state only. Numeric and drag increments share parent axes;
+Escape restores the pre-gesture state. Preview shapes/guides are unpickable scene
+nodes. Apply validates again and writes all sibling placements in one transaction;
+Cancel drops pending state, preserving earlier Apply transactions. Finish removes
+selection/document observers, handles, callbacks and scene overlays.
+
+No schema/native C++ change is required. Existing .cadprt geometry, native links,
+solver ownership and identities remain unchanged. See
+[implementation and validation](evidence/move-components-20261125/README.md).
+The following G1.6c3/G1.6c4 sections describe earlier checkpoints; their old file-root
+routing and automatic Edit activation are superseded by this contract.
+
 ### Move Components foundation and Translate (G1.6c3)
 
 Scope correction: Move Components is an operation reached through the panel's menu,

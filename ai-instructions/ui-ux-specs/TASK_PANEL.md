@@ -982,17 +982,14 @@ approved. This documentation records requirements, not implemented Clone behavio
 
 ### Move Components
 
-#### November 25, 2026 proposal — awaiting owner approval
+#### November 25, 2026 — approved Move/Rotate/Align workflow
 
-The owner requested an audit of current access, recovery of the abandoned fork's
-movement concepts, and a task-panel workflow to approve. Current `movement.py`
-implements Translate and Rotate only. Other listed methods explicitly reject
-application. Its occurrence routing still assumes the old file-root tree, and
-the panel excludes anchored occurrences from the existing context-menu entry.
-These findings are not evidence that the current task works throughout the new
-active-assembly tree.
+The owner approved implementation with “implement the move component workflow”.
+The reviewed Type/Method layout supersedes the older flat Workflow control.
+Native occurrence routing must use the selected active assembly, including
+unused and externally owned definitions, rather than treating the file as the root.
 
-The isolated proposal offers **Move Components** beside the Assembly selector and
+The workflow offers **Move Components** beside the Assembly selector and
 on child-instance right-click menus. The fixed active assembly and immediate
 parent frame are shown above the task inputs. The active root cannot be moved.
 Keep active assembly and Edit independent; collecting a child identifies the
@@ -1024,13 +1021,15 @@ must explain the blocker and disable Apply/OK; never silently detach constraints
 or move only an unexpected subset. Solver-driven movement of partially constrained
 components is outside this initial proposal; edit the constraint instead.
 
-This proposed Type/Method arrangement and entered direction vector await approval
-and would supersede the older flat Workflow order and direction-only choices
-below. Other established reference eligibility, lifecycle and transaction rules
-remain applicable. Screenshots use actual native task widgets with disposable
-fixture data, not a working movement implementation. No production module or
-installed payload was changed. See [review evidence](../evidence/move-components-proposal-20261125/README.md)
-and [archive findings](../ARCHIVE_REFERENCE.md#move-components-review--november-25-2026).
+The owner approved the proposal directly in chat; companion approval state was not
+changed on the owner's behalf. Earlier screenshots remain UI-only proposal evidence.
+Current source and native validation are recorded in
+[implementation evidence](../evidence/move-components-20261125/README.md), separately
+from the [proposal](../evidence/move-components-proposal-20261125/README.md) and
+[archive findings](../ARCHIVE_REFERENCE.md#move-components-review--november-25-2026).
+The older detailed requirements below remain applicable where consistent with this
+approved workflow. Pivot-only relocation uses Move / Dynamic drag; Rotate lets the
+user pick/reset a rotation pivot without relocating components.
 
 #### Established requirements and implementation boundary
 
@@ -1040,11 +1039,11 @@ clarified that Point to Point and the other movement workflows must not be treat
 as panel work or required to finish Group 1. Confirmed workflow requirements below
 remain valid for separately scoped operation implementation.
 
-Implementation boundary: G1.6c3 supplies the shared task and Translate; G1.6c4 adds [Rotate](../ARCHITECTURE.md#rotate-g16c4). The [technical contract](../ARCHITECTURE.md#move-components-foundation-and-translate-g16c3) and WORK_STATE own acceptance. Other methods below remain confirmed requirements for subsequent increments.
+Implementation boundary: the November 25 implementation supplies the complete approved Type/Method workflow. The technical contract, WORK_STATE and linked evidence own native acceptance; the earlier G1.6c3/G1.6c4 entries are historical checkpoints.
 
-This is one task panel for whole linked **component instances**, including descendants. Copy is performed separately through Part Tree Copy/Paste. The first field is Workflow, in this order: **Translate, Rotate, Point to Point, Align Axes, Align Coordinate Systems, Interactive**. Next is the Components list with selection, Remove/Delete and Clear. [R03](EVIDENCE_AND_DECISIONS.md#r03)
+This is one task panel for whole linked **component instances**, including descendants. Copy is performed separately through Part Tree Copy/Paste. Use the approved **Type** and **Method** controls above, followed by the Components collector with Remove/Delete and Clear. This supersedes the earlier flat Workflow order. [R03](EVIDENCE_AND_DECISIONS.md#r03)
 
-The first movable instance establishes its immediate parent as the active editing context; then accept only siblings under that parent. Listed children carry their descendants implicitly. Several siblings move as one rigid group. A parent definition owns its children's relative placements: moving them changes corresponding children in every instance of that parent. Visible geometry may supply a reference only when eligible under the newer [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): raw Reference or Excluded geometry cannot be used; Add Reference Feature must precede use of Reference geometry. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) Resulting placement stays relative to the parent. Do not introduce global/local mode switches or individual child frames. [R03](EVIDENCE_AND_DECISIONS.md#r03)
+The first movable instance establishes its immediate parent as the movement owner; accept only siblings under that exact parent occurrence. Preserve the independent active assembly and Edit choices. Listed children carry their descendants implicitly. Several siblings move as one rigid group. A parent definition owns its children's relative placements: moving them changes corresponding children in every instance of that parent. Visible geometry may supply a reference only when eligible under the newer [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): raw Reference or Excluded geometry cannot be used; Add Reference Feature must precede use of Reference geometry. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) Resulting placement stays relative to the parent. Do not introduce global/local mode switches or individual child frames. [R03](EVIDENCE_AND_DECISIONS.md#r03)
 
 Provide **Apply, OK, Cancel**. Preview does not commit geometry or placement. Apply commits one undoable group movement, keeps the task open and resets movement inputs. With Persistent Selection on, retain the component list; off clears it. OK applies pending movement and closes; after Apply it only closes. Cancel discards the pending preview but leaves earlier applied moves available through Undo. A no-op creates no Undo entry. Switching methods discards uncommitted movement inputs while retaining eligible siblings and context. Explain invalid selections inline; do not move an unexpected subset. [R03](EVIDENCE_AND_DECISIONS.md#r03)
 

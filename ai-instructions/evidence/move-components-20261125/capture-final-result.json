@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "methods": [
+    "vector",
+    "point",
+    "rotate",
+    "dynamic",
+    "axes",
+    "frames"
+  ],
+  "preview_preserved_geometry_and_undo": true,
+  "context_menu": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\movement.py"
+}

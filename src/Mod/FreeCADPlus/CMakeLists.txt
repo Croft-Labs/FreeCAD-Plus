@@ -59,6 +59,7 @@ set(FreeCADPlus_SRCS
     TestComponentDisplay.py
     TestComponentRotate.py
     TestComponentMove.py
+    TestMoveWorkflow.py
     TestComponentClipboard.py
     freecad_plus/__init__.py
     freecad_plus/ui_modes.py
@@ -83,6 +84,9 @@ set(FreeCADPlus_SRCS
     freecad_plus/part_transfer.py
     freecad_plus/part_transfer_ops.py
     freecad_plus/movement.py
+    freecad_plus/movement_ui.py
+    freecad_plus/movement_math.py
+    freecad_plus/movement_handles.py
     freecad_plus/isolation.py
     freecad_plus/editing.py
     freecad_plus/modeling.py

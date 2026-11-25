@@ -1,0 +1,68 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "42cea100cf7313d7d76145342abdc96b086ff0bdcb93609ff35b12fdc9da01d9",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestMoveWorkflow.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestMoveWorkflow.py",
+    "sha256": "5dd1beb38ad77575560b4ed739e448cf02164913bd429c0cb9a1cfc75f0947ef",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentMove.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentMove.py",
+    "sha256": "a017ae22c8b445e2f4cfeae1298cb2bbbfdb27f5119a0d5d832f4c0c892832da",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentMove.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentRotate.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentRotate.py",
+    "sha256": "1aaf860d5f9d571559113d29c17e93b880eb5256f0ac55cf7775299cca5592d2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentRotate.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentPlanes.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentPlanes.py",
+    "sha256": "d23c5577277d22308f5c1c919512f92bb9277f59230d321a02e667cf3c842b38",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentPlanes.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestComponentEligibility.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestComponentEligibility.py",
+    "sha256": "737f0f3fb0d4de914654d9ea624fbb066bb540f9bc18759230dea80c03794aa1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestComponentEligibility.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/movement.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\movement.py",
+    "sha256": "9e8ab270a2376eb159184fb6a8e7ed14b252d2ec57ab141fa6c0fb1afda4d781",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\movement.py.before-move-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/movement_ui.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\movement_ui.py",
+    "sha256": "314a6ecf28fcbf29731b738da79828cf805ed35a4d57ef563e698ce7e9c1650f",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/movement_math.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\movement_math.py",
+    "sha256": "02d26a741a111cd12e349e24cd49c1c6cfb498e7c1afe4356324519908646e5a",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/movement_handles.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\movement_handles.py",
+    "sha256": "663b27c5281bc66a08cb8ac5a2148f47bb9de34710c2f6e5964ddf6f264d96fe",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "1afd5af8e756e83296e6e925640ce6c5762e31ba8b2c2eaf715355af57fb19e2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-move-20261125"
+  }
+]

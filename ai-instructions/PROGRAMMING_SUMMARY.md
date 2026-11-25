@@ -1,5 +1,19 @@
 # FreeCAD Plus: Programming Summary
 
+## Move Components — installed November 25, 2026
+
+The approved Move/Rotate/Align workflow is installed in the existing owner payload.
+Use the Assembly move button or a child occurrence's Move Components context menu.
+Distance/vector, point-to-point, axis/angle, axes/frames and native drag handles
+preserve the fixed active assembly, parent-relative/shared ownership and Edit context.
+Preview, snapping, Apply/OK/Cancel and atomic Undo are implemented. All 22 affected
+movement/reference/numeric checks pass; fresh reopening, six native method captures
+and four existing-shortcut checks pass. The broader run passes 60/61, with one
+order-dependent constraint-preselection check still unresolved (it passes alone).
+See [exact evidence and limitation](evidence/move-components-20261125/README.md).
+Eleven Python files were installed with hash verification and rollback copies;
+no native rebuild. Restart FreeCAD Plus.
+
 ## Terminology
 
 Owner clarification, November 25: a **component** can be a **part**, an **assembly**,
@@ -560,13 +574,10 @@ per-view cleanup. G1.6c1 component file tabs are validated in the development
 build; WORK_STATE records tests, fresh-process persistence and inspected captures.
 G1.6c2 Part Tree linked-instance Copy/Paste is validated in the development build;
 WORK_STATE records 50 combined tests, fresh-process persistence and inspected captures.
-G1.6c3 Move Components foundation/Translate is validated in the development build;
-WORK_STATE records regression, independent persistence and inspected visual acceptance.
-G1.6c4 Rotate is validated in the development build; WORK_STATE records 62 combined
-cases, independent persistence and inspected visual acceptance.
-Move Components is operation/task-panel work; right-click access does not place its
-workflows within Group 1. The unvalidated Point to Point increment is parked on a
-separate local branch; WORK_STATE records its exact state. G1.7a saved Part Type
+The November 25 Move Components workflow supersedes the earlier Translate/Rotate
+foundation and parked Point to Point increment. It supplies all approved Move,
+Rotate and Align methods, native dynamic handles and active-assembly routing.
+Move Components remains operation/task-panel work. G1.7a saved Part Type
 and visibility state is validated in the development payload; WORK_STATE records
 acceptance and limits. G1.7b1 adds view-local explicit hiding/restoration; WORK_STATE
 records its validation. G1.7b2 contextual fading is validated in the development
@@ -738,7 +749,7 @@ WORK_STATE owns targeted acceptance and preservation checks. Other operation int
 - src/Mod/FreeCADPlus/TestComponentExternalExport.py: original external export occurrences, source payload and independent reopen checks.
 - src/Mod/FreeCADPlus/TestComponentExport.py: native File > Export rejection, BREP/legacy/source-owned export and independent reopen.
 - src/Gui/Application.cpp and CommandDoc.cpp: component-only export preflight and external unused source-selection routing.
-- src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate/Rotate task, transient preview and atomic commit.
+- src/Mod/FreeCADPlus/freecad_plus/movement.py: active-assembly Move/Rotate/Align task, transient preview and atomic commit.
 - src/Mod/FreeCADPlus/TestComponentMove.py: task/placement/source ownership and fresh-process persistence checks.
 - src/Mod/FreeCADPlus/freecad_plus/display.py: schema-5 saved self/direct-child choices and occurrence hide-path resolution.
 - src/Gui/View3DPy.cpp: native per-view hide wrapper and fading context; no saved display-property changes.

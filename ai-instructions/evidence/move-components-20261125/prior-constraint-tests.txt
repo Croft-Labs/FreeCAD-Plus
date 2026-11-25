@@ -1,0 +1,10 @@
+test_edit_override_owned_feature_and_no_foreign_bypass (TestComponentEligibility.TestComponentEligibility.test_edit_override_owned_feature_and_no_foreign_bypass) ... ok
+test_external_unused_source_and_occurrence_validation (TestComponentEligibility.TestComponentEligibility.test_external_unused_source_and_occurrence_validation) ... ok
+test_reference_excluded_aggregate_and_shared_occurrence (TestComponentEligibility.TestComponentEligibility.test_reference_excluded_aggregate_and_shared_occurrence) ... ok
+test_visibility_is_not_eligibility_and_persistence (TestComponentEligibility.TestComponentEligibility.test_visibility_is_not_eligibility_and_persistence) ... ok
+test_selected_parent_and_child_are_initial_references (TestAssemblyConstraints.TestAssemblyConstraints.test_selected_parent_and_child_are_initial_references) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.699s
+
+OK

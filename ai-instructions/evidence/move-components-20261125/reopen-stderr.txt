@@ -1,0 +1,2 @@
+0 <App> Document.cpp(2126): Host#ComponentInstance002.LinkedObject: Time stamp changed on link Source#Part001
+0.0003553 <App> Document.cpp(2126): Host#File.Imports: Time stamp changed on link Source#File

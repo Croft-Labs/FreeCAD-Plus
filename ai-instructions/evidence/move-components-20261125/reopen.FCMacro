@@ -1,0 +1,42 @@
+import json,os,traceback,hashlib
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+from freecad_plus import document,hierarchy,editing,panel,movement
+out=Path(os.environ['PLUS_TEST_DIR']);installed=out.parent/'installed'
+def run():
+    result={'ok':False,'cases':[]}
+    try:
+        expected=json.loads(next(installed.glob('m-*/expected.json')).read_text())
+        doc=document.open_document(expected['file']);QtTest.QTest.qWait(150)
+        first=doc.getObject(expected['first']);top=doc.getObject(expected['top'])
+        assert max(abs(a-b) for a,b in zip(first.LinkPlacement.toMatrix().A,expected['placement']))<1e-8
+        assert max(abs(a-b) for a,b in zip(top.LinkPlacement.toMatrix().A,expected['topPlacement']))<1e-8
+        solid=doc.getObject('Solid');assert abs(solid.Shape.Volume-24)<1e-7
+        with document.transaction(doc,'Edit reopened geometry'):solid.Length=8
+        assert abs(solid.Shape.Volume-48)<1e-7
+        doc.undo();doc.recompute();assert abs(solid.Shape.Volume-24)<1e-7
+        result['cases'].append('Domestic placement/root frame/geometry edit/Undo')
+        App.closeDocument(doc.Name);QtTest.QTest.qWait(150)
+        host=next(installed.glob('m-*/Host.cadprt'));checksum=hashlib.sha256(host.read_bytes()).hexdigest()
+        doc=document.open_document(host);QtTest.QTest.qWait(150)
+        root=document.validate(doc);top=root.Group[0];owner=top.LinkedObject
+        imported=next(link for link in owner.Group if link.TypeId=='App::Link' and link.LinkedObject.Document!=doc)
+        parent=imported.LinkedObject;instance=next(link for link in parent.Group if link.TypeId=='App::Link')
+        assert abs(instance.LinkPlacement.Base.x-9)<1e-7
+        editing.edit((top,));dock=panel.show_panel();dock.activate_assembly(owner,(top,));QtTest.QTest.qWait(150)
+        refs=tuple(panel.identity(o) for o in (top,imported,instance))
+        row=next(item.data(0,panel._ROLE) for item in dock._maps[1].values() if item.data(0,panel._ROLE).path==refs)
+        task=dock.move_rows([row]);QtTest.QTest.qWait(100);undo=parent.Document.UndoCount
+        task.distance.setText('2 mm');task.apply();task.reject()
+        assert abs(instance.LinkPlacement.Base.x-11)<1e-7 and parent.Document.UndoCount==undo+1
+        parent.Document.undo();parent.Document.recompute();assert abs(instance.LinkPlacement.Base.x-9)<1e-7
+        assert hashlib.sha256(host.read_bytes()).hexdigest()==checksum
+        result['cases'].append('External source link/reopened move/source Undo/host file unchanged')
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if movement._active:movement._active.finish()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(150,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1500,run)

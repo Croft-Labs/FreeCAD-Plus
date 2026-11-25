@@ -1,0 +1,9 @@
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... ok
+test_fixed_root_toolbar_and_click_collectors (TestMoveWorkflow.TestMoveWorkflow.test_fixed_root_toolbar_and_click_collectors) ... ok
+test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save) ... ok
+test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 9.854s
+
+OK

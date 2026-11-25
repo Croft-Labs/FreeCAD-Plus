@@ -1,5 +1,19 @@
 # FreeCAD Plus: Current work state
 
+## Move Components — installed November 25, 2026
+
+The approved Move/Rotate/Align workflow is installed in the existing owner payload.
+Use the Assembly move button or a child occurrence's Move Components context menu.
+Distance/vector, point-to-point, axis/angle, axes/frames and native drag handles
+preserve the fixed active assembly, parent-relative/shared ownership and Edit context.
+Preview, snapping, Apply/OK/Cancel and atomic Undo are implemented. All 22 affected
+movement/reference/numeric checks pass; fresh reopening, six native method captures
+and four existing-shortcut checks pass. The broader run passes 60/61, with one
+order-dependent constraint-preselection check still unresolved (it passes alone).
+See [exact evidence and limitation](evidence/move-components-20261125/README.md).
+Eleven Python files were installed with hash verification and rollback copies;
+no native rebuild. Restart FreeCAD Plus.
+
 ## Native file formats and Classic conversion — installed November 25, 2026
 
 Owner instruction "implement file extensions and conversions" approved the

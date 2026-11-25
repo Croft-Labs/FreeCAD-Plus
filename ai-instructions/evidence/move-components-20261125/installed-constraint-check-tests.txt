@@ -1,0 +1,6 @@
+test_selected_parent_and_child_are_initial_references (TestAssemblyConstraints.TestAssemblyConstraints.test_selected_parent_and_child_are_initial_references) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.676s
+
+OK

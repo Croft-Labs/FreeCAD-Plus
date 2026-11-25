@@ -1,0 +1,100 @@
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... ok
+test_atomic_failure_context_and_view_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_atomic_failure_context_and_view_cleanup) ... ok
+test_axes_coincident_parallel_reverse (TestMoveWorkflow.TestMoveWorkflow.test_axes_coincident_parallel_reverse) ... ok
+test_dynamic_native_handles_numeric_snap_pivot_and_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_handles_numeric_snap_pivot_and_cleanup) ... ok
+test_dynamic_native_translation_and_rotation_callbacks (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_translation_and_rotation_callbacks) ... ok
+test_external_parent_owns_move_and_source_persistence (TestMoveWorkflow.TestMoveWorkflow.test_external_parent_owns_move_and_source_persistence) ... ok
+test_fixed_root_toolbar_and_click_collectors (TestMoveWorkflow.TestMoveWorkflow.test_fixed_root_toolbar_and_click_collectors) ... ok
+test_frames_roll_and_degenerate_axes (TestMoveWorkflow.TestMoveWorkflow.test_frames_roll_and_degenerate_axes) ... ok
+test_invalid_values_readonly_expression_constraint_and_scale (TestMoveWorkflow.TestMoveWorkflow.test_invalid_values_readonly_expression_constraint_and_scale) ... ok
+test_native_frame_pick_and_dynamic_plane_snap (TestMoveWorkflow.TestMoveWorkflow.test_native_frame_pick_and_dynamic_plane_snap) ... ok
+test_nested_shared_parent_mixed_parent_rejection (TestMoveWorkflow.TestMoveWorkflow.test_nested_shared_parent_mixed_parent_rejection) ... ok
+test_point_picks_and_orientation_preserved (TestMoveWorkflow.TestMoveWorkflow.test_point_picks_and_orientation_preserved) ... ok
+test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear) ... ok
+test_rotate_two_points_pivot_reverse (TestMoveWorkflow.TestMoveWorkflow.test_rotate_two_points_pivot_reverse) ... ok
+test_unused_assembly_anchor_and_reference_eligibility (TestMoveWorkflow.TestMoveWorkflow.test_unused_assembly_anchor_and_reference_eligibility) ... ok
+test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save) ... ok
+test_typing_does_not_rebuild_move_preview (TestComponentPlanes.TestMoveNumericCommit.test_typing_does_not_rebuild_move_preview) ... ok
+test_consumer_rejects_before_shape_read_but_panel_edit_remains (TestComponentEligibility.TestComponentEligibility.test_consumer_rejects_before_shape_read_but_panel_edit_remains) ... ok
+test_edit_override_owned_feature_and_no_foreign_bypass (TestComponentEligibility.TestComponentEligibility.test_edit_override_owned_feature_and_no_foreign_bypass) ... ok
+test_external_unused_source_and_occurrence_validation (TestComponentEligibility.TestComponentEligibility.test_external_unused_source_and_occurrence_validation) ... ok
+test_reference_excluded_aggregate_and_shared_occurrence (TestComponentEligibility.TestComponentEligibility.test_reference_excluded_aggregate_and_shared_occurrence) ... ok
+test_visibility_is_not_eligibility_and_persistence (TestComponentEligibility.TestComponentEligibility.test_visibility_is_not_eligibility_and_persistence) ... ok
+test_chooser_flat_current_parts_counts_collapsed_files_and_cancel (TestActiveAssembly.TestActiveAssembly.test_chooser_flat_current_parts_counts_collapsed_files_and_cancel) ... ok
+test_copy_paste_into_selected_unused_assembly_and_stale_child_guard (TestActiveAssembly.TestActiveAssembly.test_copy_paste_into_selected_unused_assembly_and_stale_child_guard) ... ok
+test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded (TestActiveAssembly.TestActiveAssembly.test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded) ... ok
+test_loaded_unimported_assembly_edits_in_source_without_importing (TestActiveAssembly.TestActiveAssembly.test_loaded_unimported_assembly_edits_in_source_without_importing) ... ok
+test_parts_context_menu_sets_root_without_changing_edit_or_model (TestActiveAssembly.TestActiveAssembly.test_parts_context_menu_sets_root_without_changing_edit_or_model) ... ok
+test_pending_task_and_stale_chooser_are_refused (TestActiveAssembly.TestActiveAssembly.test_pending_task_and_stale_chooser_are_refused) ... ok
+test_per_view_choice_and_saved_reopen_preference (TestActiveAssembly.TestActiveAssembly.test_per_view_choice_and_saved_reopen_preference) ... ok
+test_root_rename_delete_and_undo (TestActiveAssembly.TestActiveAssembly.test_root_rename_delete_and_undo) ... ok
+test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence (TestActiveAssembly.TestActiveAssembly.test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence) ... ok
+test_atomic_first_create_undo_redo_and_schema_upgrade (TestAssemblyConstraints.TestAssemblyConstraints.test_atomic_first_create_undo_redo_and_schema_upgrade) ... ok
+test_classic_solver_has_no_component_owner (TestAssemblyConstraints.TestAssemblyConstraints.test_classic_solver_has_no_component_owner) ... ok
+test_conflicting_editor_does_not_commit_or_move_parent (TestAssemblyConstraints.TestAssemblyConstraints.test_conflicting_editor_does_not_commit_or_move_parent) ... ok
+test_consistent_redundancy_is_not_a_conflict (TestAssemblyConstraints.TestAssemblyConstraints.test_consistent_redundancy_is_not_a_conflict) ... ok
+test_constraint_frame_cannot_be_moved (TestAssemblyConstraints.TestAssemblyConstraints.test_constraint_frame_cannot_be_moved) ... ok
+test_constraint_row_double_click_reuses_editor (TestAssemblyConstraints.TestAssemblyConstraints.test_constraint_row_double_click_reuses_editor) ... ok
+test_create_editor_cancel_removes_backend_and_preserves_pose (TestAssemblyConstraints.TestAssemblyConstraints.test_create_editor_cancel_removes_backend_and_preserves_pose) ... ok
+test_delete_undo_preserves_constraint_identity (TestAssemblyConstraints.TestAssemblyConstraints.test_delete_undo_preserves_constraint_identity) ... ok
+test_editor_accept_edit_cancel_and_accept_in_place (TestAssemblyConstraints.TestAssemblyConstraints.test_editor_accept_edit_cancel_and_accept_in_place) ... ok
+test_equal_padded_tabs_left_aligned (TestAssemblyConstraints.TestAssemblyConstraints.test_equal_padded_tabs_left_aligned) ... ok
+test_existing_external_child_constraints_write_only_owning_file (TestAssemblyConstraints.TestAssemblyConstraints.test_existing_external_child_constraints_write_only_owning_file) ... ok
+test_face_references_in_nested_geometry (TestAssemblyConstraints.TestAssemblyConstraints.test_face_references_in_nested_geometry) ... ok
+test_fixed_parent_frame_without_grounded_children (TestAssemblyConstraints.TestAssemblyConstraints.test_fixed_parent_frame_without_grounded_children) ... ok
+test_history_excludes_constraint_backend (TestAssemblyConstraints.TestAssemblyConstraints.test_history_excludes_constraint_backend) ... ok
+test_incomplete_editor_stays_open_with_error (TestAssemblyConstraints.TestAssemblyConstraints.test_incomplete_editor_stays_open_with_error) ... ok
+test_joint_markers_use_owner_coordinates (TestAssemblyConstraints.TestAssemblyConstraints.test_joint_markers_use_owner_coordinates) ... ok
+test_native_command_and_live_selection_create_real_joint (TestAssemblyConstraints.TestAssemblyConstraints.test_native_command_and_live_selection_create_real_joint) ... ok
+test_native_commands_follow_active_assembly_not_edited_child (TestAssemblyConstraints.TestAssemblyConstraints.test_native_commands_follow_active_assembly_not_edited_child) ... ok
+test_nested_collectors_first_collapsed_and_independent (TestAssemblyConstraints.TestAssemblyConstraints.test_nested_collectors_first_collapsed_and_independent) ... ok
+test_parent_geometry_is_stationary (TestAssemblyConstraints.TestAssemblyConstraints.test_parent_geometry_is_stationary) ... ok
+test_reference_and_excluded_children_are_rejected (TestAssemblyConstraints.TestAssemblyConstraints.test_reference_and_excluded_children_are_rejected) ... ok
+test_reject_cross_owner_and_self_references_atomically (TestAssemblyConstraints.TestAssemblyConstraints.test_reject_cross_owner_and_self_references_atomically) ... ok
+test_repeated_instances_have_distinct_collectors (TestAssemblyConstraints.TestAssemblyConstraints.test_repeated_instances_have_distinct_collectors) ... ok
+test_revolute_joint_retains_rotation_freedom (TestAssemblyConstraints.TestAssemblyConstraints.test_revolute_joint_retains_rotation_freedom) ... ok
+test_save_fixture_for_fresh_reopen (TestAssemblyConstraints.TestAssemblyConstraints.test_save_fixture_for_fresh_reopen) ... ok
+test_selected_parent_and_child_are_initial_references (TestAssemblyConstraints.TestAssemblyConstraints.test_selected_parent_and_child_are_initial_references) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestAssemblyConstraints.py", line 247, in test_selected_parent_and_child_are_initial_references
+    self.assertEqual([r[0] for r in task.refs],[self.owner.Origin,self.link])
+AssertionError: Lists differ: [<App::Link object>] != [<GeoFeature object>, <App::Link object>]
+
+First differing element 0:
+<App::Link object>
+<GeoFeature object>
+
+Second list contains 1 additional elements.
+First extra element 1:
+<App::Link object>
+
+- [<App::Link object>]
++ [<GeoFeature object>, <App::Link object>]
+test_selection_mapping_through_occurrence_and_nested_owner (TestAssemblyConstraints.TestAssemblyConstraints.test_selection_mapping_through_occurrence_and_nested_owner) ... ok
+test_solve_command_uses_active_assembly (TestAssemblyConstraints.TestAssemblyConstraints.test_solve_command_uses_active_assembly) ... ok
+test_switch_active_assembly_preserves_placements_and_edit (TestAssemblyConstraints.TestAssemblyConstraints.test_switch_active_assembly_preserves_placements_and_edit) ... ok
+test_unanchored_island_solves_without_saved_ground (TestAssemblyConstraints.TestAssemblyConstraints.test_unanchored_island_solves_without_saved_ground) ... ok
+
+======================================================================
+FAIL: test_selected_parent_and_child_are_initial_references (TestAssemblyConstraints.TestAssemblyConstraints.test_selected_parent_and_child_are_initial_references)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestAssemblyConstraints.py", line 247, in test_selected_parent_and_child_are_initial_references
+    self.assertEqual([r[0] for r in task.refs],[self.owner.Origin,self.link])
+AssertionError: Lists differ: [<App::Link object>] != [<GeoFeature object>, <App::Link object>]
+
+First differing element 0:
+<App::Link object>
+<GeoFeature object>
+
+Second list contains 1 additional elements.
+First extra element 1:
+<App::Link object>
+
+- [<App::Link object>]
++ [<GeoFeature object>, <App::Link object>]
+
+----------------------------------------------------------------------
+Ran 61 tests in 62.235s
+
+FAILED (failures=1)

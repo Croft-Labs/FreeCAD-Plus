@@ -1,0 +1,62 @@
+import json,os,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import movement,hierarchy
+from TestMoveWorkflow import TestMoveWorkflow
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False};fixture=None
+    try:
+        win=Gui.getMainWindow();win.resize(1300,1000);win.show();Gui.activateWorkbench('AssemblyWorkbench')
+        fixture=TestMoveWorkflow('test_fixed_root_toolbar_and_click_collectors');fixture.setUp()
+        task=fixture.task(fixture.first,fixture.second)
+        dock=win.findChild(QtWidgets.QDockWidget,'Tasks');assert dock is not None
+        dock.show();win.resizeDocks([dock],[380],QtCore.Qt.Horizontal);QtTest.QTest.qWait(200)
+        before=[(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '') for o in fixture.doc.Objects];undo=fixture.doc.UndoCount
+        images=[]
+        for kind,method,name in [('Move','Distance and vector','vector'),('Move','Point to point','point'),('Rotate','Axis and angle','rotate'),('Move','Dynamic drag','dynamic'),('Align','Axes','axes'),('Align','Coordinate systems','frames')]:
+            task.kind.setCurrentText(kind);task.method.setCurrentText(method)
+            if name=='vector':
+                task.direction.setCurrentIndex(5)
+                for field,value in zip(task.vector_fields,(3,4,0)):field.setValue(value)
+                task.distance.setText('20 mm')
+            elif name=='rotate':task.angle.setText('30 deg')
+            elif name=='dynamic':task.components.setFocus();task.drag_value.setText('6 mm')
+            elif name=='point':
+                fixture.pick(task,'from',fixture.root,hierarchy.subname((fixture.top,fixture.first))+fixture.solid.Name+'.Vertex1')
+                fixture.pick(task,'to',fixture.root,hierarchy.subname((fixture.top,fixture.second))+fixture.solid.Name+'.Vertex1')
+            elif name=='axes':
+                fixture.pick(task,'source_axis',fixture.root,hierarchy.subname((fixture.top,fixture.first))+fixture.solid.Name+'.Edge1')
+                fixture.pick(task,'target_axis',fixture.root,hierarchy.subname((fixture.top,fixture.second))+fixture.solid.Name+'.Edge1')
+            else:
+                for key,link in [('source_frame',fixture.first),('target_frame',fixture.second)]:
+                    fixture.pick(task,key,fixture.root,hierarchy.subname((fixture.top,link))+fixture.child.Origin.Name+'.')
+            task.update_preview(force=True);QtTest.QTest.qWait(150)
+            assert not task.message.error,task.message.text()
+            image=dock.grab().toImage();image.setDevicePixelRatio(1);assert image.width()>200 and image.height()>300
+            image.save(str(out/(name+'-task.png')));images.append(name)
+        fixture.view.viewAxonometric();fixture.view.fitAll();task.kind.setCurrentText('Rotate');task.method.setCurrentText('Dynamic drag');QtTest.QTest.qWait(150)
+        fixture.view.saveImage(str(out/'rotation-rings.png'),1000,750,'Current')
+        assert before==[(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '') for o in fixture.doc.Objects]
+        assert undo==fixture.doc.UndoCount
+        task.reject();QtTest.QTest.qWait(100)
+        fixture.dock.tabs.setCurrentIndex(1);tree=fixture.dock.trees[1];tree.expandAll()
+        row=fixture.row(fixture.first)
+        item=next(item for item in fixture.dock._maps[1].values() if item.data(0,__import__('freecad_plus.panel',fromlist=['_ROLE'])._ROLE)==row)
+        tree.setCurrentItem(item);tree.scrollToItem(item);QtTest.QTest.qWait(100)
+        actions=[]
+        def choose():
+            menu=QtWidgets.QApplication.activePopupWidget()
+            if isinstance(menu,QtWidgets.QMenu):
+                action=next(a for a in menu.actions() if a.text()=='Move Components')
+                actions.append(action.text());action.trigger();menu.close()
+        QtCore.QTimer.singleShot(70,choose)
+        fixture.dock._menu(tree,tree.visualItemRect(item).center())
+        assert actions==['Move Components'] and movement._active is not None
+        assert len(movement._active.paths)==1
+        result.update(ok=True,methods=images,preview_preserved_geometry_and_undo=True,context_menu=True,module=movement.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    if fixture:fixture.tearDown()
+    (out/'result.json').write_text(json.dumps(result,indent=2));QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

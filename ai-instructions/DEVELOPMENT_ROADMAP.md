@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Move Components — November 25, 2026
+
+- [x] Owner authorizes the reviewed Type/Method workflow.
+- [x] Implement Assembly entry points, fixed root and occurrence-aware siblings.
+- [x] Implement all Move/Rotate/Align methods and native drag/pivot/snap controls.
+- [x] Verify scene-only preview, owning-document Apply/Undo, sharing and persistence.
+- [x] Install eleven Python files and pass four existing-shortcut checks.
+- [ ] Resolve the broader order-dependent constraint-preselection test; it passes
+  alone but fails in the combined run. Movement acceptance is complete separately.
+  See [evidence and boundaries](evidence/move-components-20261125/README.md).
+
 ## Responsive component tabs — November 25, 2026
 
 - [x] Approve native wide/intermediate/text-fit-minimum screenshots.

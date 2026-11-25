@@ -436,8 +436,8 @@ from unittest.mock import patch
 class TestMoveNumericCommit(TestComponentMove):
     # Reuse the native movement fixture, without inheriting its test inventory.
     def test_typing_does_not_rebuild_move_preview(self):
-        task = self.task((self.first,))
-        self.inputs(task)
+        task = self.task(self.first)
+        task.distance.setText("6 mm"); task.update_preview()
         task.distance.setFocus(); task.distance.selectAll()
         with patch.object(task,'update_preview',wraps=task.update_preview) as update:
             QtTest.QTest.keyClicks(task.distance,'23'); QtTest.QTest.qWait(50)

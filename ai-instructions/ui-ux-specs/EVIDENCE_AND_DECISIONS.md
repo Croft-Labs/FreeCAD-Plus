@@ -13,6 +13,19 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Move Components implementation approval — November 25, 2026
+
+The owner instructed **“implement the move component workflow”** after reviewing
+native Type/Method task screenshots and the archived-fork findings. This authorizes
+the approved Move/Rotate/Align controls, Assembly entry points, parent-relative
+movement, fixed active root, shared-instance ownership, dynamic handles, reference
+eligibility and Apply/Undo behavior. Chat approval is authoritative; companion
+session `f6ed77034205` approval state was not changed on the owner's behalf.
+[Original proposal](../evidence/move-components-proposal-20261125/README.md) remains
+UI-only evidence. [Implementation evidence](../evidence/move-components-20261125/README.md)
+records actual functionality and delivery separately. Clone and instance-management
+requests remain separate work.
+
 ### File format workflow approval — November 25, 2026
 
 After the unfinished-work audit, the owner instructed **"implement file extensions
