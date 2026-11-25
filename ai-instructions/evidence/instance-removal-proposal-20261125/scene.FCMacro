@@ -1,0 +1,67 @@
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+out=Path(os.environ['PLUS_PREVIEW_OUT']);worktree=Path(os.environ['PLUS_PREVIEW_WORKTREE'])
+
+def run():
+    result={'ok':False};doc=None
+    try:
+        win=Gui.getMainWindow();win.resize(1400,1000);win.show();win.raise_()
+        import freecad_plus
+        from freecad_plus import panel,document,hierarchy,editing,constraints
+        if panel._panel:
+            panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+        freecad_plus.__path__.insert(0,str(worktree));importlib.reload(panel)
+        Gui.activateWorkbench('AssemblyWorkbench')
+        doc=document.new_document('RemovalPreview');root=document.validate(doc)
+        parent=root.Definitions[0];parent.Label='Machine'
+        motor=hierarchy.create_definition(doc,'Motor');gear=hierarchy.create_definition(doc,'Gearbox');bolt=hierarchy.create_definition(doc,'Bolt')
+        motors=[hierarchy.add_instance(parent,motor) for _ in range(3)]
+        gears=[hierarchy.add_instance(parent,gear) for _ in range(2)]
+        bolts=[hierarchy.add_instance(gear,bolt) for _ in range(2)]
+        joint=constraints.create(parent,'Fixed',[(parent.Origin,['','']),(motors[1],['',''])]);joint.Label='Motor fixed to Machine'
+        editing.edit((root.Group[0],));dock=panel.show_panel();dock.activate_assembly(parent);dock.tabs.setCurrentIndex(1)
+        QtTest.QTest.qWait(150)
+        snapshot=lambda:[(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '',[x.Name for x in o.OutList]) for o in doc.Objects]
+        before=snapshot();undo=doc.UndoCount;context=editing.context_path(doc)
+        candidate=(worktree/'instance_remove_ui.py').exists()
+        tree=dock.trees[1];tree.expandAll()
+        rowitem=next(item for item in dock._maps[1].values() if item.data(0,panel._ROLE).path and item.data(0,panel._ROLE).path[-1]==panel.identity(motors[1]))
+        tree.setCurrentItem(rowitem);tree.scrollToItem(rowitem)
+        menu_checks=[]
+        def capture_menu():
+            menu=QtWidgets.QApplication.activePopupWidget()
+            if isinstance(menu,QtWidgets.QMenu):
+                menu_checks.append(any(a.text()=='Remove instance…' for a in menu.actions()))
+                menu.grab().save(str(out/'menu.png'));menu.close()
+        QtCore.QTimer.singleShot(150,capture_menu)
+        dock._menu(tree,tree.visualItemRect(rowitem).center())
+        assert menu_checks==[candidate],menu_checks
+        images=[]
+        if candidate:
+            from freecad_plus.instance_remove_ui import RemoveDialog
+            for scenario in ('simple','constraints','shared','blocked'):
+                dialog=RemoveDialog(win,scenario);dialog.show();QtTest.QTest.qWait(100)
+                image=dialog.grab().toImage();image.setDevicePixelRatio(1);image.save(str(out/(scenario+'.png')));images.append((scenario.title(),image))
+                assert dialog.remove.isEnabled()==(scenario=='simple')
+                if dialog.constraints:dialog.constraints.setChecked(True);assert dialog.remove.isEnabled()
+                if dialog.shared:dialog.shared.setChecked(True);assert dialog.remove.isEnabled()
+                dialog.remove.click();dialog.reject()
+            assert before==snapshot() and undo==doc.UndoCount and context==editing.context_path(doc)
+        else:
+            image=QtGui.QImage(str(out/'menu.png'));image.setDevicePixelRatio(1);images=[('Current menu',image)]
+        width=sum(img.width()+16 for _,img in images)+16;height=max(img.height() for _,img in images)+50
+        canvas=QtGui.QImage(width,height,QtGui.QImage.Format_ARGB32);canvas.fill(QtGui.QColor('#eeeeee'))
+        painter=QtGui.QPainter(canvas);x=16
+        for title,img in images:
+            painter.setPen(QtGui.QColor('#202020'));painter.drawText(x,24,title);painter.drawImage(x,38,img);x+=img.width()+16
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        assert before==snapshot() and undo==doc.UndoCount and context==editing.context_path(doc)
+        result.update(ok=True,candidate=candidate,module=panel.__file__,menu_checked=True,document_and_undo_unchanged=True,edit_context_unchanged=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if doc:App.closeDocument(doc.Name)
+    QtCore.QTimer.singleShot(100,win.close)
+QtCore.QTimer.singleShot(1800,run)

@@ -134,6 +134,23 @@ Definition deletion remains a separate action. Editing the contents of a shared
 subassembly (including removing its child link) changes every occurrence of that
 subassembly; a unique variant is needed to change just one copy's contents.
 
+## Remove individual instances — requested November 25, 2026
+
+Owner also requested Remove individual instances. Its separate
+[native review proposal](../evidence/instance-removal-proposal-20261125/README.md)
+awaits direct screenshot approval: right-click one Assembly occurrence, Remove
+instance, review parent/instance/remaining count, then remove the link in one Undo
+step. The component definition and other links remain. Explicitly include listed
+dependent constraints or leave removal disabled; unsupported references block
+with actionable feedback. Cancel is the default.
+
+Removing a child inside a shared parent changes that parent's assembly contents
+everywhere, so acknowledge that scope explicitly. Removing a whole subassembly
+occurrence preserves its definition and children. Protect active root/Edit ancestry,
+collectors and definition rows; do not treat condensed groups as remove-all.
+The intended Assembly Delete shortcut uses this same scoped review. This remains
+proposed behavior; the installed app has no new removal command yet.
+
 ## Instance quantities and patterns — requested November 25, 2026
 
 Owner requested creation of several instances at once, including patterns.

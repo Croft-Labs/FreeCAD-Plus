@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Remove individual instances — preview prepared
+
+November 25: requested occurrence-removal workflow has native menu and review
+screenshots. One-link identity, dependency handling and shared-parent scope are
+specified; production deletion and installation await direct layout approval.
+See [evidence](evidence/instance-removal-proposal-20261125/README.md).
+
 ## Instance quantity and patterns — preview prepared
 
 November 25: requested quantity/pattern workflow has native screenshots for the

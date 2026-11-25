@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Remove individual instances — November 25, 2026
+
+- [x] Audit current menu and native link/constraint ownership.
+- [x] Render native menu and single/constraint/shared-parent/blocked review states.
+- [ ] Obtain direct layout approval.
+- [ ] Implement identity-based removal plan and dependency/context revalidation.
+- [ ] Verify native links/constraints, Undo/Redo, sharing, persistence and safe Delete routing.
+- [ ] Install checked changes and verify the existing shortcut.
+  See [proposal evidence](evidence/instance-removal-proposal-20261125/README.md).
+
 ## Instance quantity and patterns — November 25, 2026
 
 - [x] Audit current single-instance-per-part Add existing behavior.

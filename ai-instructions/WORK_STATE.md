@@ -1,5 +1,12 @@
 # FreeCAD Plus: Current work state
 
+## Remove individual instances — native preview awaiting approval
+
+November 25: owner requested occurrence removal. Native menu/review proposals
+cover one link, dependent constraints, shared-parent scope and blocked references.
+Presentation checks preserve document, Undo and Edit context. No production or
+installed deletion changes yet. See [screenshots and contract](evidence/instance-removal-proposal-20261125/README.md).
+
 ## Instance quantity and patterns — native preview awaiting approval
 
 November 25: owner requested quantity creation including patterns. Native navigator
