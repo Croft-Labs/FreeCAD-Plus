@@ -11,6 +11,12 @@ import TestUnusedModels as unused_tests
 from TestComponentPanel import settle
 
 
+def camera_frame(view):
+    # Coin recalculates clipping planes on redraw; pose/scale are the user's view.
+    return '\n'.join(line for line in view.getCamera().splitlines()
+                     if not line.strip().startswith(('nearDistance ', 'farDistance ')))
+
+
 class TestComponentWindows(unittest.TestCase):
     setUp = panel_tests.TestComponentPanel.setUp
     tearDown = panel_tests.TestComponentPanel.tearDown
@@ -53,7 +59,7 @@ class TestComponentWindows(unittest.TestCase):
         window = self.mdi().activeSubWindow()
         original.setAnimationEnabled(False)
         original.viewTop(); original.fitAll(); settle()
-        camera = original.getCamera()
+        camera = camera_frame(original)
         context = editing.context_path(self.doc)
         ids = {o.Name:o.ID for o in self.doc.Objects}
         undo = self.doc.UndoCount
@@ -65,7 +71,9 @@ class TestComponentWindows(unittest.TestCase):
         self.assertEqual(len(self.mdi().subWindowList()), count + 1)
         self.assertEqual(editing.context_path(self.doc), context)
         self.assertIn(self.child.Label, new_window.windowTitle())
-        self.assertEqual([r.ref for _,r in self.rows(2)], [panel.identity(self.sketch), panel.identity(self.pad)])
+        self.assertEqual([r.ref for _,r in self.rows(2) if r.kind == 'history' and
+                          panel.lookup(r.ref) in document.history(self.doc, self.child)],
+                         [panel.identity(self.sketch), panel.identity(self.pad)])
         # Ordinary Edit stays in the newly opened tab, including child Edit.
         self.click(1, self.occurrence((self.first,)), double=True)
         self.click(1, self.occurrence((self.first, self.nested)), double=True)
@@ -75,7 +83,7 @@ class TestComponentWindows(unittest.TestCase):
         self.mdi().setActiveSubWindow(window); settle()
         self.assertEqual(Gui.activeDocument().activeView(), original)
         self.assertEqual(editing.context_path(self.doc), context)
-        self.assertEqual(original.getCamera(), camera)
+        self.assertEqual(camera_frame(original), camera)
         self.assertEqual({o.Name:o.ID for o in self.doc.Objects}, ids)
         self.assertEqual(self.doc.UndoCount, undo)
         self.assertEqual(set(App.listDocuments()), names)
@@ -83,7 +91,7 @@ class TestComponentWindows(unittest.TestCase):
         self.assertEqual(len(self.mdi().subWindowList()), count)
         self.assertFalse(any(bound[1] == new for bound, _ in self.widget._states))
         self.assertEqual(editing.context_path(self.doc), context)
-        self.assertEqual(original.getCamera(), camera)
+        self.assertEqual(camera_frame(original), camera)
 
     def test_part_tree_menu_uses_exact_occurrence_and_relabels_without_polling(self):
         original = Gui.activeDocument().activeView()

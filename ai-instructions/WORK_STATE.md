@@ -1,5 +1,17 @@
 # FreeCAD Plus: Current work state
 
+## Active assembly selection — installed
+
+November 24: owner-approved Parts/Assembly/History tabs, selected-part assembly
+root, Parts context action and counted selector are installed with rollback copies.
+All nine new assembly cases pass; the final source assembly/creation run passes
+13 checks. Installed affected run: 68/75 pass, seven pre-existing unused-part
+display/cleanup assertions fail on both old and new runtime. These remain open,
+not skipped or represented as passing. Fresh-process reopening preserves the
+local choice, native IDs and geometry; all 14 existing-shortcut checks pass. See
+[approval, direct screenshots and validation](evidence/active-assembly-20261124/README.md).
+Restart existing sessions. No native rebuild or document migration was needed.
+
 ## History component heading — installed
 
 November 24: approved far-left active component row and right-click Rename are

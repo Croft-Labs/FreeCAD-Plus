@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Active assembly selector — November 24, 2026
+
+- [x] Owner approves current-file rows with counts and collapsed loaded-file groups.
+- [x] Add Assembly button and Parts context action; replace filename root with a part.
+- [x] Keep Edit independent; preserve native membership, geometry, names and History.
+- [x] Validate nine new assembly cases, 13 final source checks and saved reopening.
+- [x] Install with rollback copies; broader installed run passes 68 of 75 checks,
+  and all 14 existing-shortcut checks pass.
+- [ ] Resolve seven prior unused-display/cleanup failures separately; each also
+  reproduces on the previous runtime. See [evidence](evidence/active-assembly-20261124/README.md).
+
 ## Active component in History — November 24, 2026
 
 - [x] Owner approves revised far-left identity row and right-click Rename.

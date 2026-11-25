@@ -1,5 +1,30 @@
 # Component panel
 
+## Active assembly — November 24, 2026
+
+Owner-approved revised preview: the visible tabs are **Parts**, **Assembly** and
+**History**. Assembly has a button showing the current assembly and opening its
+selector. Right-click a definition in Parts and choose **Make active assembly**
+to make that part the sole top-level Assembly row. Its children are component
+instances. The file name is no longer an assembly or pinned tree root.
+
+The selector lists all domestic parts from the current file directly, with a
+**Components** count beside each. Other loaded component files are expandable
+groups, collapsed by default, containing all their parts and counts. Counts include
+every nested instance, including repeats and hidden components, excluding Reference
+and Excluded branches. Select a part and press **Make active assembly**; Cancel
+preserves the choice. Do not add count sorting or a default-assembly setting.
+
+Assembly selection and component Edit are separate. Double-clicking a component
+edits it and shows History without changing the selected assembly. Unused parts
+remain in Parts and can be selected as assemblies; editing them does not append
+temporary rows to Assembly. The approved History component heading and Rename
+remain unchanged. This supersedes the older file-root and temporary-unused-row
+requirements below. It does not change stored membership, placement or geometry.
+
+Approved in chat: "Approved" after the revised selector preview. See
+[preview and implementation evidence](../evidence/active-assembly-20261124/README.md).
+
 ## Active component in History — November 24, 2026
 
 Owner-approved: show the active component as History's first row, above Coordinate
@@ -10,8 +35,8 @@ Right-click anywhere on that row, including its far-left icon, to Rename using
 the existing shared-definition dialog. Renaming updates all instances, supports
 Undo/Redo and save/reopen, and retains the current component/occurrence context.
 Cancel and invalid names retain the previous name. File-only History has no
-component heading. Models, Part Tree, feature eyes/editing and coordinate graphics
-retain their existing behavior.
+component heading. Feature eyes/editing and coordinate graphics retain their
+existing behavior. The active-assembly update above subsequently renames the other tabs.
 
 Approved in chat: "Approved implement and also make sure that the user is able to
 right click the part row and rename it" following the requested left alignment.
@@ -137,7 +162,7 @@ A component serves as both a part and an assembly: it can contain its own sketch
 
 ### File root and new files
 
-New File creates a domestic **Part001** definition, places one instance beneath the file, and enters Edit for Part001. Part001 is an ordinary component that may be renamed, removed or deleted. An empty file is valid. The **file**, identified by its file name and a FreeCAD icon, is the pinned top-level Part Tree row. [C09](EVIDENCE_AND_DECISIONS.md#c09)
+New File creates a domestic **Part001** definition, places one instance beneath the file, and enters Edit for Part001. Part001 is an ordinary component that may be renamed, removed or deleted. An empty file is valid. The November 24 active-assembly decision supersedes C09's pinned filename row: the selected part is now the Assembly root. The native file container remains internal. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
 The file owns a fixed Origin and three origin planes defining global coordinates. Its History shows only these, with visibility controls. File-level assembly relationships and placement controls are managed in Part Tree. Sketches, features and modeling geometry must belong to a component. Starting a modeling command while editing the file requires the user to explicitly edit or create a component; do not silently choose one. Existing files gain the file container without another Part001 or changes to existing names, geometry, placements or references. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
@@ -173,9 +198,12 @@ Show the active definition in bold with the configured active-item fill color in
 
 ### Editing an unused model
 
-Temporarily show the unused model as the last Part Tree entry, **Component name (unused model)**, retaining any external-file qualifier. Give it active fill and bold text. It supports editing but is not a permanent instance and cannot be reordered as one. Gray the other tree entries while their viewport geometry is temporarily hidden. They remain selectable and available for Edit. [C09](EVIDENCE_AND_DECISIONS.md#c09)
-
-Editing another component or the file removes the temporary entry and restores the previous visibility. Saving retains edits to the definition without saving the temporary entry or hiding state. An unused model must not become an additional permanent tree root. [C09](EVIDENCE_AND_DECISIONS.md#c09)
+The November 24 active-assembly decision supersedes C09's temporary unused-model
+tree entry. Editing an unused definition retains the selected Assembly root and
+shows the edited part in Parts and History. Existing isolated viewport editing
+and display restoration remain. Saving retains definition edits, not temporary
+display state. An unused definition becomes the Assembly root only when selected
+as the active assembly. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
 ### Part Type and visibility
 

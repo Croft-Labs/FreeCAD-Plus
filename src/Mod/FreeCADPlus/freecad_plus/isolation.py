@@ -43,19 +43,19 @@ def current(view):
     return next((session for session in _sessions if session.view == view and not session.closed), None)
 
 
-def begin(doc, view, definition):
+def begin(doc, view, definition, *, allow_placed=False):
     if definition not in external.available_definitions(document.validate(doc)):
         raise ValueError('The definition is not in this file catalog')
-    if occurrences(doc, definition):
-        raise ValueError('Edit a placed occurrence of this component')
     existing = current(view)
-    if existing and existing.ref == _identity(definition):
+    if existing and existing.ref == _identity(definition) and (existing.allow_placed or not occurrences(doc, definition)):
         existing.refresh()
         return existing
+    if not allow_placed and occurrences(doc, definition):
+        raise ValueError('Edit a placed occurrence of this component')
     # Prepare the new preview before disturbing an existing context.
     preview = _preview(definition)
     end(view)
-    session = Isolation(doc, view, definition, preview)
+    session = Isolation(doc, view, definition, preview, allow_placed=allow_placed)
     _sessions.append(session)
     return session
 
@@ -92,10 +92,11 @@ def _preview(definition):
 
 
 class Isolation:
-    def __init__(self, doc, view, definition, preview):
+    def __init__(self, doc, view, definition, preview, *, allow_placed=False):
         self.doc = doc
         self.view = view
         self.ref = _identity(definition)
+        self.allow_placed = allow_placed
         self.scene = view.getSceneGraph()
         self.preview = preview
         self.closed = False
@@ -167,7 +168,7 @@ class Isolation:
             return
         try:
             definition = self.definition()
-            if occurrences(self.doc, definition):
+            if not self.allow_placed and occurrences(self.doc, definition):
                 self.close()
                 return
             preview = _preview(definition)

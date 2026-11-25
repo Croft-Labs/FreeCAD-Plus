@@ -1,0 +1,42 @@
+[
+  {
+    "file": "freecad_plus/panel.py",
+    "sha256": "9932bcc5e7ee1016744511877463a1c4252f809a4ca89e2cb8a3d7625b86d336",
+    "backup_sha256": "da2d684c26dc4c56455afaedc9aa76c511a5561ea7db4350dfd5eeeb87596394"
+  },
+  {
+    "file": "freecad_plus/assembly.py",
+    "sha256": "90b2714d0c07c85eeef7c0809fb414cd2708cbc113e15777ce879c350a57ffa6",
+    "backup_sha256": null
+  },
+  {
+    "file": "freecad_plus/editing.py",
+    "sha256": "ed261ff8917fcb476d4c0d199a2a2d888ec70da0208f11a3d092c826a721b910",
+    "backup_sha256": "0c172814d868ea75af028cecbf47f2bb7f69425352b958c8f7a3aa35c92a1472"
+  },
+  {
+    "file": "freecad_plus/isolation.py",
+    "sha256": "bbd89134ff5b115cac68f2cd9ce7517f34d3d22b944a072a1f095ae6b018558a",
+    "backup_sha256": "645761d58a35b12520d3869a014524a5324462805557c1453f9e5cf67fb1c2df"
+  },
+  {
+    "file": "TestActiveAssembly.py",
+    "sha256": "864d140e7d11c39c266628a8563b43244f477dfaeb539c71c982f10a664861dd",
+    "backup_sha256": null
+  },
+  {
+    "file": "TestComponentPanel.py",
+    "sha256": "ad75afe0ec05cd92facd2312176e32c09dc656847da8665be6153476760a39a7",
+    "backup_sha256": "09ae83628279b12d88e23e69412924ddb439a19f643c28105c4b767c9f2e1908"
+  },
+  {
+    "file": "TestUnusedModels.py",
+    "sha256": "07ed3629aab6010b228483a72f3dd90fa6819397260a882f36cbab91ab0f773e",
+    "backup_sha256": "743489cf01a320489c98df538c268ab2926bf57447c2c532ebeb4f4ad15560da"
+  },
+  {
+    "file": "TestComponentWindows.py",
+    "sha256": "5aabca11afa48e1684addf6686c04ecc9ed81ffbdb8b6210e63a2856eb43d535",
+    "backup_sha256": "7beb3005673add3b366d14a8e09eabc6cbb3d9fc6a9e215f2c66b5e57346cd15"
+  }
+]

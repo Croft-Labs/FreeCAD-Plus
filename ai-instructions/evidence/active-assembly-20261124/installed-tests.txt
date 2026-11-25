@@ -1,0 +1,166 @@
+test_chooser_flat_current_parts_counts_collapsed_files_and_cancel (TestActiveAssembly.TestActiveAssembly.test_chooser_flat_current_parts_counts_collapsed_files_and_cancel) ... ok
+test_copy_paste_into_selected_unused_assembly_and_stale_child_guard (TestActiveAssembly.TestActiveAssembly.test_copy_paste_into_selected_unused_assembly_and_stale_child_guard) ... ok
+test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded (TestActiveAssembly.TestActiveAssembly.test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded) ... ok
+test_loaded_unimported_assembly_edits_in_source_without_importing (TestActiveAssembly.TestActiveAssembly.test_loaded_unimported_assembly_edits_in_source_without_importing) ... ok
+test_parts_context_menu_sets_root_without_changing_edit_or_model (TestActiveAssembly.TestActiveAssembly.test_parts_context_menu_sets_root_without_changing_edit_or_model) ... ok
+test_pending_task_and_stale_chooser_are_refused (TestActiveAssembly.TestActiveAssembly.test_pending_task_and_stale_chooser_are_refused) ... ok
+test_per_view_choice_and_saved_reopen_preference (TestActiveAssembly.TestActiveAssembly.test_per_view_choice_and_saved_reopen_preference) ... ok
+test_root_rename_delete_and_undo (TestActiveAssembly.TestActiveAssembly.test_root_rename_delete_and_undo) ... ok
+test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence (TestActiveAssembly.TestActiveAssembly.test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence) ... ok
+test_cancel_same_name_and_invalid_names_make_no_undo (TestComponentRename.TestComponentRename.test_cancel_same_name_and_invalid_names_make_no_undo) ... ok
+test_dialog_rechecks_changed_name_and_native_editor_guard (TestComponentRename.TestComponentRename.test_dialog_rechecks_changed_name_and_native_editor_guard) ... ok
+test_external_model_rename_belongs_to_source_file (TestComponentRename.TestComponentRename.test_external_model_rename_belongs_to_source_file) ... ok
+test_history_heading_context_menu_rename_undo_and_save (TestComponentRename.TestComponentRename.test_history_heading_context_menu_rename_undo_and_save) ... ok
+test_history_heading_has_no_visibility_or_feature_selection (TestComponentRename.TestComponentRename.test_history_heading_has_no_visibility_or_feature_selection) ... ok
+test_history_rename_validation_and_stale_context (TestComponentRename.TestComponentRename.test_history_rename_validation_and_stale_context) ... ok
+test_history_unused_and_external_definition_rename (TestComponentRename.TestComponentRename.test_history_unused_and_external_definition_rename) ... ok
+test_part001_rename_updates_shared_rows_and_undo (TestComponentRename.TestComponentRename.test_part001_rename_updates_shared_rows_and_undo) ... ok
+test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup) ... ok
+test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation) ... ok
+test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory) ... ok
+test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly) ... ok
+test_projection_ownership_and_history_without_body_rows (TestComponentPanel.TestComponentPanel.test_projection_ownership_and_history_without_body_rows) ... ok
+test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context) ... ok
+test_defaults_creation_only_and_reopen_preserves_hidden_groups (TestComponentPanel.TestHistoryVisibility.test_defaults_creation_only_and_reopen_preserves_hidden_groups) ... ok
+test_external_visibility_is_source_owned_and_persists (TestComponentPanel.TestHistoryVisibility.test_external_visibility_is_source_owned_and_persists) ... ok
+test_eye_and_keyboard_preserve_selection_geometry_and_undo (TestComponentPanel.TestHistoryVisibility.test_eye_and_keyboard_preserve_selection_geometry_and_undo) ... ok
+test_group_and_individual_eyes_atomic_undo_and_mixed_state (TestComponentPanel.TestHistoryVisibility.test_group_and_individual_eyes_atomic_undo_and_mixed_state) ... ok
+test_group_eyes_during_sketch_placement_and_native_drawing (TestComponentPanel.TestHistoryVisibility.test_group_eyes_during_sketch_placement_and_native_drawing) ... ok
+test_hidden_origin_and_body_reveal_in_single_transaction (TestComponentPanel.TestHistoryVisibility.test_hidden_origin_and_body_reveal_in_single_transaction) ... ok
+test_origin_group_and_left_margin_survive_resize_and_collapse (TestComponentPanel.TestHistoryVisibility.test_origin_group_and_left_margin_survive_resize_and_collapse) ... ok
+test_stale_context_pending_transaction_and_task_guards (TestComponentPanel.TestHistoryVisibility.test_stale_context_pending_transaction_and_task_guards) ... ok
+test_attach_sketch_command_rejects_later_plane_then_reorder_retry (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry) ... ok
+test_coplanar_parallel_skew_and_incomplete_points (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_coplanar_parallel_skew_and_incomplete_points) ... ok
+test_external_history_order_is_source_owned (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_external_history_order_is_source_owned) ... ok
+test_history_clamps_both_directions_and_preserves_native_graph (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_history_clamps_both_directions_and_preserves_native_graph) ... ok
+test_history_multiple_consumers_and_pending_transaction (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_history_multiple_consumers_and_pending_transaction) ... ok
+test_history_undo_redo_save_new_deleted_and_reused_names (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_history_undo_redo_save_new_deleted_and_reused_names) ... ok
+test_invalid_or_later_picks_do_not_discard_valid_refs (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_invalid_or_later_picks_do_not_discard_valid_refs) ... ok
+test_legacy_line_containing_plane_survives_open_edit_and_cancel (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_legacy_line_containing_plane_survives_open_edit_and_cancel) ... ok
+test_managed_attach_sketch_command_rejects_later_pick (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_managed_attach_sketch_command_rejects_later_pick) ... ok
+test_native_attach_sketch_legacy_document_remains_supported (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_native_attach_sketch_legacy_document_remains_supported) ... ok
+test_new_sketch_from_two_refs_enters_drawing_and_undo (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_new_sketch_from_two_refs_enters_drawing_and_undo) ... ok
+test_normal_line_point_both_orders_accept_edit_and_recompute (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_normal_line_point_both_orders_accept_edit_and_recompute) ... ok
+test_panel_real_drop_path_popup_fixed_frame_and_stale_payload (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_panel_real_drop_path_popup_fixed_frame_and_stale_payload) ... ok
+test_replacement_and_equivalent_face_in_both_tasks (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_replacement_and_equivalent_face_in_both_tasks) ... ok
+test_sketch_support_property_rejects_later_reference (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_sketch_support_property_rejects_later_reference) ... ok
+test_cycles_are_not_silently_ordered (TestFeatureCenteredModeling.TestSequentialHistory.test_cycles_are_not_silently_ordered) ... ok
+test_forward_profile_target_axis_and_limit_are_atomic (TestFeatureCenteredModeling.TestSequentialHistory.test_forward_profile_target_axis_and_limit_are_atomic) ... ok
+test_history_picker_rejects_later_profile (TestFeatureCenteredModeling.TestSequentialHistory.test_history_picker_rejects_later_profile) ... ok
+test_interleaved_bodies_undo_and_saved_order (TestFeatureCenteredModeling.TestSequentialHistory.test_interleaved_bodies_undo_and_saved_order) ... ok
+test_native_compound_drop_rejects_future_input (TestFeatureCenteredModeling.TestSequentialHistory.test_native_compound_drop_rejects_future_input) ... ok
+test_native_expression_and_body_result_dependencies (TestFeatureCenteredModeling.TestSequentialHistory.test_native_expression_and_body_result_dependencies) ... ok
+test_sketch_plane_and_native_input_guards (TestFeatureCenteredModeling.TestSequentialHistory.test_sketch_plane_and_native_input_guards) ... ok
+test_editing_unused_keeps_assembly_root_and_restores_display (TestUnusedModels.TestUnusedModels.test_editing_unused_keeps_assembly_root_and_restores_display) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 75, in test_editing_unused_keeps_assembly_root_and_restores_display
+    self.assertTrue(all(session.scene.findChild(node) >= 0 for node, _ in session.hidden))
+AssertionError: False is not true
+test_external_context_is_per_view_and_rechecks_removed_import (TestUnusedModels.TestUnusedModels.test_external_context_is_per_view_and_rechecks_removed_import) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 248, in test_external_context_is_per_view_and_rechecks_removed_import
+    self.assertIsNone(first.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+test_external_history_native_editors_and_context_guards (TestUnusedModels.TestUnusedModels.test_external_history_native_editors_and_context_guards) ... ok
+test_external_isolation_close_source_and_panel_cleanup (TestUnusedModels.TestUnusedModels.test_external_isolation_close_source_and_panel_cleanup) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 226, in test_external_isolation_close_source_and_panel_cleanup
+    self.assertIsNone(view.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+test_external_unused_saved_child_display (TestUnusedModels.TestUnusedModels.test_external_unused_saved_child_display) ... ok
+test_external_unused_selection_edit_undo_save (TestUnusedModels.TestUnusedModels.test_external_unused_selection_edit_undo_save) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 152, in test_external_unused_selection_edit_undo_save
+    self.assertTrue(Gui.Selection.getSelectionEx(source.Name), 'The isolated external geometry must remain selectable')
+AssertionError: [] is not true : The isolated external geometry must remain selectable
+test_isolation_is_per_view_and_panel_close_cleans_up (TestUnusedModels.TestUnusedModels.test_isolation_is_per_view_and_panel_close_cleans_up) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 261, in test_isolation_is_per_view_and_panel_close_cleans_up
+    self.assertTrue(any(str(scene.getChild(i).getName()) == 'ObjectGroup' for i in range(scene.getNumChildren())))
+AssertionError: False is not true
+test_modeling_undo_and_save_during_isolation (TestUnusedModels.TestUnusedModels.test_modeling_undo_and_save_during_isolation) ... ok
+test_native_sketch_editor_and_guarded_context_exit (TestUnusedModels.TestUnusedModels.test_native_sketch_editor_and_guarded_context_exit) ... ok
+test_removal_and_view_close_discard_transient_state (TestUnusedModels.TestUnusedModels.test_removal_and_view_close_discard_transient_state) ... ok
+test_saved_unused_display_reference_undo_and_persistence (TestUnusedModels.TestUnusedModels.test_saved_unused_display_reference_undo_and_persistence) ... ok
+test_unused_filters_do_not_leak_into_placed_view (TestUnusedModels.TestUnusedModels.test_unused_filters_do_not_leak_into_placed_view) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 346, in test_unused_filters_do_not_leak_into_placed_view
+    self.assertIsNotNone(view.getObjectInfoRay(*ray));self.assertIsNotNone(other.getObjectInfoRay(*ray))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None
+test_external_tab_edits_save_to_source_and_no_persistent_window_objects (TestComponentWindows.TestComponentWindows.test_external_tab_edits_save_to_source_and_no_persistent_window_objects) ... ok
+test_failed_open_rolls_back_only_new_view_and_panel_reopen_tracks_titles (TestComponentWindows.TestComponentWindows.test_failed_open_rolls_back_only_new_view_and_panel_reopen_tracks_titles) ... ok
+test_guards_reject_stale_menu_and_open_during_native_editor (TestComponentWindows.TestComponentWindows.test_guards_reject_stale_menu_and_open_during_native_editor) ... ok
+test_models_menu_preserves_original_context_camera_and_native_identity (TestComponentWindows.TestComponentWindows.test_models_menu_preserves_original_context_camera_and_native_identity) ... ok
+test_part_tree_menu_uses_exact_occurrence_and_relabels_without_polling (TestComponentWindows.TestComponentWindows.test_part_tree_menu_uses_exact_occurrence_and_relabels_without_polling) ... ok
+test_unused_windows_have_independent_isolation_and_close_cleanup (TestComponentWindows.TestComponentWindows.test_unused_windows_have_independent_isolation_and_close_cleanup) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentWindows.py", line 128, in test_unused_windows_have_independent_isolation_and_close_cleanup
+    self.assertTrue(first.closed)
+AssertionError: False is not true
+test_empty_document_and_existing_legacy (TestComponentPanel.TestNativeComponentCreation.test_empty_document_and_existing_legacy) ... ok
+test_external_definition_owns_new_part (TestComponentPanel.TestNativeComponentCreation.test_external_definition_owns_new_part) ... ok
+test_new_file_and_part_both_presentations (TestComponentPanel.TestNativeComponentCreation.test_new_file_and_part_both_presentations) ... ok
+test_start_card_creates_shared_component (TestComponentPanel.TestNativeComponentCreation.test_start_card_creates_shared_component) ... ok
+
+======================================================================
+FAIL: test_editing_unused_keeps_assembly_root_and_restores_display (TestUnusedModels.TestUnusedModels.test_editing_unused_keeps_assembly_root_and_restores_display)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 75, in test_editing_unused_keeps_assembly_root_and_restores_display
+    self.assertTrue(all(session.scene.findChild(node) >= 0 for node, _ in session.hidden))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_external_context_is_per_view_and_rechecks_removed_import (TestUnusedModels.TestUnusedModels.test_external_context_is_per_view_and_rechecks_removed_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 248, in test_external_context_is_per_view_and_rechecks_removed_import
+    self.assertIsNone(first.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+
+======================================================================
+FAIL: test_external_isolation_close_source_and_panel_cleanup (TestUnusedModels.TestUnusedModels.test_external_isolation_close_source_and_panel_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 226, in test_external_isolation_close_source_and_panel_cleanup
+    self.assertIsNone(view.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+
+======================================================================
+FAIL: test_external_unused_selection_edit_undo_save (TestUnusedModels.TestUnusedModels.test_external_unused_selection_edit_undo_save)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 152, in test_external_unused_selection_edit_undo_save
+    self.assertTrue(Gui.Selection.getSelectionEx(source.Name), 'The isolated external geometry must remain selectable')
+AssertionError: [] is not true : The isolated external geometry must remain selectable
+
+======================================================================
+FAIL: test_isolation_is_per_view_and_panel_close_cleans_up (TestUnusedModels.TestUnusedModels.test_isolation_is_per_view_and_panel_close_cleans_up)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 261, in test_isolation_is_per_view_and_panel_close_cleans_up
+    self.assertTrue(any(str(scene.getChild(i).getName()) == 'ObjectGroup' for i in range(scene.getNumChildren())))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_unused_filters_do_not_leak_into_placed_view (TestUnusedModels.TestUnusedModels.test_unused_filters_do_not_leak_into_placed_view)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestUnusedModels.py", line 346, in test_unused_filters_do_not_leak_into_placed_view
+    self.assertIsNotNone(view.getObjectInfoRay(*ray));self.assertIsNotNone(other.getObjectInfoRay(*ray))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_unused_windows_have_independent_isolation_and_close_cleanup (TestComponentWindows.TestComponentWindows.test_unused_windows_have_independent_isolation_and_close_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentWindows.py", line 128, in test_unused_windows_have_independent_isolation_and_close_cleanup
+    self.assertTrue(first.closed)
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 75 tests in 106.341s
+
+FAILED (failures=7)

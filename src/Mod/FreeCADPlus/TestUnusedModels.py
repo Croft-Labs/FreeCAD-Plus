@@ -40,20 +40,18 @@ class TestUnusedModels(unittest.TestCase):
         settle()
         return sketch, pad
 
-    def test_temporary_row_is_not_an_instance_and_restores_display(self):
+    def test_editing_unused_keeps_assembly_root_and_restores_display(self):
         original = visibility(self.doc)
         ids = {o.Name: o.ID for o in self.doc.Objects}
         undo = self.doc.UndoCount
+        assembly_ref = self.widget.trees[1].topLevelItem(0).data(0, panel._ROLE).ref
         session = self.activate()
         self.assertIsNotNone(session)
         rows = self.rows(1)
         temp = [(item, row) for item, row in rows if row.kind == 'unused']
-        self.assertEqual(len(temp), 1)
-        item, row = temp[0]
-        self.assertEqual(row.label, 'Unused component (unused model)')
-        file_item = self.widget.trees[1].topLevelItem(0)
-        self.assertIs(file_item.child(file_item.childCount()-1), item)
-        self.assertTrue(item.font(0).bold())
+        self.assertEqual(len(temp), 0)
+        item = self.widget.trees[1].topLevelItem(0)
+        self.assertEqual(item.data(0, panel._ROLE).ref, assembly_ref)
         self.assertFalse(item.flags() & QtCore.Qt.ItemIsDragEnabled)
         self.assertEqual(self.widget.trees[1].topLevelItemCount(), 1)
         for other, other_row in rows:
@@ -131,7 +129,8 @@ class TestUnusedModels(unittest.TestCase):
         self.click(0, self.model(definition), double=True)
         QtTest.QTest.qWait(350)
         self.assertEqual(editing.context_path(self.doc), (definition, ()))
-        self.assertIn('Unused screw (Hardware) (unused model)', [r.label for _,r in self.rows(1)])
+        self.assertEqual(self.widget.trees[2].topLevelItem(0).text(0), 'Unused screw (Hardware)')
+        self.assertFalse(any(r.kind == 'unused' for _, r in self.rows(1)))
         self.assertEqual(self.doc.UndoCount, undo)
         sketch, pad = self.geometry()
         self.assertEqual(pad.Document, source)

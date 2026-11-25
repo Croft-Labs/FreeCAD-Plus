@@ -69,7 +69,7 @@ def edit_file(doc):
     _notify_context()
 
 
-def edit_unused(doc, definition):
+def edit_unused(doc, definition, *, detached=False):
     """Edit a catalog definition in this tab without adding a native occurrence."""
     view = _view(doc)
     if Gui.getDocument(doc.Name).getInEdit():
@@ -81,7 +81,7 @@ def edit_unused(doc, definition):
     if hasattr(view, 'setComponentHiddenPaths'):
         view.setComponentHiddenPaths()
     try:
-        isolation.begin(doc, view, definition)
+        isolation.begin(doc, view, definition, allow_placed=detached)
     except Exception:
         _notify_context()  # Restore the previous placed-context filter after failed entry.
         raise
@@ -204,7 +204,7 @@ def edit_feature(doc, feature):
         raise
 
 
-def open_component_view(doc, definition, path=()):
+def open_component_view(doc, definition, path=(), *, detached=False):
     """Open another native file view; share the model, not the original Edit state."""
     from .external import available_definitions
     original = _view(doc)
@@ -215,7 +215,7 @@ def open_component_view(doc, definition, path=()):
         target, path = hierarchy.resolve(doc, path)
         if target != definition:
             raise ValueError("The selected occurrence changed; select it again")
-    elif isolation.occurrences(doc, definition):
+    elif not detached and isolation.occurrences(doc, definition):
         raise ValueError("Choose a placed occurrence of this component")
     if any(Gui.getDocument(owner.Name).getInEdit() for owner in App.listDocuments().values()):
         raise ValueError("Finish the native feature editor first")
@@ -237,7 +237,7 @@ def open_component_view(doc, definition, path=()):
         if path:
             edit(path)
         else:
-            edit_unused(doc, definition)
+            edit_unused(doc, definition, detached=detached)
         view.setCamera(camera)
         if not path:
             view.fitAll()

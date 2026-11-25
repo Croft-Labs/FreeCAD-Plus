@@ -1,5 +1,34 @@
 # Component/document architecture
 
+## Active assembly navigation — November 24, 2026
+
+`freecad_plus.assembly` resolves loaded Plus catalogs, counts nested instances and
+stores the last explicit choice in local FreeCAD workspace preferences, keyed by
+document UID and source UID/object name/native ID. This is not a portable document
+default or a schema migration. Per-view panel state keeps the current assembly
+separate from the edited definition/occurrence. Initial state recalls a valid
+choice or uses the initially edited part. Deleted/closed roots clear the tree.
+
+Assembly projects one selected definition and its existing App::Link descendants;
+the native file container and catalog remain unchanged. A placed root retains its
+real native route. An unplaced root uses definition-relative selection paths and
+validated anchor identities. Editing its child uses explicit detached definition
+isolation, even if that definition also has unrelated placements. Existing strict
+unused-model callers retain their default placement guard. Open in new window
+supports the same detached context. Edit routing from Parts searches the complete
+file graph, not only the currently projected assembly subtree.
+
+Loaded-file selection does not import or place anything. Editing a selected part
+from a loaded but unimported file activates that source file's native tab; imported
+definitions retain their existing host-file editing behavior. Assembly selection
+is navigation state; viewport display remains governed by existing Edit/isolation
+rules. There is no geometry, visibility, membership, transaction or native binary
+change when selecting an assembly. Counts include all nested instance occurrences,
+skipping Reference/Excluded branches irrespective of Shown/Hidden state.
+
+See [owner specification](ui-ux-specs/COMPONENT_PANEL.md#active-assembly--november-24-2026)
+and [native validation and known baseline failures](evidence/active-assembly-20261124/README.md).
+
 Status: G1.6b domestic/external unused-model editing validated in the native development build, October 10, 2026.
 The native service module and panel foundation are opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.

@@ -56,6 +56,9 @@ class TestComponentPanel(unittest.TestCase):
 
     def occurrence(self, path):
         key = tuple(panel.identity(o) for o in path)
+        if not any(row.path == key and not row.anchor for _, row in self.rows(1)):
+            self.widget.activate_assembly(path[0].LinkedObject, path=(path[0],))
+            settle()
         return next(item for item, row in self.rows(1) if row.path == key)
 
     def model(self, definition):
@@ -73,13 +76,14 @@ class TestComponentPanel(unittest.TestCase):
         settle()
 
     def test_projection_ownership_and_history_without_body_rows(self):
+        self.widget.activate_assembly(self.parent)
         before = [(o.Name, o.ID) for o in self.doc.Objects]
         undo = self.doc.UndoCount
-        self.assertEqual([self.widget.tabs.tabText(i) for i in range(3)], ['Models', 'Part Tree', 'History'])
+        self.assertEqual([self.widget.tabs.tabText(i) for i in range(3)], ['Parts', 'Assembly', 'History'])
         self.assertEqual(self.widget.trees[1].topLevelItemCount(), 1)
         self.assertFalse(self.widget.trees[1].topLevelItem(0).icon(0).isNull())
         self.assertEqual(len([r for _, r in self.rows(0) if r.kind == 'model']), 3)
-        self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 4)
+        self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 1)
         history = [panel.lookup(r.ref) for _, r in self.rows(2) if r.kind == 'history']
         self.assertEqual(history, [next(o for o in self.child.Origin.OriginFeatures if o.TypeId == 'App::Point'), *[o for o in self.child.Origin.OriginFeatures
                                                      if o.TypeId in ('App::Line', 'App::Plane')],
@@ -118,10 +122,11 @@ class TestComponentPanel(unittest.TestCase):
         self.click(0, self.model(self.child), double=True)
         self.assertEqual(self.widget.tabs.currentIndex(), 2)
         self.assertEqual(editing.context_path(self.doc)[1], (self.second, self.nested))
-        file_item = self.widget.trees[1].topLevelItem(0)
-        self.click(1, file_item)
+        assembly_item = self.widget.trees[1].topLevelItem(0)
+        self.click(1, assembly_item)
         self.assertEqual(editing.context_path(self.doc)[0], self.child)
-        self.click(1, file_item, double=True)
+        # File-root editing remains an internal compatibility operation, not a tree row.
+        editing.edit_file(self.doc); settle()
         with self.assertRaises(ValueError): editing.context_path(self.doc)
         self.assertEqual(len(self.rows(2)), 4)
         before = len(self.doc.Objects)
@@ -156,7 +161,7 @@ class TestComponentPanel(unittest.TestCase):
         self.doc.undo(); self.doc.recompute(); settle()
         restored = self.doc.getObject(old_row.path[0][2])
         self.assertIsNotNone(restored)
-        self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 4)
+        self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 1)
 
     def test_nested_import_labels_and_external_edit_remain_in_assembly(self):
         document.save_document(self.doc, self.output / 'Assembly.cadprt')
@@ -206,7 +211,7 @@ class TestComponentPanel(unittest.TestCase):
         self.doc = document.open_document(path)
         self.widget = panel.show_panel(); settle()
         self.assertEqual({o.Name: o.ID for o in self.doc.Objects}, ids)
-        self.assertEqual(self.widget.trees[1].topLevelItemCount(), 1)
+        self.assertEqual(self.widget.trees[1].topLevelItemCount(), 0)
         self.assertEqual(len(self.rows(2)), 4)
 
     def test_event_coalescing_idle_and_observer_cleanup(self):
@@ -848,8 +853,10 @@ class TestNativeComponentCreation(unittest.TestCase):
             self.assertIn(panel.identity(created), self.model_names())
             self.assertEqual(tuple(o.Name for o in root.Group), placed)
             self.assertEqual(sum(o.TypeId == 'App::Link' for o in doc.Objects), 1)
-            self.assertTrue(any(item.data(0, panel._ROLE).kind == 'unused'
-                                 for item in panel._panel._maps[1].values()))
+            self.assertFalse(any(item.data(0, panel._ROLE).kind == 'unused'
+                                  for item in panel._panel._maps[1].values()))
+            self.assertEqual(panel._panel.trees[1].topLevelItem(0).data(0, panel._ROLE).ref,
+                             panel.identity(root.Definitions[0]))
             self.assertEqual(editing.context(doc)[0], created)
             self.assertEqual(panel._panel.tabs.currentIndex(), 2)
             self.assertFalse(Gui.Selection.getSelection('*'))

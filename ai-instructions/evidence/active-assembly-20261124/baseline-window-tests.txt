@@ -1,0 +1,6 @@
+test_models_menu_preserves_original_context_camera_and_native_identity (TestComponentWindows.TestComponentWindows.test_models_menu_preserves_original_context_camera_and_native_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.927s
+
+OK

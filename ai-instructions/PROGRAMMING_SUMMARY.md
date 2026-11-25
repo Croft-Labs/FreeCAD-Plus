@@ -1,5 +1,18 @@
 # FreeCAD Plus: Programming Summary
 
+## Active assembly selector — installed
+
+Parts offers **Make active assembly**; Assembly shows the chosen part as its root
+and has a selector button. The chooser lists current-file parts with nested instance
+counts and collapsed groups for other loaded component files. Edit remains separate,
+and the local workspace recalls the last explicit assembly choice. The approved
+History heading/Rename remain intact. All nine new assembly checks and 13 final
+source checks pass. The installed 75-case run passes 68; seven older unused-display
+and cleanup failures also reproduce on the prior runtime. Fresh reopening and all
+14 existing-shortcut checks pass. See
+[screenshots, exact checks and delivery](evidence/active-assembly-20261124/README.md).
+Restart running FreeCAD Plus sessions to load the Python update.
+
 ## Active component and Rename in History — installed
 
 History now starts with the active component's icon/name aligned at the far left,

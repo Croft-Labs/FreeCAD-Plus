@@ -1,0 +1,41 @@
+import json,os,sys,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        import freecad_plus
+        from freecad_plus import panel
+        if os.environ.get('PLUS_TEST_SOURCE'):
+            if panel._panel:
+                panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+            sys.path.insert(0,os.environ['PLUS_TEST_SOURCE'])
+            freecad_plus.__path__.insert(0,os.path.join(os.environ['PLUS_TEST_SOURCE'],'freecad_plus'))
+            from freecad_plus import editing,isolation
+            importlib.reload(isolation);importlib.reload(editing);importlib.reload(panel)
+        elif os.environ.get('PLUS_TEST_CASE_SOURCE'):
+            sys.path.insert(0,os.environ['PLUS_TEST_CASE_SOURCE'])
+            panel.Row.anchor=()  # Read-only test compatibility with the pre-assembly baseline.
+        names=os.environ.get('PLUS_TEST_NAMES','TestActiveAssembly.TestActiveAssembly').split(',')
+        suite=unittest.defaultTestLoader.loadTestsFromNames(names)
+        with (out/'tests.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

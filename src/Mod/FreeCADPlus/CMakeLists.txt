@@ -20,6 +20,7 @@ set(FreeCADPlus_SRCS
     TestExternalDefinitions.py
     TestComponentPanel.py
     TestComponentRename.py
+    TestActiveAssembly.py
     TestComponentImport.py
     TestUnusedModels.py
     TestComponentWindows.py
@@ -70,6 +71,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/legacy_hierarchy.py
     freecad_plus/external.py
     freecad_plus/panel.py
+    freecad_plus/assembly.py
     freecad_plus/movement.py
     freecad_plus/isolation.py
     freecad_plus/editing.py

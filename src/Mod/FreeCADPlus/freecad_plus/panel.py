@@ -15,7 +15,7 @@ try:
 except ImportError:
     QtWidgets = QtGui
 
-from . import document, editing, external, hierarchy, isolation, display
+from . import document, editing, external, hierarchy, isolation, display, assembly
 
 _ROLE = QtCore.Qt.UserRole
 _ACTIVE = _ROLE + 1
@@ -45,9 +45,10 @@ class Row:
     selection: tuple = ()
     children: tuple = ()
     visible: object = None
+    anchor: tuple = ()
 
 
-def projection(doc, active=None, active_path=()):
+def projection(doc, active=None, active_path=(), assembly_root=None, assembly_path=()):
     """Build immutable, identity-qualified rows from a validated component graph."""
     root = document.validate(doc)
     def models(group, ancestry=()):
@@ -61,7 +62,7 @@ def projection(doc, active=None, active_path=()):
             rows.append(Row(('import', branch), 'import', Path(other.FileName).stem,
                             identity(other_root), children=tuple(models(imported, branch))))
         return rows
-    def occurrences(owner, path=()):
+    def occurrences(owner, path=(), anchor=None):
         rows = []
         for link in owner.Group:
             if link.TypeId != 'App::Link':
@@ -70,19 +71,21 @@ def projection(doc, active=None, active_path=()):
             refs = tuple(identity(item) for item in route)
             target = link.LinkedObject
             rows.append(Row(('occurrence', refs), 'occurrence',
-                            external.qualified_label(target, doc), identity(target), refs,
-                            (doc.Name, root.Name, hierarchy.subname(route)),
-                            tuple(occurrences(target, route))))
+                            assembly.label(target, doc), identity(target), refs,
+                            ((anchor.Document.Name, anchor.Name, hierarchy.subname(route)) if anchor
+                             else (doc.Name, root.Name, hierarchy.subname(route))),
+                            tuple(occurrences(target, route, anchor)),
+                            anchor=identity(anchor) if anchor else ()))
         return rows
-    file_row = Row(('file', identity(root)), 'file', Path(doc.FileName).stem if doc.FileName else doc.Label,
-                   identity(root), selection=(doc.Name, root.Name, ''),
-                   children=tuple(occurrences(root)))
-    if active is not None and not active_path:
-        temporary = Row(('unused', identity(active)), 'unused',
-                        external.qualified_label(active, doc) + ' (unused model)', identity(active),
-                        selection=(active.Document.Name, active.Name, ''))
-        file_row = Row(file_row.key, file_row.kind, file_row.label, file_row.ref,
-                       selection=file_row.selection, children=(*file_row.children, temporary))
+    assembly_rows = ()
+    if assembly_root is not None:
+        anchor = None if assembly_path else assembly_root
+        assembly_rows = (Row(('assembly', identity(assembly_root)), 'assembly',
+                             assembly.label(assembly_root, doc), identity(assembly_root),
+                             tuple(identity(item) for item in assembly_path),
+                             (doc.Name, root.Name, hierarchy.subname(assembly_path)) if assembly_path
+                             else (assembly_root.Document.Name, assembly_root.Name, ''),
+                             tuple(occurrences(assembly_root, assembly_path, anchor))),)
     def history_row(obj, label=None, children=()):
         if active is None:
             sub = root.Origin.Name + '.'
@@ -111,7 +114,7 @@ def projection(doc, active=None, active_path=()):
         history.insert(0, Row(('history-component', identity(active)), 'history_component',
                               external.qualified_label(active, doc), identity(active),
                               tuple(identity(item) for item in active_path)))
-    return (tuple(models(external.catalog(doc))), (file_row,), tuple(history))
+    return (tuple(models(external.catalog(doc))), assembly_rows, tuple(history))
 
 
 def history_visible(definition, obj):
@@ -316,7 +319,18 @@ class ComponentPanel(QtWidgets.QDockWidget):
             tree.itemDoubleClicked.connect(lambda item, column: self._edit_clicked(item))
             tree.customContextMenuRequested.connect(lambda point, t=tree: self._menu(t, point))
             tree.itemChanged.connect(self._visibility_changed)
-            self.tabs.addTab(tree, label)
+            if label == 'Part Tree':
+                page = QtWidgets.QWidget()
+                layout = QtWidgets.QVBoxLayout(page)
+                layout.setContentsMargins(0, 0, 0, 0)
+                layout.setSpacing(4)
+                self.assembly_button = QtWidgets.QPushButton('Choose active assembly...')
+                self.assembly_button.clicked.connect(self.choose_assembly)
+                layout.addWidget(self.assembly_button)
+                layout.addWidget(tree)
+                self.tabs.addTab(page, 'Assembly')
+            else:
+                self.tabs.addTab(tree, 'Parts' if label == 'Models' else label)
             self.trees.append(tree)
         self.message = QtWidgets.QLabel()
         self.message.setWordWrap(True)
@@ -740,14 +754,20 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 except ValueError as error:
                     active, path = None, ()
                     self._message(str(error))
-                rows = projection(doc, active, path)
                 state = self._state(current)
+                owner, owner_path = self._assembly_context(current, active, path)
+                rows = projection(doc, active, path, owner, owner_path)
+                self.assembly_button.setText('Active assembly: ' + assembly.label(owner, doc) + '...'
+                                             if owner else 'Choose active assembly...')
                 if state.get('component_window'):
                     label = external.qualified_label(active, doc) if active else doc.Label
                     state['window'].widget().setWindowTitle(label + ' [*]')
                 if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
             self._history_eyes = active is not None
+            self.assembly_button.setEnabled(current is not None)
+            if current is None:
+                self.assembly_button.setText('Choose active assembly...')
             self.trees[2].setColumnHidden(1, not self._history_eyes)
             self._updating = True
             self.setUpdatesEnabled(False)
@@ -758,11 +778,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self._reconcile(index, entries)
                 for item in self._maps[index].values():
                     row = item.data(0, _ROLE)
-                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence', 'unused', 'history_component'))
+                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence', 'unused', 'history_component', 'assembly'))
                     is_file = current and not active and row.kind == 'file'
-                    font = item.font(0); font.setBold(bool(is_active or is_file)); item.setFont(0, font)
+                    font = item.font(0); font.setBold(bool(is_active or is_file or row.kind == 'assembly')); item.setFont(0, font)
                     item.setData(0, _ACTIVE, bool(is_active or is_file))
-                    item.setData(0, _EDITED, bool(target and row.kind == 'occurrence' and row.path == target))
+                    item.setData(0, _EDITED, bool(target and row.kind in ('occurrence', 'assembly') and row.path == target))
                     item.setBackground(0, QtGui.QBrush(fill) if is_active or is_file else QtGui.QBrush())
                     dimmed = active is not None and not path and row.kind in ('file', 'occurrence')
                     item.setForeground(0, QtGui.QBrush(QtGui.QColor(128, 128, 128))
@@ -788,6 +808,123 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._updating = False
             self.setUpdatesEnabled(True)
         self._sync_selection()
+
+    def _assembly_context(self, binding, active=None, active_path=()):
+        doc, view = binding
+        state = self._state(binding)
+        if 'assembly' not in state:
+            chosen = assembly.recalled(doc) or active
+            state['assembly'] = identity(chosen) if chosen is not None else None
+            state['assembly_path'] = ()
+        try:
+            owner = lookup(state['assembly']) if state['assembly'] else None
+            if owner is None:
+                return None, ()
+            if owner not in document.validate(owner.Document).Definitions:
+                raise ValueError('The active assembly is no longer available')
+            paths = isolation.occurrences(doc, owner)
+            preferred = state.get('assembly_path', ())
+            path = next((p for p in paths if tuple(identity(o) for o in p) == preferred), None)
+            if path is None:
+                path = next((p for p in paths if tuple(active_path[:len(p)]) == p), paths[0] if paths else ())
+            state['assembly_path'] = tuple(identity(o) for o in path)
+            return owner, path
+        except (ValueError, RuntimeError, ReferenceError):
+            state['assembly'] = None
+            state['assembly_path'] = ()
+            return None, ()
+
+    def _assembly_guard(self):
+        self._clipboard_guard()
+        if Gui.Control.activeDialog():
+            raise ValueError('Finish the current task before changing the active assembly')
+        current = self._current()
+        if current is None or current != self._binding:
+            raise ValueError('The active file tab changed; reopen the assembly selector')
+        return current
+
+    def activate_assembly(self, definition, path=None):
+        binding = self._assembly_guard()
+        if definition not in document.validate(definition.Document).Definitions:
+            raise ValueError('Choose an available part as the active assembly')
+        if path is not None and hierarchy.resolve(binding[0], path)[0] != definition:
+            raise ValueError('The assembly occurrence changed; select it again')
+        state = self._state(binding)
+        state['assembly'] = identity(definition)
+        state['assembly_path'] = tuple(identity(o) for o in path) if path else ()
+        assembly.remember(binding[0], definition)
+        self.refresh()
+        self.tabs.setCurrentIndex(1)
+
+    def make_active_assembly(self, row):
+        self._assembly_guard()
+        _, obj = self._checked(row)
+        if row.kind != 'model':
+            raise ValueError('Choose a part in Parts')
+        self.activate_assembly(obj)
+
+    def choose_assembly(self):
+        try:
+            binding = self._assembly_guard()
+            catalog = assembly.files(binding[0])
+            counts = assembly.counts([part for _, parts in catalog for part in parts])
+        except (ValueError, RuntimeError, ReferenceError) as error:
+            self._message(str(error))
+            return
+        dialog = QtWidgets.QDialog(self)
+        dialog.setWindowTitle('Choose active assembly')
+        dialog.resize(420, 360)
+        layout = QtWidgets.QVBoxLayout(dialog)
+        layout.addWidget(QtWidgets.QLabel('Choose a part to show at the top of Assembly.'))
+        choices = QtWidgets.QTreeWidget()
+        choices.setColumnCount(2)
+        choices.setHeaderLabels(['Part', 'Components'])
+        choices.header().setStretchLastSection(False)
+        choices.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        choices.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        choices.headerItem().setToolTip(1, 'Component instances at all assembly levels; excludes reference-only and excluded components.')
+        choices.setRootIsDecorated(True)
+        layout.addWidget(choices)
+        buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel)
+        apply = buttons.addButton('Make active assembly', QtWidgets.QDialogButtonBox.AcceptRole)
+        apply.setEnabled(False)
+        layout.addWidget(buttons)
+        current = self._state(binding).get('assembly')
+        for doc, parts in catalog:
+            group = None
+            if doc != binding[0]:
+                name = Path(doc.FileName).name if doc.FileName else doc.Label
+                group = QtWidgets.QTreeWidgetItem(choices, [name, ''])
+                group.setFlags(QtCore.Qt.ItemIsEnabled)
+                group.setIcon(0, QtGui.QIcon(':/icons/freecad.svg'))
+            for definition in parts:
+                ref = identity(definition)
+                item = QtWidgets.QTreeWidgetItem(group if group is not None else choices,
+                                                [definition.Label, str(counts[definition])])
+                item.setIcon(0, definition.ViewObject.Icon)
+                item.setData(0, _ROLE, ref)
+                item.setTextAlignment(1, QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+                if ref == current and group is None:
+                    choices.setCurrentItem(item); apply.setEnabled(True)
+            if group is not None:
+                group.setExpanded(False)
+        choices.currentItemChanged.connect(lambda item, previous: apply.setEnabled(bool(item and item.data(0, _ROLE))))
+        def accept():
+            item = choices.currentItem()
+            if item is None or not item.data(0, _ROLE):
+                return
+            try:
+                if self._current() != binding:
+                    raise ValueError('The active file tab changed; reopen the assembly selector')
+                self.activate_assembly(lookup(item.data(0, _ROLE)))
+                dialog.accept()
+            except (ValueError, RuntimeError, ReferenceError) as error:
+                self._message(str(error))
+                dialog.reject()
+        buttons.accepted.connect(accept)
+        buttons.rejected.connect(dialog.reject)
+        dialog.exec_()
+        dialog.deleteLater()
 
     def _update_display_views(self):
         for (doc, view), state in self._states:
@@ -911,7 +1048,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         document.validate(doc)
         if row.path:
             path = tuple(lookup(ref) for ref in row.path)
-            definition, _ = hierarchy.resolve(doc, path)
+            definition = assembly.resolve(lookup(row.anchor), path) if row.anchor else hierarchy.resolve(doc, path)[0]
             if definition != obj:
                 raise ValueError('The selected occurrence changed; select it again')
         return doc, obj
@@ -925,8 +1062,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def copy_rows(self, rows):
         self._clipboard_guard()
         rows = tuple(rows)
-        if not rows or any(row.kind != 'occurrence' for row in rows):
-            raise ValueError('Select placed component instances in Part Tree to Copy')
+        if not rows or any(row.kind not in ('occurrence', 'assembly') or not row.path for row in rows):
+            raise ValueError('Select placed component instances in Assembly to Copy')
         for row in rows:
             self._checked(row)
         # A selected parent already includes its descendants through its definition.
@@ -946,10 +1083,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def paste_row(self, row):
         self._clipboard_guard()
         doc, owner = self._checked(row)
-        if row.kind not in ('file', 'occurrence'):
+        if row.kind not in ('file', 'occurrence', 'assembly'):
             raise ValueError('Select a file or placed component as the Paste destination')
         if not self._clipboard:
-            raise ValueError('Copy component instances in Part Tree first')
+            raise ValueError('Copy component instances in Assembly first')
         entries = [(lookup(ref), App.Placement(App.Matrix(*matrix)), transform, visible)
                    for ref, matrix, transform, visible, choice in self._clipboard]
         instances = hierarchy.add_instances(owner, entries, display_states=[entry[4] for entry in self._clipboard])
@@ -961,15 +1098,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
         try:
             Gui.Selection.clearSelection()
             for instance in instances:
-                Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname((*parent_path, instance)))
+                anchor = lookup(row.anchor) if row.anchor else (owner if row.kind == 'assembly' and not row.path else root)
+                Gui.Selection.addSelection(anchor.Document.Name, anchor.Name, hierarchy.subname((*parent_path, instance)))
         finally:
             self._selecting = False
         self._sync_selection()
         return instances
 
     def _model_route(self, row):
-        options = [item.data(0, _ROLE).path for item in self._maps[1].values()
-                   if item.data(0, _ROLE).kind == 'occurrence' and item.data(0, _ROLE).ref == row.ref]
+        options = [tuple(identity(link) for link in path) for path in isolation.occurrences(self._binding[0], lookup(row.ref))]
         preferred = self._state(self._binding)['last'].get(row.ref)
         return preferred if preferred in options else (options[0] if options else ())
 
@@ -979,8 +1116,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             raise ValueError('Finish the current task first')
         def target():
             doc, obj = self._checked(row)
-            if (row.kind not in ('model', 'occurrence', 'unused', 'history_component') or
-                    obj not in external.available_definitions(document.validate(doc))):
+            available = (document.validate(obj.Document).Definitions if row.kind == 'assembly' or row.anchor
+                         else external.available_definitions(document.validate(doc)))
+            if (row.kind not in ('model', 'occurrence', 'unused', 'history_component', 'assembly') or obj not in available):
                 raise ValueError('Choose an available component to rename')
             if row.kind == 'history_component':
                 active, path = self._context(doc, self._binding[1])
@@ -1008,10 +1146,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def open_row(self, row):
         doc, obj = self._checked(row)
-        if row.kind not in ('model', 'occurrence', 'unused'):
+        if row.kind not in ('model', 'occurrence', 'unused', 'assembly'):
             raise ValueError('Choose a component to open in a new window')
-        route = row.path if row.kind == 'occurrence' else self._model_route(row)
-        view = editing.open_component_view(doc, obj, tuple(lookup(ref) for ref in route))
+        if obj not in external.available_definitions(document.validate(doc)):
+            self._clipboard_guard()
+            App.setActiveDocument(obj.Document.Name)
+            doc = obj.Document
+            self._binding = self._current()
+        route = () if row.anchor else (row.path if row.kind in ('occurrence', 'assembly') else self._model_route(row))
+        view = editing.open_component_view(doc, obj, tuple(lookup(ref) for ref in route), detached=bool(row.anchor))
         binding = (doc, view)
         self._mdi.activeSubWindow().setProperty('FreeCADPlusComponentWindow', True)
         state = self._state(binding)
@@ -1024,17 +1167,22 @@ class ComponentPanel(QtWidgets.QDockWidget):
         doc, obj = self._checked(row)
         if row.kind == 'file':
             editing.edit_file(doc)
-        elif row.kind == 'occurrence':
+        elif row.kind in ('occurrence', 'assembly') and row.path and not row.anchor:
             editing.edit(tuple(lookup(ref) for ref in row.path))
         elif row.kind == 'history':
             editing.edit_feature(doc, obj)
             return
         elif row.kind == 'unused':
             editing.edit_unused(doc, obj)
-        elif row.kind == 'model':
-            route = self._model_route(row)
+        elif row.kind in ('model', 'assembly', 'occurrence'):
+            if obj not in external.available_definitions(document.validate(doc)):
+                # A loaded, unimported file remains independent. Edit in its own tab.
+                App.setActiveDocument(obj.Document.Name)
+                doc = obj.Document
+                self._binding = self._current()
+            route = () if row.anchor else self._model_route(row)
             if not route:
-                editing.edit_unused(doc, obj)
+                editing.edit_unused(doc, obj, detached=bool(row.anchor))
             else:
                 editing.edit(tuple(lookup(ref) for ref in route))
         else:
@@ -1070,9 +1218,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
         active, route = self._context(doc, self._binding[1])
         owner = active or document.validate(doc)
         refs = tuple(identity(o) for o in route)
-        if row.kind in ('model', 'unused') and obj == active:
+        if row.kind in ('model', 'unused', 'assembly') and obj == active:
             return owner, None
         if row.kind == 'occurrence':
+            if row.anchor:
+                anchor = lookup(row.anchor)
+                parent = assembly.resolve(anchor, tuple(lookup(ref) for ref in row.path[:-1]))
+                if parent == active:
+                    return owner, lookup(row.path[-1])
+                raise ValueError('Edit the component or its immediate parent to change this setting')
             if row.path == refs: return owner, None
             if row.path[:-1] == refs: return owner, lookup(row.path[-1])
         raise ValueError('Edit the component or its immediate parent to change this setting')
@@ -1117,7 +1271,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def _menu(self, tree, point):
         item = tree.itemAt(point)
         row = item.data(0, _ROLE) if item else None
-        component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused')
+        component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused', 'assembly')
         history_component = row is not None and row.kind == 'history_component'
         if not component_row and not history_component and tree != self.trees[0]:
             return
@@ -1127,6 +1281,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[0]:
             actions[menu.addAction('Import Models from File')] = self.import_models
+            if row is not None and row.kind == 'model':
+                actions[menu.addAction('Make active assembly')] = self.make_active_assembly
         if component_row:
             actions[menu.addAction('Edit')] = self.edit_row
             if row.kind != 'file':
@@ -1137,8 +1293,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
             menu.addSeparator()
             if row.kind == 'occurrence':
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
-                actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
-            if row.kind in ('file', 'occurrence'):
+                if not row.anchor:
+                    actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
+            elif row.kind == 'assembly' and row.path:
+                actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
+            if row.kind in ('file', 'occurrence', 'assembly'):
                 paste = menu.addAction('Paste')
                 paste.setEnabled(bool(self._clipboard))
                 actions[paste] = self.paste_row
