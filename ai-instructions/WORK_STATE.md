@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Condensed/expanded instances — native preview awaiting approval
+
+November 25: owner requested implementation. The required native screenshot
+proposal adds an Instances selector, repeated-sibling numbering and expandable
+quantity groups. Both preview captures preserve document, Undo and Edit context.
+Production and installed behavior are unchanged pending direct layout approval.
+See [proposal and evidence](evidence/instance-display-proposal-20261125/README.md).
+
 ## Move Components — installed November 25, 2026
 
 The approved Move/Rotate/Align workflow is installed in the existing owner payload.

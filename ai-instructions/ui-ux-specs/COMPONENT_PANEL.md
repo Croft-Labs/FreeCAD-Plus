@@ -115,10 +115,17 @@ and removing one instance without deleting the part. Source audit at
 - Each link has its own placement; its linked definition is shared. Linked imports
   preserve the source definition. Export parts to file creates independent copies.
 
+November 25: owner requested **Condensed/expanded instances** implementation.
+The [native screenshot proposal](../evidence/instance-display-proposal-20261125/README.md)
+is ready for the required layout approval. It adds an Instances selector beneath
+the Assembly selector, defaults to Expanded, and allows opening condensed groups
+to reach individual instances. Grouping is by definition identity, not matching
+labels, and does not merge different parents. Production integration remains pending.
+
 Recommended design, **pending workflow approval/implementation**: group repeated
 sibling links by definition identity beneath their immediate parent. Condensed
 shows `part2 ×3`; Expanded shows `part2 (1)`, `part2 (2)`, `part2 (3)`. Numbers are
-occurrence identifiers, not definition renames. Keep individual instances reachable
+display ordinals, not persistent occurrence identifiers or definition renames. Keep individual instances reachable
 for placement, constraint and visibility actions. Add existing should offer a
 quantity; Remove instance should remove selected links only, preserve the shared
 definition and other links, and handle dependent constraints explicitly in one

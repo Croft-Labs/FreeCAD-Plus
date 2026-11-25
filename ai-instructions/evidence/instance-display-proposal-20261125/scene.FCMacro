@@ -1,0 +1,66 @@
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+out=Path(os.environ['PLUS_PREVIEW_OUT']);worktree=Path(os.environ['PLUS_PREVIEW_WORKTREE'])
+def run():
+    result={'ok':False};doc=None
+    try:
+        win=Gui.getMainWindow();win.resize(1250,950);win.show();win.raise_();win.activateWindow()
+        import freecad_plus
+        from freecad_plus import panel,document,hierarchy,editing,constraints
+        if panel._panel:
+            panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+        freecad_plus.__path__.insert(0,str(worktree));importlib.reload(panel)
+        Gui.activateWorkbench('AssemblyWorkbench')
+        doc=document.new_document('InstancePreview');root=document.validate(doc);machine=root.Definitions[0];machine.Label='Machine'
+        motor=hierarchy.create_definition(doc,'Motor');gearbox=hierarchy.create_definition(doc,'Gearbox')
+        frame=hierarchy.create_definition(doc,'Frame');bolt=hierarchy.create_definition(doc,'Bolt');shaft=hierarchy.create_definition(doc,'Shaft')
+        with document.transaction(doc,'Preview geometry'):
+            for part in (motor,frame,bolt,shaft):part.newObject('Part::Box','Solid')
+        motors=[hierarchy.add_instance(machine,motor,App.Placement(App.Vector(i*30,0,0),App.Rotation())) for i in range(3)]
+        gears=[hierarchy.add_instance(machine,gearbox,App.Placement(App.Vector(i*50,40,0),App.Rotation())) for i in range(2)]
+        frame_link=hierarchy.add_instance(machine,frame)
+        for i in range(2):hierarchy.add_instance(gearbox,bolt,App.Placement(App.Vector(i*15,0,0),App.Rotation()))
+        shaft_link=hierarchy.add_instance(gearbox,shaft)
+        constraints.create(machine,'Fixed',[(machine.Origin,['','']),(frame_link,['',''])])
+        constraints.create(gearbox,'Fixed',[(gearbox.Origin,['','']),(shaft_link,['',''])])
+        editing.edit((root.Group[0],));dock=panel.show_panel();dock.activate_assembly(machine);dock.tabs.setCurrentIndex(1)
+        win.resizeDocks([dock],[365],QtCore.Qt.Horizontal);QtTest.QTest.qWait(200)
+        def snapshot():return [(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '',[x.Name for x in o.OutList]) for o in doc.Objects]
+        before=snapshot();undo=doc.UndoCount;context=dock._context(*dock._binding)
+        images=[]
+        def capture(name,title):
+            QtWidgets.QApplication.processEvents();QtTest.QTest.qWait(180)
+            image=dock.grab().toImage();image.setDevicePixelRatio(1);image.save(str(out/(name+'.png')))
+            images.append((title,image))
+        proposed=hasattr(panel,'preview_instance_layout')
+        if proposed:
+            choice=panel.preview_instance_layout(dock);capture('expanded','Expanded instances')
+            choice.setCurrentText('Condensed');capture('condensed','Condensed instances')
+            tree=dock.trees[1];owner=tree.topLevelItem(0)
+            motor_group=next(owner.child(i) for i in range(owner.childCount()) if owner.child(i).text(0).startswith('Motor'))
+            assert motor_group.childCount()==3 and not motor_group.isExpanded()
+            motor_group.setExpanded(True)
+            gear_group=next(owner.child(i) for i in range(owner.childCount()) if owner.child(i).text(0).startswith('Gearbox'))
+            gear_group.setExpanded(True)
+            # Keep one repeated subassembly open to show its own constraint collector.
+            gear_group.child(1).setExpanded(False)
+            capture('individuals','Condensed groups opened')
+            assert [motor_group.child(i).text(0) for i in range(3)]==['Motor (1)','Motor (2)','Motor (3)']
+            assert gear_group.child(0).child(0).text(0)=='Assembly constraints'
+        else:capture('baseline','Current assembly list')
+        assert snapshot()==before and doc.UndoCount==undo and dock._context(*dock._binding)==context
+        width=sum(img.width()+18 for _,img in images)+18;height=max(img.height() for _,img in images)+58
+        canvas=QtGui.QImage(width,height,QtGui.QImage.Format_ARGB32);canvas.fill(QtGui.QColor('#eeeeee'))
+        painter=QtGui.QPainter(canvas);x=18
+        for title,image in images:
+            painter.setPen(QtGui.QColor('#202020'));painter.drawText(x,26,title);painter.drawImage(x,40,image);x+=image.width()+18
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,proposed=proposed,document_and_undo_unchanged=True,edit_context_unchanged=True,module=panel.__file__,images=[name for name,_ in images])
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if doc:App.closeDocument(doc.Name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

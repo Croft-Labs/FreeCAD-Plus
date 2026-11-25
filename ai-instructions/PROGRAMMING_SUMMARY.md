@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+## Condensed/expanded instances — preview prepared
+
+November 25: implementation requested; required native presentation preview is
+ready for direct screenshot approval. Production/installed behavior is unchanged.
+See [proposal and checks](evidence/instance-display-proposal-20261125/README.md).
+
 ## Move Components — installed November 25, 2026
 
 The approved Move/Rotate/Align workflow is installed in the existing owner payload.
