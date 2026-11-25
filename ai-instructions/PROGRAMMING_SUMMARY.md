@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Part-owned assembly constraints — installed
+
+Every constrained part/subcomponent has a first-child, initially collapsed Assembly
+constraints collector. Native joint creation/editing and Solve use the active assembly's
+frame, with no mandatory child anchoring. Parts/Assembly/History tabs are equally padded
+and left aligned. Schema 6 preserves native part/link identities and joint ownership.
+All 30 new checks, saved reopening and six existing-shortcut checks pass. The broader
+suite passes 81/82; the sole older coordinate-deletion assertion also fails unchanged
+on the prior runtime. Restart FreeCAD Plus. See [approval and delivery](evidence/assembly-constraints-20261125/README.md).
+
 ## Add Component dropdown and child placement — installed
 
 Add Component always opens **Add existing / Add new**. Both add one child beneath

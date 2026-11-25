@@ -1,5 +1,18 @@
 # FreeCAD Plus: Current work state
 
+## Assembly constraints and component tabs — installed
+
+November 25: the owner-approved native joint integration, recursive collectors and
+equal padded left-aligned tabs are installed. Active assembly and Edit remain separate;
+parent-local frames replace mandatory child grounding. Schema 6 and one native Assembly
+module were delivered with rollback copies and matching hashes for all 11 payload files.
+All 30 new cases pass; source/installed affected runs both pass 81/82. The sole error is
+the older pilot test deleting protected coordinates, reproduced on the prior installed
+runtime. Source/installed saved reopening and all six existing-shortcut checks pass.
+See [evidence and screenshots](evidence/assembly-constraints-20261125/README.md).
+Restart existing sessions. The separate file import/export request was cancelled;
+no new transfer workflow was implemented. The older unrelated failures below remain open.
+
 ## Add Component — installed
 
 November 24: approved always-open dropdown and separate existing/new child dialogs

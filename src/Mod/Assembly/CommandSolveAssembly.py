@@ -57,9 +57,16 @@ class CommandSolveAssembly:
         }
 
     def IsActive(self):
+        constraints = UtilsAssembly.plusConstraints()
+        if constraints is not None:
+            return constraints.can_solve()
         return UtilsAssembly.isAssemblyCommandActive()
 
     def Activated(self):
+        constraints = UtilsAssembly.plusConstraints()
+        if constraints is not None:
+            constraints.solve_active()
+            return
         assembly = UtilsAssembly.activeAssembly()
         if not assembly:
             return

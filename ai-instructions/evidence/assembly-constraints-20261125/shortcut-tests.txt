@@ -1,0 +1,11 @@
+test_native_command_and_live_selection_create_real_joint (TestAssemblyConstraints.TestAssemblyConstraints.test_native_command_and_live_selection_create_real_joint) ... ok
+test_nested_collectors_first_collapsed_and_independent (TestAssemblyConstraints.TestAssemblyConstraints.test_nested_collectors_first_collapsed_and_independent) ... ok
+test_editor_accept_edit_cancel_and_accept_in_place (TestAssemblyConstraints.TestAssemblyConstraints.test_editor_accept_edit_cancel_and_accept_in_place) ... ok
+test_atomic_first_create_undo_redo_and_schema_upgrade (TestAssemblyConstraints.TestAssemblyConstraints.test_atomic_first_create_undo_redo_and_schema_upgrade) ... ok
+test_equal_padded_tabs_left_aligned (TestAssemblyConstraints.TestAssemblyConstraints.test_equal_padded_tabs_left_aligned) ... ok
+test_ribbon_always_dropdown_both_real_add_paths_and_cancel (TestAddComponent.TestAddComponent.test_ribbon_always_dropdown_both_real_add_paths_and_cancel) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.822s
+
+OK

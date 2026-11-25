@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development roadmap
 
+## Part-owned assembly constraints — November 25, 2026
+
+- [x] Owner approves first-child collectors at every nesting level and the assembly frame.
+- [x] Separately approve equal padded, left-aligned Parts/Assembly/History tabs.
+- [x] Integrate native joints, editor, Solve, local coordinates and schema 6 ownership.
+- [x] Preserve Cancel, native identities, Undo/Redo, geometry and unchanged Classic routing.
+- [x] Pass all 30 new native cases, source/installed saved reopening and six shortcut checks.
+- [x] Install the native/Python update into the existing app with verified rollback/hashes.
+- [ ] Separately reconcile the older protected-coordinate deletion test: source/installed
+  suites pass 81/82; that same case fails on the unchanged prior runtime.
+  See [approval and delivery evidence](evidence/assembly-constraints-20261125/README.md).
+
 ## Add Component — November 24, 2026
 
 - [x] Owner approves always-open Add existing/Add new menu, distinct from New Component.

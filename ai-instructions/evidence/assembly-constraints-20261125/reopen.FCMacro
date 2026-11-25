@@ -1,0 +1,55 @@
+import json,os,sys,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+repo=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus')
+def run():
+    result={'ok':False}
+    try:
+        if os.environ.get('PLUS_TEST_SOURCE'):
+            global native_search
+            native_search=[os.add_dll_directory('C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/'+p)
+                           for p in ('app/bin','app/lib','build/bin','build/Mod/Assembly')]
+            import freecad_plus
+            freecad_plus.__path__.insert(0,str(repo/'src/Mod/FreeCADPlus/freecad_plus'))
+            sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/Assembly')
+            sys.path.insert(0,str(repo/'src/Mod/Assembly'))
+            from freecad_plus import document,panel
+            if panel._panel:
+                panel._panel.dispose();Gui.getMainWindow().removeDockWidget(panel._panel);panel._panel.deleteLater()
+            importlib.reload(document);importlib.reload(panel)
+        Gui.activateWorkbench('AssemblyWorkbench')
+        from freecad_plus import constraints,document,panel,editing
+        mode='source' if os.environ.get('PLUS_TEST_SOURCE') else 'installed'
+        fixture=out.parent/mode/'test_save_fixture_for_fresh_reopen'
+        expected=json.loads((fixture/'fixture.json').read_text())
+        doc=document.open_document(fixture/'Constrained assembly.cadprt')
+        root=document.validate(doc);owner=doc.getObject(expected['owner']);child=doc.getObject(expected['child'])
+        assert str(doc.Uid)==expected['uid']
+        assert {o.Name:o.ID for o in doc.Objects}==expected['objects']
+        assert len(constraints.joints(owner))==len(constraints.joints(child))==1
+        assert abs(doc.getObject(expected['shape']).Shape.Volume-60)<1e-8
+        assert constraints.solver_for(owner).PlusAssemblyOwner==owner
+        assert not any('ObjectToGround' in o.PropertiesList for o in doc.Objects)
+        editing.edit((root.Group[0],));dock=panel.show_panel()
+        QtTest.QTest.qWait(100);dock.refresh();dock.activate_assembly(owner)
+        doc.recompute();dock.refresh()
+        top=dock.trees[1].topLevelItem(0)
+        assert top.child(0).text(0)=='Assembly constraints' and not top.child(0).isExpanded()
+        joint=constraints.joints(owner)[0];link=doc.getObject(expected['link'])
+        identity=joint.ID;before=App.Placement(link.Placement)
+        task=constraints.open_task(joint=joint)
+        task.joint.Offset2=App.Placement(App.Vector(0,0,6),App.Rotation())
+        task.updateJoint();assert task.accept(),task.error
+        assert joint.ID==identity and abs(link.Placement.Base.z+6)<1e-7
+        doc.undo();doc.recompute();assert link.Placement.isSame(before,1e-7)
+        assert joint.ID==identity
+        document.validate(doc)
+        result.update(ok=True,identity_geometry_collectors_and_edit_undo=True,objects=len(doc.Objects))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    Gui.getMainWindow().close()
+QtCore.QTimer.singleShot(2200,run)

@@ -1,5 +1,51 @@
 # Component/document architecture
 
+## Part-owned native assembly constraints — November 25, 2026
+
+`constraints.py` owns the Plus adapter; `constraint_task.py` subclasses the native joint
+editor. Native joint and Solve command entry points route Plus documents through the
+panel's selected assembly, not ambient active Part/Body. Ordinary documents retain
+their existing routes. Constraint edits use the joint's saved owner, including when
+its row is nested below the active assembly.
+
+Schema **6** permits one backing `Assembly::AssemblyObject` in an `App::Part`
+definition's Group. Its hidden `PlusAssemblyOwner` back-reference avoids a native
+dependency cycle. It owns one `Assembly::JointGroup` and native `App::FeaturePython`
+joints with the upstream Joint/ViewProviderJoint proxies and component-rooted XLinkSub
+references. Child App::Links remain in their original part, with their original IDs
+and placements. The backend is not a catalog definition or History feature. Native
+GeoFeatureGroup flattens joint membership; `owned_children` visits each joint through
+the collector once instead of counting the flattened membership twice.
+
+Schemas 1–5 remain readable. New files use schema 6. Existing files upgrade lazily in
+the first constraint's transaction; Cancel/Undo restores the previous schema and graph.
+Validation checks the fixed backend placement, unique ownership/collector and allowed
+local reference roots. Native save/reopen supplies persistence; no parallel graph or
+serialized placement cache is introduced. References to existing external components
+are rooted at domestic App::Link occurrences, so solving changes the owning file's
+placements without modifying the external definition.
+
+The native solver treats the owning part's origin and own non-link geometry as fixed
+in that part's local frame. No child GroundedJoint is created. Disconnected islands
+receive a numerical reference at a member's current placement for that solve only;
+the reference is not stored or reported as a grounded child. Native equations still
+solve the island's internal relationships. Before publishing placements, evaluate
+both active and removed redundant native equations (residual tolerance 1e-7), reject
+inconsistent/malformed constraints, and check stationary geometry. Consistent redundant
+equations remain allowed. Recompute reports failed Plus solves. These changes are
+guarded by the native solver's verified Plus owner; Classic solving is unchanged.
+
+Presolve and joint markers use component-rooted placements when given the Plus solver,
+without pulling a containing occurrence/file transform into the local calculation.
+The established coordinate graphics are unchanged. Each nested part solves its own
+constraints; changing the navigation root never resets any persisted placement.
+
+The native editor retains its controls, selection observer and connector calculation.
+The adapter supplies the explicit solver/view and owns a single native transaction,
+context checks and shared TaskStatus errors. Assembly projection inserts a real
+collector before child links, only when nonempty; row keys include occurrence routes.
+See [native acceptance and delivery](evidence/assembly-constraints-20261125/README.md).
+
 ## Add Component child placement — November 24, 2026
 
 `component_add` owns the always-open Plus toolbar menu and separate existing/new

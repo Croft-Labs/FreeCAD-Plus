@@ -47,10 +47,17 @@ def noOtherTaskActive():
 
 
 def isCreateJointActive():
+    constraints = UtilsAssembly.plusConstraints()
+    if constraints is not None:
+        return constraints.can_create()
     return UtilsAssembly.assembly_has_at_least_n_parts(1) and noOtherTaskActive()
 
 
 def activateJoint(index):
+    constraints = UtilsAssembly.plusConstraints()
+    if constraints is not None:
+        constraints.open_task(index)
+        return
     if JointObject.activeTask:
         JointObject.activeTask.reject()
 
@@ -85,6 +92,9 @@ class CommandCreateJointFixed:
         }
 
     def IsActive(self):
+        constraints = UtilsAssembly.plusConstraints()
+        if constraints is not None:
+            return constraints.can_create()
         if UtilsAssembly.activePart() is not None:
             return UtilsAssembly.assembly_has_at_least_n_parts(2)
 

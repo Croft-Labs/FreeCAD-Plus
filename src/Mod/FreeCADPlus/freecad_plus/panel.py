@@ -15,7 +15,7 @@ try:
 except ImportError:
     QtWidgets = QtGui
 
-from . import document, editing, external, hierarchy, isolation, display, assembly
+from . import document, editing, external, hierarchy, isolation, display, assembly, constraints
 
 _ROLE = QtCore.Qt.UserRole
 _ACTIVE = _ROLE + 1
@@ -64,6 +64,14 @@ def projection(doc, active=None, active_path=(), assembly_root=None, assembly_pa
         return rows
     def occurrences(owner, path=(), anchor=None):
         rows = []
+        members = constraints.joints(owner)
+        if members:
+            refs = tuple(identity(item) for item in path)
+            group = constraints.group_for(constraints.solver_for(owner))
+            children = tuple(Row(('constraint', identity(joint), refs), 'constraint',
+                                 joint.Label, identity(joint)) for joint in members)
+            rows.append(Row(('constraints', identity(owner), refs), 'constraints',
+                            'Assembly constraints', identity(group), children=children))
         for link in owner.Group:
             if link.TypeId != 'App::Link':
                 continue
@@ -189,6 +197,15 @@ def _eye_icon(shown, color):
     return QtGui.QIcon(pixmap)
 
 
+class ComponentTabBar(QtWidgets.QTabBar):
+    def tabSizeHint(self, index):
+        size = super().tabSizeHint(index)
+        width = max((self.fontMetrics().horizontalAdvance(self.tabText(i))
+                     for i in range(self.count())), default=0)
+        size.setWidth(width + 40)
+        return size
+
+
 class _Delegate(QtWidgets.QStyledItemDelegate):
     def paint(self, painter, option, index):
         selected = bool(option.state & QtWidgets.QStyle.State_Selected)
@@ -293,6 +310,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._sketch_exit_fit = None
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
+        self.tabs.setTabBar(ComponentTabBar())
+        self.tabs.tabBar().setExpanding(False)
+        self.tabs.setStyleSheet('QTabWidget::tab-bar { alignment: left; }')
         self.trees = []
         for label in ('Models', 'Part Tree', 'History'):
             tree = HistoryTree(self) if label == 'History' else QtWidgets.QTreeWidget()
@@ -1002,7 +1022,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                                                         and row.label == 'Coordinate System')
                 sync(item, row.children, coordinate_row)
                 if fresh:
-                    item.setExpanded(not coordinate_row)
+                    item.setExpanded(not coordinate_row and row.kind != 'constraints')
         blocker = QtCore.QSignalBlocker(tree)
         sync(tree.invisibleRootItem(), rows)
         for key, item in previous.items():
@@ -1165,6 +1185,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def edit_row(self, row):
         doc, obj = self._checked(row)
+        if row.kind == 'constraint':
+            constraints.open_task(joint=obj)
+            return
         if row.kind == 'file':
             editing.edit_file(doc)
         elif row.kind in ('occurrence', 'assembly') and row.path and not row.anchor:
@@ -1271,6 +1294,23 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def _menu(self, tree, point):
         item = tree.itemAt(point)
         row = item.data(0, _ROLE) if item else None
+        if row is not None and row.kind == 'constraint':
+            menu = QtWidgets.QMenu(self)
+            edit = menu.addAction('Edit')
+            delete = menu.addAction('Delete')
+            chosen = menu.exec_(tree.viewport().mapToGlobal(point))
+            try:
+                _, obj = self._checked(row)
+                if chosen == edit:
+                    constraints.open_task(joint=obj)
+                elif chosen == delete:
+                    self._clipboard_guard()
+                    constraints.remove(obj)
+                    self.refresh()
+            except (ValueError, RuntimeError, ReferenceError) as error:
+                self._message(str(error))
+            menu.deleteLater()
+            return
         component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused', 'assembly')
         history_component = row is not None and row.kind == 'history_component'
         if not component_row and not history_component and tree != self.trees[0]:
@@ -1348,7 +1388,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             selections = []
             for item in tree.selectedItems():
                 row = item.data(0, _ROLE)
-                if row.kind in ('history_group', 'history_component'):
+                if row.kind in ('history_group', 'history_component', 'constraints'):
                     continue
                 _, obj = self._checked(row)
                 selections.append(row.selection or (obj.Document.Name, obj.Name, ''))
@@ -1372,7 +1412,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             for item in items.values():
                 row = item.data(0, _ROLE)
                 selection = row.selection or (row.ref[0], row.ref[2], '')
-                item.setSelected(row.kind not in ('history_group', 'history_component') and selection in selected)
+                item.setSelected(row.kind not in ('history_group', 'history_component', 'constraints') and selection in selected)
             del blocker
 
     def _visibility_changed(self, item, column):

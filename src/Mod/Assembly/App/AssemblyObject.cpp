@@ -75,6 +75,9 @@
 #include <OndselSolver/ASMTTime.h>
 #include <OndselSolver/ASMTConstantGravity.h>
 #include <OndselSolver/ExternalSystem.h>
+#include <OndselSolver/System.h>
+#include <OndselSolver/Constraint.h>
+#include <OndselSolver/RedundantConstraint.h>
 #include <OndselSolver/enum.h>
 
 #include "AssemblyLink.h"
@@ -88,6 +91,23 @@ FC_LOG_LEVEL_INIT("Assembly", true, true, true)
 
 using namespace Assembly;
 using namespace MbD;
+
+// A Plus part owns its solver without making the solver the geometry container.
+// The hidden back-reference avoids a dependency cycle and never changes Classic.
+static App::Part* componentOwner(const AssemblyObject* assembly)
+{
+    auto* property = dynamic_cast<App::PropertyLinkHidden*>(
+        assembly->getPropertyByName("PlusAssemblyOwner"));
+    if (!property) {
+        return nullptr;
+    }
+    auto* owner = dynamic_cast<App::Part*>(property->getValue());
+    if (!owner || owner->getDocument() != assembly->getDocument()) {
+        return nullptr;
+    }
+    const auto& group = owner->Group.getValues();
+    return std::find(group.begin(), group.end(), assembly) != group.end() ? owner : nullptr;
+}
 
 
 namespace PartApp = Part;
@@ -132,7 +152,11 @@ App::DocumentObjectExecReturn* AssemblyObject::execute()
         "User parameter:BaseApp/Preferences/Mod/Assembly"
     );
     if (hGrp->GetBool("SolveOnRecompute", true)) {
-        solve(false, false);  // No need to update jcs since recompute updated them.
+        const int result = solve(false, false);  // Recompute already updated the JCS.
+        if (componentOwner(this) && result != 0) {
+            return new App::DocumentObjectExecReturn(
+                "Assembly constraints could not be solved; check their references and values.");
+        }
     }
     return ret;
 }
@@ -140,6 +164,10 @@ App::DocumentObjectExecReturn* AssemblyObject::execute()
 int AssemblyObject::solve(bool enableRedo, bool updateJCS)
 {
     lastDoF = numberOfComponents() * 6;
+    if (componentOwner(this)) {
+        lastHasMalformedConstraints = false;
+        lastHasConflict = false;
+    }
 
     ensureIdentityPlacements();
 
@@ -158,6 +186,9 @@ int AssemblyObject::solve(bool enableRedo, bool updateJCS)
     removeUnconnectedJoints(joints, groundedObjs);
 
     jointParts(joints);
+    if (componentOwner(this) && lastHasMalformedConstraints) {
+        return -5;
+    }
 
     if (enableRedo) {
         savePlacementsForUndo();
@@ -175,6 +206,29 @@ int AssemblyObject::solve(bool enableRedo, bool updateJCS)
         return -1;
     }
 
+    if (componentOwner(this)) {
+        // Ondsel removes redundant equations while solving. A removed equation
+        // can also be inconsistent; evaluate the original native residuals at
+        // the candidate solution before changing any saved component placement.
+        auto equations = mbdAssembly->mbdSystem->allConstraints();
+        auto redundant = mbdAssembly->mbdSystem->allRedundantConstraints();
+        for (const auto& equation : *redundant) {
+            auto removed = std::dynamic_pointer_cast<MbD::RedundantConstraint>(equation);
+            if (removed && removed->constraint) {
+                equations->push_back(removed->constraint);
+            }
+        }
+        for (const auto& equation : *equations) {
+            equation->calcPostDynCorrectorIteration();
+            if (!std::isfinite(equation->aG) || std::abs(equation->aG) > 1.0e-7) {
+                lastHasConflict = true;
+                return -3;
+            }
+        }
+        if (!validateNewPlacements()) {
+            return -3;
+        }
+    }
     setNewPlacements();
 
     redrawJointPlacements(joints);
@@ -796,6 +850,17 @@ std::unordered_set<App::DocumentObject*> AssemblyObject::getGroundedParts()
     // Origin is not in Group so we add it separately
     groundedSet.insert(Origin.getValue());
 
+    if (auto* owner = componentOwner(this)) {
+        // Geometry owned by the parent is stationary in that parent's local frame.
+        // Children are App::Links: none is automatically grounded.
+        groundedSet.insert(owner->Origin.getValue());
+        for (auto* obj : owner->Group.getValues()) {
+            if (obj != this && obj->isDerivedFrom<App::GeoFeature>() && !obj->isLink()) {
+                groundedSet.insert(obj);
+            }
+        }
+    }
+
     return groundedSet;
 }
 
@@ -937,6 +1002,23 @@ void AssemblyObject::removeUnconnectedJoints(
         traverseAndMarkConnectedParts(groundedObj, connectedParts, joints);
     }
 
+    if (componentOwner(this)) {
+        // A disconnected island still has useful relative constraints. Choose a
+        // numerical frame for this solve only, at one member's current placement.
+        // No GroundedJoint is stored; the island retains its six global freedoms.
+        for (auto* joint : joints) {
+            auto* part = getMovingPartFromRef(joint, "Reference1");
+            if (part && !isObjInSetOfObjRefs(part, connectedParts)) {
+                Base::Placement plc = getPlacementFromProp(part, "Placement");
+                std::string name = "ComponentSolveFrame-" + part->getFullName();
+                fixGroundedPart(part, plc, name);
+                connectedParts.push_back({part, nullptr});
+                traverseAndMarkConnectedParts(part, connectedParts, joints);
+            }
+        }
+        return;
+    }
+
     // Filter out unconnected joints
     joints.erase(
         std::remove_if(
@@ -1068,6 +1150,9 @@ void AssemblyObject::jointParts(std::vector<App::DocumentObject*> joints)
         }
 
         std::vector<std::shared_ptr<MbD::ASMTJoint>> mbdJoints = makeMbdJoint(joint);
+        if (componentOwner(this) && !bundleFixed && mbdJoints.empty()) {
+            lastHasMalformedConstraints = true;
+        }
         for (auto& mbdJoint : mbdJoints) {
             mbdAssembly->addJoint(mbdJoint);
         }

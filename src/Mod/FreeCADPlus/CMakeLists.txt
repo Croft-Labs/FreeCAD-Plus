@@ -22,6 +22,7 @@ set(FreeCADPlus_SRCS
     TestComponentRename.py
     TestActiveAssembly.py
     TestAddComponent.py
+    TestAssemblyConstraints.py
     TestComponentImport.py
     TestUnusedModels.py
     TestComponentWindows.py
@@ -73,6 +74,8 @@ set(FreeCADPlus_SRCS
     freecad_plus/external.py
     freecad_plus/panel.py
     freecad_plus/assembly.py
+    freecad_plus/constraints.py
+    freecad_plus/constraint_task.py
     freecad_plus/component_add.py
     freecad_plus/movement.py
     freecad_plus/isolation.py
@@ -109,6 +112,7 @@ add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
 install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
+    TestAssemblyConstraints.py
     TestFilletWorkflow.py
     TestSketchSymmetry.py
     TestSketchConstraintSymmetry.py
@@ -137,6 +141,10 @@ install(FILES
     freecad_plus/legacy_hierarchy.py
     freecad_plus/external.py
     freecad_plus/panel.py
+    freecad_plus/assembly.py
+    freecad_plus/component_add.py
+    freecad_plus/constraints.py
+    freecad_plus/constraint_task.py
     freecad_plus/movement.py
     freecad_plus/isolation.py
     freecad_plus/editing.py

@@ -1,0 +1,68 @@
+[
+  {
+    "file": "lib/AssemblyApp.pyd",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Assembly\\AssemblyApp.pyd",
+    "sha256": "344bd6db8f41b2c75631e2225b958db186579f2a2378c4aa6fab9dbad260226e",
+    "backup_sha256": "ac8f194837bd88a510c788f391716bd2b5d821bc3ad63b3c8acde501a2326635"
+  },
+  {
+    "file": "Mod/Assembly/CommandCreateJoint.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\CommandCreateJoint.py",
+    "sha256": "9e2574ca1242dfb334ffc050e05ed5859e51552f2ef7dd306115caf451c5906f",
+    "backup_sha256": "4ab94084c128191b9d8e80f1a2c0d7e27d2e61e3c406963b18838bc1232b9861"
+  },
+  {
+    "file": "Mod/Assembly/CommandSolveAssembly.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\CommandSolveAssembly.py",
+    "sha256": "0366aa259249357385bf2655f263aaac7d82e11d14eeb373a2254e07c690b3c2",
+    "backup_sha256": "6a1240977ffb1af30035c1c20e901ef0985ab3f4935f78c3cdfe4806881307c5"
+  },
+  {
+    "file": "Mod/Assembly/JointObject.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\JointObject.py",
+    "sha256": "7a3b46e13175d3bf58483c98a8f4d949d8c61adb8445810595c72b34c561b640",
+    "backup_sha256": "0b6d7c9b3a285a77954d3fafdd0f1729ca322024476babc055862d6e70abfd06"
+  },
+  {
+    "file": "Mod/Assembly/UtilsAssembly.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\UtilsAssembly.py",
+    "sha256": "d1c3c405e3af91b9b71c162ed829ba1dd5bc979e2e4d609d3da9a902d4254991",
+    "backup_sha256": "1979c1a4789d344401b36eaf8d82b81dffdd6773ac89911ac5f364e027e646d6"
+  },
+  {
+    "file": "Mod/Assembly/SoSwitchMarker.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\Assembly\\SoSwitchMarker.py",
+    "sha256": "50d30d39b518606446005c71b8ae0106958149101649284c6748bc1878e8d283",
+    "backup_sha256": "3254b039dc6929a906614f6968dc4e1f997e4295a7a2d45555c62d92d484ea16"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "sha256": "1adbc27030521b1982da47131383688335173b2e8ba0f72e76d230978d869198",
+    "backup_sha256": "1268d02478cc61edd0e352d7b93585cbab85ca64b6ba062a2eccf4ddd518e5ba"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "4f6bc09e759c47e8a12deda652f68034d624fdaf6bf7b4bf841e69d8db05b3f1",
+    "backup_sha256": "9932bcc5e7ee1016744511877463a1c4252f809a4ca89e2cb8a3d7625b86d336"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/constraints.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\constraints.py",
+    "sha256": "efbace61f4b2ea464de1645c41a20a795609a288bacfdac1ff91cd4352039304",
+    "backup_sha256": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/constraint_task.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\constraint_task.py",
+    "sha256": "8c2a48578163071523b9a09828bc6637b2683b7835cd232f5d5f81b5a8c99daa",
+    "backup_sha256": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestAssemblyConstraints.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAssemblyConstraints.py",
+    "sha256": "77338b2977290680611843895228458d6b7ed6b3439e5a62e49bbec57b590ca9",
+    "backup_sha256": null
+  }
+]

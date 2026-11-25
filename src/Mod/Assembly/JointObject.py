@@ -966,8 +966,8 @@ class Joint:
         if savePlc:
             self.partsMovedByPresolved = {p: p.Placement for p in parts_to_move}
 
-        moving_part_global_jcs = UtilsAssembly.getJcsGlobalPlc(moving_placement, moving_part_ref)
-        fixed_part_global_jcs = UtilsAssembly.getJcsGlobalPlc(fixed_placement, fixed_part_ref)
+        moving_part_global_jcs = UtilsAssembly.getJcsGlobalPlc(moving_placement, moving_part_ref, assembly)
+        fixed_part_global_jcs = UtilsAssembly.getJcsGlobalPlc(fixed_placement, fixed_part_ref, assembly)
 
         if not sameDir:
             moving_part_global_jcs = UtilsAssembly.flipPlacement(moving_part_global_jcs)
@@ -1013,7 +1013,7 @@ class Joint:
             self.presolveBackupPlc = part2.Placement
 
             # Get the global JCS placement to find a suitable rotation axis (its own X-axis)
-            globalJcsPlc = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2)
+            globalJcsPlc = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2, assembly)
             # Transform the local X-axis vector (1,0,0) into the global coordinate system
             rotation_axis = globalJcsPlc.Rotation.multVec(App.Vector(1, 0, 0))
 
@@ -1026,7 +1026,7 @@ class Joint:
             self.presolveBackupPlc = part1.Placement
 
             # Get the global JCS placement to find a suitable rotation axis (its own X-axis)
-            globalJcsPlc = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1)
+            globalJcsPlc = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1, assembly)
             # Transform the local X-axis vector (1,0,0) into the global coordinate system
             rotation_axis = globalJcsPlc.Rotation.multVec(App.Vector(1, 0, 0))
 
@@ -1035,14 +1035,14 @@ class Joint:
             )
 
     def areJcsSameDir(self, joint):
-        globalJcsPlc1 = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1)
-        globalJcsPlc2 = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2)
+        globalJcsPlc1 = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1, self.getAssembly(joint))
+        globalJcsPlc2 = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2, self.getAssembly(joint))
 
         return UtilsAssembly.arePlacementSameDir(globalJcsPlc1, globalJcsPlc2)
 
     def areJcsZParallel(self, joint):
-        globalJcsPlc1 = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1)
-        globalJcsPlc2 = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2)
+        globalJcsPlc1 = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1, self.getAssembly(joint))
+        globalJcsPlc2 = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2, self.getAssembly(joint))
 
         return UtilsAssembly.arePlacementZParallel(globalJcsPlc1, globalJcsPlc2)
 
@@ -1182,6 +1182,11 @@ class ViewProviderJoint:
         return None
 
     def doubleClicked(self, vobj):
+        assembly = vobj.Object.Proxy.getAssembly(vobj.Object)
+        if assembly is not None and hasattr(assembly, "PlusAssemblyOwner"):
+            from freecad_plus import constraints
+            constraints.open_task(joint=vobj.Object)
+            return True
         App.closeActiveTransaction(True)  # Close the auto-transaction
 
         task = Gui.Control.activeTaskDialog()
@@ -1425,6 +1430,10 @@ class MakeJointSelGate:
         self.assembly = assembly
 
     def allow(self, doc, obj, sub):
+        if hasattr(self.assembly, "PlusAssemblyOwner"):
+            from freecad_plus import constraints
+            part, relative = constraints.component_reference(self.assembly, obj, sub)
+            return part is not None
         if not sub:
             return False
 
@@ -1468,14 +1477,15 @@ activeTask = None
 
 
 class TaskAssemblyCreateJoint(QtCore.QObject):
-    def __init__(self, jointTypeIndex, jointObj=None, subclass=False):
+    def __init__(self, jointTypeIndex, jointObj=None, subclass=False, *, assembly=None,
+                 view=None, transaction=True):
         super().__init__()
 
         global activeTask
         activeTask = self
         self.blockOffsetRotation = False
 
-        self.assembly = UtilsAssembly.activeAssembly()
+        self.assembly = assembly or UtilsAssembly.activeAssembly()
         if not self.assembly:
             self.assembly = UtilsAssembly.activePart()
             self.activeType = "Part"
@@ -1486,7 +1496,7 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
         self.doc = self.assembly.Document
         self.gui_doc = Gui.getDocument(self.doc)
 
-        self.view = self.gui_doc.activeView()
+        self.view = view or self.gui_doc.activeView()
 
         if not self.assembly or not self.view or not self.doc:
             return
@@ -1530,7 +1540,8 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
             self.creating = False
             self.joint = jointObj
             self.jointName = jointObj.Label
-            App.setActiveTransaction("Edit " + self.jointName + " Joint")
+            if transaction:
+                App.setActiveTransaction("Edit " + self.jointName + " Joint")
 
             self.updateTaskboxFromJoint()
             self.visibilityBackup = self.joint.Visibility
@@ -1539,10 +1550,11 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
         else:
             self.creating = True
             self.jointName = self.jForm.jointType.currentText().replace(" ", "")
-            if self.activeType == "Part":
-                App.setActiveTransaction("Transform")
-            else:
-                App.setActiveTransaction("Create " + self.jointName + " Joint")
+            if transaction:
+                if self.activeType == "Part":
+                    App.setActiveTransaction("Transform")
+                else:
+                    App.setActiveTransaction("Create " + self.jointName + " Joint")
 
             self.refs = []
             self.presel_ref = None

@@ -1,0 +1,11 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/11] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[2/5] Automatic MOC and UIC for target Assembly
+[3/4] Building CXX object src\Mod\Assembly\App\CMakeFiles\Assembly.dir\AssemblyObject.cpp.obj
+[4/4] Linking CXX shared library Mod\Assembly\AssemblyApp.pyd

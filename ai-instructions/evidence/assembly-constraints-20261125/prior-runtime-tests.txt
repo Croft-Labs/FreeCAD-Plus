@@ -1,0 +1,18 @@
+test_structure_context_and_empty_file (TestComponentPilot.TestComponentPilot.test_structure_context_and_empty_file) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPilot.py", line 73, in test_structure_context_and_empty_file
+    self.doc.removeObject(obj.Name)
+RuntimeError: The component's base coordinate system cannot be deleted.
+
+======================================================================
+ERROR: test_structure_context_and_empty_file (TestComponentPilot.TestComponentPilot.test_structure_context_and_empty_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPilot.py", line 73, in test_structure_context_and_empty_file
+    self.doc.removeObject(obj.Name)
+RuntimeError: The component's base coordinate system cannot be deleted.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.181s
+
+FAILED (errors=1)

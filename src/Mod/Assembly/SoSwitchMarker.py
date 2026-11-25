@@ -146,7 +146,9 @@ class SoSwitchMarker(coin.SoSwitch):
 
     def set_marker_placement(self, placement, ref):
         # change plc to be relative to the origin of the document.
-        global_plc = UtilsAssembly.getGlobalPlacement(ref)
+        get_assembly = getattr(self.app_obj.Proxy, 'getAssembly', None)
+        assembly = get_assembly(self.app_obj) if get_assembly else None
+        global_plc = UtilsAssembly.getGlobalPlacement(ref, assembly=assembly)
         placement = global_plc * placement
 
         t = placement.Base

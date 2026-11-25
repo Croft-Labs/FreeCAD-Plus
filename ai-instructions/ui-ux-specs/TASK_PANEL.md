@@ -4,6 +4,23 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Part-owned assembly constraints — November 25, 2026
+
+Use the native joint tools and editor for constraints in the selected active assembly,
+independent of the component in Edit. The parent row represents its fixed origin;
+references may also use its own geometry or geometry within its direct child instances.
+Reference/Excluded children cannot be selected as new assembly-constraint inputs.
+Show component labels in the native reference list. Retain native joint types, values,
+offsets, reversals and limit controls. Solve Assembly operates on the selected assembly.
+
+Double-click/Edit on a saved constraint reopens the same editor with its references
+and values. Acceptance updates that object in place. Cancel restores references,
+values and placements; cancelling the first constraint also removes the newly created
+backend. Creation, editing and deletion support native Undo/Redo. Invalid references,
+incomplete input and conflicting constraints keep the editor open with the shared
+prominent error feedback and do not commit a successful result. Collector layout and
+approval are owned by [Component panel](COMPONENT_PANEL.md#assembly-constraints-and-padded-tabs--november-25-2026).
+
 ### Fillet edge selection repair — November 23, 2026
 
 Owner reported a freeze after opening Fillet on an Extrude, clearing the automatically

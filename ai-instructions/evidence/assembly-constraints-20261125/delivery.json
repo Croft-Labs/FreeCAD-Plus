@@ -1,0 +1,9 @@
+{
+  "installed_files": 11,
+  "all_source_payload_hashes_match": true,
+  "native_source_sha256": "db62cf70dbc09d59d46d77dfc4d0fdd57bca6458061da9ceaf899e8de07191df",
+  "executable": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCAD.exe",
+  "shortcut": "C:/Users/dgium/Desktop/freecad plus 0.1.0.lnk",
+  "shortcut_target": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\Launch FreeCAD Plus.bat",
+  "shortcut_working_directory": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus"
+}

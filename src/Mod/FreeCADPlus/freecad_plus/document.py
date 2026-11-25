@@ -10,8 +10,8 @@ from pathlib import Path
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 5
-SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5)
+SCHEMA = 6
+SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6)
 
 
 @contextmanager
@@ -51,6 +51,11 @@ def validate(doc):
 
 def owned_children(obj):
     """Native ownership only, never general feature dependencies or linked definitions."""
+    if obj.TypeId == 'Assembly::AssemblyObject':
+        from .constraints import owned_children as constraint_children
+        return constraint_children(obj)
+    if obj.TypeId == 'Assembly::JointGroup':
+        return list(obj.Group)
     if obj.TypeId in ("App::Part", "PartDesign::Body"):
         return [obj.Origin, *obj.Group]
     if obj.TypeId == "App::Origin":
@@ -97,7 +102,13 @@ def _validate_local(doc, external_definitions=()):
             raise ValueError("Invalid domestic definition")
         if root.PlusSchema < 3 and not definition.Placement.isSame(App.Placement(), 1e-9):
             raise ValueError("Place the occurrence, not the stored definition")
+        solvers = []
         for obj in definition.Group:
+            if root.PlusSchema >= 6 and obj.TypeId == 'Assembly::AssemblyObject':
+                from .constraints import validate_solver
+                validate_solver(definition, obj)
+                solvers.append(obj)
+                continue
             if root.PlusSchema >= 3 and obj.TypeId == "App::Link":
                 instances.append(obj)
                 continue
@@ -106,6 +117,8 @@ def _validate_local(doc, external_definitions=()):
             if root.PlusSchema >= 2 and obj.isDerivedFrom("Part::Feature"):
                 continue
             raise ValueError("Unsupported component modeling content for this schema")
+        if len(solvers) > 1:
+            raise ValueError('A part can have only one assembly constraint collector')
     for instance in instances:
         if (instance.TypeId != "App::Link" or instance.Document != doc
                 or instance.LinkedObject not in [*definitions, *external_definitions]
@@ -207,7 +220,7 @@ def history(doc, definition=None):
     if definition not in available_definitions(root):
         raise ValueError("Definition does not belong to this file")
     def features(obj):
-        if obj.TypeId == "App::Link":
+        if obj.TypeId in ("App::Link", "Assembly::AssemblyObject"):
             return  # A child component has its own History.
         if obj.TypeId == "PartDesign::Body":
             for child in obj.Group:

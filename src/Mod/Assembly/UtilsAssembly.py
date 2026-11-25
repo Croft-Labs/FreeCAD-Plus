@@ -33,6 +33,15 @@ if App.GuiUp:
 
 translate = App.Qt.translate
 
+
+def plusConstraints():
+    """Optional component-document routing; ordinary FreeCAD remains independent."""
+    try:
+        from freecad_plus import constraints
+    except ImportError:
+        return None
+    return constraints if constraints.is_plus_document() else None
+
 __title__ = "Assembly utilitary functions"
 __author__ = "Ondsel"
 __url__ = "https://www.freecad.org"
@@ -355,12 +364,12 @@ def getRootPath(obj, part):
 
 
 # Return the jcs global placement
-def getJcsGlobalPlc(jcsPlc, ref):
-    obj_global_plc = getGlobalPlacement(ref)
+def getJcsGlobalPlc(jcsPlc, ref, assembly=None):
+    obj_global_plc = getGlobalPlacement(ref, assembly=assembly)
     return obj_global_plc * jcsPlc
 
 
-def getGlobalPlacement(ref, targetObj=None):
+def getGlobalPlacement(ref, targetObj=None, assembly=None):
     if not isRefValid(ref, 1):
         return App.Placement()
 
@@ -371,6 +380,10 @@ def getGlobalPlacement(ref, targetObj=None):
 
     rootObj = ref[0]
     subName = ref[1][0]
+    if assembly is not None and hasattr(assembly, "PlusAssemblyOwner"):
+        # Component-rooted references already live in their owning part's frame.
+        # Do not pull a containing file/occurrence transform into a local solve.
+        return rootObj.getPlacementOf(subName, targetObj)
     # ref[0] is no longer the root object. Now it's the moving part.
     # So to get the correct global placement in case user transformed the assembly,
     # or if he has nested the assembly, we need to adjust it.
@@ -1230,6 +1243,9 @@ def getComponentReference(assembly, root_obj, sub_string):
     """
     if not assembly or not root_obj:
         return None, ""
+    if hasattr(assembly, "PlusAssemblyOwner"):
+        from freecad_plus.constraints import component_reference
+        return component_reference(assembly, root_obj, sub_string)
 
     doc = assembly.Document
 

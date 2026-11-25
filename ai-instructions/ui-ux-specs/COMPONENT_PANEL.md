@@ -1,5 +1,31 @@
 # Component panel
 
+## Assembly constraints and padded tabs — November 25, 2026
+
+Every part with assembly constraints has an **Assembly constraints** collector as
+its first child in Assembly, before its component instances. This applies at every
+nesting level and to every occurrence of a shared subassembly. Each collector lists
+only its owning part's constraints. It appears when the first constraint is added,
+starts collapsed, retains the user's expansion through refresh, and disappears when
+the last constraint is deleted. Constraint rows support double-click/Edit and Delete.
+
+The selected active assembly supplies the global reference frame for its assembly
+operations. Its origin and own geometry remain fixed; no child must be anchored to
+begin. Subassemblies retain their own local frames and constraints. Choosing another
+active assembly changes navigation/operation context without rewriting stored
+placements or changing the independently edited component. This supersedes older
+wording that made the internal file container the user's assembly reference frame.
+
+Parts, Assembly and History have equal widths with extra horizontal label padding.
+The tab group is left aligned and does not stretch to fill the panel. Preserve native
+tab height, styling, navigation and scrolling when the panel becomes narrow.
+
+Owner approved the collector preview, clarified that every constrained subcomponent
+needs its own collector, and then said **"approved, implement"**. The additional tab
+preview was separately approved with **"Approve this tab layout"**. On November 25
+the owner cancelled the separate file import/export request and directed continuation
+of constraints. See [approval, native screenshots and verification](../evidence/assembly-constraints-20261125/README.md).
+
 ## Add Component — November 24, 2026
 
 Owner-approved: **Add Component** in the Plus Assembly tools always opens a dropdown
