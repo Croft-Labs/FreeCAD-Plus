@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Open/import and conversion cursor correction — installed November 25, 2026
+
+Open, Plus Import and component source choosers default to both `.cadprt` and
+`.FCStd` together. Conversion/repair dialogs retain the normal pointer while idle;
+acceptance shows busy and restores the cursor on success, error and Cancel.
+Source and installed checks pass 27/27 each; existing shortcut checks pass 5/5.
+Five installed hashes verified. Restart FreeCAD Plus. See
+[evidence](evidence/file-dialog-fix-20261125/README.md).
+
 ## Assembly-wide component names — installed November 25, 2026
 
 Unique definition names now span the full imported catalog, with reverse-importer

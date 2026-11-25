@@ -1,3 +1,12 @@
+# November 25: Open/import filters and conversion cursor
+
+- [x] Combined `.cadprt`/`.FCStd` default for Open and Plus/native component Import.
+- [x] Normal pointer while the conversion dialog waits; busy only during acceptance.
+- [x] Native build, source/installed 27/27 and existing-shortcut 5/5 checks.
+- [x] Existing payload updated, hashes verified and rollback copies retained.
+
+See [evidence](evidence/file-dialog-fix-20261125/README.md). Restart FreeCAD Plus.
+
 # FreeCAD Plus: Development roadmap
 
 ## Unified Clone and Extract geometry — November 25, 2026

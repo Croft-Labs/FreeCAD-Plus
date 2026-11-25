@@ -1,0 +1,32 @@
+[
+  {
+    "file": "bin/FreeCADBase.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADBase.dll",
+    "sha256": "a1fe8d69eb9fc6ae1920ebaf82e697cef00af74c544cf27d0eb2aab4aa2582c2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADBase.dll.before-file-dialog-fix-20261125"
+  },
+  {
+    "file": "bin/FreeCADApp.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADApp.dll",
+    "sha256": "ead4ed6751df334b0e0b9394adcb384f7255a266005210b284135827fc6a505e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADApp.dll.before-file-dialog-fix-20261125"
+  },
+  {
+    "file": "bin/FreeCADGui.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.dll",
+    "sha256": "7bb8c107c880a15b710a45a67c66d7f6da7ff42591cb5462e3c6aa7d4f0d876c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.dll.before-file-dialog-fix-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestFileWorkflows.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestFileWorkflows.py",
+    "sha256": "8e6190cce9ae958374d49684e3675ad0480f80f1deecd6ca2b4f0ecfaeb9904c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestFileWorkflows.py.before-file-dialog-fix-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/file_workflows.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\file_workflows.py",
+    "sha256": "481158bd7d9a320ebbb82429f5a72b33ae083caeb6177fb73b091de004e5d8f0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\file_workflows.py.before-file-dialog-fix-20261125"
+  }
+]

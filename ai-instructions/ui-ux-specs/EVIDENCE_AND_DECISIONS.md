@@ -28,6 +28,11 @@ requests remain separate work.
 
 ### File format workflow approval — November 25, 2026
 
+Follow-up owner correction: Open and Import must show `.FCStd` and `.cadprt`
+together by default. The conversion dialog must retain a normal pointer until
+**Save .cadprt copy** is clicked. This is a narrow correction to the approved file
+workflow; no new dialog layout, conversion choices or format semantics were added.
+
 After the unfinished-work audit, the owner instructed **"implement file extensions
 and conversions"**, authorizing the previously presented workflow. Preview session
 `a888d3336f92`, fingerprint

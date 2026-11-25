@@ -143,8 +143,9 @@ void StdCmdOpen::activated(int iMsg)
     });
     formats.prepend(QObject::tr("FreeCAD Classic document (*.FCStd)"));
     formats.prepend(QObject::tr("FreeCAD Plus document (*.cadprt)"));
+    formats.prepend(QObject::tr("FreeCAD documents (*.cadprt *.FCStd)"));
     formatList = formats.join(QStringLiteral(";;"));
-    QString selectedFilter = QObject::tr("FreeCAD Plus document (*.cadprt)");
+    QString selectedFilter = QObject::tr("FreeCAD documents (*.cadprt *.FCStd)");
     QStringList fileList = FileDialog::getOpenFileNames(
         getMainWindow(),
         QObject::tr("Open document"),
@@ -243,6 +244,11 @@ void StdCmdImport::activated(int iMsg)
                                               ->GetGroup("Preferences")
                                               ->GetGroup("General");
     QString selectedFilter = QString::fromStdString(hPath->GetASCII("FileImportFilter"));
+    if (plus) {
+        const QString nativeFilter = QObject::tr("FreeCAD documents (*.cadprt *.FCStd)");
+        formatList.prepend(nativeFilter + QStringLiteral(";;"));
+        selectedFilter = nativeFilter;
+    }
     QStringList fileList = FileDialog::getOpenFileNames(
         getMainWindow(),
         QObject::tr("Import file"),

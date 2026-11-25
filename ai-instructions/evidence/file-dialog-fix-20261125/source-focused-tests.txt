@@ -1,0 +1,29 @@
+test_component_source_chooser_shows_both_formats (TestFileWorkflows.TestFileWorkflows.test_component_source_chooser_shows_both_formats) ... ok
+test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 211, in test_conversion_cursor_restores_after_error_cancel_and_success
+    self.assert_action(state)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 71, in assert_action
+    if state['error']: raise state['error']
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 60, in act
+    raise AssertionError(dialog.status.text())
+AssertionError: Conversion never overwrites an existing destination
+
+======================================================================
+FAIL: test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 211, in test_conversion_cursor_restores_after_error_cancel_and_success
+    self.assert_action(state)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 71, in assert_action
+    if state['error']: raise state['error']
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 60, in act
+    raise AssertionError(dialog.status.text())
+AssertionError: Conversion never overwrites an existing destination
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.758s
+
+FAILED (failures=1)

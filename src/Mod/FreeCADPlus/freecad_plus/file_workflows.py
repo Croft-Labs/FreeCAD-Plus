@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Explicit Classic-to-Plus conversion, shared by Open and component import."""
 from pathlib import Path
+from contextlib import contextmanager
 import hashlib
 import os
 import uuid
@@ -9,12 +10,23 @@ import zipfile
 
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 from . import document, conversion, task_status
 
 PLUS_FILTER = 'FreeCAD Plus document (*.cadprt)'
 CLASSIC_FILTER = 'FreeCAD Classic document (*.FCStd)'
-SOURCE_FILTERS = PLUS_FILTER + ';;' + CLASSIC_FILTER
+NATIVE_FILTER = 'FreeCAD documents (*.cadprt *.FCStd)'
+SOURCE_FILTERS = NATIVE_FILTER + ';;' + PLUS_FILTER + ';;' + CLASSIC_FILTER
+
+
+@contextmanager
+def _cursor(shape):
+    """Balance our override without discarding a caller's native busy cursor."""
+    QtWidgets.QApplication.setOverrideCursor(shape)
+    try:
+        yield
+    finally:
+        QtWidgets.QApplication.restoreOverrideCursor()
 
 
 def archive_kind(filename):
@@ -116,6 +128,12 @@ class ConversionDialog(QtWidgets.QDialog):
             classic.clicked.connect(self.open_classic)
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject); box.addWidget(buttons)
 
+    def exec(self):
+        # Native Open/Import hold a WaitCursor while dispatching to this dialog.
+        # Waiting for a choice is idle; retain that caller's cursor underneath.
+        with _cursor(QtCore.Qt.ArrowCursor):
+            return super().exec()
+
     def browse(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save FreeCAD Plus document',
             self.destination.text(), PLUS_FILTER, options=QtWidgets.QFileDialog.DontConfirmOverwrite)
@@ -127,6 +145,10 @@ class ConversionDialog(QtWidgets.QDialog):
         super().accept()
 
     def accept(self):
+        with _cursor(QtCore.Qt.WaitCursor):
+            self._convert()
+
+    def _convert(self):
         previous = App.ActiveDocument
         before = set(App.listDocuments())
         created = None

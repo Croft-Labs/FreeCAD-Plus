@@ -18,7 +18,10 @@ See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--novem
 The owner approved implementation with "implement file extensions and conversions".
 **FreeCAD Plus document** uses `.cadprt`; **FreeCAD Classic document** uses `.FCStd`.
 Format follows document content, independently of Classic/Plus presentation mode.
-Open lists Plus first, Classic second, and retains other geometry importers. Save,
+Open and Plus Import default to a combined **FreeCAD documents (*.cadprt *.FCStd)**
+filter, so both types are visible together. The component import/Add existing source
+chooser uses the same combined default. Separate format filters and other geometry
+importers remain available. Save,
 Save As, Save Copy, Save All and save-on-close use the document's native extension.
 A mismatched native suffix is corrected for a new filename; ordinary Save cannot
 overwrite a mismatched-format filename. Extension preferences cannot disable this
@@ -37,6 +40,10 @@ alone does not place children or change Edit/active assembly. Component export
 remains independent editable `.cadprt` output only. Previously mislabelled Plus
 content in `.FCStd` offers **Save .cadprt copy**; repair preserves the original,
 uses a new document identity, and retains external links even in another directory.
+Owner correction November 25: conversion/repair dialogs use the ordinary pointer
+while waiting for a choice, including destination browsing. Busy starts only when
+the user accepts conversion or **Save .cadprt copy**, and ends on completion or
+error. Cancel and errors must leave no lingering busy cursor.
 See [approval and acceptance evidence](../evidence/file-formats-20261125/README.md).
 
 ## Clone from direct children — November 25, 2026

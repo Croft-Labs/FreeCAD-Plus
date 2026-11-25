@@ -1,0 +1,10 @@
+test_gui_open_filters_keep_geometry_importers (TestFileWorkflows.TestFileWorkflows.test_gui_open_filters_keep_geometry_importers) ... ok
+test_native_import_defaults_to_both_formats_even_after_single_format (TestFileWorkflows.TestFileWorkflows.test_native_import_defaults_to_both_formats_even_after_single_format) ... ok
+test_native_open_repair_cursor_idle_until_save_copy (TestFileWorkflows.TestFileWorkflows.test_native_open_repair_cursor_idle_until_save_copy) ... ok
+test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success) ... ok
+test_component_source_chooser_shows_both_formats (TestFileWorkflows.TestFileWorkflows.test_component_source_chooser_shows_both_formats) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 3.302s
+
+OK

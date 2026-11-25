@@ -55,7 +55,8 @@ class TestFileWorkflows(unittest.TestCase):
                     raise AssertionError('No modal dialog opened')
                 dialog.grab().save(str(self.out / ('dialog-' + str(len(self.callbacks)) + '.png')))
                 action(dialog)
-                if isinstance(dialog, files.ConversionDialog) and not dialog.status.isHidden():
+                if (isinstance(dialog, files.ConversionDialog)
+                        and dialog.result() != QtWidgets.QDialog.Accepted and not dialog.status.isHidden()):
                     dialog.grab().save(str(self.out / 'conversion-error.png'))
                     raise AssertionError(dialog.status.text())
             except BaseException as error:
@@ -139,13 +140,110 @@ class TestFileWorkflows(unittest.TestCase):
     def test_gui_open_filters_keep_geometry_importers(self):
         def inspect(dialog):
             filters = dialog.nameFilters()
-            self.assertEqual(filters[:2], [files.PLUS_FILTER, files.CLASSIC_FILTER])
-            self.assertEqual(dialog.selectedNameFilter(), files.PLUS_FILTER)
+            self.assertEqual(filters[:3], [files.NATIVE_FILTER, files.PLUS_FILTER, files.CLASSIC_FILTER])
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
             self.assertTrue(any('*.step' in f.lower() for f in filters))
             dialog.reject()
         state = self.dialog_action(inspect)
         Gui.runCommand('Std_Open', 0)
         self.assert_action(state)
+
+    def test_native_import_defaults_to_both_formats_even_after_single_format(self):
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
+        previous = prefs.GetString('FileImportFilter')
+        prefs.SetString('FileImportFilter', files.PLUS_FILTER)
+        def inspect(dialog):
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
+            self.assertTrue(any('*.step' in f.lower() for f in dialog.nameFilters()))
+            dialog.reject()
+        try:
+            state = self.dialog_action(inspect)
+            Gui.runCommand('Std_Import', 0)
+            self.assert_action(state)
+        finally:
+            prefs.SetString('FileImportFilter', previous)
+
+    def test_component_source_chooser_shows_both_formats(self):
+        _, source = self.classic()
+        document.save_document(self.plus, self.out / 'machine.cadprt')
+        def inspect(dialog):
+            dialog.setDirectory(str(self.out))
+            QtTest.QTest.qWait(100)
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
+            model = dialog.findChild(QtWidgets.QFileSystemModel)
+            parent = model.index(str(self.out))
+            visible = {model.fileName(model.index(row, 0, parent)) for row in range(model.rowCount(parent))}
+            self.assertIn(source.name, visible)
+            self.assertIn('machine.cadprt', visible)
+            dialog.reject()
+        attribute = QtCore.Qt.AA_DontUseNativeDialogs
+        previous = QtWidgets.QApplication.testAttribute(attribute)
+        QtWidgets.QApplication.setAttribute(attribute, True)
+        try:
+            state = self.dialog_action(inspect)
+            self.assertIsNone(files.choose_source(Gui.getMainWindow(), 'Import file', 'import'))
+        finally:
+            QtWidgets.QApplication.setAttribute(attribute, previous)
+        self.assert_action(state)
+
+    def test_conversion_cursor_restores_after_error_cancel_and_success(self):
+        _, source = self.classic()
+        app = QtWidgets.QApplication
+        app.setOverrideCursor(QtCore.Qt.CrossCursor)
+        try:
+            def choose(dialog):
+                self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.ArrowCursor)
+                convert = files.conversion.convert_file
+                def checked_convert(*args, **kwargs):
+                    self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.WaitCursor)
+                    return convert(*args, **kwargs)
+                with patch.object(files.conversion, 'convert_file', side_effect=checked_convert):
+                    existing = self.out / 'existing.cadprt'
+                    existing.write_bytes(b'existing output')
+                    dialog.destination.setText(str(existing))
+                    dialog.accept()
+                    self.assertFalse(dialog.status.isHidden())
+                    self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.ArrowCursor)
+                    dialog.destination.setText(str(self.out / 'copy.cadprt'))
+                    dialog.accept()
+                self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.ArrowCursor)
+            state = self.dialog_action(choose)
+            result = files.prepare_source(source)
+            self.assert_action(state)
+            self.assertTrue(result)
+            self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.CrossCursor)
+            state = self.dialog_action(lambda dialog: dialog.reject())
+            self.assertIsNone(files.prepare_source(source))
+            self.assert_action(state)
+            self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.CrossCursor)
+        finally:
+            app.restoreOverrideCursor()
+
+    def test_native_open_repair_cursor_idle_until_save_copy(self):
+        document.save_document(self.plus, self.out / 'machine.cadprt')
+        source = self.out / 'mislabelled.FCStd'
+        shutil.copy2(self.plus.FileName, source)
+        app = QtWidgets.QApplication
+        prior = app.overrideCursor().shape() if app.overrideCursor() else None
+        second = []
+        def repair(dialog):
+            self.assertEqual(dialog.primary.text(), 'Save .cadprt copy')
+            self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.ArrowCursor)
+            original = files.repair_copy
+            def checked_repair(*args):
+                self.assertEqual(app.overrideCursor().shape(), QtCore.Qt.WaitCursor)
+                return original(*args)
+            with patch.object(files, 'repair_copy', side_effect=checked_repair):
+                dialog.accept()
+        def choose(dialog):
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
+            second.append(self.dialog_action(repair))
+            self.choose_file(dialog, source.name)
+        first = self.dialog_action(choose)
+        Gui.runCommand('Std_Open', 0)
+        self.assert_action(first); self.assert_action(second[0])
+        self.assertEqual(app.overrideCursor().shape() if app.overrideCursor() else None, prior)
+        self.assertTrue(source.with_suffix('.cadprt').exists())
 
     def test_convert_dialog_preserves_source_and_live_unsaved_edits(self):
         classic, source = self.classic()
@@ -211,7 +309,7 @@ class TestFileWorkflows(unittest.TestCase):
         App.closeDocument(classic.Name)
         second = []
         def choose(dialog):
-            dialog.selectNameFilter(files.CLASSIC_FILTER)
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
             second.append(self.dialog_action(lambda conversion_dialog: conversion_dialog.accept()))
             self.choose_file(dialog, source.name)
         first = self.dialog_action(choose)
@@ -332,13 +430,39 @@ class TestFileWorkflows(unittest.TestCase):
         App.setActiveDocument(self.plus.Name)
         document.save_document(self.plus, self.out / 'machine.cadprt')
         count = len(self.owner.Group)
-        state = self.dialog_action(lambda dialog: dialog.accept())
-        document_import.insert(str(source), self.plus.Name)
-        self.assert_action(state)
+        second = []
+        def convert(dialog):
+            self.assertEqual(QtWidgets.QApplication.overrideCursor().shape(), QtCore.Qt.ArrowCursor)
+            dialog.accept()
+        def choose(dialog):
+            self.assertEqual(dialog.selectedNameFilter(), files.NATIVE_FILTER)
+            second.append(self.dialog_action(convert))
+            self.choose_file(dialog, source.name)
+        first = self.dialog_action(choose)
+        Gui.runCommand('Std_Import', 0)
+        self.assert_action(first); self.assert_action(second[0])
         root = document.validate(self.plus)
         self.assertEqual(len(root.Imports), 1)
         self.assertEqual(len(self.owner.Group), count)
         self.assertTrue(source.with_suffix('.cadprt').exists())
+
+    def test_combined_filter_opens_and_imports_plus_documents(self):
+        source = document.new_document('Hardware')
+        document.validate(source).Definitions[0].Label = 'HardwarePart'
+        path = document.save_document(source, self.out / 'hardware.cadprt')
+        App.closeDocument(source.Name)
+        App.setActiveDocument(self.plus.Name)
+        first = self.dialog_action(lambda dialog: self.choose_file(dialog, 'hardware.cadprt'))
+        Gui.runCommand('Std_Open', 0)
+        self.assert_action(first)
+        self.assertEqual(Path(App.ActiveDocument.FileName), Path(path))
+        App.closeDocument(App.ActiveDocument.Name)
+        document.save_document(self.plus, self.out / 'machine.cadprt')
+        App.setActiveDocument(self.plus.Name)
+        second = self.dialog_action(lambda dialog: self.choose_file(dialog, 'hardware.cadprt'))
+        Gui.runCommand('Std_Import', 0)
+        self.assert_action(second)
+        self.assertEqual(len(document.validate(self.plus).Imports), 1)
 
     def test_add_existing_converts_without_changing_edit_context(self):
         _, source = self.classic()

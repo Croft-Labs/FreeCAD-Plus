@@ -1,3 +1,10 @@
+# November 25: file chooser and cursor correction installed
+
+Combined `.cadprt`/`.FCStd` Open/Import defaults and idle conversion pointer are
+implemented. Native build passes; source 27/27, installed 27/27, shortcut 5/5.
+Five installed payload hashes match; rollback copies retained. Restart required.
+See [evidence](evidence/file-dialog-fix-20261125/README.md).
+
 # FreeCAD Plus: Current work state
 
 ## Unified Clone — native task preview awaiting approval

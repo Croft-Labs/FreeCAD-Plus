@@ -1,0 +1,72 @@
+test_add_existing_converts_without_changing_edit_context (TestFileWorkflows.TestFileWorkflows.test_add_existing_converts_without_changing_edit_context) ... ok
+test_classic_data_cannot_open_as_cadprt (TestFileWorkflows.TestFileWorkflows.test_classic_data_cannot_open_as_cadprt) ... ok
+test_combined_filter_opens_and_imports_plus_documents (TestFileWorkflows.TestFileWorkflows.test_combined_filter_opens_and_imports_plus_documents) ... ok
+test_component_source_chooser_shows_both_formats (TestFileWorkflows.TestFileWorkflows.test_component_source_chooser_shows_both_formats) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 180, in test_component_source_chooser_shows_both_formats
+    self.assert_action(state)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 71, in assert_action
+    if state['error']: raise state['error']
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 57, in act
+    action(dialog)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 173, in inspect
+    parent = model.index(str(self.out))
+             ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'index'
+test_conversion_cancel_and_existing_destination (TestFileWorkflows.TestFileWorkflows.test_conversion_cancel_and_existing_destination) ... ok
+test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 202, in test_conversion_cursor_restores_after_error_cancel_and_success
+    self.assertTrue(files.prepare_source(source))
+AssertionError: None is not true
+test_conversion_preserves_another_documents_pending_transaction (TestFileWorkflows.TestFileWorkflows.test_conversion_preserves_another_documents_pending_transaction) ... ok
+test_convert_dialog_preserves_source_and_live_unsaved_edits (TestFileWorkflows.TestFileWorkflows.test_convert_dialog_preserves_source_and_live_unsaved_edits) ... ok
+test_direct_save_rejects_wrong_extension_even_with_preference_disabled (TestFileWorkflows.TestFileWorkflows.test_direct_save_rejects_wrong_extension_even_with_preference_disabled) ... ok
+test_gui_open_filters_keep_geometry_importers (TestFileWorkflows.TestFileWorkflows.test_gui_open_filters_keep_geometry_importers) ... ok
+test_gui_save_all_uses_document_specific_extensions (TestFileWorkflows.TestFileWorkflows.test_gui_save_all_uses_document_specific_extensions) ... ok
+test_gui_save_as_plus_filter_and_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_as_plus_filter_and_filename) ... ok
+test_gui_save_cancel_retains_filename_and_modified_state (TestFileWorkflows.TestFileWorkflows.test_gui_save_cancel_retains_filename_and_modified_state) ... ok
+test_gui_save_copy_classic_filter (TestFileWorkflows.TestFileWorkflows.test_gui_save_copy_classic_filter) ... ok
+test_gui_save_repairs_mislabelled_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_repairs_mislabelled_filename) ... ok
+test_mislabelled_plus_repair_preserves_links_and_source (TestFileWorkflows.TestFileWorkflows.test_mislabelled_plus_repair_preserves_links_and_source) ... ok
+test_native_classic_cannot_save_as_cadprt (TestFileWorkflows.TestFileWorkflows.test_native_classic_cannot_save_as_cadprt) ... ok
+test_native_import_converts_to_catalog_without_placement (TestFileWorkflows.TestFileWorkflows.test_native_import_converts_to_catalog_without_placement) ... ok
+test_native_import_defaults_to_both_formats_even_after_single_format (TestFileWorkflows.TestFileWorkflows.test_native_import_defaults_to_both_formats_even_after_single_format) ... ok
+test_native_open_command_converts_and_opens_plus (TestFileWorkflows.TestFileWorkflows.test_native_open_command_converts_and_opens_plus) ... ok
+test_native_open_repair_cursor_idle_until_save_copy (TestFileWorkflows.TestFileWorkflows.test_native_open_repair_cursor_idle_until_save_copy) ... ok
+test_native_plus_save_as_copy_and_reopen (TestFileWorkflows.TestFileWorkflows.test_native_plus_save_as_copy_and_reopen) ... ok
+test_native_save_as_and_copy_keep_external_links_in_other_directory (TestFileWorkflows.TestFileWorkflows.test_native_save_as_and_copy_keep_external_links_in_other_directory) ... ok
+test_open_classic_choice_does_not_convert (TestFileWorkflows.TestFileWorkflows.test_open_classic_choice_does_not_convert) ... ok
+test_panel_import_converts_without_placing_children (TestFileWorkflows.TestFileWorkflows.test_panel_import_converts_without_placing_children) ... ok
+test_save_on_close_uses_cadprt (TestFileWorkflows.TestFileWorkflows.test_save_on_close_uses_cadprt) ... ok
+test_unsupported_conversion_reports_error_without_output (TestFileWorkflows.TestFileWorkflows.test_unsupported_conversion_reports_error_without_output) ... ok
+
+======================================================================
+ERROR: test_component_source_chooser_shows_both_formats (TestFileWorkflows.TestFileWorkflows.test_component_source_chooser_shows_both_formats)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 180, in test_component_source_chooser_shows_both_formats
+    self.assert_action(state)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 71, in assert_action
+    if state['error']: raise state['error']
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 57, in act
+    action(dialog)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 173, in inspect
+    parent = model.index(str(self.out))
+             ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'index'
+
+======================================================================
+FAIL: test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestFileWorkflows.py", line 202, in test_conversion_cursor_restores_after_error_cancel_and_success
+    self.assertTrue(files.prepare_source(source))
+AssertionError: None is not true
+
+----------------------------------------------------------------------
+Ran 27 tests in 16.323s
+
+FAILED (failures=1, errors=1)
