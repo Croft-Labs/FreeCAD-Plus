@@ -1,0 +1,91 @@
+import os, sys, json, traceback, importlib
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtGui, QtWidgets, QtTest
+import freecad_plus
+from freecad_plus import document, hierarchy, editing, panel
+out = Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result = {'ok': False, 'installed_behavior_check': True}
+    try:
+        win = Gui.getMainWindow(); win.resize(1200, 850); win.show()
+        Gui.activateWorkbench('AssemblyWorkbench')
+        if panel._panel:
+            panel._panel.dispose(); win.removeDockWidget(panel._panel); panel._panel.deleteLater()
+        freecad_plus.__path__.insert(0, os.environ['PLUS_PREVIEW_WORKTREE'])
+        importlib.reload(panel)
+        doc = document.new_document('Machine project')
+        root = document.validate(doc); machine = root.Definitions[0]; machine.Label = 'Machine'
+        drive = hierarchy.create_definition(doc, 'Drive unit')
+        hierarchy.add_instance(machine, drive)
+        dock = panel.show_panel(); dock.refresh(); dock.activate_assembly(machine)
+        dock.tabs.setCurrentIndex(0); dock.setFloating(True)
+        dock.show(); QtTest.QTest.qWait(100)
+        before = [(o.ID, tuple(x.Name for x in o.OutList)) for o in doc.Objects]
+        bar = dock.tabs.tabBar()
+        metrics = []; images = []
+        minimum = max(bar.minimumTabSizeHint(i).width() for i in range(3))
+        maximum = max(bar.tabSizeHint(i).width() for i in range(3))
+        # The same widths render each worktree; candidate text-fit limit is
+        # independent of baseline's current padded minimum.
+        text_width = max(bar.fontMetrics().horizontalAdvance(bar.tabText(i)) for i in range(3))
+        bold_font = QtGui.QFont(bar.font()); bold_font.setBold(True)
+        fit_width = max(QtGui.QFontMetrics(bold_font).horizontalAdvance(bar.tabText(i)) for i in range(3))
+        option = QtWidgets.QStyleOptionTab(); option.initFrom(bar); option.shape = bar.shape()
+        option.rect = QtCore.QRect(QtCore.QPoint(), bar.tabSizeHint(0))
+        fit_width += option.rect.width() - bar.style().subElementRect(QtWidgets.QStyle.SE_TabBarTabText, option, bar).width()
+        widths = [370, ((fit_width + maximum) // 2) * 3, fit_width * 3]
+        for title, width in zip(('Wide panel', 'Medium panel', 'Text-fit minimum'), widths):
+            if title == 'Text-fit minimum': dock.tabs.setCurrentIndex(1)
+            dock.resize(width, 280); QtTest.QTest.qWait(180)
+            details = []
+            for i in range(3):
+                option = QtWidgets.QStyleOptionTab(); bar.initStyleOption(option, i)
+                rect = bar.style().subElementRect(QtWidgets.QStyle.SE_TabBarTabText, option, bar)
+                details.append({'text':bar.tabText(i),'paint_text':option.text,'tab_width':bar.tabRect(i).width(),
+                                'text_rect_width':rect.width(),'text_width':bar.fontMetrics().horizontalAdvance(bar.tabText(i))})
+            metrics.append({'title':title,'requested':width,'panel_width':dock.width(),'bar_width':bar.width(),
+                            'tabs':details,'scroll_buttons':any(b.isVisible() for b in bar.findChildren(QtWidgets.QToolButton))})
+            actual_widths = [bar.tabRect(i).width() for i in range(3)]
+            assert max(actual_widths)-min(actual_widths) <= 1
+            assert minimum <= min(actual_widths) <= max(actual_widths) <= maximum
+            assert not metrics[-1]['scroll_buttons']
+            assert bar.mapTo(dock.tabs, QtCore.QPoint()).x() < 4
+            img = dock.grab().toImage(); img.setDevicePixelRatio(1)
+            img = img.copy(0, 0, img.width(), min(img.height(), 250))
+            img.save(str(out/(title.lower().replace(' ', '-')+'.png'))); images.append((title,img))
+        # Each actual tab click must still work at the text-fit minimum.
+        for index in range(3):
+            QtTest.QTest.mouseClick(bar, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, bar.tabRect(index).center())
+            QtTest.QTest.qWait(80)
+            assert dock.tabs.currentIndex() == index
+            option = QtWidgets.QStyleOptionTab(); bar.initStyleOption(option, index)
+            rect = bar.style().subElementRect(QtWidgets.QStyle.SE_TabBarTabText, option, bar)
+            assert rect.width() >= QtGui.QFontMetrics(bold_font).horizontalAdvance(bar.tabText(index))
+            assert not any(b.isVisible() for b in bar.findChildren(QtWidgets.QToolButton))
+        dock.resize(minimum*3-1, 280); QtTest.QTest.qWait(100)
+        assert any(b.isVisible() for b in bar.findChildren(QtWidgets.QToolButton))
+        dock.resize(370, 280); QtTest.QTest.qWait(100)
+        assert [bar.tabRect(i).width() for i in range(3)] == [maximum]*3
+        assert before == [(o.ID, tuple(x.Name for x in o.OutList)) for o in doc.Objects]
+        canvas = QtGui.QImage(sum(img.width() for _,img in images)+24*(len(images)+1),
+                             max(img.height() for _,img in images)+65, QtGui.QImage.Format_ARGB32)
+        canvas.fill(QtGui.QColor('#f5f5f5')); painter = QtGui.QPainter(canvas)
+        painter.setPen(QtGui.QColor('#202020')); x = 24
+        for title,img in images:
+            painter.drawText(x, 26, title); painter.drawImage(x, 42, img); x += img.width()+24
+        painter.end(); assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True, minimum=minimum, maximum=maximum, measurements=metrics,
+                      all_three_tabs_clickable_at_minimum=True, selected_labels_fit=True,
+                      below_minimum_overflow_and_return_to_maximum=True,
+                      model_unchanged=True, module=panel.__file__)
+        dock.close()
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200, run)

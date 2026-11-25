@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "installed_behavior_check": true,
+  "minimum": 64,
+  "maximum": 90,
+  "measurements": [
+    {
+      "title": "Wide panel",
+      "requested": 370,
+      "panel_width": 370,
+      "bar_width": 270,
+      "tabs": [
+        {
+          "text": "Parts",
+          "paint_text": "Parts",
+          "tab_width": 90,
+          "text_rect_width": 80,
+          "text_width": 26
+        },
+        {
+          "text": "Assembly",
+          "paint_text": "Assembly",
+          "tab_width": 90,
+          "text_rect_width": 80,
+          "text_width": 50
+        },
+        {
+          "text": "History",
+          "paint_text": "History",
+          "tab_width": 90,
+          "text_rect_width": 80,
+          "text_width": 38
+        }
+      ],
+      "scroll_buttons": false
+    },
+    {
+      "title": "Medium panel",
+      "requested": 231,
+      "panel_width": 231,
+      "bar_width": 231,
+      "tabs": [
+        {
+          "text": "Parts",
+          "paint_text": "Parts",
+          "tab_width": 77,
+          "text_rect_width": 67,
+          "text_width": 26
+        },
+        {
+          "text": "Assembly",
+          "paint_text": "Assembly",
+          "tab_width": 77,
+          "text_rect_width": 67,
+          "text_width": 50
+        },
+        {
+          "text": "History",
+          "paint_text": "History",
+          "tab_width": 77,
+          "text_rect_width": 67,
+          "text_width": 38
+        }
+      ],
+      "scroll_buttons": false
+    },
+    {
+      "title": "Text-fit minimum",
+      "requested": 192,
+      "panel_width": 192,
+      "bar_width": 192,
+      "tabs": [
+        {
+          "text": "Parts",
+          "paint_text": "Parts",
+          "tab_width": 64,
+          "text_rect_width": 54,
+          "text_width": 26
+        },
+        {
+          "text": "Assembly",
+          "paint_text": "Assembly",
+          "tab_width": 64,
+          "text_rect_width": 54,
+          "text_width": 50
+        },
+        {
+          "text": "History",
+          "paint_text": "History",
+          "tab_width": 64,
+          "text_rect_width": 54,
+          "text_width": 38
+        }
+      ],
+      "scroll_buttons": false
+    }
+  ],
+  "all_three_tabs_clickable_at_minimum": true,
+  "selected_labels_fit": true,
+  "below_minimum_overflow_and_return_to_maximum": true,
+  "model_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}

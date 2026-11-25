@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Responsive component tabs — installed November 25, 2026
+
+Approved sizing is installed: equal tabs shrink to a common text-fit minimum and
+retain their previous padded maximum. Native source, installed and existing-shortcut
+checks pass; all tabs remain readable/clickable at minimum. Only panel.py changed
+in the runtime; its hash is verified and a rollback copy is retained. Restart the app.
+See [evidence](evidence/responsive-tabs-20261125/README.md).
+
 ## Part-file transfer — installed November 25, 2026
 
 The owner renewed the external-file/export request and approved both native dialogs.

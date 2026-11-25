@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Responsive component tabs — installed
+
+Parts/Assembly/History now shrink equally to the longest complete label, including
+its selected bold state. The current padded width remains the maximum; tabs stay
+left aligned. Source, installed-app and existing-shortcut native checks pass at
+wide/intermediate/minimum widths, including clicks and overflow below minimum.
+Restart FreeCAD Plus. See [evidence](evidence/responsive-tabs-20261125/README.md).
+
 ## Multi-part insertion and editable export — installed
 
 Add Component > Add existing now opens other `.cadprt` files and adds checked parts

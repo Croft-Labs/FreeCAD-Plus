@@ -1,5 +1,13 @@
 # FreeCAD Plus: Development roadmap
 
+## Responsive component tabs — November 25, 2026
+
+- [x] Approve native wide/intermediate/text-fit-minimum screenshots.
+- [x] Add a common native-text-fit minimum while retaining the padded maximum.
+- [x] Verify equal widths, full selected labels, three tab clicks and overflow recovery.
+- [x] Install the single Python module and verify the existing desktop shortcut.
+  See [evidence](evidence/responsive-tabs-20261125/README.md).
+
 ## Multi-part insertion and editable export — November 25, 2026
 
 - [x] Owner approves direct native dialog screenshots after renewing the request.

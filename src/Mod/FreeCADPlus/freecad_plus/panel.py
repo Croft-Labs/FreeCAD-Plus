@@ -198,6 +198,22 @@ def _eye_icon(shown, color):
 
 
 class ComponentTabBar(QtWidgets.QTabBar):
+    def minimumTabSizeHint(self, index):
+        size = self.tabSizeHint(index)
+        selected_font = QtGui.QFont(self.font())
+        selected_font.setBold(True)
+        metrics = (self.fontMetrics(), QtGui.QFontMetrics(selected_font))
+        width = max((metric.horizontalAdvance(self.tabText(i))
+                     for metric in metrics for i in range(self.count())), default=0)
+        option = QtWidgets.QStyleOptionTab()
+        option.initFrom(self)
+        option.shape = self.shape()
+        option.rect = QtCore.QRect(QtCore.QPoint(), size)
+        text_rect = self.style().subElementRect(QtWidgets.QStyle.SE_TabBarTabText, option, self)
+        padding = max(0, size.width() - text_rect.width())
+        size.setWidth(width + padding)
+        return size
+
     def tabSizeHint(self, index):
         size = super().tabSizeHint(index)
         width = max((self.fontMetrics().horizontalAdvance(self.tabText(i))

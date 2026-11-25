@@ -1,5 +1,18 @@
 # Component panel
 
+## Responsive tab widths — November 25, 2026
+
+Owner-approved native preview: Parts, Assembly and History shrink together with
+the panel, using a common minimum that fits the longest label in normal and bold
+selected states, with only native text-edge spacing. Their common maximum remains
+the existing padded width. Keep the tabs left aligned and do not stretch beyond
+that maximum. Native scroll arrows are needed only below the combined text-fit
+minimum. This refines the earlier equal-width/padding approval; it does not change
+tab labels, heights, styling, navigation or component workflows.
+
+The owner approved the wide/medium/minimum screenshots with **"approved. implement"**.
+See [native sizing and delivery evidence](../evidence/responsive-tabs-20261125/README.md).
+
 ## Transfer sets of parts — November 25, 2026
 
 The owner renewed the previously cancelled import/export request and approved the
