@@ -13,6 +13,19 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Shared instances and unique names — November 25, 2026
+
+The owner asked about `part2 x3` condensed versus `part2 (1)` / `(2)` / `(3)`
+expanded, adding further instances, and deleting one instance independently.
+They explicitly stated: "a part name must be unique in an assembly" and
+"part2 will be the exact same in every instance across different assemblies and
+even if imported into another file", so "editing part2 edits that part everywhere."
+The shared-name/definition requirement is confirmed and supersedes C09's
+allowance of distinct equally named imported definitions in one assembly.
+The questions do not constitute approval of a new grouping, quantity or removal
+UI. COMPONENT_PANEL records the audited current behavior and proposed next steps
+separately. This turn does not approve the pending Move Components task layout.
+
 ### Fixed assembly and movement review — November 25, 2026
 
 The owner reiterated: "the active assembly becomes the locked part automatically"

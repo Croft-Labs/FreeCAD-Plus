@@ -13,6 +13,52 @@ discussion. Use this definition when interpreting those messages and in future
 project guidance. Existing approved behavior and UI labels remain in effect.
 See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--november-25-2026).
 
+## Shared instances and names — November 25, 2026
+
+The owner clarified that a part name must be unique in an assembly: `part2`
+denotes the same shared definition in every occurrence, including occurrences
+in other assemblies and linked imports into another file. Editing its definition
+edits that part wherever referenced. Occurrence placement is independent of
+definition geometry. Naming uniqueness applies to distinct definitions; repeated
+instances of the same definition retain the same name.
+
+This supersedes the older rule below wherever it allowed distinct definitions
+with equal names from different files to coexist in an assembly merely by showing
+a filename qualifier. Current code still enforces uniqueness only within the
+defining file; assembly/import collision enforcement remains unimplemented.
+Use persistent definition identity for links, not display-name matching. Do not
+silently merge unrelated source definitions because their names happen to match.
+Collision resolution and a deliberate independent-copy naming workflow need a
+reviewed implementation. Independent export currently creates detached copies;
+it must not be described as a shared linked import or globally synchronized edit.
+Closed dependent files see saved source changes when reopened/refreshed; this
+requirement does not imply rewriting every closed file at edit time.
+
+The owner also asked about condensed/expanded instances, adding more instances,
+and removing one instance without deleting the part. Source audit at
+`e9297f7b4572540481d810f8bd997be25bb166e6` found:
+
+- Assembly projection emits one row per native link, using the definition label.
+  There is no repeated-instance grouping toggle or numbered occurrence label.
+- Add Component > Add existing can add the same definition again; Assembly
+  Copy/Paste creates more links. The existing picker has no quantity control.
+- The custom Assembly menu has no explicit Remove instance action. Native Delete
+  fallback is not verified as a safe occurrence-only workflow.
+- Each link has its own placement; its linked definition is shared. Linked imports
+  preserve the source definition. Export parts to file creates independent copies.
+
+Recommended design, **pending workflow approval/implementation**: group repeated
+sibling links by definition identity beneath their immediate parent. Condensed
+shows `part2 ×3`; Expanded shows `part2 (1)`, `part2 (2)`, `part2 (3)`. Numbers are
+occurrence identifiers, not definition renames. Keep individual instances reachable
+for placement, constraint and visibility actions. Add existing should offer a
+quantity; Remove instance should remove selected links only, preserve the shared
+definition and other links, and handle dependent constraints explicitly in one
+Undo operation. A condensed group must not ambiguously delete every instance.
+Definition deletion remains a separate action. Editing the contents of a shared
+subassembly (including removing its child link) changes every occurrence of that
+subassembly; a unique variant is needed to change just one copy's contents.
+
 ## Fixed active assembly — November 25, 2026
 
 The owner reiterated that the active assembly automatically becomes the locked
@@ -308,7 +354,7 @@ Tree remains a separate action. The November 23 owner update now activates the n
 definition for editing and selects History automatically, superseding the former
 requirement to preserve the previous editing context after creation.
 
-New Component allows storage in the current defining file, a new external file, or an existing external file such as Hardware. Use **domestic** and **external** terminology. Names must be unique within a file; equal names in different files remain distinct definitions. Show a domestic name without a qualifier, and an external name as **M3 screw (Hardware)**. Do not silently substitute a domestic definition for an external one with the same name. [C09](EVIDENCE_AND_DECISIONS.md#c09)
+New Component allows storage in the current defining file, a new external file, or an existing external file such as Hardware. Use **domestic** and **external** terminology. The historical C09 rule allowed equal names in different files as distinct definitions, qualified as **M3 screw (Hardware)**. The [November 25 shared-name clarification](#shared-instances-and-names--november-25-2026) supersedes that allowance within an assembly. Filename qualifiers may communicate source, but cannot resolve a conflicting part identity. Do not silently substitute a domestic definition for an external one with the same name. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
 Editing an external definition edits and saves its defining file. Other files using it receive the saved change when reopened. Child components must come from the active definition's own file or from files imported into that defining file. An external Hardware component cannot simply acquire a component from the importing assembly's domestic list. Edit Hardware and import the required file there first. Immediately flag and block circular file references and circular component nesting. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
