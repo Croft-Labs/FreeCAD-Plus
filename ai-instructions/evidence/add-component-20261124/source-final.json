@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "tests": 14,
+  "failures": 0,
+  "errors": 0,
+  "modules": {
+    "freecad_plus.component_add": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "freecad_plus.hierarchy": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\hierarchy.py",
+    "freecad_plus.external": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\external.py",
+    "freecad_plus.toolbars": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py"
+  }
+}

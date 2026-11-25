@@ -1,0 +1,32 @@
+[
+  {
+    "file": "freecad_plus/component_add.py",
+    "sha256": "70a033ff3ddbff37989bc6f4fa2390b398862e71bb1b6c8790bbb699ec3c3204",
+    "backup_sha256": null
+  },
+  {
+    "file": "freecad_plus/hierarchy.py",
+    "sha256": "1c19f7c5a6251f2395fac1e550a2169e691e4eafba93fff5277d96bfe0224b9d",
+    "backup_sha256": "31a530819b2ded0521c4f661c6cc78dce45df9394d9ef713fb1b68c7ffe0ba02"
+  },
+  {
+    "file": "freecad_plus/external.py",
+    "sha256": "697e78abe0afb2e3e2434e777867c0564b186ddcb7fee0d37196c4757c7694e4",
+    "backup_sha256": "0935979f43dfcabedb04799eac71b0cb5868e7837a0d1d7505401fd0167180f3"
+  },
+  {
+    "file": "freecad_plus/toolbars.py",
+    "sha256": "8fbf2622dcec7d91d7c70c6a85a6e573378275223d479d037f488d716b731e24",
+    "backup_sha256": "a1179f08898676d9ef47242f32dd17e487ea19b62cf33b8daae0c5a5735ea9dd"
+  },
+  {
+    "file": "TestAddComponent.py",
+    "sha256": "300131d0298a3491983f0982a011f58d1071495624498d5746fc60139e052671",
+    "backup_sha256": null
+  },
+  {
+    "file": "TestPlusToolbars.py",
+    "sha256": "7bee6c0700df33e0f898bfeec3b2bbe4d9b7776664acb56b6219cd23ea59331f",
+    "backup_sha256": "6b40d6ff2d8d76b9ed9d5de381e032484c9925c38469a2fc5e33050c821f5d45"
+  }
+]

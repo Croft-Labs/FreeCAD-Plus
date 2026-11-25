@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Add Component — November 24, 2026
+
+- [x] Owner approves always-open Add existing/Add new menu, distinct from New Component.
+- [x] Replace Plus New Assembly/Insert presentation with the approved Add menu.
+- [x] Add children under Edit's component; preserve Edit and assembly navigation.
+- [x] Validate cycles/context and transact definition/import/link changes atomically.
+- [x] Pass 55 installed affected checks, domestic/external fresh-process reopen
+  and six existing-shortcut checks.
+  See [approval and delivery](evidence/add-component-20261124/README.md).
+
 ## Active assembly selector — November 24, 2026
 
 - [x] Owner approves current-file rows with counts and collapsed loaded-file groups.

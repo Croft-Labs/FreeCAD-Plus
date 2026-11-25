@@ -380,6 +380,9 @@ class Ribbon(QtCore.QObject):
         return control
 
     def _button(self, command, parent):
+        if command == 'Assembly_Insert':
+            from .component_add import make_button
+            return make_button(parent, self.window)
         source = self._source(command)
         if source is None:
             return self._native_control(command, parent)
@@ -615,7 +618,7 @@ class Ribbon(QtCore.QObject):
             for name in names:
                 entries = [(None, 'separator', ()) if c == 'Separator' else
                            (re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', c.split('_', 1)[-1]),
-                            'small', (c,)) for c in items.get(name, ())]
+                            'small', (c,)) for c in items.get(name, ()) if c != 'Assembly_CreateAssembly']
                 native = self.native.get(name)
                 if native:
                     # Spreadsheet appends its native color pickers after command

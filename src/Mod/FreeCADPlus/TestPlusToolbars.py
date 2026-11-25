@@ -202,7 +202,7 @@ class TestPlusToolbars(unittest.TestCase):
         self.assertEqual(r.tab, 'Modeling')
         self.assertEqual([g.objectName() for g in r.scroll.widget().findChildren(QtWidgets.QWidget)
                           if g.objectName().startswith('PlusGroup_')],
-                         ['PlusGroup_' + n for n in ('Sketch','Modeling','Dress-Up','Transformation','Primitives','Other')])
+                         ['PlusGroup_' + n for n in ('Sketch','Modeling','Dress-Up','Surface','Transformation','Primitives','Other')])
         primitive = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_PartDesign_CompPrimitiveAdditive')
         self.assertEqual(primitive.menu().actions()[-1].text(), 'Tab')
         self.assertFalse(primitive.menu().actions()[-1].isEnabled())
@@ -2402,7 +2402,12 @@ class TestPlusToolbars(unittest.TestCase):
                                                              button.width() + 1)
                                     self.assertLessEqual(button.width(), button.iconSize().width() +
                                                          (32 if split else 14))
-                                    if split:
+                                    if button.objectName() == 'Plus_AddComponent':
+                                        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+                                        self.assertIsNone(button.defaultAction())
+                                        self.assertEqual([a.text() for a in button.menu().actions()],
+                                                         ['Add existing', 'Add new'])
+                                    elif split:
                                         option = QtWidgets.QStyleOptionToolButton()
                                         button.initStyleOption(option)
                                         style = button.style()

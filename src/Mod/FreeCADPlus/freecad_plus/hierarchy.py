@@ -25,13 +25,73 @@ def create_definition(doc, label):
     if not label.strip() or any(d.Label == label for d in root.Definitions):
         raise ValueError("Choose a nonempty component name unique within this file")
     with transaction(doc, "Create domestic component"):
-        definition = doc.addObject("App::Part", "Component")
-        show_new_component_frame(definition)
-        definition.Label = label
-        root.Definitions = [*root.Definitions, definition]
-        if App.GuiUp:
-            definition.Visibility = False
+        definition = _create_definition(root, label)
     return definition
+
+
+def _create_definition(root, label):
+    """Caller owns validation and the defining-file transaction."""
+    definition = root.Document.addObject('App::Part', 'Component')
+    show_new_component_frame(definition)
+    definition.Label = label
+    root.Definitions = [*root.Definitions, definition]
+    if App.GuiUp:
+        definition.Visibility = False
+    return definition
+
+
+def check_nesting(owner, definition):
+    """References and excluded links still participate in cycle prevention."""
+    todo, seen = [definition], set()
+    while todo:
+        current = todo.pop()
+        if current == owner:
+            raise ValueError('Circular component nesting is not allowed: this would create a parent-child cycle')
+        if current in seen:
+            continue
+        seen.add(current)
+        todo.extend(o.LinkedObject for o in current.Group if o.TypeId == 'App::Link')
+
+
+def _place_instance(owner, definition, placement=None, transform=True, visible=True):
+    """Caller owns one transaction, preflight and final graph validation."""
+    instance = owner.Document.addObject('App::Link', 'ComponentInstance')
+    instance.setLink(definition)
+    instance.LinkTransform = transform
+    instance.LinkPlacement = placement if placement is not None else App.Placement()
+    owner.addObject(instance)
+    if App.GuiUp:
+        instance.Visibility = visible
+    return instance
+
+
+def add_child(owner, definition=None, *, label=None):
+    """Add an existing or new child; catalog/definition/link changes share one Undo."""
+    import json
+    from . import external
+    root = _root(owner.Document)
+    if owner not in root.Definitions:
+        raise ValueError('Edit a component before adding a child')
+    if (definition is None) == (label is None):
+        raise ValueError('Choose an existing component or a new component name')
+    imported = None
+    if definition is None:
+        label = label.strip()
+        if not label or any(d.Label == label for d in root.Definitions):
+            raise ValueError('Choose a nonempty component name unique within this file')
+    else:
+        if definition not in validate(definition.Document).Definitions:
+            raise ValueError('The selected component is no longer available')
+        check_nesting(owner, definition)
+        if definition not in external.available_definitions(root):
+            _, imported = external.prepare_import(owner.Document, definition.Document)
+    with transaction(owner.Document, 'Add new component' if definition is None else 'Add existing component'):
+        if imported is not None:
+            root.Imports = [*root.Imports, imported]
+            root.ImportIdentities = json.dumps([str(o.Document.Uid) for o in root.Imports])
+        if definition is None:
+            definition = _create_definition(root, label)
+        return _place_instance(owner, definition)
 
 
 def new_part():
@@ -110,15 +170,7 @@ def add_instances(owner, entries, label='Paste component instances', display_sta
     for definition, placement, transform, visible in entries:
         if definition not in available:
             raise ValueError('Import this component into the destination defining file first')
-        todo, seen = [definition], set()
-        while todo:
-            current = todo.pop()
-            if current == owner:
-                raise ValueError('Circular component nesting is not allowed')
-            if current in seen:
-                continue
-            seen.add(current)
-            todo.extend(o.LinkedObject for o in current.Group if o.TypeId == 'App::Link')
+        check_nesting(owner, definition)
     from . import display
     choices = tuple(display_states) if display_states is not None else (None,) * len(entries)
     if len(choices) != len(entries) or any(value is not None and
@@ -127,13 +179,7 @@ def add_instances(owner, entries, label='Paste component instances', display_sta
     result = []
     with transaction(doc, label):
         for (definition, placement, transform, visible), choice in zip(entries, choices):
-            instance = doc.addObject('App::Link', 'ComponentInstance')
-            instance.setLink(definition)
-            instance.LinkTransform = transform
-            instance.LinkPlacement = placement if placement is not None else App.Placement()
-            owner.addObject(instance)
-            if App.GuiUp:
-                instance.Visibility = visible
+            instance = _place_instance(owner, definition, placement, transform, visible)
             if choice is not None and choice != display.state(instance):
                 display.enable(root); display.write_state(instance, choice)
             result.append(instance)

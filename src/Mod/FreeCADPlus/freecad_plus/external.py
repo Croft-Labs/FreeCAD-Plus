@@ -130,13 +130,16 @@ def _saved(doc):
     return graph
 
 
-def import_file(doc, source):
-    """Register a saved source document's complete catalog, without placements."""
+def prepare_import(doc, source):
+    """Validate a saved catalog dependency before its caller starts a transaction."""
     root, target = document.validate(doc), document.validate(source)
     if root.PlusSchema < 4:
         raise ValueError("External definitions require explicit upgrade to schema 4")
-    _saved(doc)
-    _saved(source)
+    try:
+        _saved(doc)
+        _saved(source)
+    except (OSError, zipfile.BadZipFile, ET.ParseError, KeyError) as error:
+        raise ValueError('Cannot import component file: ' + str(error)) from error
     todo, seen = [target], set()
     while todo:
         current = todo.pop()
@@ -146,6 +149,12 @@ def import_file(doc, source):
             continue
         seen.add(current)
         todo.extend(_imports(current))
+    return root, target
+
+
+def import_file(doc, source):
+    """Register a saved source document's complete catalog, without placements."""
+    root, target = prepare_import(doc, source)
     if target in _imports(root):
         return target
     with document.transaction(doc, "Import component catalog"):

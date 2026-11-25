@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "checks": [
+    "DomesticChild.cadprt",
+    "Host.cadprt"
+  ],
+  "verified": [
+    "native IDs",
+    "geometry volume",
+    "child links",
+    "external source identity",
+    "add then Undo after reopen"
+  ]
+}

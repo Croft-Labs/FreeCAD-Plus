@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons
 
+### Add Component always opens its menu — November 24, 2026
+
+Owner-approved exception to repeat-last-action split controls: the complete
+**Add Component** button opens a simple dropdown on every click, offering only
+**Add existing** and **Add new**. No primary action or remembered last choice.
+The separate **New Component** button retains definition-only creation. Add new
+creates and places a child under the edited component. Remove New Assembly from
+Plus Assembly tools and retain the Components panel's active-assembly selector.
+Native Classic commands and unrelated split controls retain their behavior.
+See [the component workflow](COMPONENT_PANEL.md#add-component--november-24-2026)
+and [approval/evidence](../evidence/add-component-20261124/README.md).
+
 ### Surface tools inside Modeling — November 23, 2026
 
 Owner requests moving the six existing Surface tools into a Surface section on

@@ -1,5 +1,31 @@
 # Component panel
 
+## Add Component — November 24, 2026
+
+Owner-approved: **Add Component** in the Plus Assembly tools always opens a dropdown
+with **Add existing** and **Add new**, including clicks on the main icon. It never
+repeats the last choice. Add existing opens the part navigator with component counts,
+current defining-file parts and collapsed groups for other loaded component files.
+Add new opens a separate name/create dialog. There are no mode tabs in these dialogs.
+
+Both paths add one linked child at the origin of the component currently being
+edited, independently of the selected active assembly. Keep that parent in Edit and
+keep the selected assembly root. New Assembly is removed from the Plus Assembly
+tools; the active-assembly selector remains. Standalone **New Component** retains
+its existing definition-only creation and activation behavior, without placement.
+Add new creates a definition and a child instance together; it is a different action.
+
+Block self-reference and any direct/indirect parent-child cycle, including through
+Reference/Excluded links, and block circular file dependencies. Recheck context and
+eligibility at acceptance. Cancel and validation failures leave the graph unchanged.
+Undo removes an entire addition, including its new definition or required catalog
+import. Loaded external sources retain their defining-file identity; required files
+must be saved before importing, without implicit saves.
+
+Approved in chat: "Approved. Implement" after the revised always-open dropdown and
+explicit distinction from New Component. See
+[preview and native evidence](../evidence/add-component-20261124/README.md).
+
 ## Active assembly — November 24, 2026
 
 Owner-approved revised preview: the visible tabs are **Parts**, **Assembly** and
@@ -351,7 +377,12 @@ its exact position was not recovered from owner messages. The dialog states that
 all instances share the name. Cancellation and unchanged names make no edit.
 See the [rename contract](../ARCHITECTURE.md#definition-rename-g16c5).
 
-The changed **Add Component** task remains explicitly deferred. Importing external models and placing selected models are separate actions; do not invent a finished placement dialog from the current code. The detailed delete/grounding/fixed-relationship menus, grouped instance presentation, status columns, History drag/drop and suppression rules below need source confirmation where not supported by the cited owner messages.
+The November 24 Add Component approval above supersedes the former deferral of
+that workflow. Catalog-only Import Models remains separate; Add Component may
+register a required saved source catalog while placing the selected child in one
+Undo transaction. The detailed delete/grounding/fixed-relationship menus, grouped
+instance presentation, status columns, History drag/drop and suppression rules
+below need source confirmation where not supported by the cited owner messages.
 
 ## Transferred DOCX requirements — Needs owner confirmation
 

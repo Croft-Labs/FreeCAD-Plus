@@ -1,5 +1,31 @@
 # Component/document architecture
 
+## Add Component child placement — November 24, 2026
+
+`component_add` owns the always-open Plus toolbar menu and separate existing/new
+pickers. Its acceptance token captures host document UID, native view, edited
+definition identity and occurrence route. Acceptance rechecks the live context,
+pending native tasks/transactions and chosen object identity. Assembly navigation
+is never used as placement ownership. Standalone `hierarchy.new_part` is unchanged.
+
+`hierarchy.add_child` preflights labels, definition membership and nesting, then
+creates one native App::Link at identity local placement. New-definition creation
+or required saved-catalog registration shares that same defining-file transaction.
+Its low-level creation/placement helpers are also used by existing definition and
+clipboard services. `external.prepare_import` extracts the existing read-only
+saved-file/UID/file-DAG preflight; catalog-only Import retains its own transaction.
+Rejected operations create no objects/Undo entry; native transaction abort removes
+all partial definitions, origins, links and import metadata on failure.
+
+Both component and file cycles are blocked. Component checks traverse every link,
+including hidden, Reference and Excluded branches. The picker disables invalid
+choices with a reason and repeats validation at acceptance. External Add targets
+the edited component's defining file; loaded but unimported sources require saved
+`.cadprt` files and are never silently saved. No schema/native binary changes.
+The global native New Assembly/Insert commands remain available to Classic;
+the Plus ribbon removes New Assembly and substitutes the approved Add menu.
+See [native checks and screenshots](evidence/add-component-20261124/README.md).
+
 ## Active assembly navigation — November 24, 2026
 
 `freecad_plus.assembly` resolves loaded Plus catalogs, counts nested instances and

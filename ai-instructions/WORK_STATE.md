@@ -1,5 +1,16 @@
 # FreeCAD Plus: Current work state
 
+## Add Component — installed
+
+November 24: approved always-open dropdown and separate existing/new child dialogs
+are installed with rollback copies. All 55 affected native checks pass, including
+13 new workflow cases, hierarchy/import regressions, standalone New Component,
+active assembly, History rename and toolbar behavior. Domestic/external saved
+children reopen with native IDs, geometry and linked ownership intact; add/Undo
+also works after reopening. All six existing-shortcut checks pass. No native rebuild or schema migration was needed.
+See [evidence](evidence/add-component-20261124/README.md). Restart running sessions.
+The older unused-display/cleanup issues recorded below remain a separate scope.
+
 ## Active assembly selection — installed
 
 November 24: owner-approved Parts/Assembly/History tabs, selected-part assembly

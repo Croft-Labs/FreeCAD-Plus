@@ -1,0 +1,11 @@
+test_ribbon_always_dropdown_both_real_add_paths_and_cancel (TestAddComponent.TestAddComponent.test_ribbon_always_dropdown_both_real_add_paths_and_cancel) ... ok
+test_new_child_is_atomic_and_standalone_new_component_remains_unplaced (TestAddComponent.TestAddComponent.test_new_child_is_atomic_and_standalone_new_component_remains_unplaced) ... ok
+test_empty_document_and_existing_legacy (TestComponentPanel.TestNativeComponentCreation.test_empty_document_and_existing_legacy) ... ok
+test_external_definition_owns_new_part (TestComponentPanel.TestNativeComponentCreation.test_external_definition_owns_new_part) ... ok
+test_new_file_and_part_both_presentations (TestComponentPanel.TestNativeComponentCreation.test_new_file_and_part_both_presentations) ... ok
+test_start_card_creates_shared_component (TestComponentPanel.TestNativeComponentCreation.test_start_card_creates_shared_component) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 8.756s
+
+OK

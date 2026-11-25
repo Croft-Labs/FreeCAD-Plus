@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Add Component dropdown and child placement — installed
+
+Add Component always opens **Add existing / Add new**. Both add one child beneath
+the edited component; Add new creates its definition and instance together.
+Standalone New Component remains definition-only and activates the new component.
+New Assembly is removed from Plus tools; the active-assembly selector remains.
+Cycle/stale-context checks, atomic Undo and external ownership are verified.
+All 55 installed affected checks, two fresh-process reopen cases and six existing-shortcut checks pass. Restart
+FreeCAD Plus. See [approval, screenshots and delivery](evidence/add-component-20261124/README.md).
+
 ## Active assembly selector — installed
 
 Parts offers **Make active assembly**; Assembly shows the chosen part as its root
