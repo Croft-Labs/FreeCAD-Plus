@@ -13,6 +13,18 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Instance display implementation approval — November 25, 2026
+
+The owner renewed **"implement Condensed/expanded instances"** after the prepared
+native proposal. This authorizes the Instances selector, numbered sibling rows,
+identity-based collapsed groups and individual-instance access in that proposal.
+Review `1339cd788f26` was inspected fresh with no scope violations; fingerprint
+`b97aa8298195bd804b0de852dacca11fa8524fe0c183480ecd9f7930f2bf3639` is unchanged.
+Chat approval is authoritative; companion approval state was not modified.
+See [the proposal](../evidence/instance-display-proposal-20261125/README.md) and
+[implemented behavior and checks](../evidence/instance-display-20261125/README.md).
+Quantity/pattern creation, individual removal and Clone remain separately pending.
+
 ### Move Components implementation approval — November 25, 2026
 
 The owner instructed **“implement the move component workflow”** after reviewing

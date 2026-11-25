@@ -1,0 +1,8 @@
+test_modes_preserve_model_selection_and_occurrence_items (TestInstanceDisplay.TestInstanceDisplay.test_modes_preserve_model_selection_and_occurrence_items) ... ok
+test_hidden_selection_reveals_nested_exact_instance_without_rebuilding (TestInstanceDisplay.TestInstanceDisplay.test_hidden_selection_reveals_nested_exact_instance_without_rebuilding) ... ok
+test_nested_groups_collapsed_and_constraint_collectors_first (TestInstanceDisplay.TestInstanceDisplay.test_nested_groups_collapsed_and_constraint_collectors_first) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.619s
+
+OK

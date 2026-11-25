@@ -9,6 +9,17 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md). Restart FreeCAD Plu
 
 # FreeCAD Plus: Development roadmap
 
+## Condensed/expanded instance display — installed November 25, 2026
+
+- [x] Apply the prepared native layout after the owner's renewed implementation instruction.
+- [x] Number repeated siblings; condense by defining identity and immediate parent.
+- [x] Preserve occurrence selection/actions, subtree folds and own constraint collectors.
+- [x] Persist view preference without document/Undo mutation; verify fresh reopening.
+- [x] Install three checked Python files; focused 9/9 and shortcut 3/3 pass.
+
+See [evidence and broader regression limitations](evidence/instance-display-20261125/README.md).
+Restart FreeCAD Plus. Quantity/patterns, removal and Clone remain separate work.
+
 ## Unified Clone and Extract geometry — November 25, 2026
 
 - [x] Record whole-object input, direct-child scope and cloned body/surface/sketch/plane names.

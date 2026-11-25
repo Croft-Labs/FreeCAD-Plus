@@ -1,0 +1,49 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+from freecad_plus import document, editing, panel
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False}
+    try:
+        Gui.getMainWindow().resize(1250, 1000)
+        info = json.loads((out.parent/'installed-final/test_external_qualification_preference_and_save_reopen/reopen.json').read_text())
+        doc = document.open_document(info['host'])
+        assert str(doc.Uid) == info['uid']
+        assert {o.Name: o.ID for o in doc.Objects} == info['ids']
+        owner, top = doc.getObject(info['owner']), doc.getObject(info['top'])
+        App.setActiveDocument(doc.Name)
+        editing.edit((top,))
+        dock = panel.show_panel(); QtTest.QTest.qWait(100); dock.refresh()
+        dock.activate_assembly(owner, (top,)); dock.tabs.setCurrentIndex(1)
+        QtTest.QTest.qWait(150)
+        assert dock.instance_mode.currentText() == 'Condensed'
+        groups = [i for i in dock._maps[1].values() if i.data(0, panel._ROLE).kind == 'instance_group']
+        imported = next(i for i in groups if 'Imported motor' in i.text(0))
+        assert 'Library' in imported.text(0) and imported.childCount() == 2
+        assert not imported.isExpanded()
+        links = [doc.getObject(name) for name in info['selected']]
+        key = ('occurrence', tuple(panel.identity(o) for o in links))
+        item = dock._maps[1][key]
+        Gui.Selection.addSelection(*item.data(0, panel._ROLE).selection)
+        assert item.isSelected() and imported.isExpanded()
+        undo = doc.UndoCount; before = [(o.Name,o.ID,tuple(x.Name for x in o.OutList)) for o in doc.Objects]
+        dock.instance_mode.setCurrentText('Expanded'); dock.instance_mode.setCurrentText('Condensed')
+        QtTest.QTest.qWait(100)
+        assert dock._maps[1][key] is item and item.isSelected()
+        assert doc.UndoCount == undo and before == [(o.Name,o.ID,tuple(x.Name for x in o.OutList)) for o in doc.Objects]
+        assert editing.context_path(doc) == (owner, (top,))
+        dock.setMinimumHeight(600)
+        QtTest.QTest.qWait(150)
+        dock.grab().save(str(out/'reopened.png'))
+        result.update(ok=True, preference_persisted=True, external_group=True, ids_preserved=True,
+                      selection_revealed=True, model_and_undo_unchanged=True)
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

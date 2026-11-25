@@ -1,0 +1,36 @@
+test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPanel.py", line 176, in test_nested_import_labels_and_external_edit_remain_in_assembly
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Shared child" conflicts with "Shared child" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPanel.py", line 176, in test_nested_import_labels_and_external_edit_remain_in_assembly
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 159, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 153, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Shared child" conflicts with "Shared child" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+----------------------------------------------------------------------
+Ran 1 test in 1.467s
+
+FAILED (errors=1)

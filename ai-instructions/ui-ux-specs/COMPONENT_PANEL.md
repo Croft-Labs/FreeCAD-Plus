@@ -151,18 +151,23 @@ and removing one instance without deleting the part. Source audit at
 - Each link has its own placement; its linked definition is shared. Linked imports
   preserve the source definition. Export parts to file creates independent copies.
 
-November 25: owner requested **Condensed/expanded instances** implementation.
-The [native screenshot proposal](../evidence/instance-display-proposal-20261125/README.md)
-is ready for the required layout approval. It adds an Instances selector beneath
-the Assembly selector, defaults to Expanded, and allows opening condensed groups
-to reach individual instances. Grouping is by definition identity, not matching
-labels, and does not merge different parents. Production integration remains pending.
-
-Recommended design, **pending workflow approval/implementation**: group repeated
-sibling links by definition identity beneath their immediate parent. Condensed
+November 25: the owner's renewed **implement Condensed/expanded instances** request
+authorizes the [prepared native layout](../evidence/instance-display-proposal-20261125/README.md).
+The Assembly tab's Instances selector defaults to Expanded and remembers the user's
+choice across files and restarts. Group repeated sibling links by definition
+identity beneath their immediate parent, never by matching labels. Condensed
 shows `part2 ×3`; Expanded shows `part2 (1)`, `part2 (2)`, `part2 (3)`. Numbers are
-display ordinals, not persistent occurrence identifiers or definition renames. Keep individual instances reachable
-for placement, constraint and visibility actions. Add existing should offer a
+display ordinals, not persistent occurrence identifiers or definition renames.
+Singletons retain their names; imported labels retain their source filename.
+Condensed groups start collapsed. Expand them to reach original instances and
+their own constraint collectors. A group has no visibility eye or component action.
+Switching modes preserves selection and existing subtree folds; selecting a hidden
+occurrence reveals its containing groups. No definitions, placements, Edit/active
+assembly state, or Undo entries change. Keep individual instances reachable for
+placement, constraint and visibility actions. See
+[implementation and verification](../evidence/instance-display-20261125/README.md).
+
+Separate pending quantity/removal workflows: Add existing should offer a
 quantity; Remove instance should remove selected links only, preserve the shared
 definition and other links, and handle dependent constraints explicitly in one
 Undo operation. A condensed group must not ambiguously delete every instance.
@@ -203,9 +208,9 @@ the total and preview, and save editable parameters in the destination component
 Edit instance pattern reopens the same controls. Preserve surviving link identities
 and explicitly block removal of referenced members. One Undo step, unchanged Cancel,
 recursive nesting guards and the fixed active assembly are required. This is
-proposed behavior, not current implementation. Condensed/expanded display remains
-a separate pending preview; Remove instance and name enforcement are not implemented
-by this proposal.
+proposed behavior, not current implementation. Condensed/expanded display is now
+implemented separately; Remove instance remains a pending preview. Name enforcement
+was delivered separately and is not implemented by this proposal.
 
 ## Fixed active assembly — November 25, 2026
 

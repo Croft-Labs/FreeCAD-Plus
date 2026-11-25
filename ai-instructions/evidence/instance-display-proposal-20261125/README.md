@@ -1,5 +1,9 @@
 # Condensed/expanded instance display proposal
 
+**Update November 25:** the owner's renewed implementation instruction approved
+this prepared layout. [Implementation and installed verification](../instance-display-20261125/README.md)
+are now complete. The text below records the earlier UI-only proposal state.
+
 November 25, 2026. The owner requested implementation of condensed/expanded
 instances. This is the required native Qt presentation preview, awaiting direct
 screenshot approval; production behavior and the installed payload are unchanged.

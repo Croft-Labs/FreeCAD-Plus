@@ -1,0 +1,67 @@
+test_counts_rename_singleton_transition_and_undo (TestInstanceDisplay.TestInstanceDisplay.test_counts_rename_singleton_transition_and_undo) ... ok
+test_external_qualification_preference_and_save_reopen (TestInstanceDisplay.TestInstanceDisplay.test_external_qualification_preference_and_save_reopen) ... ok
+test_group_has_no_component_action_or_native_selection (TestInstanceDisplay.TestInstanceDisplay.test_group_has_no_component_action_or_native_selection) ... ok
+test_grouping_identity_never_merges_equal_labels_or_different_parents (TestInstanceDisplay.TestInstanceDisplay.test_grouping_identity_never_merges_equal_labels_or_different_parents) ... ok
+test_hidden_selection_reveals_nested_exact_instance_without_rebuilding (TestInstanceDisplay.TestInstanceDisplay.test_hidden_selection_reveals_nested_exact_instance_without_rebuilding) ... ok
+test_individual_edit_copy_and_move_keep_exact_route (TestInstanceDisplay.TestInstanceDisplay.test_individual_edit_copy_and_move_keep_exact_route) ... ok
+test_modes_preserve_model_selection_and_occurrence_items (TestInstanceDisplay.TestInstanceDisplay.test_modes_preserve_model_selection_and_occurrence_items) ... ok
+test_nested_groups_collapsed_and_constraint_collectors_first (TestInstanceDisplay.TestInstanceDisplay.test_nested_groups_collapsed_and_constraint_collectors_first) ... ok
+test_chooser_flat_current_parts_counts_collapsed_files_and_cancel (TestActiveAssembly.TestActiveAssembly.test_chooser_flat_current_parts_counts_collapsed_files_and_cancel) ... ok
+test_copy_paste_into_selected_unused_assembly_and_stale_child_guard (TestActiveAssembly.TestActiveAssembly.test_copy_paste_into_selected_unused_assembly_and_stale_child_guard) ... ok
+test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded (TestActiveAssembly.TestActiveAssembly.test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded) ... ok
+test_loaded_unimported_assembly_edits_in_source_without_importing (TestActiveAssembly.TestActiveAssembly.test_loaded_unimported_assembly_edits_in_source_without_importing) ... ok
+test_parts_context_menu_sets_root_without_changing_edit_or_model (TestActiveAssembly.TestActiveAssembly.test_parts_context_menu_sets_root_without_changing_edit_or_model) ... ok
+test_pending_task_and_stale_chooser_are_refused (TestActiveAssembly.TestActiveAssembly.test_pending_task_and_stale_chooser_are_refused) ... ok
+test_per_view_choice_and_saved_reopen_preference (TestActiveAssembly.TestActiveAssembly.test_per_view_choice_and_saved_reopen_preference) ... ok
+test_root_rename_delete_and_undo (TestActiveAssembly.TestActiveAssembly.test_root_rename_delete_and_undo) ... ok
+test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence (TestActiveAssembly.TestActiveAssembly.test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence) ... ok
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestMoveWorkflow.py", line 246, in test_actual_viewport_arrow_release_escape_and_ring
+    gesture(pivot + App.Vector(size * .707, size * .707, 0), pivot + App.Vector(-size * .707, size * .707, 0))
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestMoveWorkflow.py", line 225, in gesture
+    self.assertTrue(handles.dragging, 'The viewport did not grab the native handle')
+AssertionError: False is not true : The viewport did not grab the native handle
+test_atomic_failure_context_and_view_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_atomic_failure_context_and_view_cleanup) ... ok
+test_axes_coincident_parallel_reverse (TestMoveWorkflow.TestMoveWorkflow.test_axes_coincident_parallel_reverse) ... ok
+test_dynamic_native_handles_numeric_snap_pivot_and_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_handles_numeric_snap_pivot_and_cleanup) ... ok
+test_dynamic_native_translation_and_rotation_callbacks (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_translation_and_rotation_callbacks) ... ok
+test_external_parent_owns_move_and_source_persistence (TestMoveWorkflow.TestMoveWorkflow.test_external_parent_owns_move_and_source_persistence) ... ok
+test_fixed_root_toolbar_and_click_collectors (TestMoveWorkflow.TestMoveWorkflow.test_fixed_root_toolbar_and_click_collectors) ... ok
+test_frames_roll_and_degenerate_axes (TestMoveWorkflow.TestMoveWorkflow.test_frames_roll_and_degenerate_axes) ... ok
+test_invalid_values_readonly_expression_constraint_and_scale (TestMoveWorkflow.TestMoveWorkflow.test_invalid_values_readonly_expression_constraint_and_scale) ... ok
+test_native_frame_pick_and_dynamic_plane_snap (TestMoveWorkflow.TestMoveWorkflow.test_native_frame_pick_and_dynamic_plane_snap) ... ok
+test_nested_shared_parent_mixed_parent_rejection (TestMoveWorkflow.TestMoveWorkflow.test_nested_shared_parent_mixed_parent_rejection) ... ok
+test_point_picks_and_orientation_preserved (TestMoveWorkflow.TestMoveWorkflow.test_point_picks_and_orientation_preserved) ... ok
+test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear) ... ok
+test_rotate_two_points_pivot_reverse (TestMoveWorkflow.TestMoveWorkflow.test_rotate_two_points_pivot_reverse) ... ok
+test_unused_assembly_anchor_and_reference_eligibility (TestMoveWorkflow.TestMoveWorkflow.test_unused_assembly_anchor_and_reference_eligibility) ... ok
+test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save) ... ok
+test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup) ... ok
+test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation) ... ok
+test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory) ... ok
+test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context) ... ok
+test_projection_shared_history_and_stable_native_ids (unittest.loader._FailedTest.test_projection_shared_history_and_stable_native_ids) ... ERROR
+AttributeError: type object 'TestComponentPanel' has no attribute 'test_projection_shared_history_and_stable_native_ids'
+test_nested_collectors_first_collapsed_and_independent (TestAssemblyConstraints.TestAssemblyConstraints.test_nested_collectors_first_collapsed_and_independent) ... ok
+test_fixed_parent_frame_without_grounded_children (TestAssemblyConstraints.TestAssemblyConstraints.test_fixed_parent_frame_without_grounded_children) ... ok
+
+======================================================================
+ERROR: test_projection_shared_history_and_stable_native_ids (unittest.loader._FailedTest.test_projection_shared_history_and_stable_native_ids)
+----------------------------------------------------------------------
+AttributeError: type object 'TestComponentPanel' has no attribute 'test_projection_shared_history_and_stable_native_ids'
+
+======================================================================
+FAIL: test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestMoveWorkflow.py", line 246, in test_actual_viewport_arrow_release_escape_and_ring
+    gesture(pivot + App.Vector(size * .707, size * .707, 0), pivot + App.Vector(-size * .707, size * .707, 0))
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestMoveWorkflow.py", line 225, in gesture
+    self.assertTrue(handles.dragging, 'The viewport did not grab the native handle')
+AssertionError: False is not true : The viewport did not grab the native handle
+
+----------------------------------------------------------------------
+Ran 40 tests in 59.675s
+
+FAILED (failures=1, errors=1)

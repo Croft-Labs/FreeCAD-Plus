@@ -48,7 +48,33 @@ class Row:
     anchor: tuple = ()
 
 
-def projection(doc, active=None, active_path=(), assembly_root=None, assembly_path=()):
+def instance_rows(rows, condensed=False, parent_key=()):
+    """Present repeated siblings without changing occurrence keys or selection routes."""
+    siblings = {}
+    for row in rows:
+        if row.kind == 'occurrence':
+            siblings.setdefault(row.ref, []).append(row)
+    numbered, emitted, result = {}, set(), []
+    for row in rows:
+        members = siblings.get(row.ref, ()) if row.kind == 'occurrence' else ()
+        if len(members) > 1:
+            if condensed:
+                if row.ref in emitted:
+                    continue
+                emitted.add(row.ref)
+                children = tuple(replace(member, label=member.label + ' (' + str(index) + ')',
+                                         children=instance_rows(member.children, condensed, member.key))
+                                 for index, member in enumerate(members, 1))
+                result.append(Row(('instance_group', parent_key, row.ref), 'instance_group',
+                                  row.label + ' \u00d7' + str(len(members)), row.ref, children=children))
+                continue
+            numbered[row.ref] = numbered.get(row.ref, 0) + 1
+            row = replace(row, label=row.label + ' (' + str(numbered[row.ref]) + ')')
+        result.append(replace(row, children=instance_rows(row.children, condensed, row.key)))
+    return tuple(result)
+
+
+def projection(doc, active=None, active_path=(), assembly_root=None, assembly_path=(), condensed=False):
     """Build immutable, identity-qualified rows from a validated component graph."""
     root = document.validate(doc)
     def models(group, ancestry=()):
@@ -122,7 +148,7 @@ def projection(doc, active=None, active_path=(), assembly_root=None, assembly_pa
         history.insert(0, Row(('history-component', identity(active)), 'history_component',
                               external.qualified_label(active, doc), identity(active),
                               tuple(identity(item) for item in active_path)))
-    return (tuple(models(external.catalog(doc))), assembly_rows, tuple(history))
+    return (tuple(models(external.catalog(doc))), instance_rows(assembly_rows, condensed), tuple(history))
 
 
 def history_visible(definition, obj):
@@ -371,6 +397,19 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self.move_button.clicked.connect(self.move_selected)
                 tools.addWidget(self.move_button)
                 layout.addLayout(tools)
+                host = QtWidgets.QWidget()
+                bar = QtWidgets.QHBoxLayout(host)
+                bar.setContentsMargins(2, 0, 2, 0)
+                bar.addWidget(QtWidgets.QLabel('Instances'))
+                self.instance_mode = QtWidgets.QComboBox()
+                self.instance_mode.setObjectName('PlusInstanceDisplay')
+                self.instance_mode.setAccessibleName('Instances')
+                self.instance_mode.addItems(('Expanded', 'Condensed'))
+                prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/FreeCADPlus')
+                self.instance_mode.setCurrentIndex(1 if prefs.GetBool('CondensedInstances', False) else 0)
+                bar.addWidget(self.instance_mode)
+                bar.addStretch()
+                layout.addWidget(host)
                 layout.addWidget(tree)
                 self.tabs.addTab(page, 'Assembly')
             else:
@@ -388,6 +427,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._timer = QtCore.QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.timeout.connect(self.refresh)
+        self.instance_mode.currentIndexChanged.connect(self._instance_mode_changed)
         self._mdi = parent.findChild(QtWidgets.QMdiArea)
         if self._mdi:
             self._mdi.subWindowActivated.connect(self.schedule)
@@ -706,7 +746,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.schedule()
 
     def addSelection(self, *args):
-        self._sync_selection()
+        self._sync_selection(reveal=True)
 
     removeSelection = addSelection
     setSelection = addSelection
@@ -769,6 +809,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 return definition, path
         raise ValueError('Select Edit on the file or a component to establish an editing context')
 
+    def _instance_mode_changed(self, index):
+        App.ParamGet('User parameter:BaseApp/Preferences/Mod/FreeCADPlus').SetBool('CondensedInstances', index == 1)
+        self.refresh()
+        self._sync_selection(reveal=True)
+
     def refresh(self):
         if self._closed:
             return
@@ -807,7 +852,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     self._message(str(error))
                 state = self._state(current)
                 owner, owner_path = self._assembly_context(current, active, path)
-                rows = projection(doc, active, path, owner, owner_path)
+                rows = projection(doc, active, path, owner, owner_path, self.instance_mode.currentIndex() == 1)
                 self.assembly_button.setText('Active assembly: ' + assembly.label(owner, doc) + '...'
                                              if owner else 'Choose active assembly...')
                 if state.get('component_window'):
@@ -1014,6 +1059,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             for position, row in enumerate(entries):
                 item = previous.get(row.key)
                 fresh = item is None
+                expanded = item.isExpanded() if item is not None else False
                 if fresh:
                     item = QtWidgets.QTreeWidgetItem()
                 if (item.parent() or tree.invisibleRootItem()) != parent or parent.indexOfChild(item) != position:
@@ -1048,12 +1094,17 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 if index == 2 and self._history_eyes and not coordinate_branch and row.kind == 'history':
                     flags |= QtCore.Qt.ItemIsDragEnabled
                 item.setFlags(flags)
+                if row.kind == 'instance_group':
+                    item.setToolTip(0, 'Expand to choose an individual instance')
                 current[row.key] = item
                 coordinate_row = coordinate_branch or (index == 2 and row.kind == 'history_group'
                                                         and row.label == 'Coordinate System')
                 sync(item, row.children, coordinate_row)
                 if fresh:
-                    item.setExpanded(not coordinate_row and row.kind != 'constraints')
+                    item.setExpanded(not coordinate_row and row.kind not in ('constraints', 'instance_group'))
+                else:
+                    # Qt clears expansion when a reused occurrence changes parent.
+                    item.setExpanded(expanded)
         blocker = QtCore.QSignalBlocker(tree)
         sync(tree.invisibleRootItem(), rows)
         for key, item in previous.items():
@@ -1092,6 +1143,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.message.setVisible(bool(text))
 
     def _checked(self, row):
+        if row.kind == 'instance_group':
+            raise ValueError('Expand the group and choose an individual instance')
         if self._binding is None or self._current() != self._binding:
             raise ValueError('The active file tab changed; select the item again')
         obj = lookup(row.ref)
@@ -1262,6 +1315,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._sync_selection()
 
     def _edit_clicked(self, item):
+        if item.data(0, _ROLE).kind == 'instance_group':
+            return  # Qt expands/collapses this presentation collector; it has no Edit action.
         try:
             self.edit_row(item.data(0, _ROLE))
         except (ValueError, RuntimeError, ReferenceError) as error:
@@ -1441,7 +1496,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             selections = []
             for item in tree.selectedItems():
                 row = item.data(0, _ROLE)
-                if row.kind in ('history_group', 'history_component', 'constraints'):
+                if row.kind in ('history_group', 'history_component', 'constraints', 'instance_group'):
                     continue
                 _, obj = self._checked(row)
                 selections.append(row.selection or (obj.Document.Name, obj.Name, ''))
@@ -1453,7 +1508,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         finally:
             self._selecting = False
 
-    def _sync_selection(self):
+    def _sync_selection(self, reveal=False):
         if self._closed or self._selecting or self._updating or not self._binding:
             return
         selected = set()
@@ -1465,7 +1520,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
             for item in items.values():
                 row = item.data(0, _ROLE)
                 selection = row.selection or (row.ref[0], row.ref[2], '')
-                item.setSelected(row.kind not in ('history_group', 'history_component', 'constraints') and selection in selected)
+                chosen = (row.kind not in ('history_group', 'history_component', 'constraints', 'instance_group')
+                          and selection in selected)
+                newly_selected = chosen and not item.isSelected()
+                item.setSelected(chosen)
+                if tree is self.trees[1] and chosen and (reveal or newly_selected):
+                    parent = item.parent()
+                    while parent is not None:
+                        parent.setExpanded(True)
+                        parent = parent.parent()
             del blocker
 
     def _visibility_changed(self, item, column):

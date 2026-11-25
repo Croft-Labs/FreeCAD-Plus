@@ -1,0 +1,14 @@
+test_counts_rename_singleton_transition_and_undo (TestInstanceDisplay.TestInstanceDisplay.test_counts_rename_singleton_transition_and_undo) ... ok
+test_external_qualification_preference_and_save_reopen (TestInstanceDisplay.TestInstanceDisplay.test_external_qualification_preference_and_save_reopen) ... ok
+test_group_has_no_component_action_or_native_selection (TestInstanceDisplay.TestInstanceDisplay.test_group_has_no_component_action_or_native_selection) ... ok
+test_grouping_identity_never_merges_equal_labels_or_different_parents (TestInstanceDisplay.TestInstanceDisplay.test_grouping_identity_never_merges_equal_labels_or_different_parents) ... ok
+test_hidden_selection_reveals_nested_exact_instance_without_rebuilding (TestInstanceDisplay.TestInstanceDisplay.test_hidden_selection_reveals_nested_exact_instance_without_rebuilding) ... ok
+test_individual_edit_copy_and_move_keep_exact_route (TestInstanceDisplay.TestInstanceDisplay.test_individual_edit_copy_and_move_keep_exact_route) ... ok
+test_modes_preserve_model_selection_and_occurrence_items (TestInstanceDisplay.TestInstanceDisplay.test_modes_preserve_model_selection_and_occurrence_items) ... ok
+test_nested_groups_collapsed_and_constraint_collectors_first (TestInstanceDisplay.TestInstanceDisplay.test_nested_groups_collapsed_and_constraint_collectors_first) ... ok
+test_projection_ownership_and_history_without_body_rows (TestComponentPanel.TestComponentPanel.test_projection_ownership_and_history_without_body_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 10.225s
+
+OK

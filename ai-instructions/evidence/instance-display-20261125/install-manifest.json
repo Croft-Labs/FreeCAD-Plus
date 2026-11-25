@@ -1,0 +1,20 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "e348bd06586f5f606c36ee01f950fbb62e50c4833a482dd29864977f2608eaba",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-instance-display-20261125"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestInstanceDisplay.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestInstanceDisplay.py",
+    "sha256": "595ca2c4ff991727184bfb16fb08af160bb9f36c5d0717a20d0eecf2684b14f8",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "51c107870c140e4ad2baacbe07191fdeda542ce63b0f01677b4fbb92b601c405",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-instance-display-20261125"
+  }
+]

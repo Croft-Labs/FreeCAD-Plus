@@ -1,0 +1,6 @@
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.629s
+
+OK

@@ -23,7 +23,7 @@ labels remain. Imports, renames, creation/copies and native saves share the guar
 Older conflicts can be repaired without losing document access. Installed 81/81,
 source focused 15/15, fresh reopen and existing shortcut 5/5 pass. Sixteen installed
 hashes verified; restart the app. See [evidence](evidence/component-names-20261125/README.md).
-Condensed/expanded, quantity/patterns and individual removal previews remain pending.
+Quantity/patterns and individual removal previews remain pending.
 
 ## Remove individual instances — native preview awaiting approval
 
@@ -39,15 +39,18 @@ and Create instances task proposals cover Quantity, Linear, Grid and Circular,
 with the same form for pattern editing. Final fixture runs preserve document,
 Undo and Edit context. No production/installed changes yet. See
 [screenshots and intended contract](evidence/instance-quantity-proposal-20261125/README.md).
-Condensed/expanded view approval remains pending separately.
+Condensed/expanded display is implemented separately below.
 
-## Condensed/expanded instances — native preview awaiting approval
+## Condensed/expanded instances — installed November 25, 2026
 
-November 25: owner requested implementation. The required native screenshot
-proposal adds an Instances selector, repeated-sibling numbering and expandable
-quantity groups. Both preview captures preserve document, Undo and Edit context.
-Production and installed behavior are unchanged pending direct layout approval.
-See [proposal and evidence](evidence/instance-display-proposal-20261125/README.md).
+Owner's renewed implementation instruction authorizes the prepared layout.
+Assembly > Instances now switches numbered occurrences and collapsed identity
+groups, preserving individual actions, selection and model/Undo/Edit state.
+Preference, imports and identity pass fresh-process reopening. Final focused 9/9
+and desktop-shortcut 3/3 checks pass; three Python files installed and hash verified.
+Restart required. Broad checks retain baseline clipboard/name-fixture failures and
+an order-sensitive viewport ring check (passes alone on baseline and final code).
+See [full evidence](evidence/instance-display-20261125/README.md).
 
 ## Move Components — installed November 25, 2026
 

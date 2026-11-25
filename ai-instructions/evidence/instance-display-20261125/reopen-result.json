@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/instance-display-validation/reopen.FCMacro\", line 19, in run\n    dock = panel.show_panel(); dock.activate_assembly(owner, (top,)); dock.tabs.setCurrentIndex(1)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py\", line 943, in activate_assembly\n    binding = self._assembly_guard()\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py\", line 939, in _assembly_guard\n    raise ValueError('The active file tab changed; reopen the assembly selector')\nValueError: The active file tab changed; reopen the assembly selector\n"
+}

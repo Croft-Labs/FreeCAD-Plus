@@ -33,11 +33,16 @@ navigator and shared create/edit form. Quantity, Linear, Grid and Circular are
 proposed; document behavior is not implemented or installed. Direct layout approval
 is pending. See [evidence](evidence/instance-quantity-proposal-20261125/README.md).
 
-## Condensed/expanded instances — preview prepared
+## Condensed/expanded instances — installed November 25, 2026
 
-November 25: implementation requested; required native presentation preview is
-ready for direct screenshot approval. Production/installed behavior is unchanged.
-See [proposal and checks](evidence/instance-display-proposal-20261125/README.md).
+Assembly > Instances switches Expanded numbered siblings and Condensed quantity
+groups, retaining native occurrence identity, selection and individual actions.
+The view preference persists; imported labels and per-occurrence constraint
+collectors remain intact. Final focused checks pass 9/9, fresh reopening and
+existing-shortcut checks 3/3. Three Python files installed with verified hashes.
+Restart FreeCAD Plus. Older clipboard/name fixtures fail on the unchanged baseline;
+a viewport drag check fails in the combined suite but passes alone on both versions.
+See [checks and boundaries](evidence/instance-display-20261125/README.md).
 
 ## Move Components — installed November 25, 2026
 
