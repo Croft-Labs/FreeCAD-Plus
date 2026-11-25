@@ -24,6 +24,7 @@ set(FreeCADPlus_SRCS
     TestAddComponent.py
     TestAssemblyConstraints.py
     TestPartTransfer.py
+    TestFileWorkflows.py
     TestComponentImport.py
     TestUnusedModels.py
     TestComponentWindows.py
@@ -69,6 +70,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
+    freecad_plus/file_workflows.py
     freecad_plus/conversion.py
     freecad_plus/hierarchy.py
     freecad_plus/legacy_hierarchy.py

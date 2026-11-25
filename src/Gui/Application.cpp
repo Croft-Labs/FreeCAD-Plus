@@ -49,6 +49,8 @@
 #include <ranges>
 
 #include <App/Document.h>
+#include <App/DocumentFormat.h>
+#include <App/AutoTransaction.h>
 #include <App/DocumentObjectPy.h>
 #include <Base/Console.h>
 #include <Base/Interpreter.h>
@@ -750,22 +752,13 @@ void Application::open(const char* FileName, const char* Module)
     if (Module) {
         try {
             if (File.hasExtension("FCStd")) {
-                bool handled = false;
-                std::string filepath = File.filePath();
-                for (auto& v : d->documents) {
-                    auto doc = v.second->getDocument();
-                    std::string fi = Base::FileInfo(doc->FileName.getValue()).filePath();
-                    if (filepath == fi) {
-                        handled = true;
-                        Command::doCommand(Command::App, "FreeCADGui.reload('%s')", doc->getName());
-                        break;
-                    }
-                }
-
-                if (!handled) {
-                    Command::doCommand(Command::App, "FreeCAD.openDocument('%s')", unicodepath.c_str());
-                    Gui::Application::checkForRecomputes();
-                }
+                // Conversion owns a new document and commits it before saving. The
+                // command's automatic transaction guard must not defer that commit.
+                App::AutoTransaction::setEnable(false);
+                Command::doCommand(Command::App,
+                    "import freecad_plus.file_workflows\nfreecad_plus.file_workflows.open_file(u\"%s\")",
+                    unicodepath.c_str());
+                Gui::Application::checkForRecomputes();
             }
             else {
                 std::string code = fmt::format(
@@ -825,7 +818,15 @@ void Application::importFrom(const char* FileName, const char* DocName, const ch
             Command::doCommand(Command::App, "import %s", Module);
 
             // load the file with the module
-            if (File.hasExtension("FCStd")) {
+            if (File.hasExtension("FCStd") && DocName
+                && App::GetApplication().getDocument(DocName)
+                && App::isComponentDocument(*App::GetApplication().getDocument(DocName))) {
+                App::AutoTransaction::setEnable(false);
+                Command::doCommand(Command::App,
+                    "import freecad_plus.document_import\nfreecad_plus.document_import.insert(u\"%s\", \"%s\")",
+                    unicodepath.c_str(), DocName);
+            }
+            else if (File.hasExtension("FCStd")) {
                 Command::doCommand(Command::App, "%s.open(u\"%s\")", Module, unicodepath.c_str());
                 setStatus(UserInitiatedOpenDocument, false);
                 App::Document* doc = App::GetApplication().getActiveDocument();

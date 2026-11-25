@@ -1296,8 +1296,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def import_models(self, row=None):
         target, expected = self._import_target()
         title = Path(target.FileName).stem if target.FileName else target.Label
-        filename, selected_filter = QtWidgets.QFileDialog.getOpenFileName(
-            self, 'Import Models into ' + title, '', 'FreeCAD Plus component (*.cadprt)')
+        from .file_workflows import choose_source
+        filename = choose_source(self, 'Import Models into ' + title, 'import')
         if not filename:
             return None
         target, current = self._import_target()

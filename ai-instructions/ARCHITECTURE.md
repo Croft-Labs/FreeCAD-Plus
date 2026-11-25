@@ -1,5 +1,34 @@
 # Component/document architecture
 
+## Native document formats and Classic conversion — November 25, 2026
+
+`App/DocumentFormat.h` classifies Plus from the component-document marker and
+normalizes native filenames to `.cadprt` or `.FCStd`. App Save As/Save Copy use
+this rule; ordinary Save refuses a mismatched suffix. GUI saves use corresponding
+filters, including Save All and close-time saves. When normalization changes an
+existing destination, the GUI asks about the corrected target before replacement.
+Presentation mode is not format authority.
+
+`file_workflows.py` inspects archive metadata before selecting the Plus loader,
+explicit Classic conversion, or extension repair. It preserves source archives
+and live source edits, uses exclusive publication, and rejects existing targets.
+The existing converter retains its bounded native Body/Part hierarchy/shared-link/
+Boolean/primitive coverage; unsupported structures remain explicit errors, never
+automatic geometry fallback. A corrected Plus copy receives a new file UUID and
+retains native object/history identities.
+
+Native Open and Classic import into Plus disable the enclosing automatic
+transaction guard so conversion can commit its new document before saving. Source
+choosers restore the original active document and close only newly created unused
+documents. Add existing still places only upon its separate Add action. Save As
+recalculates Plus external XLink paths against the new directory, including when
+the destination does not yet exist. Save Copy retains the original document
+filename and writes absolute external paths into the copy. Linked dependencies
+are not made independent; component export remains the independent-copy workflow.
+
+See the [owner workflow](ui-ux-specs/COMPONENT_PANEL.md#classic-and-plus-file-formats--november-25-2026)
+and [acceptance evidence](evidence/file-formats-20261125/README.md).
+
 ## Part-owned native assembly constraints — November 25, 2026
 
 `constraints.py` owns the Plus adapter; `constraint_task.py` subclasses the native joint

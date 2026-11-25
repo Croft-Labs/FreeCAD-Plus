@@ -3,6 +3,10 @@ from .document import open_document
 
 
 def open(filename):
+    import FreeCAD as App
+    if App.GuiUp:
+        from .file_workflows import open_file
+        return open_file(filename)
     return open_document(filename)
 
 
@@ -21,4 +25,9 @@ def insert(filename, document_name):
     # Allow that wrapper, but never consume an operation that already has edits.
     if any(d.HasPendingTransaction for d in App.listDocuments().values()):
         raise ValueError('Finish the current operation before importing parts')
+    if App.GuiUp:
+        from .file_workflows import prepare_source
+        filename = prepare_source(filename, purpose='import')
+        if not filename:
+            return None
     return external.import_path(doc, filename)

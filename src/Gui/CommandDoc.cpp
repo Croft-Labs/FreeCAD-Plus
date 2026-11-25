@@ -34,6 +34,7 @@
 
 #include <App/AutoTransaction.h>
 #include <App/Document.h>
+#include <App/DocumentFormat.h>
 #include <App/DocumentObject.h>
 #include <App/Expression.h>
 #include <App/GeoFeature.h>
@@ -133,7 +134,17 @@ void StdCmdOpen::activated(int iMsg)
     }
     formatList += QObject::tr(allFiles);
 
-    QString selectedFilter;
+    // Native Plus and Classic documents lead the list; retain every other importer.
+    QStringList formats = formatList.split(QStringLiteral(";;"));
+    formats.removeIf([](const QString& filter) {
+        return !filter.startsWith(QObject::tr("Supported formats"))
+            && (filter.contains(QStringLiteral("*.FCStd"), Qt::CaseInsensitive)
+                || filter.contains(QStringLiteral("*.cadprt"), Qt::CaseInsensitive));
+    });
+    formats.prepend(QObject::tr("FreeCAD Classic document (*.FCStd)"));
+    formats.prepend(QObject::tr("FreeCAD Plus document (*.cadprt)"));
+    formatList = formats.join(QStringLiteral(";;"));
+    QString selectedFilter = QObject::tr("FreeCAD Plus document (*.cadprt)");
     QStringList fileList = FileDialog::getOpenFileNames(
         getMainWindow(),
         QObject::tr("Open document"),
@@ -194,6 +205,7 @@ StdCmdImport::StdCmdImport()
 void StdCmdImport::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    const bool plus = App::isComponentDocument(*getActiveGuiDocument()->getDocument());
 
     // fill the list of registered endings
     QString formatList;
@@ -205,7 +217,7 @@ void StdCmdImport::activated(int iMsg)
     std::vector<std::string> filetypes = App::GetApplication().getImportTypes();
     std::vector<std::string>::const_iterator it;
     for (it = filetypes.begin(); it != filetypes.end(); ++it) {
-        if (*it != "FCStd") {
+        if (*it != "FCStd" || plus) {
             // ignore the project file format
             formatList += QLatin1String(" *.");
             formatList += QLatin1String(it->c_str());
@@ -218,7 +230,7 @@ void StdCmdImport::activated(int iMsg)
     std::map<std::string, std::string>::const_iterator jt;
     for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
         // ignore the project file format
-        if (jt->first.find("(*.FCStd)") == std::string::npos) {
+        if (jt->first.find("(*.FCStd)") == std::string::npos || plus) {
             formatList += QLatin1String(jt->first.c_str());
             formatList += QLatin1String(";;");
         }

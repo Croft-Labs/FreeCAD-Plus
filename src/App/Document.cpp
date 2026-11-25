@@ -64,6 +64,7 @@
 #include <Base/UnitsApi.h>
 
 #include "Document.h"
+#include "DocumentFormat.h"
 #include "private/DocumentP.h"
 #include "Application.h"
 #include "AutoTransaction.h"
@@ -1677,31 +1678,14 @@ unsigned int Document::getMemSize() const
     return size;
 }
 
-static std::string checkFileName(const char* file)
+static std::string checkFileName(const Document& doc, const char* file)
 {
-    std::string fn(file);
-
-    // Append extension if missing. This option is added for security reason, so
-    // that the user won't accidentally overwrite other file that may be critical.
-    if (GetApplication()
-            .GetParameterGroupByPath("User parameter:BaseApp/Preferences/Document")
-            ->GetBool("CheckExtension", true)) {
-        const char* ext = strrchr(file, '.');
-        if ((ext == nullptr) || !boost::iequals(ext + 1, "fcstd")) {
-            if (ext && ext[1] == 0) {
-                fn += "FCStd";
-            }
-            else {
-                fn += ".FCStd";
-            }
-        }
-    }
-    return fn;
+    return nativeDocumentFileName(doc, file);
 }
 
 bool Document::saveAs(const char* _file)
 {
-    const std::string file = checkFileName(_file);
+    const std::string file = checkFileName(*this, _file);
     const Base::FileInfo fi(file.c_str());
     if (this->FileName.getStrValue() != file) {
         this->FileName.setValue(file);
@@ -1714,13 +1698,17 @@ bool Document::saveAs(const char* _file)
 
 bool Document::saveCopy(const char* file) const
 {
-    const std::string checked = checkFileName(file);
+    const std::string checked = checkFileName(*this, file);
     return this->FileName.getStrValue() != checked ? saveToFile(checked.c_str()) : false;
 }
 
 // Save the document under the name it has been opened
 bool Document::save()
 {
+    if (*FileName.getValue() && nativeDocumentFileName(*this, FileName.getValue()) != FileName.getValue()) {
+        throw Base::ValueError("The filename does not match the document format. Use Save As: "
+                               "FreeCAD Plus requires .cadprt; FreeCAD Classic requires .FCStd.");
+    }
     if (testStatus(Document::PartialDoc)) {
         FC_ERR("Partial loaded document '" << Label.getValue() << "' cannot be saved");
         // TODO We don't make this a fatal error and return 'true' to make it possible to
@@ -1835,6 +1823,9 @@ bool Document::saveToFile(const char* filename) const
         }
 
         writer.setComment("FreeCAD Document");
+        if (isComponentDocument(*this) && nativePath != canonical_path(FileName.getValue())) {
+            writer.setMode("ComponentSaveCopy");
+        }
         writer.setLevel(compression);
         writer.putNextEntry("Document.xml");
 

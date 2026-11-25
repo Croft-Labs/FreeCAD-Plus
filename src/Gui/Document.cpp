@@ -45,6 +45,7 @@
 
 #include <App/AutoTransaction.h>
 #include <App/Document.h>
+#include <App/DocumentFormat.h>
 #include <App/DocumentObject.h>
 #include <App/DocumentObjectGroup.h>
 #include <App/Transactions.h>
@@ -1642,6 +1643,10 @@ bool Document::warnIfOlderVersion()
 /// Save the document
 bool Document::save()
 {
+    if (App::nativeDocumentFileName(*getDocument(), getDocument()->FileName.getValue())
+        != getDocument()->FileName.getValue()) {
+        return saveAs();
+    }
     if (d->_pcDocument->isSaved()) {
         // Warn if this document was created with an older FreeCAD version
         if (!warnIfOlderVersion()) {
@@ -1713,7 +1718,15 @@ bool Document::save()
                     );
                 }
 
-                Command::doCommand(Command::Doc, "App.getDocument(\"%s\").save()", doc->getName());
+                if (App::nativeDocumentFileName(*doc, doc->FileName.getValue()) != doc->FileName.getValue()) {
+                    auto dependent = Application::Instance->getDocument(doc);
+                    if (!dependent || !dependent->saveAs()) {
+                        return false;
+                    }
+                }
+                else {
+                    Command::doCommand(Command::Doc, "App.getDocument(\"%s\").save()", doc->getName());
+                }
                 auto gdoc = Application::Instance->getDocument(doc);
                 if (gdoc) {
                     gdoc->setModified(false);
@@ -1739,22 +1752,39 @@ bool Document::save()
     }
 }
 
+static QString nativeSaveFileName(App::Document* doc, bool copy = false)
+{
+    const bool plus = App::isComponentDocument(*doc);
+    QString name = QString::fromUtf8(doc->FileName.getValue());
+    if (name.isEmpty()) {
+        name = QString::fromUtf8(doc->Label.getValue());
+    }
+    name = QString::fromStdString(App::nativeDocumentFileName(*doc, name.toUtf8().constData()));
+    const QString title = copy ? QObject::tr("Save a copy of the document")
+        : plus ? QObject::tr("Save FreeCAD Plus document") : QObject::tr("Save FreeCAD Classic document");
+    QString file = FileDialog::getSaveFileName(getMainWindow(), title, name,
+        plus ? QObject::tr("FreeCAD Plus document (*.cadprt)")
+             : QObject::tr("FreeCAD Classic document (*.FCStd)"));
+    if (file.isEmpty()) {
+        return {};
+    }
+    const QString normalized = QString::fromStdString(App::nativeDocumentFileName(*doc, file.toUtf8().constData()));
+    // The dialog's overwrite consent covered the typed path, not a corrected suffix.
+    if (normalized != file && QFileInfo::exists(normalized)
+        && QMessageBox::question(getMainWindow(), QObject::tr("Replace file?"),
+            QObject::tr("%1 already exists. Replace it?").arg(normalized),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes) {
+        return {};
+    }
+    return normalized;
+}
+
 /// Save the document under a new file name
 bool Document::saveAs()
 {
     getMainWindow()->showMessage(QObject::tr("Save document under new filename…"));
 
-    QString exe = qApp->applicationName();
-    QString name = QString::fromUtf8(getDocument()->FileName.getValue());
-    if (name.isEmpty()) {
-        name = QString::fromUtf8(getDocument()->Label.getValue());
-    }
-    QString fn = FileDialog::getSaveFileName(
-        getMainWindow(),
-        QObject::tr("Save %1 Document").arg(exe),
-        name,
-        QStringLiteral("%1 %2 (*.FCStd)").arg(exe, QObject::tr("Document"))
-    );
+    QString fn = nativeSaveFileName(getDocument());
 
     if (!fn.isEmpty()) {
         QFileInfo fi;
@@ -1788,6 +1818,7 @@ bool Document::saveAs()
                 QObject::tr("Saving document failed"),
                 QString::fromLatin1(e.what())
             );
+            return false;
         }
         return true;
     }
@@ -1838,7 +1869,7 @@ void Document::saveAll()
         if (!gdoc) {
             continue;
         }
-        if (!doc->isSaved()) {
+        if (!doc->isSaved() || App::nativeDocumentFileName(*doc, doc->FileName.getValue()) != doc->FileName.getValue()) {
             if (!gdoc->saveAs()) {
                 break;
             }
@@ -1871,13 +1902,7 @@ bool Document::saveCopy()
 {
     getMainWindow()->showMessage(QObject::tr("Save a copy of the document under new filename…"));
 
-    QString exe = qApp->applicationName();
-    QString fn = FileDialog::getSaveFileName(
-        getMainWindow(),
-        QObject::tr("Save %1 Document").arg(exe),
-        QString::fromUtf8(getDocument()->FileName.getValue()),
-        QObject::tr("%1 document (*.FCStd)").arg(exe)
-    );
+    QString fn = nativeSaveFileName(getDocument(), true);
     if (!fn.isEmpty()) {
         const char* DocName = App::GetApplication().getDocumentName(getDocument());
 

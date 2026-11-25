@@ -1,0 +1,9 @@
+test_native_open_command_converts_and_opens_plus (TestFileWorkflows.TestFileWorkflows.test_native_open_command_converts_and_opens_plus) ... ok
+test_gui_save_as_plus_filter_and_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_as_plus_filter_and_filename) ... ok
+test_gui_save_all_uses_document_specific_extensions (TestFileWorkflows.TestFileWorkflows.test_gui_save_all_uses_document_specific_extensions) ... ok
+test_save_on_close_uses_cadprt (TestFileWorkflows.TestFileWorkflows.test_save_on_close_uses_cadprt) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 2.854s
+
+OK

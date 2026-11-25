@@ -1,0 +1,39 @@
+import os, json, hashlib, traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore
+out = Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result = {'ok': False}
+    try:
+        from freecad_plus import document, file_workflows, hierarchy
+        fixture = out.parent/'installed'
+        def case(name):
+            return fixture/('fw-'+hashlib.sha256(name.encode()).hexdigest()[:10])
+        checks = []
+        for name, filename in (
+            ('test_native_open_command_converts_and_opens_plus','original.cadprt'),
+            ('test_native_plus_save_as_copy_and_reopen','UPPER.CADPRT'),
+            ('test_save_on_close_uses_cadprt','closed.cadprt'),
+            ('test_mislabelled_plus_repair_preserves_links_and_source','elsewhere/corrected.cadprt'),
+            ('test_native_save_as_and_copy_keep_external_links_in_other_directory','elsewhere/moved.cadprt'),
+            ('test_native_save_as_and_copy_keep_external_links_in_other_directory','elsewhere/copy.cadprt')):
+            doc = document.open_document(case(name)/filename)
+            root = document.validate(doc)
+            assert root.Definitions and not any('Invalid' in o.State for o in doc.Objects)
+            original = doc.getObject('Box')
+            if original:
+                old = original.Length.Value
+                with document.transaction(doc,'Fresh reopened edit'): original.Length = old + 1
+                assert original.Length.Value == old+1
+                doc.undo(); doc.recompute(); assert original.Length.Value == old
+            checks.append(filename)
+            for n in list(App.listDocuments()): App.closeDocument(n)
+        classic = case('test_open_classic_choice_does_not_convert')/'original.FCStd'
+        assert file_workflows.archive_kind(classic) == 'classic'
+        result.update(ok=True, reopened=checks, edits_and_undo=True, classic_preserved=True)
+    except BaseException: result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    for n in list(App.listDocuments()): App.closeDocument(n)
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200, run)

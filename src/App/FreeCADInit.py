@@ -743,7 +743,7 @@ except Exception as e:
     Err(traceback.format_exc())
     Err('-'*80+'\n')
 
-FreeCAD.addImportType("FreeCAD document (*.FCStd)","FreeCAD")
+FreeCAD.addImportType("FreeCAD Classic document (*.FCStd)","FreeCAD")
 
 # set to no gui, is overwritten by InitGui
 App.GuiUp = 0

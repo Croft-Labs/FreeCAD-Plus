@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "reopened": [
+    "original.cadprt",
+    "UPPER.CADPRT",
+    "closed.cadprt",
+    "elsewhere/corrected.cadprt",
+    "elsewhere/moved.cadprt",
+    "elsewhere/copy.cadprt"
+  ],
+  "edits_and_undo": true,
+  "classic_preserved": true
+}

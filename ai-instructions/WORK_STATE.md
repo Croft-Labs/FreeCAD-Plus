@@ -1,5 +1,25 @@
 # FreeCAD Plus: Current work state
 
+## Native file formats and Classic conversion — installed November 25, 2026
+
+Owner instruction "implement file extensions and conversions" approved the
+previously rendered workflow. Native App/GUI format handling and explicit Classic
+conversion are installed in the existing owner payload, with retained rollback
+files and all eleven installed hashes verified. Format is content-based: Plus
+`.cadprt`, Classic `.FCStd`. Native Open/Save/Save As/Save Copy/Save All/close and
+component import/add/export follow that distinction. Repair preserves originals;
+unsupported Classic structures remain explicit conversion errors.
+
+The App/GUI build succeeds. Final installed acceptance passes 61/61, including
+22 new native/GUI workflow cases and existing conversion, import/export and
+external-definition coverage. Source regression passes 60/60 and the final
+transaction safeguard passes all 22 workflow cases. Six outputs reopen in a fresh installed
+process with geometry editing/Undo and original Classic content preserved.
+Four existing-shortcut checks also pass. The owning
+[evidence record](evidence/file-formats-20261125/README.md) records the
+reviewed screenshots, source/runtime provenance and bounded
+conversion limitations. Restart running sessions for the native update.
+
 ## Responsive component tabs — installed November 25, 2026
 
 Approved sizing is installed: equal tabs shrink to a common text-fit minimum and

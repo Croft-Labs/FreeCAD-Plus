@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 import FreeCAD
 
-FreeCAD.addImportType("FreeCAD Plus component (*.cadprt)", "freecad_plus.document_import")
+FreeCAD.addImportType("FreeCAD Plus document (*.cadprt)", "freecad_plus.document_import")
 FreeCAD.__unit_test__ += ["TestFeatureCenteredModeling"]
+FreeCAD.__unit_test__ += ["TestFileWorkflows"]
 
 FreeCAD.__unit_test__ += ["TestPlusToolbars", "TestComponentPilot", "TestLegacyConversion", "TestLegacyBooleanConversion", "TestComponentHierarchy", "TestExternalDefinitions", "TestComponentPanel", "TestComponentRename", "TestComponentImport", "TestUnusedModels", "TestComponentWindows", "TestComponentClipboard", "TestComponentMove", "TestComponentRotate", "TestComponentDisplay", "TestComponentVisibility", "TestComponentFading", "TestComponentBodiesOnly", "TestComponentEligibility", "TestComponentExport", "TestComponentExternalExport", "TestComponentModeling", "TestComponentReferences", "TestComponentInputEditors", "TestComponentSweepInputs", "TestComponentDressUpInputs", "TestComponentCommandInputs", "TestComponentBooleanOwnership", "TestComponentBooleanInputs", "TestPartBooleanInputs"]

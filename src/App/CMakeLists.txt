@@ -197,6 +197,7 @@ SET(Document_HPP_SRCS
     Annotation.h
     BackupPolicy.h
     Document.h
+    DocumentFormat.h
     DocumentObject.h
     Extension.h
     ExtensionContainer.h

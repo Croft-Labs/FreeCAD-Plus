@@ -164,12 +164,12 @@ class Picker(QtWidgets.QDialog):
         return selected
 
     def open_source(self):
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open component file', '',
-                                                         'FreeCAD Plus component (*.cadprt)')
-        if not filename:
-            return
         before = set(App.listDocuments())
         try:
+            from .file_workflows import choose_source
+            filename = choose_source(self, 'Open component file', 'add')
+            if not filename:
+                return
             if target()[1] != self.expected:
                 raise ValueError('The edited component or file tab changed; reopen Add Component')
             external.open_catalog(self.owner.Document, filename)

@@ -7,6 +7,20 @@ or **both**. Combining modeled geometry and child components is supported but no
 recommended. This corrects potentially reversed terminology in the November 24
 discussion. Follow the [canonical component terminology](ui-ux-specs/COMPONENT_PANEL.md#component-terminology--owner-clarification-november-25-2026).
 
+## Native file formats and Classic conversion — installed
+
+Plus saves/opens `.cadprt`; Classic uses `.FCStd`, independently of UI mode. Native
+Open, Save/Save As/Save Copy/Save All and save-on-close follow this distinction.
+Classic Open offers explicit conversion or Open Classic. Component import and Add
+existing can convert Classic sources; export remains `.cadprt`. Mislabelled Plus
+`.FCStd` files can be repaired into a new `.cadprt` without changing the original.
+Conversion preserves supported editable content and refuses unsupported structures
+without silent flattening or replacement. Native external links survive Save As,
+Save Copy and repair to another directory. All 61 affected checks pass in the
+installed app, as do six fresh-process reopen/edit/Undo cases and four shortcut
+checks. Source regression and final workflow checks also pass. Restart FreeCAD
+Plus to load the native DLL update. See [delivery evidence](evidence/file-formats-20261125/README.md).
+
 ## Clone ownership — specified, not implemented
 
 November 25 owner direction: one Clone workflow selects geometric objects from

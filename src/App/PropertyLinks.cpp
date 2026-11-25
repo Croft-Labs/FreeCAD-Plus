@@ -33,6 +33,7 @@
 #include "PropertyLinks.h"
 #include "Application.h"
 #include "Document.h"
+#include "DocumentFormat.h"
 #include "DocumentObject.h"
 #include "DocumentObjectPy.h"
 #include "DocumentObserver.h"
@@ -4155,6 +4156,15 @@ void PropertyXLink::Save(Base::Writer& writer) const
     else {
         const char* path = filePath.c_str();
         std::string _path;
+        if (!exporting && docInfo && isComponentDocument(*owner->getDocument())) {
+            // Rebase links after Save As/extension repair. Save Copy keeps its source
+            // document's filename, so serialize absolute links in that copy only.
+            const QString target = QString::fromUtf8(docInfo->filePath());
+            const QDir directory(QFileInfo(QString::fromUtf8(owner->getDocument()->getFileName())).absolutePath());
+            _path = writer.getMode("ComponentSaveCopy") ? std::string(docInfo->filePath())
+                : directory.relativeFilePath(target).toUtf8().constData();
+            path = _path.c_str();
+        }
         if (exporting) {
             // Here means we are exporting the owner but not exporting the
             // linked object.  Try to use absolute file path for easy transition

@@ -400,11 +400,12 @@ def open_document(filename, *, hidden=False):
         raise
 
 
-def save_document(doc, filename=None):
+def save_document(doc, filename=None, *, label=None):
     """Save the native archive at the exact path without changing CheckExtension.
 
-    Native save() provides temporary-file replacement and backups. saveAs() cannot
-    be used here because upstream appends .FCStd to unrecognized extensions.
+    Native save() provides temporary-file replacement and backups. This helper
+    additionally validates the component graph and guards referenced-file moves.
+    Native Save As also recognizes the document's Plus format.
     """
     root = validate(doc)
     if doc.HasPendingTransaction:
@@ -429,7 +430,7 @@ def save_document(doc, filename=None):
     old_filename, old_label = doc.FileName, root.Label
     try:
         doc.FileName = str(path)
-        root.Label = path.stem
+        root.Label = label if label is not None else path.stem
         doc.recompute()
         doc.save()
         inspect_archive(path)

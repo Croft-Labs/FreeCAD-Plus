@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### File format workflow approval — November 25, 2026
+
+After the unfinished-work audit, the owner instructed **"implement file extensions
+and conversions"**, authorizing the previously presented workflow. Preview session
+`a888d3336f92`, fingerprint
+`c85cb74d68a13804a657ac917a71db97946334dba0dfde9f6bcb2f2056f871d8`, was inspected
+as fresh and within its UI allowlist. Approval is the owner's chat instruction;
+no companion approval state was set on their behalf. COMPONENT_PANEL owns the
+intended behavior, ARCHITECTURE the persistence boundaries, and WORK_STATE runtime
+acceptance. Pending movement, instance and Clone work is outside this approval.
+
 ### Clone geometry from direct children — November 25, 2026
 
 The owner requested the equivalent concept to promoting geometry, retaining the

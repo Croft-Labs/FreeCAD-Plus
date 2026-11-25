@@ -13,6 +13,32 @@ discussion. Use this definition when interpreting those messages and in future
 project guidance. Existing approved behavior and UI labels remain in effect.
 See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--november-25-2026).
 
+## Classic and Plus file formats — November 25, 2026
+
+The owner approved implementation with "implement file extensions and conversions".
+**FreeCAD Plus document** uses `.cadprt`; **FreeCAD Classic document** uses `.FCStd`.
+Format follows document content, independently of Classic/Plus presentation mode.
+Open lists Plus first, Classic second, and retains other geometry importers. Save,
+Save As, Save Copy, Save All and save-on-close use the document's native extension.
+A mismatched native suffix is corrected for a new filename; ordinary Save cannot
+overwrite a mismatched-format filename. Extension preferences cannot disable this
+distinction.
+
+Opening Classic offers **Convert and open**, **Open Classic**, or Cancel. Conversion
+chooses a separate new `.cadprt`, preserves supported editable content, and leaves
+the original `.FCStd` unchanged. It reads the saved source rather than unsaved live
+edits. Existing destinations are not replaced. Unsupported structures show an
+explicit error; do not silently flatten them into dumb geometry. Open Classic
+remains available for ordinary native editing/saving.
+
+Parts import offers both types, with **Convert and import** for Classic. Add
+Component > Add existing > Open file offers **Convert and select parts**. Conversion
+alone does not place children or change Edit/active assembly. Component export
+remains independent editable `.cadprt` output only. Previously mislabelled Plus
+content in `.FCStd` offers **Save .cadprt copy**; repair preserves the original,
+uses a new document identity, and retains external links even in another directory.
+See [approval and acceptance evidence](../evidence/file-formats-20261125/README.md).
+
 ## Clone from direct children — November 25, 2026
 
 The owner specifies one operation named **Clone**, without separate single-element

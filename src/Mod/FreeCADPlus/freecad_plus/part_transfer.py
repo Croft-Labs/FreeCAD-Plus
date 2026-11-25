@@ -51,7 +51,7 @@ class ExportDialog(QtWidgets.QDialog):
 
     def choose_file(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Export parts to a new file', '',
-                    'FreeCAD Plus component (*.cadprt)', options=QtWidgets.QFileDialog.DontConfirmOverwrite)
+                    'FreeCAD Plus document (*.cadprt)', options=QtWidgets.QFileDialog.DontConfirmOverwrite)
         if filename:
             if not Path(filename).suffix:
                 filename += '.cadprt'
