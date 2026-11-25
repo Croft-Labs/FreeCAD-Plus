@@ -963,6 +963,23 @@ Each independent object has one layer. A sketch and a body consuming it are sepa
 
 Hide/show preserves individual visibility choices and must not reveal intermediate results. Deleting a layer moves its members to Base and never deletes geometry. Deleting the active layer activates Base. Save/reopen and Undo/Redo preserve layers, assignments, visibility and active choice. [R03](EVIDENCE_AND_DECISIONS.md#r03)
 
+### Clone
+
+Owner direction, November 25, 2026: provide one **Clone** task for geometric objects
+from direct child components, with no single-element/whole-part mode split. The
+[component ownership contract](COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026)
+owns source depth, history-free parent geometry and child history retention.
+This is the current name for the earlier Add Reference Feature prerequisite.
+References to that older name elsewhere in this document retain their admission
+rules but do not authorize an additional competing promotion workflow.
+
+Proposed task for subsequent review: one geometry collector, selecting eligible
+objects through a specific direct-child occurrence, preview in the edited parent's
+frame, and the shared Apply/OK/Cancel pattern. No copied child feature tree and no
+automatic body union. Subsequent parent features modify/combine the clone. Exact
+layout, multi-selection/result grouping and source-update controls are not yet
+approved. This documentation records requirements, not implemented Clone behavior.
+
 ### Move Components
 
 #### November 25, 2026 proposal — awaiting owner approval

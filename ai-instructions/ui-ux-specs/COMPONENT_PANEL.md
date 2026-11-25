@@ -13,6 +13,48 @@ discussion. Use this definition when interpreting those messages and in future
 project guidance. Existing approved behavior and UI labels remain in effect.
 See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--november-25-2026).
 
+## Clone from direct children — November 25, 2026
+
+The owner specifies one operation named **Clone**, without separate single-element
+and whole-part modes. While editing a parent component, the user may choose
+geometric objects (sketches, bodies, sheets and other geometry) owned by a **direct
+child**. Do not traverse another component boundary: geometry owned by a child's
+child is ineligible, even if visible in the parent view. Native feature/body
+containers within the direct child are not themselves additional component levels.
+Choose the source through its child occurrence so repeated instances retain the
+correct placement relative to the parent. Selecting a component must not silently
+flatten its descendant geometry.
+
+Clone creates native, history-free geometry owned by the edited parent. The child's
+source geometry and all its defining sketches, constraints and modeling operations
+remain with the child; do not copy or relocate that construction history into the
+parent. A sketch clone supplies its geometric result, not the child's driving
+dimensions/constraint history. The parent's History records Clone and subsequent
+parent-owned operations.
+
+Parent feature operations may modify the cloned result and incorporate a cloned
+body into another parent body, for example through Boolean or other applicable
+modeling features. Clone alone does not merge bodies. Do not achieve this by
+reparenting the original child body, moving the child's history, or directly editing
+the child's definition from the parent. Downstream parent operations affect the
+parent's result; editing the source child remains a separate shared-definition edit.
+
+This is the newly specified workflow for the earlier **Add Reference Feature**
+promotion prerequisite. That earlier name and undefined-task wording below are
+superseded by **Clone** for this component workflow. The prerequisite of an explicit
+parent-owned feature remains: ordinary parent modeling must not silently create a
+clone or consume unpromoted Reference geometry. This does not rename unrelated
+upstream Draft, Sketcher, PartDesign or BIM commands without a separate UI decision.
+
+The earlier contract requires an owned, derived, linked result. Retain that source
+association unless the owner explicitly requests a detached snapshot; "dumb"
+geometry here means no transferred construction history. Proposed update semantics
+for discussion: source geometry/child-placement changes recompute Clone in the
+parent frame, then recompute parent operations; parent operations never write back
+to the child. Missing sources or invalid downstream results must be reported, not
+silently converted into detached geometry. Exact controls and implementation remain
+pending; no Clone runtime feature is delivered by this documentation update.
+
 ## Shared instances and names — November 25, 2026
 
 The owner clarified that a part name must be unique in an assembly: `part2`
@@ -422,7 +464,7 @@ descendant rule is inferred from the owner's example; see the
 
 A direct Reference child displays its full geometry while its parent is edited, respecting its own nested exclusions. Editing an ancestor makes that reference behave as Excluded without erasing its saved Reference setting. Reactivating its owner restores Reference. To use an excluded nested component as a reference, add that component separately as a direct Reference child. [C10](EVIDENCE_AND_DECISIONS.md#c10)
 
-**Add Reference Feature is mandatory before reference-child geometry may be used.** It creates an owned, derived and linked reference sketch/body/other feature in the active component. A promoted reference body becomes a body of that component. Unpromoted source geometry is not directly usable for modeling or as final component geometry. This supersedes the suggestion that displayed Reference geometry alone could be used as sketch/attachment inputs. The detailed Add Reference Feature task remains to be defined. [C10](EVIDENCE_AND_DECISIONS.md#c10)
+**Clone is mandatory before reference-child geometry may be used.** Earlier C10 called this **Add Reference Feature**: an owned, derived and linked reference sketch/body/other feature in the active component. The [November 25 Clone clarification](#clone-from-direct-children--november-25-2026) supplies its current name, direct-child source restriction and history-free result contract. A cloned body becomes geometry of the parent component; unpromoted source geometry is not directly usable for modeling or as final component geometry. Displayed Reference geometry alone cannot be used as sketch/attachment inputs. The task's detailed controls and implementation remain pending. [C10](EVIDENCE_AND_DECISIONS.md#c10)
 
 ### History and legacy files
 

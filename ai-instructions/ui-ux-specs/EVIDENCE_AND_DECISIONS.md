@@ -13,6 +13,22 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Clone geometry from direct children — November 25, 2026
+
+The owner requested the equivalent concept to promoting geometry, retaining the
+name **Clone** as one workflow rather than separate single-element/whole-part
+choices. They specified "any object, whether sketch, body, sheet, etc" from a
+"direct child only (no children of children)" as native dumb geometry. Parent
+feature operations may edit the cloned body or incorporate it into a parent body;
+"all of the defining operations for the cloned body stay with the child."
+COMPONENT_PANEL records these confirmed boundaries; TASK_PANEL records the
+single-task direction and separates proposed controls from approved requirements.
+This supersedes the earlier undefined Add Reference Feature workflow's name and
+source scope. The older linked/derived reference contract is not explicitly revoked
+by "dumb geometry"; association is distinguished from transferring construction
+history. Detailed recompute controls remain a discussion proposal. No runtime
+implementation or preview approval is implied by this owner message.
+
 ### Shared instances and unique names — November 25, 2026
 
 The owner asked about `part2 x3` condensed versus `part2 (1)` / `(2)` / `(3)`

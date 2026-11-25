@@ -7,6 +7,15 @@ or **both**. Combining modeled geometry and child components is supported but no
 recommended. This corrects potentially reversed terminology in the November 24
 discussion. Follow the [canonical component terminology](ui-ux-specs/COMPONENT_PANEL.md#component-terminology--owner-clarification-november-25-2026).
 
+## Clone ownership — specified, not implemented
+
+November 25 owner direction: one Clone workflow selects geometric objects from
+direct children only and creates native history-free geometry in the edited
+parent. Child construction history remains in the child; only parent feature
+operations modify/combine cloned geometry. This defines the earlier Add Reference
+Feature concept. Follow the [current Clone contract](ui-ux-specs/COMPONENT_PANEL.md#clone-from-direct-children--november-25-2026);
+task controls and runtime implementation remain pending.
+
 ## Responsive component tabs — installed
 
 Parts/Assembly/History now shrink equally to the longest complete label, including
