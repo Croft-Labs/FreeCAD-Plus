@@ -965,6 +965,58 @@ Hide/show preserves individual visibility choices and must not reveal intermedia
 
 ### Move Components
 
+#### November 25, 2026 proposal — awaiting owner approval
+
+The owner requested an audit of current access, recovery of the abandoned fork's
+movement concepts, and a task-panel workflow to approve. Current `movement.py`
+implements Translate and Rotate only. Other listed methods explicitly reject
+application. Its occurrence routing still assumes the old file-root tree, and
+the panel excludes anchored occurrences from the existing context-menu entry.
+These findings are not evidence that the current task works throughout the new
+active-assembly tree.
+
+The isolated proposal offers **Move Components** beside the Assembly selector and
+on child-instance right-click menus. The fixed active assembly and immediate
+parent frame are shown above the task inputs. The active root cannot be moved.
+Keep active assembly and Edit independent; collecting a child identifies the
+movement owner without silently replacing either user choice.
+
+| Type | Method | Inputs |
+| --- | --- | --- |
+| Move | Distance and vector | Parent X/Y/Z, picked edge/axis, two points or entered direction vector; distance and Reverse. Normalize an entered nonzero vector; its magnitude does not multiply the distance. |
+| Move | Point to point | From and To references; preserve orientation. |
+| Move | Dynamic drag | Translation arrows/planes, editable/resettable pivot, numeric active-handle distance and optional snapping. |
+| Rotate | Axis and angle | Parent/picked/two-point axis, pivot, angle and Reverse. |
+| Rotate | Dynamic drag | Rotation rings, editable/resettable pivot, numeric active-handle angle and optional snapping. |
+| Align | Axes | Source/target axes, Coincident or Parallel, Reverse target. |
+| Align | Coordinate systems | Source/target frames; expandable origin/Z/X reference definitions. |
+
+One Components collector supports tree/view picking, Remove/Delete/Clear and
+Keep selection after Apply. One operation accepts siblings with a common parent
+occurrence. Moving an assembly instance carries its descendants; moving children
+inside a shared parent definition affects every occurrence of that parent.
+References are transformed into the immediate parent's frame. The active
+assembly supplies the fixed outer frame. Neither root switching nor pivot
+editing rewrites geometry or saved placements.
+
+Retain the established Apply/OK/Cancel and one-Undo group movement contract below.
+Automatic preview updates after a numeric field is committed, with an explicit
+Update preview option. Drag release keeps a pending preview; Escape cancels the
+current drag. Invalid, constrained, expression-driven or read-only selections
+must explain the blocker and disable Apply/OK; never silently detach constraints
+or move only an unexpected subset. Solver-driven movement of partially constrained
+components is outside this initial proposal; edit the constraint instead.
+
+This proposed Type/Method arrangement and entered direction vector await approval
+and would supersede the older flat Workflow order and direction-only choices
+below. Other established reference eligibility, lifecycle and transaction rules
+remain applicable. Screenshots use actual native task widgets with disposable
+fixture data, not a working movement implementation. No production module or
+installed payload was changed. See [review evidence](../evidence/move-components-proposal-20261125/README.md)
+and [archive findings](../ARCHIVE_REFERENCE.md#move-components-review--november-25-2026).
+
+#### Established requirements and implementation boundary
+
 Scope: this is an operation task, separate from Component Panel implementation.
 Its Part Tree right-click entry is a convenient access point. The owner explicitly
 clarified that Point to Point and the other movement workflows must not be treated

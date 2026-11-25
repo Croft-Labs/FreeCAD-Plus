@@ -1,5 +1,31 @@
 # FreeCAD Plus reference archive
 
+## Move Components review — November 25, 2026
+
+At the owner's request, reviewed local tag `archive/freecad-plus-2026-10-10`,
+checkpoint `29496214b34a53fa1d479f35ab5669b41ed4fb18`: `src/Gui/MoveComponents.py`,
+`src/Gui/MoveComponentsTask.py`, `src/Gui/MoveComponentsManipulator.py`, and
+`tests/MoveComponents.md`. The ZIP location documented below is historical;
+the local Git tag supplied this review. The old application and archived tests
+were not executed. Historical acceptance claims are not current validation.
+
+The archive supplied six methods: Translate, Rotate, Point to Point, Align Axes,
+Align Coordinate Systems and Interactive. It included parent-frame movement,
+common pivot/group transforms, source/destination collectors, axis alignment
+modes, expandable origin/Z/X frame definitions, arrows/plane handles/rings,
+component versus pivot manipulation, numeric handle input and distance/angle
+snapping. Apply/OK/Cancel, temporary previews and constraints/read-only checks
+are useful concepts to retain. The archived manipulator called
+`createTransformDragger`, which is absent from the current View3DPy source;
+its integration cannot simply be assumed compatible with this baseline.
+
+The [new task proposal](ui-ux-specs/TASK_PANEL.md#move-components) groups these
+methods under Move/Rotate/Align and adapts ownership to the fixed active assembly
+and immediate parent placements. It was independently written as a UI-only
+candidate. Current production `movement.py` supplies only Translate/Rotate and
+still uses older file-root occurrence routing. No archived code was restored to
+production. Approval and functional implementation remain pending.
+
 ## Extrude workflow review — November 21, 2026
 
 The owner requested concepts from the abandoned Extrude workflow, a preview before

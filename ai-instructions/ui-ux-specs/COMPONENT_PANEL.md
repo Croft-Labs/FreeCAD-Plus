@@ -13,6 +13,22 @@ discussion. Use this definition when interpreting those messages and in future
 project guidance. Existing approved behavior and UI labels remain in effect.
 See [the owner statement](EVIDENCE_AND_DECISIONS.md#component-terminology--november-25-2026).
 
+## Fixed active assembly — November 25, 2026
+
+The owner reiterated that the active assembly automatically becomes the locked
+component and that every child is positioned relative to its immediate parent.
+The active assembly supplies the fixed global frame for that assembly context;
+it cannot be moved by Move Components while it is the active root. No child needs
+to be grounded merely to establish that frame. Selecting a different active
+assembly must not rewrite saved child placements or ground another child.
+An assembly can still be positioned as a child within a different parent assembly.
+Edit context and active assembly remain separate choices.
+
+The proposed movement task and entry points are awaiting owner review in
+[Move Components](TASK_PANEL.md#move-components). This clarification is an owner
+requirement, not a claim that the older movement task already handles all current
+active-assembly occurrence paths.
+
 ## Responsive tab widths — November 25, 2026
 
 Owner-approved native preview: Parts, Assembly and History shrink together with

@@ -1,0 +1,100 @@
+import os, sys, json, traceback, importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtGui, QtWidgets, QtTest
+from pivy import coin
+import freecad_plus
+from freecad_plus import document, hierarchy, editing, panel, movement
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'ui_only':True,'movement_is_simulated':True}; task=None; dragger=None
+    try:
+        win=Gui.getMainWindow(); win.resize(1400,1000); win.show()
+        Gui.activateWorkbench('AssemblyWorkbench')
+        if panel._panel:
+            panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        importlib.reload(panel);importlib.reload(movement)
+        proposed=hasattr(movement,'METHODS')
+        doc=document.new_document('Machine project');root=document.validate(doc)
+        machine=root.Definitions[0];machine.Label='Machine'
+        drive=hierarchy.create_definition(doc,'Drive unit')
+        motor=hierarchy.create_definition(doc,'Motor');coupling=hierarchy.create_definition(doc,'Coupling')
+        parent_link=hierarchy.add_instance(machine,drive)
+        a=hierarchy.add_instance(drive,motor);b=hierarchy.add_instance(drive,coupling)
+        b.LinkPlacement.Base=App.Vector(30,0,0)
+        with document.transaction(doc,'Disposable fixture geometry'):
+            housing=motor.newObject('Part::Box','Housing');housing.Length=20;housing.Width=16;housing.Height=14
+            shaft=coupling.newObject('Part::Cylinder','Shaft');shaft.Radius=6;shaft.Height=18
+            shaft.Placement.Rotation=App.Rotation(App.Vector(0,1,0),90)
+        editing.edit((root.Group[0],parent_link))
+        dock=panel.show_panel();dock.refresh();dock.activate_assembly(machine);dock.tabs.setCurrentIndex(1)
+        win.resizeDocks([dock],[300],QtCore.Qt.Horizontal)
+        doc.recompute();view=Gui.activeDocument().activeView();view.viewAxonometric();view.fitAll()
+        QtTest.QTest.qWait(200)
+        rows=[]
+        for link in (a,b):
+            path=(root.Group[0],parent_link,link)
+            rows.append(panel.Row(('preview',link.Name),'occurrence',link.LinkedObject.Label,panel.identity(link.LinkedObject),
+                                 tuple(panel.identity(o) for o in path),
+                                 (doc.Name,root.Name,hierarchy.subname(path))))
+        task=movement.open_task(dock,rows)
+        QtTest.QTest.qWait(180)
+        taskdock=win.findChild(QtWidgets.QDockWidget,'Tasks');assert taskdock is not None
+        win.resizeDocks([taskdock],[370],QtCore.Qt.Horizontal)
+        def snapshot():
+            return [(o.ID,tuple(x.Name for x in o.OutList),str(o.Placement) if hasattr(o,'Placement') else '') for o in doc.Objects]
+        before=snapshot();undo=doc.UndoCount
+        images=[]
+        def capture(name,title,widget=taskdock):
+            QtWidgets.QApplication.processEvents();QtTest.QTest.qWait(100)
+            img=widget.grab().toImage();img.setDevicePixelRatio(1)
+            assert img.save(str(out/(name+'.png')))
+            if widget==taskdock:images.append((title,img))
+        if proposed:
+            for kind,method,name in (
+                ('Move','Distance and vector','distance-vector'),('Move','Point to point','point-to-point'),
+                ('Rotate','Axis and angle','rotate'),('Move','Dynamic drag','dynamic'),
+                ('Align','Axes','align-axes'),('Align','Coordinate systems','align-frames')):
+                task.kind.setCurrentText(kind);task.method.setCurrentText(method)
+                capture(name,kind+' · '+method)
+                if name == 'distance-vector':
+                    task.direction.setCurrentText('Enter vector'); capture('vector-input','Move · Enter vector')
+            task.kind.setCurrentText('Move');task.method.setCurrentText('Dynamic drag')
+            dragger=coin.SoJackDragger()
+            dragger.translation.setValue(20,8,7);dragger.scaleFactor.setValue(7,7,7)
+            view.getSceneGraph().addChild(dragger)
+            QtTest.QTest.qWait(180)
+            capture('dynamic-in-app','Native handle illustration',win)
+            view.getSceneGraph().removeChild(dragger);dragger=None
+            task.show_blocked();capture('constraint-blocked','Constrained selection')
+            task.clicked(QtWidgets.QDialogButtonBox.Apply)
+        else:
+            capture('translate','Current · Translate')
+            task.workflow.setCurrentIndex(1);capture('rotate','Current · Rotate')
+            task.workflow.setCurrentIndex(2);capture('unimplemented','Current · Point to Point unavailable')
+        assert before==snapshot() and doc.UndoCount==undo
+        columns=3;w=max(img.width() for _,img in images);h=max(img.height() for _,img in images)+45
+        rows_count=(len(images)+columns-1)//columns
+        canvas=QtGui.QImage(columns*(w+20)+20,rows_count*(h+15)+15,QtGui.QImage.Format_ARGB32)
+        canvas.fill(QtGui.QColor('#f5f5f5'));painter=QtGui.QPainter(canvas);painter.setPen(QtGui.QColor('#202020'))
+        for i,(title,img) in enumerate(images):
+            x=20+(i%columns)*(w+20);y=15+(i//columns)*(h+15)
+            painter.drawText(x,y+19,title);painter.drawImage(x,y+32,img)
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,proposed=proposed,document_placement_and_undo_unchanged=True,
+                      module=movement.__file__,native_handle_is_preview_only=proposed)
+    except BaseException:result['error']=traceback.format_exc()
+    if dragger is not None:
+        try:Gui.activeDocument().activeView().getSceneGraph().removeChild(dragger)
+        except Exception:pass
+    if task:
+        try:task.reject()
+        except Exception:pass
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200,run)

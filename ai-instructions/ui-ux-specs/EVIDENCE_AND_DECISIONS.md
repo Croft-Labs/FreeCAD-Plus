@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Fixed assembly and movement review — November 25, 2026
+
+The owner reiterated: "the active assembly becomes the locked part automatically"
+and "all child components become positioned relative to its parent." They asked
+whether Move Components exists, requested inspection of the abandoned fork's
+dynamic drag, move/rotate, point-to-point, distance and vector methods, and asked
+to "create a task panel workflow for me to approve." The fixed-frame clarification
+is confirmed; the newly prepared task layout is pending approval, not authorized
+functional implementation. COMPONENT_PANEL owns the frame rule; TASK_PANEL owns
+the proposed workflow. Archive source and native UI-only evidence are linked there.
+
 ### Component terminology — November 25, 2026
 
 The owner stated in this chat: "a component can be either a part, an assembly, or
