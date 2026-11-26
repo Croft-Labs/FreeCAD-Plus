@@ -55,8 +55,10 @@ check also waits for normal panel binding before selecting the active assembly.
 
 See [source results](source-tests.txt), [installed results](installed-tests.txt),
 [fresh-process checks](fresh-result.json), and [installed hashes](install-manifest.json).
-Disposable native harnesses and rollback files are retained locally under
-`validation/mesh26`; the task harness is in the sibling `mesh-import-validation`.
+The native build log and rollback files are retained under `validation/mesh26`;
+the task harness and archived local results are in the sibling
+`mesh-import-validation`. Disposable profiles and test CAD fixtures were removed
+after archiving results and delivering the verified repaired model.
 
 ## Delivery
 
