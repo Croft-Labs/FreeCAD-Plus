@@ -13,6 +13,20 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Save All and Hidden line correction — November 26, 2026
+
+After receiving the direct toolbar and Hidden line screenshots, the owner said
+“implement save as and the hidden line fix”. In context this approves the pending
+Save All change: the preceding request specifies placement between Save and Save As,
+and the owner explicitly selected every open file, including imports. Save As was
+already present; this interpretation was stated before implementation.
+The fresh, violation-free sessions are 38e412ce3308 (Save All, fingerprint
+c92c01e69285f2eb3116e2f4d6a86509e4969b3e69e3ea6e11b0fdc68082934a) and
+9c418841bda1 (Hidden line, fingerprint
+c0ad95d355673038037f519dd51728aea7b7c44c2cf662b914dfa7d4d58646bb).
+Chat approval governs; tool approval state was not modified. See
+[screenshots and verification](../evidence/save-hidden-20261126/README.md).
+
 ### Placement rendering and active-component additions — November 26, 2026
 
 Owner said “all approved. implement” after the revised native-style screenshots

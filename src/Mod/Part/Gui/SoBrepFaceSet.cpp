@@ -39,6 +39,9 @@
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/bundles/SoMaterialBundle.h>
 #include <Inventor/bundles/SoTextureCoordinateBundle.h>
+#include <Inventor/elements/SoDrawStyleElement.h>
+#include <Inventor/elements/SoModelMatrixElement.h>
+#include <Inventor/elements/SoViewVolumeElement.h>
 #include <Inventor/elements/SoLazyElement.h>
 #include <Inventor/elements/SoGLLazyElement.h>
 #include <Inventor/elements/SoOverrideElement.h>
@@ -596,6 +599,87 @@ void SoBrepFaceSet::GLRender(SoGLRenderAction* action)
 
     auto state = action->getState();
     selCounter.checkRenderCache(state);
+
+    // Coin's hidden-line second pass forces polygons to LINES. BRep boundaries
+    // are already supplied by SoBrepEdgeSet: outlining every triangle here
+    // exposes the internal tessellation. Retain only curved face silhouettes.
+    if (SoDrawStyleElement::get(state) == SoDrawStyleElement::LINES
+        && SoOverrideElement::getDrawStyleOverride(state)
+        && SoOverrideElement::getPolygonOffsetOverride(state)) {
+        const auto* coords = SoCoordinateElement::getInstance(state);
+        const auto& volume = SoViewVolumeElement::get(state);
+        const auto inverse = SoModelMatrixElement::get(state).inverse();
+        SbVec3f eye, direction;
+        inverse.multVecMatrix(volume.getProjectionPoint(), eye);
+        inverse.multDirMatrix(volume.getProjectionDirection(), direction);
+        const bool perspective = volume.getProjectionType() == SbViewVolume::PERSPECTIVE;
+        SoMaterialBundle material(action);
+        material.sendFirst();
+        glPushAttrib(GL_CURRENT_BIT | GL_LINE_BIT);
+        Base::Color color(0.1f, 0.1f, 0.1f);
+        if (viewProvider) {
+            color = viewProvider->LineColor.getValue();
+            glLineWidth(static_cast<GLfloat>(viewProvider->LineWidth.getValue()));
+        }
+        int offset = 0;
+        for (int face = 0; face < partIndex.getNum(); ++face) {
+            const int count = partIndex[face];
+            const int end = offset + count * 4;
+            if (end > coordIndex.getNum()) {
+                break;
+            }
+            if (ctx2 && !ctx2->isSelectAll() && !ctx2->selectionIndex.count(face)) {
+                offset = end;
+                continue;
+            }
+            SbColor lineColor(color.r, color.g, color.b);
+            bool marked = false;
+            if (ctx && (ctx->isHighlightAll() || ctx->highlightIndex == face)) {
+                lineColor = ctx->highlightColor;
+                marked = true;
+            }
+            else if (ctx && (ctx->isSelectAll() || ctx->selectionIndex.count(face))) {
+                lineColor = ctx->selectionColor;
+                marked = true;
+            }
+            glColor3fv(lineColor.getValue());
+            // Per-face adjacency: topological face boundaries remain real edges.
+            // Two triangles with opposite facing signs meet at a silhouette.
+            std::map<std::pair<int, int>, std::pair<unsigned, unsigned>> edges;
+            for (int i = offset; i < end; i += 4) {
+                const int a = coordIndex[i], b = coordIndex[i + 1], c = coordIndex[i + 2];
+                if (a < 0 || b < 0 || c < 0 || a >= coords->getNum()
+                    || b >= coords->getNum() || c >= coords->getNum()) {
+                    continue;
+                }
+                const auto& p = coords->get3(a);
+                const auto& q = coords->get3(b);
+                const auto& r = coords->get3(c);
+                const auto normal = (q - p).cross(r - p);
+                if (normal.sqrLength() < 1e-20f) {
+                    continue;
+                }
+                const auto ray = perspective ? p - eye : direction;
+                const unsigned side = normal.dot(ray) < 0.0f ? 1u : 2u;
+                for (const auto& edge : {std::pair<int, int>(a, b), {b, c}, {c, a}}) {
+                    auto& info = edges[std::minmax(edge.first, edge.second)];
+                    info.first |= side;
+                    ++info.second;
+                }
+            }
+            glBegin(GL_LINES);
+            for (const auto& [edge, info] : edges) {
+                if (info.first == 3u || (marked && info.second == 1u)) {
+                    glVertex3fv(coords->get3(edge.first).getValue());
+                    glVertex3fv(coords->get3(edge.second).getValue());
+                }
+            }
+            glEnd();
+            offset = end;
+        }
+        glPopAttrib();
+        return;
+    }
 
     bool hasContextHighlight = ctx && ctx->isHighlighted() && !ctx->isHighlightAll()
         && ctx->highlightIndex >= 0 && ctx->highlightIndex < partIndex.getNum();

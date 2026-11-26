@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2004 Jürgen Riegel <juergen.riegel@web.de>              *
+ *   Copyright (c) 2004 JÃ¼rgen Riegel <juergen.riegel@web.de>              *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -1276,9 +1276,10 @@ void View3DInventorViewer::setOverrideMode(const std::string& mode)
     }
     else if (mode == "Hidden Line") {
         this->shading = true;
-        std::string shaded = "Shaded";
+        // Depth-tested CAD edges, not the tessellation of the shaded faces.
+        std::string flatLines = "Flat Lines";
         for (auto view : views) {
-            view->setOverrideMode(shaded);
+            view->setOverrideMode(flatLines);
         }
         this->getSoRenderManager()->setRenderMode(SoRenderManager::HIDDEN_LINE);
     }

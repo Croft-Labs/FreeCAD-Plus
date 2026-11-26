@@ -1,5 +1,17 @@
 # Toolbars and buttons
 
+## Save All and Hidden line — approved November 26, 2026
+
+The common top toolbar orders **Save, Save All, Save As**. Save All uses the native
+command to save every open document in the current FreeCAD application window,
+including hidden and nested imported documents. Keep native dependency ordering,
+file naming, cancellation, errors, enablement and per-document file formats.
+
+Hidden line shows visible CAD edges and curved silhouettes without internal face
+tessellation diagonals, including component placement. Preserve selection outlines,
+orthographic/perspective cameras, the other draw styles, and saved model properties.
+The owner approved the direct screenshots; see the [approval and delivery record](../evidence/save-hidden-20261126/README.md).
+
 ## FreeCAD Plus application and file icon — November 26, 2026
 
 The owner selected **B** from the six rendered icon options: the existing FreeCAD

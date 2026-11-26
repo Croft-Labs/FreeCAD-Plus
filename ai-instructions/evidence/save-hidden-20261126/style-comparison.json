@@ -1,0 +1,32 @@
+{
+  "AsIs": {
+    "pixels": 969048,
+    "significant": 62,
+    "fraction": 6.398031882837589e-05
+  },
+  "Points": {
+    "pixels": 969048,
+    "significant": 2,
+    "fraction": 2.0638812525282547e-06
+  },
+  "Wireframe": {
+    "pixels": 969048,
+    "significant": 116,
+    "fraction": 0.00011970511264663877
+  },
+  "NoShading": {
+    "pixels": 969048,
+    "significant": 62,
+    "fraction": 6.398031882837589e-05
+  },
+  "Shaded": {
+    "pixels": 969048,
+    "significant": 0,
+    "fraction": 0.0
+  },
+  "FlatLines": {
+    "pixels": 969048,
+    "significant": 62,
+    "fraction": 6.398031882837589e-05
+  }
+}

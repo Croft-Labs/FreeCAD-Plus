@@ -1,0 +1,19 @@
+test_gui_save_as_plus_filter_and_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_as_plus_filter_and_filename) ... ok
+test_gui_save_all_uses_document_specific_extensions (TestFileWorkflows.TestFileWorkflows.test_gui_save_all_uses_document_specific_extensions) ... ok
+test_gui_save_cancel_retains_filename_and_modified_state (TestFileWorkflows.TestFileWorkflows.test_gui_save_cancel_retains_filename_and_modified_state) ... ok
+test_native_save_as_and_copy_keep_external_links_in_other_directory (TestFileWorkflows.TestFileWorkflows.test_native_save_as_and_copy_keep_external_links_in_other_directory) ... ok
+test_all_native_styles_refresh_translucent_copy_without_source_writes (TestPlacementWorkflow.TestPlacementWorkflow.test_all_native_styles_refresh_translucent_copy_without_source_writes) ... ok
+test_child_target_not_parent_or_native_body (TestMeshImport.TestMeshImport.test_child_target_not_parent_or_native_body) ... ok
+test_classic_document_retains_native_mesh_import (TestMeshImport.TestMeshImport.test_classic_document_retains_native_mesh_import) ... ok
+test_external_unused_target_uses_defining_document (TestMeshImport.TestMeshImport.test_external_unused_target_uses_defining_document) ... ok
+test_failed_or_cancelled_reader_rolls_back (TestMeshImport.TestMeshImport.test_failed_or_cancelled_reader_rolls_back) ... ok
+test_mesh_workbench_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_mesh_workbench_import_dialog_history_and_atomic_undo) ... ok
+test_missing_edit_does_not_create_orphan (TestMeshImport.TestMeshImport.test_missing_edit_does_not_create_orphan) ... ok
+test_native_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_native_import_dialog_history_and_atomic_undo) ... ok
+test_pending_edit_is_preserved (TestMeshImport.TestMeshImport.test_pending_edit_is_preserved) ... ok
+test_save_reopen_preserves_mesh_and_identity (TestMeshImport.TestMeshImport.test_save_reopen_preserves_mesh_and_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 11.833s
+
+OK

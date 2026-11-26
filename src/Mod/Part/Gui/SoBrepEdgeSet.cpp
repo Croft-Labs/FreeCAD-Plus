@@ -41,6 +41,7 @@
 #include <Inventor/bundles/SoMaterialBundle.h>
 #include <Inventor/details/SoLineDetail.h>
 #include <Inventor/elements/SoCoordinateElement.h>
+#include <Inventor/elements/SoOverrideElement.h>
 #include <Inventor/elements/SoGLCoordinateElement.h>
 #include <Inventor/elements/SoLineWidthElement.h>
 #include <Inventor/errors/SoDebugError.h>
@@ -83,6 +84,12 @@ void SoBrepEdgeSet::GLRender(SoGLRenderAction* action)
 {
     auto state = action->getState();
     selCounter.checkRenderCache(state);
+    // Hidden-line occlusion must contain faces only. An edge written into the
+    // depth prepass would reject itself in Coin's subsequent visible-line pass.
+    if (SoOverrideElement::getPolygonOffsetOverride(state)
+        && !SoOverrideElement::getDrawStyleOverride(state)) {
+        return;
+    }
 
     SelContextPtr ctx2;
     SelContextPtr ctx = Gui::SoFCSelectionRoot::getRenderContext<SelContext>(this, selContext, ctx2);

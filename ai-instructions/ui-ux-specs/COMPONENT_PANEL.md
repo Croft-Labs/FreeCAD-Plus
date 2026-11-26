@@ -383,8 +383,8 @@ During placement, follow the current native draw style and update when the style
 buttons are clicked. Preserve source colors. Normally opaque faces are 50%
 transparent; retain greater source transparency. Do not change saved source
 materials, visibility or geometry. Preview toggling and Cancel remove only the
-temporary scene. Hidden line's existing native triangulation artifact is a known
-renderer limitation, reproduced even with the placement preview off.
+temporary scene. The subsequently approved [Hidden line correction](TOOLBARS_AND_BUTTONS.md#save-all-and-hidden-line--approved-november-26-2026)
+removes the native triangulation artifact, which also affected ordinary geometry.
 
 See [implementation and verification](../evidence/placement-workflow-20261126/README.md).
 

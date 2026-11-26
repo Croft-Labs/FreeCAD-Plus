@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Save All and Hidden line — installed November 26, 2026
+
+The common toolbar now orders Save, Save All, Save As; actual saves cover every
+open document, hidden imports and nested imports. Native Hidden line now draws CAD
+edges/curved silhouettes without face tessellation diagonals, including placement.
+Native targets build; 49 staged regressions and 14 installed checks pass, along
+with installed render/save exercises. Three payload hashes match; owner settings
+and live documents are preserved. Restart required. See
+[screenshots, approval and evidence](evidence/save-hidden-20261126/README.md).
+
 ## Mesh import ownership — installed November 26, 2026
 
 File and Mesh imports now attach native meshes to the active component's History;

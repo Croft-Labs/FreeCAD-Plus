@@ -1,0 +1,102 @@
+import os,sys,json,traceback,hashlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part, PartGui
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+from freecad_plus import document,hierarchy,editing,panel,instance_task
+out=Path(os.environ['PLUS_PREVIEW_OUT']);candidate=os.environ['PLUS_PREVIEW_SIDE']=='candidate'
+
+def run():
+    result={'ok':False,'candidate':candidate,'part_gui':PartGui.__file__};task=None
+    try:
+        win=Gui.getMainWindow();win.resize(1280,920);win.show();win.raise_();win.activateWindow()
+        QtGui.QCursor.setPos(win.mapToGlobal(QtCore.QPoint(2,2)))
+        Gui.activateWorkbench('AssemblyWorkbench')
+        doc=document.new_document('HiddenLine');root=document.validate(doc);owner=root.Definitions[0]
+        part=hierarchy.create_definition(doc,'Test component')
+        body=part.newObject('Part::Feature','Plate')
+        shape=Part.makeBox(42,30,3)
+        for x,y in ((4,4),(38,4),(38,26),(4,26)):
+            shape=shape.fuse(Part.makeCylinder(2.5,4,App.Vector(x,y,3))).cut(Part.makeCylinder(1.2,10,App.Vector(x,y,-1)))
+        body.Shape=shape;body.ViewObject.ShapeColor=(.25,.6,.85)
+        tube=part.newObject('Part::Feature','Cylinder');tube.Shape=Part.makeCylinder(5,14,App.Vector(13,15,3))
+        ball=part.newObject('Part::Feature','Sphere');ball.Shape=Part.makeSphere(5,App.Vector(29,15,8))
+        for obj in (tube,ball):obj.ViewObject.ShapeColor=(.25,.6,.85)
+        placed=hierarchy.add_instance(owner,part)
+        editing.edit((root.Group[0],));dock=panel.show_panel();dock.activate_assembly(owner,(root.Group[0],))
+        doc.recompute();view=Gui.activeDocument().activeView();view.viewAxonometric();view.fitAll();QtTest.QTest.qWait(200)
+        images=[];hashes={}
+        snapshot=lambda: ([(o.Name,o.ID,str(o.Placement) if hasattr(o,'Placement') else '',o.Visibility) for o in doc.Objects],doc.UndoCount,
+                          [(o.ViewObject.ShapeColor,o.ViewObject.Transparency,o.ViewObject.DisplayMode) for o in (body,tube,ball)])
+        before=snapshot()
+        def capture(label,name):
+            Gui.updateGui();QtTest.QTest.qWait(200)
+            img=view.getViewer().grabFramebuffer();img.setDevicePixelRatio(1);img.save(str(out/(name+'.png')))
+            images.append((label,img));return img
+        def style(name):
+            Gui.getMainWindow().findChild(QtGui.QAction,'Std_DrawStyle'+name).trigger();QtTest.QTest.qWait(150)
+        style('HiddenLine');capture('Hidden line · ordinary model','ordinary')
+        view.setCameraType('Perspective');view.fitAll();capture('Hidden line · perspective','perspective')
+        view.setCameraType('Orthographic');view.viewTop();view.fitAll();capture('Hidden line · top / occlusion','top')
+        view.viewAxonometric();QtTest.QTest.qWait(400);view.fitAll();QtTest.QTest.qWait(400)
+        fixed_camera=view.getCamera()
+        for name in ('AsIs','Points','Wireframe','NoShading','Shaded','FlatLines'):
+            view.setCamera(fixed_camera);style(name);Gui.updateGui();QtTest.QTest.qWait(250)
+            img=view.getViewer().grabFramebuffer();img.save(str(out/(name+'.png')))
+            hashes[name]=hashlib.sha256((out/(name+'.png')).read_bytes()).hexdigest()
+        assert snapshot()==before
+        topface=max(((face.Area,i+1) for i,face in enumerate(body.Shape.Faces)
+                     if face.normalAt(0,0).z>.99),key=lambda item:item[0])[1]
+        style('HiddenLine');Gui.Selection.addSelection(root,hierarchy.subname((root.Group[0],placed))+body.Name+'.Face'+str(topface))
+        assert Gui.Selection.getSelectionEx(), 'Selected face not resolved'
+        selected=capture('Hidden line · selected face','selected');Gui.Selection.clearSelection()
+        placed.Visibility=False;doc.recompute();before=snapshot()
+        task=instance_task.open_task([part]);view.fitAll();capture('Hidden line · placement preview','placement')
+        assert not task.form.status.error,task.form.status.text()
+        task.form.preview.setChecked(False);task.refresh();assert task.overlay is None
+        task.form.preview.setChecked(True);task.refresh();assert task.overlay is not None
+        task.reject();task=None;assert snapshot()==before
+        # Flat, unbroken box face must not display its triangulation diagonal.
+        diagnostic=App.newDocument('HiddenLineBox');obj=diagnostic.addObject('Part::Box','Box')
+        obj.Length=40;obj.Width=30;obj.Height=10;diagnostic.recompute()
+        view=Gui.activeDocument().activeView();view.viewTop();view.fitAll();style('HiddenLine')
+        img=capture('Hidden line · planar-face diagnostic','box')
+        bg=img.pixelColor(5,5);dark=0
+        for y in range(int(img.height()*.4),int(img.height()*.6)):
+            for x in range(int(img.width()*.4),int(img.width()*.6)):
+                c=img.pixelColor(x,y)
+                if abs(c.red()-bg.red())+abs(c.green()-bg.green())+abs(c.blue()-bg.blue())>80:dark+=1
+        if candidate:assert dark==0,('Planar triangle remains',dark)
+        outline=0
+        for y in range(int(img.height()*.2),int(img.height()*.85)):
+            for x in range(int(img.width()*.05),int(img.width()*.9)):
+                c=img.pixelColor(x,y)
+                if abs(c.red()-bg.red())+abs(c.green()-bg.green())+abs(c.blue()-bg.blue())>80:outline+=1
+        assert outline>300,('Missing box outline',outline)
+        Gui.Selection.addSelection(obj, 'Face6')
+        selection=capture('Hidden line · selected planar face','selected-box')
+        images[3]=images.pop()
+        colored=0
+        for y in range(int(selection.height()*.2),int(selection.height()*.85)):
+            for x in range(int(selection.width()*.05),int(selection.width()*.9)):
+                c=selection.pixelColor(x,y)
+                if max(c.red(),c.green(),c.blue())-min(c.red(),c.green(),c.blue())>40:colored+=1
+        if candidate:assert colored>100,('Missing face selection outline',colored)
+        Gui.Selection.clearSelection()
+        canvas=QtGui.QImage(1500,1000,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('#edf1f5'))
+        painter=QtGui.QPainter(canvas);painter.setPen(QtGui.QColor('#243044'));font=QtGui.QFont('Segoe UI',17);font.setBold(True);painter.setFont(font)
+        painter.drawText(20,35,('Verified correction' if candidate else 'Current rendering')+' — native Hidden line')
+        painter.setFont(QtGui.QFont('Segoe UI',11));painter.drawText(20,62,'Real FreeCAD viewport captures · plate, cylinder and sphere · isolated synthetic documents')
+        for i,(label,img) in enumerate(images):
+            x=20+(i%3)*495;y=95+(i//3)*450
+            painter.drawText(x,y+18,label)
+            scaled=img.scaled(475,410,QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation)
+            painter.drawImage(x,y+30,scaled)
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,planar_interior_artifact_pixels=dark,outline_pixels=outline,selected_face_outline_pixels=colored,other_style_hashes=hashes,source_and_undo_unchanged=True,preview_toggle_cancel=True)
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,win.close)
+QtCore.QTimer.singleShot(2200,run)

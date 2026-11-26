@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "candidate": true,
+  "toolbar_order": [
+    "Plus_Std_New",
+    "Plus_Std_Open",
+    "Plus_Std_Save",
+    "Plus_Std_SaveAll",
+    "Plus_Std_SaveAs",
+    "Plus_Std_Undo",
+    "Plus_Std_Redo",
+    "Plus_Std_Refresh",
+    "Plus_Std_Cut",
+    "Plus_Std_Copy",
+    "Plus_Std_Paste"
+  ],
+  "saved_files": [
+    "Assembly.cadprt",
+    "Library.cadprt",
+    "Fasteners.cadprt",
+    "Other.cadprt"
+  ],
+  "nested_import_saved": true,
+  "existing_native_command": true,
+  "identities_undo_edit_unchanged": true
+}

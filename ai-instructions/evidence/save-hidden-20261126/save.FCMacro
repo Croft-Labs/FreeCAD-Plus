@@ -1,0 +1,83 @@
+import os,sys,json,traceback,importlib.util,zipfile,hashlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import xml.etree.ElementTree as ET
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+from freecad_plus import document,external,hierarchy,editing,toolbars,ui_modes
+out=Path(os.environ['PLUS_PREVIEW_OUT']);worktree=Path(os.environ['PLUS_PREVIEW_WORKTREE']);candidate=worktree.name=='candidate'
+
+def run():
+    result={'ok':False,'candidate':candidate}
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,900);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes();QtTest.QTest.qWait(200)
+        def make(name,label):
+            doc=document.new_document(name);owner=document.validate(doc).Definitions[0];owner.Label=label
+            obj=owner.newObject('Part::Box','Block');doc.recompute()
+            document.save_document(doc,out/(name+'.cadprt'))
+            return doc,owner
+        deep,deep_part=make('Fasteners','Fastener')
+        source,source_part=make('Library','Library component')
+        external.import_file(source,deep);hierarchy.add_instance(source_part,deep_part)
+        document.save_document(source)
+        source_path=source.FileName
+        App.closeDocument(source.Name);App.closeDocument(deep.Name)
+        host,owner=make('Assembly','Machine')
+        external.import_path(host,source_path)
+        source=document.validate(host).Imports[0].Document
+        deep=document.validate(source).Imports[0].Document
+        other,other_part=make('Other','Other open component')
+        App.setActiveDocument(host.Name);editing.edit((document.validate(host).Group[0],))
+        ribbon=toolbars._controller;ribbon.refresh();QtTest.QTest.qWait(300)
+        buttons=ribbon.common.findChildren(QtWidgets.QToolButton)
+        names=[b.objectName() for b in buttons if b.defaultAction()]
+        save=next(b for b in buttons if b.objectName()=='Plus_Std_Save')
+        saveas=next(b for b in buttons if b.objectName()=='Plus_Std_SaveAs')
+        saveall=next((b for b in buttons if b.objectName()=='Plus_Std_SaveAll'),None)
+        if candidate:
+            assert saveall is not None and not saveall.icon().isNull()
+            assert names.index('Plus_Std_Save')+1==names.index('Plus_Std_SaveAll')
+            assert names.index('Plus_Std_SaveAll')+1==names.index('Plus_Std_SaveAs')
+            assert saveall.defaultAction()==Gui.Command.get('Std_SaveAll').getAction()[0]
+        else:assert saveall is None
+        docs=(host,source,deep,other)
+        old_hash={d.Name:hashlib.sha256(Path(d.FileName).read_bytes()).hexdigest() for d in docs}
+        lengths={d.Name:15+i*7 for i,d in enumerate(docs)}
+        for d in docs:d.getObject('Block').Length=lengths[d.Name];d.recompute()
+        identities={d.Name:([(o.Name,o.ID) for o in d.Objects],d.UndoCount,str(d.Uid)) for d in docs}
+        context=editing.context_path(host)
+        ribbon.refresh();Gui.updateGui();QtTest.QTest.qWait(200)
+        native=ribbon.bar.grab().toImage();native.setDevicePixelRatio(1)
+        canvas=QtGui.QImage(1500,430,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('#edf1f5'))
+        painter=QtGui.QPainter(canvas);painter.setPen(QtGui.QColor('#243044'));font=QtGui.QFont('Segoe UI',17);font.setBold(True);painter.setFont(font)
+        painter.drawText(20,35,('Installed: Save → Save All → Save As' if candidate else 'Current: Save → Save As'))
+        painter.setFont(QtGui.QFont('Segoe UI',11));painter.drawText(20,65,'Native top toolbar · saves every open file in this FreeCAD window, including imported files')
+        scaled=native.scaled(1460,300,QtCore.Qt.KeepAspectRatio,QtCore.Qt.SmoothTransformation)
+        painter.drawImage(20,85,scaled)
+        painter.drawText(20,410,'Existing native Save All command; normal naming dialogs and error handling are retained.')
+        painter.end();assert canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        if candidate:
+            button=ribbon.common.findChild(QtWidgets.QToolButton,'Plus_Std_SaveAll')
+            assert button.isEnabled();QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton)
+        else:Gui.runCommand('Std_SaveAll',0)
+        QtTest.QTest.qWait(200)
+        verified=[]
+        for d in docs:
+            path=Path(d.FileName)
+            assert hashlib.sha256(path.read_bytes()).hexdigest()!=old_hash[d.Name]
+            with zipfile.ZipFile(path) as archive:
+                tree=ET.fromstring(archive.read('Document.xml'))
+                value=tree.find("./ObjectData/Object[@name='Block']/Properties/Property[@name='Length']/Float")
+                assert float(value.get('value'))==lengths[d.Name]
+            assert not Gui.getDocument(d.Name).Modified
+            assert ([(o.Name,o.ID) for o in d.Objects],d.UndoCount,str(d.Uid))==identities[d.Name]
+            verified.append(path.name)
+        assert App.ActiveDocument==host and editing.context_path(host)==context
+        result.update(ok=True,toolbar_order=names,saved_files=verified,nested_import_saved=True,
+                      existing_native_command=True,identities_undo_edit_unchanged=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

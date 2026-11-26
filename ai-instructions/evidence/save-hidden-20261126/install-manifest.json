@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "path": "bin/FreeCADGui.dll",
+      "before": "bbc2331e962a9206742ddb2e934990f838a18f94953558b99a3a44e7e2a6f7aa",
+      "installed": "30c2d8d5d06cfa8ec7b2daccb58e7f1f658035d5c94018616220457eb8e4061d"
+    },
+    {
+      "path": "lib/PartGui.pyd",
+      "before": "874efda184c66e3cd730236e19448c7321acd403c0029fc74f1fcb008755bf76",
+      "installed": "1998e6fc7ad391ac089a0e4bb8e3b0294a15f2dfb724168c14d6b2dfc177a3a9"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/toolbars.py",
+      "before": "8fbf2622dcec7d91d7c70c6a85a6e573378275223d479d037f488d716b731e24",
+      "installed": "6a3da3e5c1deafa17980bad2b667f6136d47a0b725d13b85c0052cd808607f36"
+    }
+  ],
+  "owner_config": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7945a6f622f9c628b05137eda2c3fdc6460eac536f26df5c580953952de6b82c"
+  }
+}

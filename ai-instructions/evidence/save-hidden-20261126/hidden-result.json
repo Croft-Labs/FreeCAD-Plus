@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "candidate": true,
+  "part_gui": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\PartGui.pyd",
+  "planar_interior_artifact_pixels": 0,
+  "outline_pixels": 5202,
+  "selected_face_outline_pixels": 5144,
+  "other_style_hashes": {
+    "AsIs": "42178456ad78b6c076a05210bcd802fac127cae355cf664e3c90ae1bc6a61e22",
+    "Points": "b27663c9afd3bcde26330258401089b4d4f1fcbcaf32137b9c3d89ac57c637f7",
+    "Wireframe": "cb92f1a655f28f704c91f27ea7924e479e0d5ab209b53bbd0aa63c4f91078142",
+    "NoShading": "f345b3e38782e29af634d54e46d461ff91d333cb94e88e75ee5ee9f8d49e20d3",
+    "Shaded": "0223510c71e2d135fdfa98482b773a164855e490eb606151be5af4524bda429c",
+    "FlatLines": "42178456ad78b6c076a05210bcd802fac127cae355cf664e3c90ae1bc6a61e22"
+  },
+  "source_and_undo_unchanged": true,
+  "preview_toggle_cancel": true
+}

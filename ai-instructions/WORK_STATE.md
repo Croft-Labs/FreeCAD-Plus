@@ -1,3 +1,12 @@
+# November 26: Save All and Hidden line installed
+
+Both reviewed changes are installed after chat approval. The native renderer
+removes internal triangle lines while retaining CAD edges, silhouettes, selection
+and placement style behavior. Save All sits between Save and Save As and saves
+all open/imported documents. Native build, 49 staged checks, 14 installed checks
+and separate installed render/save exercises pass. Three hashes verified; restart
+required. See [delivery evidence](evidence/save-hidden-20261126/README.md).
+
 # November 26: Mesh import repair installed
 
 Native File and Mesh import now preserve component ownership and mesh History.
@@ -5,7 +14,7 @@ Native build and source/installed focused checks pass 26/26; fresh reopening and
 original STL import pass. The repaired copy preserves mesh/sketch bytes and all
 identities; original owner file unchanged. Six payload hashes verified; restart
 required. See [evidence and baseline comparison](evidence/mesh-import-20261126/README.md).
-Save All and Hidden line previews remain separately pending approval.
+Save All and Hidden line were subsequently approved and installed; see above.
 
 # November 26: Placement display and active-component additions installed
 

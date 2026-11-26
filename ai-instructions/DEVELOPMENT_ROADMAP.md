@@ -1,3 +1,13 @@
+# November 26: Save All and Hidden line correction
+
+- [x] Apply the reviewed Save All toolbar placement and native renderer correction.
+- [x] Build FreeCADGui/PartGui; pass 49 staged regressions.
+- [x] Install three hash-verified files with rollback copies; pass 14 installed checks.
+- [x] Verify all-open/imported saves and native outlines/selection/placement renders.
+- [x] Preserve owner settings/documents and archive direct screenshots. Restart required.
+
+See [approval and delivery evidence](evidence/save-hidden-20261126/README.md).
+
 # November 26: Mesh import ownership repair
 
 - [x] Reproduce orphan mesh and blank component tabs from the saved owner file.

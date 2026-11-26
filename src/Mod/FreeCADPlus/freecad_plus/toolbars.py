@@ -469,9 +469,10 @@ class Ribbon(QtCore.QObject):
                 if button:
                     row.addWidget(button)
             if name == 'File':
-                button = self._button('Std_SaveAs', common)
-                if button:
-                    row.addWidget(button)
+                for command in ('Std_SaveAll', 'Std_SaveAs'):
+                    button = self._button(command, common)
+                    if button:
+                        row.addWidget(button)
             self._divider(row)
         selection_toolbar.append_controls(row, self.mode_workbench == 'PartDesignWorkbench')
         self.top_layout.replaceWidget(self.common, common)
