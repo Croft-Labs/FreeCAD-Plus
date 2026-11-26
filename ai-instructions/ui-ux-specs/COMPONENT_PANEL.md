@@ -1,5 +1,16 @@
 # Component panel
 
+## Imported meshes in History — November 26, 2026
+
+Owner clarification: a mesh imported into a part is an item in that part's History.
+File > Import and Mesh > Import Mesh must attach native mesh features to the active
+edited component, including child and externally defined components. Keep mesh
+data intact; importing a mesh does not create a component definition or occurrence.
+Parts, Assembly and History must remain available after import. Undo/Redo includes
+ownership, and cancellation or a failed reader must not leave orphan objects.
+Use the existing History row, native mesh icon, selection and visibility behavior.
+See [bug repair and verification](../evidence/mesh-import-20261126/README.md).
+
 ## Component terminology — owner clarification, November 25, 2026
 
 **Component** is the general entity. A component can serve as a **part**, an

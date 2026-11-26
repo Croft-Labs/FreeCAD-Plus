@@ -1,3 +1,12 @@
+# November 26: Mesh import ownership repair
+
+- [x] Reproduce orphan mesh and blank component tabs from the saved owner file.
+- [x] Route File/Mesh imports into active-component History with atomic Undo.
+- [x] Build native MeshGui and verify source/installed focused checks 26/26.
+- [x] Verify fresh reopening, original STL import and unchanged geometry/identities.
+- [x] Install six hash-verified files; deliver a repaired copy without overwriting
+  the original. Restart required. [Evidence](evidence/mesh-import-20261126/README.md).
+
 # November 26: Placement display and active-component additions
 
 - [x] Apply the approved native draw styles and 50% preview face-transparency floor.

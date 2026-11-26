@@ -1,0 +1,38 @@
+{
+  "files": [
+    {
+      "path": "bin\\Lib\\site-packages\\freecad\\module_io.py",
+      "before": "8ad8ab0595e4076d9eca5babb20ecc9c7b64c285eb34613d53d17799acdcf99b",
+      "installed": "3cada1e33d6a9dc04e8962c1be05b7dee7cc76130fd2894ceee4d6ccafe81fb3"
+    },
+    {
+      "path": "lib\\MeshGui.pyd",
+      "before": "45df0b30afb32ea1ac59ea5fd0de1c4e5ee6c50ab3d0d1f3c7671c7d3906b028",
+      "installed": "228a9987ede34ac434f4f14bb225ba357b7119706fbf1249edc494b9dde80c24"
+    },
+    {
+      "path": "Mod\\FreeCADPlus\\Init.py",
+      "before": "ec0b726597e23b00b4f081fc5c5dff2cef3b9d6b5edc76add7eb7ffc3855e0c5",
+      "installed": "bf8519a0e9800cfbc51209bcd06245073ca8e1d401d3e2ed87a1dba8ad485853"
+    },
+    {
+      "path": "Mod\\FreeCADPlus\\TestMeshImport.py",
+      "before": null,
+      "installed": "b76dbbba0dcf7014bcfecf02c577316fa714041a835d5be1e50509d8497813f2"
+    },
+    {
+      "path": "Mod\\FreeCADPlus\\freecad_plus\\document.py",
+      "before": "b00b9185ab10690e8de7542b0d142246966733a8f438a5b5bac1b971d33ae517",
+      "installed": "0abae1ea9f5c058290e5818aae0b1f71cee930269535d0bfb6c363a027b18ccc"
+    },
+    {
+      "path": "Mod\\FreeCADPlus\\freecad_plus\\document_import.py",
+      "before": "3e49ccaa51f714d0ac205e4422e7a0db6a9939bf9959d5da263a1ad172b92754",
+      "installed": "6ca9b97d61189945e72fadbeb6bcd4071c196d9a35706e1be3ef9fe9648a24af"
+    }
+  ],
+  "owner_config": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7945a6f622f9c628b05137eda2c3fdc6460eac536f26df5c580953952de6b82c"
+  }
+}

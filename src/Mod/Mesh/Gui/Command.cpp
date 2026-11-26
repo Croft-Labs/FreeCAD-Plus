@@ -377,7 +377,10 @@ void CmdMeshImport::activated(int)
         unicodepath = Base::Tools::escapeEncodeFilename(unicodepath);
         openCommand(QT_TRANSLATE_NOOP("Command", "Import Mesh"));
         doCommand(Doc, "import Mesh");
-        doCommand(Doc, "Mesh.insert(u\"%s\")", unicodepath.c_str());
+        doCommand(Doc,
+                  "from freecad import module_io\n"
+                  "module_io.OpenInsertObject('Mesh', u\"%s\", 'insert', App.ActiveDocument.Name)",
+                  unicodepath.c_str());
         commitCommand();
         updateActive();
     }

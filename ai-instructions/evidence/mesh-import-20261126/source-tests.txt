@@ -1,0 +1,31 @@
+test_child_target_not_parent_or_native_body (TestMeshImport.TestMeshImport.test_child_target_not_parent_or_native_body) ... ok
+test_classic_document_retains_native_mesh_import (TestMeshImport.TestMeshImport.test_classic_document_retains_native_mesh_import) ... ok
+test_external_unused_target_uses_defining_document (TestMeshImport.TestMeshImport.test_external_unused_target_uses_defining_document) ... ok
+test_failed_or_cancelled_reader_rolls_back (TestMeshImport.TestMeshImport.test_failed_or_cancelled_reader_rolls_back) ... ok
+test_mesh_workbench_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_mesh_workbench_import_dialog_history_and_atomic_undo) ... ok
+test_missing_edit_does_not_create_orphan (TestMeshImport.TestMeshImport.test_missing_edit_does_not_create_orphan) ... ok
+test_native_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_native_import_dialog_history_and_atomic_undo) ... ok
+test_pending_edit_is_preserved (TestMeshImport.TestMeshImport.test_pending_edit_is_preserved) ... ok
+test_save_reopen_preserves_mesh_and_identity (TestMeshImport.TestMeshImport.test_save_reopen_preserves_mesh_and_identity) ... ok
+test_cancel_duplicate_and_cycle_preserve_catalog (TestComponentImport.TestComponentImport.test_cancel_duplicate_and_cycle_preserve_catalog) ... ok
+test_closed_nested_catalog_import_undo_and_persistence (TestComponentImport.TestComponentImport.test_closed_nested_catalog_import_undo_and_persistence) ... ok
+test_context_change_and_invalid_archive_are_atomic (TestComponentImport.TestComponentImport.test_context_change_and_invalid_archive_are_atomic) ... ok
+test_external_edit_imports_into_its_defining_file (TestComponentImport.TestComponentImport.test_external_edit_imports_into_its_defining_file) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_cycles_are_not_silently_ordered (TestFeatureCenteredModeling.TestSequentialHistory.test_cycles_are_not_silently_ordered) ... ok
+test_forward_profile_target_axis_and_limit_are_atomic (TestFeatureCenteredModeling.TestSequentialHistory.test_forward_profile_target_axis_and_limit_are_atomic) ... ok
+test_history_picker_rejects_later_profile (TestFeatureCenteredModeling.TestSequentialHistory.test_history_picker_rejects_later_profile) ... ok
+test_interleaved_bodies_undo_and_saved_order (TestFeatureCenteredModeling.TestSequentialHistory.test_interleaved_bodies_undo_and_saved_order) ... ok
+test_native_compound_drop_rejects_future_input (TestFeatureCenteredModeling.TestSequentialHistory.test_native_compound_drop_rejects_future_input) ... ok
+test_native_expression_and_body_result_dependencies (TestFeatureCenteredModeling.TestSequentialHistory.test_native_expression_and_body_result_dependencies) ... ok
+test_sketch_plane_and_native_input_guards (TestFeatureCenteredModeling.TestSequentialHistory.test_sketch_plane_and_native_input_guards) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 19.604s
+
+OK

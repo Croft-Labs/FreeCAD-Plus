@@ -1,3 +1,12 @@
+# November 26: Mesh import repair installed
+
+Native File and Mesh import now preserve component ownership and mesh History.
+Native build and source/installed focused checks pass 26/26; fresh reopening and
+original STL import pass. The repaired copy preserves mesh/sketch bytes and all
+identities; original owner file unchanged. Six payload hashes verified; restart
+required. See [evidence and baseline comparison](evidence/mesh-import-20261126/README.md).
+Save All and Hidden line previews remain separately pending approval.
+
 # November 26: Placement display and active-component additions installed
 
 Approved native style-following/translucent placement and Parts/Assembly destination

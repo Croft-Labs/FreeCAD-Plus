@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Mesh import ownership — installed November 26, 2026
+
+File and Mesh imports now attach native meshes to the active component's History;
+schema-8 validation accepts them. Both native dialogs, nested/external targets,
+rollback, Undo and saved reopening pass in the 26/26 installed focused suite.
+A separate repaired owner-file copy preserves mesh/sketch bytes and object IDs;
+the original remains unchanged. Six payload hashes match. Restart required. See
+[evidence and broader-test limitations](evidence/mesh-import-20261126/README.md).
+
 ## Placement display and active-component additions — installed November 26, 2026
 
 Placement now follows native draw-style clicks and preserves source colors with a

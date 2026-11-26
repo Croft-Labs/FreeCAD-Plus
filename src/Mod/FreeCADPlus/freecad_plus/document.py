@@ -123,6 +123,8 @@ def _validate_local(doc, external_definitions=()):
                 continue
             if root.PlusSchema >= 2 and obj.isDerivedFrom("Part::Feature"):
                 continue
+            if root.PlusSchema >= 8 and obj.isDerivedFrom("Mesh::Feature"):
+                continue
             raise ValueError("Unsupported component modeling content for this schema")
         if len(solvers) > 1:
             raise ValueError('A part can have only one assembly constraint collector')

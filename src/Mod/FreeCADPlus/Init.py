@@ -6,6 +6,7 @@ naming.install()
 FreeCAD.addImportType("FreeCAD Plus document (*.cadprt)", "freecad_plus.document_import")
 FreeCAD.__unit_test__ += ["TestFeatureCenteredModeling"]
 FreeCAD.__unit_test__ += ["TestFileWorkflows"]
+FreeCAD.__unit_test__ += ["TestMeshImport"]
 FreeCAD.__unit_test__ += ["TestComponentNames"]
 FreeCAD.__unit_test__ += ["TestInstanceDisplay"]
 FreeCAD.__unit_test__ += ["TestInstanceQuantity"]
