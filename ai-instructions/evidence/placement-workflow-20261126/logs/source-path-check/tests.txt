@@ -1,0 +1,6 @@
+test_export_external_children_domesticates_and_deduplicates_labels (TestPartTransfer.TestPartTransfer.test_export_external_children_domesticates_and_deduplicates_labels) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.503s
+
+OK

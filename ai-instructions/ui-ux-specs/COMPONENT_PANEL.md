@@ -335,9 +335,9 @@ repeats the last choice. Add existing opens the part navigator with component co
 current defining-file parts and collapsed groups for other loaded component files.
 Add new opens a separate name/create dialog. There are no mode tabs in these dialogs.
 
-Both paths add one linked child at the origin of the component currently being
-edited, independently of the selected active assembly. Keep that parent in Edit and
-keep the selected assembly root. New Assembly is removed from the Plus Assembly
+Both paths target the active (edited) component. The November 26 contract below
+adds assembly containment confirmation and the Parts context-menu entry.
+Keep that parent in Edit. New Assembly is removed from the Plus Assembly
 tools; the active-assembly selector remains. Standalone **New Component** retains
 its existing definition-only creation and activation behavior, without placement.
 Add new creates a definition and a child instance together; it is a different action.
@@ -352,6 +352,30 @@ must be saved before importing, without implicit saves.
 Approved in chat: "Approved. Implement" after the revised always-open dropdown and
 explicit distinction from New Component. See
 [preview and native evidence](../evidence/add-component-20261124/README.md).
+
+## Active-component additions and placement display — November 26, 2026
+
+Owner approved the revised direct screenshots with “all approved. implement”.
+Assembly Add existing/Add new always target the active component, including the
+top level or a child of the active assembly. Parts > Add to active component… uses
+the selected part definitions as sources and opens the existing instance task.
+Selection does not change the destination. Multiple selected parts share one Undo.
+
+If the active component is outside the active assembly, offer **Make active assembly
+and add** or **Cancel**. Cancel is the default and changes nothing. Acceptance makes
+the active component the assembly root, retains Edit, and continues adding. Nested
+membership follows shared component definitions, including external children;
+adding to a shared parent affects its occurrences as before. Keep cycle, saved-file,
+identity, transaction and stale-context protections.
+
+During placement, follow the current native draw style and update when the style
+buttons are clicked. Preserve source colors. Normally opaque faces are 50%
+transparent; retain greater source transparency. Do not change saved source
+materials, visibility or geometry. Preview toggling and Cancel remove only the
+temporary scene. Hidden line's existing native triangulation artifact is a known
+renderer limitation, reproduced even with the placement preview off.
+
+See [implementation and verification](../evidence/placement-workflow-20261126/README.md).
 
 ## Active assembly — November 24, 2026
 

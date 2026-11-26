@@ -159,6 +159,22 @@ See [native acceptance and delivery](evidence/assembly-constraints-20261125/READ
 
 ## Add Component child placement — November 24, 2026
 
+November 26 extension: the toolbar entry points and Parts context action resolve
+Edit's component, traverse active-assembly definition membership, and offer a
+cancel-default assembly-switch prompt when outside it. The prompt rechecks the
+captured Edit token and assembly before changing only transient assembly context.
+Parts actions revalidate captured rows, then pass their definitions into the shared
+instance task. The task also rejects a changed active assembly during creation.
+Low-level hierarchy APIs retain their noninteractive behavior.
+
+Placement display copies the native component view-provider graph, retaining its
+draw-mode switches, true edges, source colors and internal placements. Only copied
+ShapeMaterial nodes receive a transparency floor of 0.5. The overlay is unpickable;
+draw-style QAction signals schedule a refresh after native mode updates and are
+disconnected on task cleanup. Source materials and document objects are untouched.
+Native Hidden line renderer artifacts remain outside this correction. No schema
+or serialization changes are required.
+
 `component_add` owns the always-open Plus toolbar menu and separate existing/new
 pickers. Its acceptance token captures host document UID, native view, edited
 definition identity and occurrence route. Acceptance rechecks the live context,

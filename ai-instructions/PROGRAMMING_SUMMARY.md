@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## Placement display and active-component additions — installed November 26, 2026
+
+Placement now follows native draw-style clicks and preserves source colors with a
+50% face-transparency floor. Add existing/new target the active component; Parts
+offers Add to active component. Outside-assembly destinations prompt to make that
+component the active assembly or Cancel. Installed regression passes 66/66, existing
+shortcut 10/10, and fresh reopening/edit/Undo checks pass. Five Python files match
+installed hashes; owner settings remain unchanged. Native Hidden line triangulation
+is a separate known renderer limitation. Restart FreeCAD Plus. See
+[evidence](evidence/placement-workflow-20261126/README.md).
+
 ## Recent thumbnails and icon outline — installed November 26, 2026
 
 Start reads embedded previews from `.cadprt` and `.CADPRT` through the native

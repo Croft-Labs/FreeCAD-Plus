@@ -6,6 +6,12 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ### Create/edit component instances — November 25, 2026
 
+November 26 approved refinement: placement follows the native draw style live,
+retains source colors, and applies at least 50% face transparency to the temporary
+preview only. Parts > Add to active component opens this same task with the selected
+sources. Outside-assembly destinations require the assembly-switch/Cancel prompt
+specified in [Component Panel](COMPONENT_PANEL.md#active-component-additions-and-placement-display--november-26-2026).
+
 Add existing/new keeps the component navigator and uses Next to open Create instances.
 Quantity, Linear, Grid and Circular share one native form with per-definition counts,
 parent-local coordinates, preview and prominent validation errors. Change parts

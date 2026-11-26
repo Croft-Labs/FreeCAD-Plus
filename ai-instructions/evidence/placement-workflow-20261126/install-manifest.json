@@ -1,0 +1,32 @@
+[
+  {
+    "file": "Mod/FreeCADPlus/Init.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+    "sha256": "ec0b726597e23b00b4f081fc5c5dff2cef3b9d6b5edc76add7eb7ffc3855e0c5",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\Init.py.before-placement-workflow-20261126"
+  },
+  {
+    "file": "Mod/FreeCADPlus/TestPlacementWorkflow.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPlacementWorkflow.py",
+    "sha256": "419c0780db67da1d7fa43fdedcfe282281ae9dce6578933b097e0c50edce0ea4",
+    "rollback": null
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/component_add.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py",
+    "sha256": "d0957522be8d783dd4c86c47c2d7ed28c47e42ac5a72499a39dce6ab334c90ef",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\component_add.py.before-placement-workflow-20261126"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "19c0c6f14ba8b7043f7709d10a79c8f24502c307765945b56a83c62205464222",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py.before-placement-workflow-20261126"
+  },
+  {
+    "file": "Mod/FreeCADPlus/freecad_plus/instance_task.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\instance_task.py",
+    "sha256": "b43f0c7b331da30bb8cdae0637f959e09aa5f7db0961feab47676a674189353f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\instance_task.py.before-placement-workflow-20261126"
+  }
+]

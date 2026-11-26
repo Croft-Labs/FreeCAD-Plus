@@ -1,3 +1,14 @@
+# November 26: Placement display and active-component additions
+
+- [x] Apply the approved native draw styles and 50% preview face-transparency floor.
+- [x] Add Parts context insertion into the active component, retaining batch Undo.
+- [x] Confirm outside-assembly destinations before switching assembly and adding.
+- [x] Verify 66 installed regressions, ten shortcut checks and fresh saved reopening.
+- [x] Install five hash-verified Python files with rollback copies; restart required.
+
+The separate native Hidden line artifact remains a documented limitation.
+See [evidence](evidence/placement-workflow-20261126/README.md).
+
 # November 26: Recent Files thumbnails and icon outline
 
 - [ X ] Route `.cadprt` embedded previews through the existing native reader.

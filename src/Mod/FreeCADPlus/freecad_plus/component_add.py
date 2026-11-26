@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Add a child to Edit's component, independently of assembly navigation."""
+"""Add children to the active component within the chosen assembly."""
 from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -19,6 +19,77 @@ def target(*, allow_task=False):
     token = (doc.Name, str(doc.Uid), Gui.activeDocument().activeView(), panel.identity(owner),
              tuple(panel.identity(o) for o in path))
     return owner, token
+
+
+def active_assembly():
+    """Resolve the current view's assembly without changing Edit or selection."""
+    owner, path = editing.context_path(App.ActiveDocument)
+    widget = panel.show_panel() if panel._panel is None else panel._panel
+    return widget._assembly_context((App.ActiveDocument, Gui.activeDocument().activeView()), owner, path)[0]
+
+
+def contains(assembly_owner, component):
+    # Children are definition-owned: all repeated occurrences share additions.
+    pending = [assembly_owner] if assembly_owner is not None else []
+    visited = set()
+    while pending:
+        part = pending.pop()
+        if part == component:
+            return True
+        ref = panel.identity(part)
+        if ref in visited:
+            continue
+        visited.add(ref)
+        pending.extend(link.LinkedObject for link in part.Group
+                       if link.TypeId == 'App::Link' and link.LinkedObject is not None)
+    return False
+
+
+class ActiveAssemblyPrompt(QtWidgets.QMessageBox):
+    def __init__(self, parent, component_label, assembly_label):
+        super().__init__(parent)
+        self.setWindowTitle('Add to active component')
+        self.setIcon(QtWidgets.QMessageBox.Question)
+        self.setTextFormat(QtCore.Qt.PlainText)
+        self.setText("The active component '" + component_label +
+                     "' is not within the active assembly '" + assembly_label + "'.")
+        self.setInformativeText("Make '" + component_label +
+                                "' the active assembly and add components to it?")
+        self.make_active = self.addButton('Make active assembly and add', QtWidgets.QMessageBox.AcceptRole)
+        self.cancel = self.addButton(QtWidgets.QMessageBox.Cancel)
+        self.setDefaultButton(self.cancel)
+        self.setEscapeButton(self.cancel)
+
+
+def ensure_destination(parent):
+    owner, expected = target()
+    current = active_assembly()
+    if contains(current, owner):
+        return True
+    dialog = ActiveAssemblyPrompt(parent, assembly.label(owner, App.ActiveDocument),
+                                  assembly.label(current, App.ActiveDocument) if current else 'None')
+    try:
+        dialog.exec_()
+        if dialog.clickedButton() != dialog.make_active:
+            return False
+        if target()[1] != expected or active_assembly() != current:
+            raise ValueError('The active component or assembly changed; reopen Add Component')
+        path = tuple(panel.lookup(ref) for ref in expected[4])
+        panel._panel.activate_assembly(owner, path or None)
+        return True
+    finally:
+        dialog.deleteLater()
+
+
+def add_selected(parent, definitions):
+    definitions = tuple(definitions)
+    if not definitions:
+        raise ValueError('Select parts to add to the active component')
+    owner, _ = target()
+    from . import instance_patterns, instance_task
+    instance_patterns.prepare(owner, definitions, None)
+    if ensure_destination(parent):
+        return instance_task.open_task(definitions)
 
 
 def add(expected, definition=None, *, label=None):
@@ -230,6 +301,8 @@ class Picker(QtWidgets.QDialog):
 
 def open_picker(parent, new_component=False, *, selected=(), label=None, opened=(), initial=None):
     try:
+        if not ensure_destination(parent):
+            return
         dialog = Picker(parent, new_component)
         dialog.opened.update(opened)
         if new_component and label is not None: dialog.name.setText(label)
@@ -264,7 +337,7 @@ def make_button(parent, window):
     button.setIcon(Gui.getIcon('Assembly_InsertLink'))
     button.setText('Add Component')
     button.setAccessibleName('Add Component')
-    button.setToolTip('Add an existing or new component as a child of the component being edited')
+    button.setToolTip('Add an existing or new component as a child of the active component')
     menu = QtWidgets.QMenu(button)
     existing = menu.addAction(Gui.getIcon('Assembly_InsertLink'), 'Add existing')
     create = menu.addAction(Gui.Command.get('Std_Part').getAction()[0].icon(), 'Add new')

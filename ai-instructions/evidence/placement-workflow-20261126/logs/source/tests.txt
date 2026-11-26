@@ -1,0 +1,13 @@
+test_all_native_styles_refresh_translucent_copy_without_source_writes (TestPlacementWorkflow.TestPlacementWorkflow.test_all_native_styles_refresh_translucent_copy_without_source_writes) ... ok
+test_cycle_rejected_before_prompt_or_mutation (TestPlacementWorkflow.TestPlacementWorkflow.test_cycle_rejected_before_prompt_or_mutation) ... ok
+test_nested_and_top_level_destinations_ignore_selected_source (TestPlacementWorkflow.TestPlacementWorkflow.test_nested_and_top_level_destinations_ignore_selected_source) ... ok
+test_outside_accept_switches_assembly_and_creates_one_undo (TestPlacementWorkflow.TestPlacementWorkflow.test_outside_accept_switches_assembly_and_creates_one_undo) ... ok
+test_outside_cancel_leaves_context_geometry_and_undo_unchanged (TestPlacementWorkflow.TestPlacementWorkflow.test_outside_cancel_leaves_context_geometry_and_undo_unchanged) ... ok
+test_parts_menu_routes_checked_source_to_active_component (TestPlacementWorkflow.TestPlacementWorkflow.test_parts_menu_routes_checked_source_to_active_component) ... ok
+test_ribbon_existing_and_new_use_active_child (TestPlacementWorkflow.TestPlacementWorkflow.test_ribbon_existing_and_new_use_active_child) ... ok
+test_stale_prompt_does_not_switch_or_add (TestPlacementWorkflow.TestPlacementWorkflow.test_stale_prompt_does_not_switch_or_add) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 5.965s
+
+OK

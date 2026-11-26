@@ -9,6 +9,7 @@ FreeCAD.__unit_test__ += ["TestFileWorkflows"]
 FreeCAD.__unit_test__ += ["TestComponentNames"]
 FreeCAD.__unit_test__ += ["TestInstanceDisplay"]
 FreeCAD.__unit_test__ += ["TestInstanceQuantity"]
+FreeCAD.__unit_test__ += ["TestPlacementWorkflow"]
 FreeCAD.__unit_test__ += ["TestInstanceRemoval"]
 FreeCAD.__unit_test__ += ["TestDerivedGeometry"]
 

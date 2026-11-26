@@ -1423,6 +1423,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             if row is not None and row.kind == 'model':
                 actions[menu.addAction('Make active assembly')] = self.make_active_assembly
                 selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
+                actions[menu.addAction('Add to active component…')] = lambda unused: self.add_component_rows(selected)
                 actions[menu.addAction('Export parts to file…')] = lambda unused: self.export_rows(selected)
         if component_row:
             if row.kind == 'occurrence':
@@ -1485,6 +1486,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def remove_instance(self, row):
         from .instance_remove_ui import open_dialog
         return open_dialog(self, row)
+
+    def add_component_rows(self, rows):
+        from .component_add import add_selected
+        parts = [self._checked(row)[1] for row in rows if row.kind == 'model']
+        return add_selected(self, parts)
 
     def export_rows(self, rows):
         from .part_transfer import ExportDialog

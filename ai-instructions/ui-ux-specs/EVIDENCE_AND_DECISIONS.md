@@ -13,6 +13,17 @@ This is the source ledger for the five UI/UX specifications. It owns provenance,
 
 ## Current
 
+### Placement rendering and active-component additions — November 26, 2026
+
+Owner said “all approved. implement” after the revised native-style screenshots
+and active-component workflow screenshots. This supersedes the earlier edge-only
+preview proposal. Both captures were fresh with no scope violations; chat approval
+governs and tool approval state was not edited. Sessions 2cc61ebcbc09 and a06b2d79b336
+have fingerprints e57c972e32f7ab92e448f7926c27e7d63905d9c0363580e58f346ec987f72deb
+and 460f42747c47bc4715da41639b85ae6ca15fae78fcc521f4c8e706a5a49168d3.
+The native Hidden line artifact was disclosed as a separate remaining limitation.
+See [implementation and verification](../evidence/placement-workflow-20261126/README.md).
+
 ### FreeCAD Plus icon B — November 25, 2026
 
 The owner requested several green-plus overlays on the current FreeCAD icon,

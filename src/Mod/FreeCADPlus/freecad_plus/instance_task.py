@@ -3,11 +3,11 @@
 import json
 import FreeCAD as App
 import FreeCADGui as Gui
-import Part
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets, QtGui
 from pivy import coin
 from . import component_add, document, editing, hierarchy, instance_patterns as patterns, panel
 from .instance_quantity_ui import InstanceForm
+from . import isolation
 
 _active = None
 
@@ -21,6 +21,8 @@ class InstanceTask(QtCore.QObject):
         self.owner = patterns.owner_of(pattern) if pattern else owner
         self.owner_doc = self.owner.Document
         self.owner_ref = panel.identity(self.owner)
+        current_assembly = component_add.active_assembly()
+        self.assembly_ref = panel.identity(current_assembly) if current_assembly else None
         self.frame_row = row
         self.revision = (pattern.Configuration, tuple(panel.identity(o) for o in pattern.Members)) if pattern else None
         if pattern: definitions = [seed.LinkedObject for seed in pattern.Seeds]
@@ -47,6 +49,9 @@ class InstanceTask(QtCore.QObject):
         editing.add_context_observer(self.schedule)
         self.mdi = Gui.getMainWindow().findChild(QtWidgets.QMdiArea)
         if self.mdi: self.mdi.subWindowActivated.connect(self.schedule)
+        self.style_actions = [a for a in Gui.getMainWindow().findChildren(QtGui.QAction)
+                              if a.objectName().startswith('Std_DrawStyle')]
+        for action in self.style_actions: action.triggered.connect(self.schedule)
         self.busy = False
 
     def check(self):
@@ -54,6 +59,9 @@ class InstanceTask(QtCore.QObject):
         if component_add.target(allow_task=True)[1] != self.expected:
             raise ValueError('The edited component or file tab changed. Cancel and reopen the task.')
         if panel.lookup(self.owner_ref) != self.owner: raise ValueError('The destination component changed')
+        current_assembly = component_add.active_assembly()
+        if not self.pattern_ref and (panel.identity(current_assembly) if current_assembly else None) != self.assembly_ref:
+            raise ValueError('The active assembly changed. Cancel and reopen the task.')
         pattern = panel.lookup(self.pattern_ref) if self.pattern_ref else None
         if pattern and (pattern.Configuration, tuple(panel.identity(o) for o in pattern.Members)) != self.revision:
             raise ValueError('The pattern changed. Cancel and reopen Edit instance pattern.')
@@ -186,14 +194,22 @@ class InstanceTask(QtCore.QObject):
                                       + ' · ' + str(len(definitions) or 1) + ' shared component(s)')
             self.form.status.setText('Ready. One Undo step.')
             if not self.form.preview.isChecked(): return
-            overlay = coin.SoSeparator(); pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE; overlay.addChild(pick)
-            style = coin.SoDrawStyle(); style.style = coin.SoDrawStyle.LINES; style.setOverride(True); overlay.addChild(style)
-            color = coin.SoBaseColor(); color.rgb = (.1, .8, 1.0); color.setOverride(True); overlay.addChild(color)
+            overlay = coin.SoSeparator(); pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE
+            pick.setOverride(True); overlay.addChild(pick)
             frame = self.frame()
             for definition in definitions:
-                shape = Part.getShape(definition)
-                if shape.isNull(): continue
-                source = coin.SoInput(); source.setBuffer(shape.writeInventor()); geometry = coin.SoDB.readAll(source)
+                # Copy the native view-provider tree after its draw-style update,
+                # retaining its real edge/face switches and original face colors.
+                geometry = isolation._preview(definition).copy()
+                geometry.whichChild = coin.SO_SWITCH_ALL
+                search = coin.SoSearchAction(); search.setType(coin.SoMaterial.getClassTypeId())
+                search.setInterest(coin.SoSearchAction.ALL); search.setSearchingAll(True); search.apply(geometry)
+                for path in search.getPaths():
+                    material = path.getTail()
+                    if str(material.getName()) == 'ShapeMaterial':
+                        values_alpha = [max(.5, float(material.transparency[i]))
+                                        for i in range(material.transparency.getNum())]
+                        material.transparency.setValues(0, len(values_alpha), values_alpha)
                 for value in values:
                     node = coin.SoSeparator(); transform = coin.SoTransform(); placement = frame.multiply(value)
                     transform.translation.setValue(*tuple(placement.Base)); transform.rotation.setValue(*placement.Rotation.Q)
@@ -240,6 +256,9 @@ class InstanceTask(QtCore.QObject):
         global _active
         if self.closed: return
         self.closed = True; self.clear_preview(); self.timer.stop(); self.pick_timer.stop()
+        for action in self.style_actions:
+            try: action.triggered.disconnect(self.schedule)
+            except RuntimeError: pass
         App.removeDocumentObserver(self); Gui.Selection.removeObserver(self); editing.remove_context_observer(self.schedule)
         if self.mdi:
             try: self.mdi.subWindowActivated.disconnect(self.schedule)

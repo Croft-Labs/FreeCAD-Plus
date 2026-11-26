@@ -1,0 +1,2 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/ai-instructions/evidence/placement-workflow-20261126/helpers/run.FCMacro:10: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())

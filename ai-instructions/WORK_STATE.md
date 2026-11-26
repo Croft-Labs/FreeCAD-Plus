@@ -1,3 +1,12 @@
+# November 26: Placement display and active-component additions installed
+
+Approved native style-following/translucent placement and Parts/Assembly destination
+workflow are installed. All 66 installed regressions, ten existing-shortcut checks
+and fresh-process saved pattern/edit/Undo checks pass. Five installed Python hashes
+match; owner CFG settings remain unchanged. Restart required. The previously
+disclosed native Hidden line artifact remains. See
+[delivery evidence](evidence/placement-workflow-20261126/README.md).
+
 # November 26: Recent Files thumbnails and icon outline installed
 
 Both owner-approved changes are installed. Native build passes; focused 6/6,

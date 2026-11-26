@@ -1,0 +1,56 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+from freecad_plus import document, editing, panel, movement, instance_patterns as patterns, instance_task
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False}
+    try:
+        info = json.loads((out.parent/'installed/test_external_patterns_export_and_saved_fixtures/reopen.json').read_text())
+        doc = document.open_document(info['host']); App.setActiveDocument(doc.Name)
+        feature = doc.getObject(info['pattern']); owner = patterns.owner_of(feature)
+        assert isinstance(feature.Proxy, patterns.Pattern)
+        assert {o.Name:o.ID for o in feature.Members} == info['members']
+        assert any(o.LinkedObject.Document != doc for o in feature.Members)
+        top = document.validate(doc).Group[0]; editing.edit((top,))
+        dock = panel.show_panel(); QtTest.QTest.qWait(150); dock.refresh()
+        dock.activate_assembly(owner, (top,)); dock.tabs.setCurrentIndex(1)
+        task = instance_task.open_task(pattern=feature)
+        assert task.form.mode.currentText() == 'Circular' and task.form.count.value() == 4
+        task.form.count.setValue(5); assert task.accept()
+        assert len(feature.Members) == 10
+        assert all(doc.getObject(name).ID == identity for name,identity in info['members'].items())
+        try: movement.movable(feature.Members[0], owner)
+        except ValueError as error: assert 'pattern' in str(error)
+        else: raise AssertionError('Pattern movement guard lost on restore')
+        doc.undo(); doc.recompute(); assert len(feature.Members) == 8
+        doc.redo(); doc.recompute(); assert len(feature.Members) == 10
+        document.save_document(doc)
+        copied = document.open_document(info['export']); root = document.validate(copied)
+        assert not root.Imports
+        exported = next(o for o in copied.Objects if patterns.is_pattern(o))
+        assert isinstance(exported.Proxy, patterns.Pattern)
+        assert all(o.LinkedObject.Document == copied for o in exported.Members)
+        cfg = json.loads(exported.Configuration); cfg.update(columns=3, rows=2)
+        patterns.update(exported, cfg); assert len(exported.Members) == 12
+        document.save_document(copied)
+        refinfo = json.loads((out.parent/'installed/test_reference_updates_and_dependency_reduction_block/reopen.json').read_text())
+        reference_doc = document.open_document(refinfo['host'])
+        reference_pattern = reference_doc.getObject(refinfo['pattern'])
+        assert isinstance(reference_pattern.Proxy, patterns.Pattern)
+        assert len(reference_pattern.References) == 1
+        with document.transaction(reference_doc, 'Change restored direction'):
+            reference_doc.getObject(refinfo['line']).Placement.Rotation = App.Rotation()
+        assert reference_pattern.Members[2].LinkPlacement.Base.isEqual(App.Vector(1,22,3), 1e-8)
+        document.save_document(reference_doc)
+        result.update(ok=True, restored_proxy=True, identities=True, external_links=True,
+                      edit_undo_redo=True, exported_pattern_editable=True, reference_recomputed=True)
+    except BaseException: result['error'] = traceback.format_exc()
+    if instance_task._active: instance_task._active.reject()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)
