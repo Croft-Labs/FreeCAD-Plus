@@ -1,0 +1,41 @@
+test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) ...
+  test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) (extension='.cadprt') ... FAIL
+  test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) (extension='.CADPRT') ... FAIL
+test_02_classic_embedded_preview_unchanged (TestStartThumbnails.TestStartThumbnails.test_02_classic_embedded_preview_unchanged) ... ok
+test_03_missing_thumbnail_and_macro_fallback (TestStartThumbnails.TestStartThumbnails.test_03_missing_thumbnail_and_macro_fallback) ... ok
+test_04_original_files_untouched (TestStartThumbnails.TestStartThumbnails.test_04_original_files_untouched) ... ok
+test_05_native_icon_matches_approved_svg (TestStartThumbnails.TestStartThumbnails.test_05_native_icon_matches_approved_svg) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\ai-instructions\evidence\thumbnails-outline-20261126\helpers\TestStartThumbnails.py", line 96, in test_05_native_icon_matches_approved_svg
+    self.assertEqual(actual,(REPO/'src/Gui/Icons/freecad-plus.svg').read_bytes())
+AssertionError: b'<?x[170 chars]Box="0 0 48 48"\r\n   version="1.1"\r\n   id="[2610 chars]\r\n' != b'<?x[170 chars]Box="-1 -1 50 50"\r\n   version="1.1"\r\n   id[4441 chars]\r\n'
+test_06_recent_card_opens_native_plus (TestStartThumbnails.TestStartThumbnails.test_06_recent_card_opens_native_plus) ... ok
+
+======================================================================
+FAIL: test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) (extension='.cadprt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\ai-instructions\evidence\thumbnails-outline-20261126\helpers\TestStartThumbnails.py", line 68, in test_01_plus_embedded_preview_bytes
+    self.assertEqual(actual,expected)
+AssertionError: b'' != b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x[14797 chars]\x82'
+
+======================================================================
+FAIL: test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) (extension='.CADPRT')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\ai-instructions\evidence\thumbnails-outline-20261126\helpers\TestStartThumbnails.py", line 68, in test_01_plus_embedded_preview_bytes
+    self.assertEqual(actual,expected)
+AssertionError: b'' != b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x[14388 chars]\x82'
+
+======================================================================
+FAIL: test_05_native_icon_matches_approved_svg (TestStartThumbnails.TestStartThumbnails.test_05_native_icon_matches_approved_svg)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\ai-instructions\evidence\thumbnails-outline-20261126\helpers\TestStartThumbnails.py", line 96, in test_05_native_icon_matches_approved_svg
+    self.assertEqual(actual,(REPO/'src/Gui/Icons/freecad-plus.svg').read_bytes())
+AssertionError: b'<?x[170 chars]Box="0 0 48 48"\r\n   version="1.1"\r\n   id="[2610 chars]\r\n' != b'<?x[170 chars]Box="-1 -1 50 50"\r\n   version="1.1"\r\n   id[4441 chars]\r\n'
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.734s
+
+FAILED (failures=3)

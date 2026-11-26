@@ -1,0 +1,30 @@
+import json,os,sys,traceback,unittest
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1400,1000);win.show();win.raise_();win.activateWindow()
+        sys.path.insert(0,str(Path(__file__).parent))
+        sys.path.insert(1,str(Path(__file__).parents[2]/'plus-icon-20261125/helpers'))
+        Gui.activateWorkbench('AssemblyWorkbench')
+        import AssemblyApp,JointObject,UtilsAssembly,CommandCreateJoint
+        names=os.environ.get('PLUS_TEST_NAMES','TestStartThumbnails.TestStartThumbnails').split(',')
+        suite=unittest.defaultTestLoader.loadTestsFromNames(names)
+        with (out/'tests.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors))
+    except BaseException: result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

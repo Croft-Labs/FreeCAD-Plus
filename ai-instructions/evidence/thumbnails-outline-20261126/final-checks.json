@@ -1,0 +1,18 @@
+{
+  "approved_svg_exact": true,
+  "original_artwork_and_plus_unchanged": true,
+  "transparent_ico_sizes": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    96,
+    128,
+    256
+  ],
+  "installed_hashes_match": 9,
+  "uniform_saved_owner_previews": 1
+}

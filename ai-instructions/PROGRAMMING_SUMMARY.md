@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Recent thumbnails and icon outline — installed November 26, 2026
+
+Start reads embedded previews from `.cadprt` and `.CADPRT` through the native
+FCStd reader. The app/shortcut/file icon has the approved white outer outline.
+Native build, focused 6/6, file/icon regressions 30/30 and existing-shortcut 10/10
+pass; all four owner preview bytes and unchanged files/settings are verified.
+One owner file contains a blank saved PNG. Nine installed hashes match. Restart
+FreeCAD Plus. See [evidence](evidence/thumbnails-outline-20261126/README.md).
+
 ## FreeCAD Plus icon B - installed November 25, 2026
 
 The approved lower-right green plus now identifies the application, desktop shortcut

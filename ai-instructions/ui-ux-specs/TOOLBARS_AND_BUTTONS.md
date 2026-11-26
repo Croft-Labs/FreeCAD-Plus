@@ -1,13 +1,24 @@
 # Toolbars and buttons
 
-## FreeCAD Plus application and file icon — November 25, 2026
+## FreeCAD Plus application and file icon — November 26, 2026
 
 The owner selected **B** from the six rendered icon options: the existing FreeCAD
 artwork with a green plus and white outline over its lower-right corner. Use the
 same artwork for the Plus application, desktop shortcut, and `.cadprt` file type.
 Keep a transparent background and legibility at small Windows icon sizes. Plus
 catalog/file chooser rows use this icon too. Classic `.FCStd` keeps its existing
-FreeCAD association and icon. See [approval and delivery](../evidence/plus-icon-20261125/README.md).
+FreeCAD association and icon. See [initial icon delivery](../evidence/plus-icon-20261125/README.md).
+
+November 26: add a white peripheral outline around the red-and-blue FreeCAD
+silhouette, matching the existing plus-sign border. Preserve the original colored
+paths and plus overlay; allow minimal viewBox padding to prevent clipping. The
+owner approved the direct [current/proposed artwork screenshot](../evidence/thumbnails-outline-20261126/approved-outline.png)
+with **"both approved. implement"**, also approving the Recent Files thumbnail fix.
+Preview `2e9aa4de838c` used the exact icon from source `d68d353819ec`, isolated
+baseline `a05d2b4e56c65113961177cf7289a877436e04be`, and fingerprint
+`83adbccdcaee31c051ce844c2f3b7bb735792fa0dfa15ce2938a7506f841b0ca`.
+The fresh preview had no scope violations; approval remains the explicit chat
+instruction, with no tool approval-state changes. See [implementation and checks](../evidence/thumbnails-outline-20261126/README.md).
 
 ## Unified Clone and Extract geometry - November 25, 2026
 

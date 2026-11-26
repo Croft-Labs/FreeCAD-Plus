@@ -199,7 +199,9 @@ void DisplayedFilesModel::addFile(const QString& filePath)
         QLatin1String("csv"),
         QLatin1String("txt")
     };
-    if (lowercaseExtension == QLatin1String("fcstd")) {
+    // Plus documents use the same native archive and embedded thumbnail as FCStd.
+    if (lowercaseExtension == QLatin1String("fcstd")
+        || lowercaseExtension == QLatin1String("cadprt")) {
         if (const auto thumbnail = loadFCStdThumbnail(filePath); !thumbnail.isEmpty()) {
             _imageCache.insert(filePath, thumbnail);
         }

@@ -1,3 +1,11 @@
+# November 26: Recent Files thumbnails and icon outline installed
+
+Both owner-approved changes are installed. Native build passes; focused 6/6,
+file/icon regressions 30/30 and existing-shortcut 10/10 pass. All four owner
+embedded previews load without document/settings changes; one saved PNG is blank.
+Nine installed hashes match, with rollback copies retained. Restart FreeCAD Plus.
+See [implementation and limits](evidence/thumbnails-outline-20261126/README.md).
+
 # November 25: file chooser and cursor correction installed
 
 ## FreeCAD Plus icon B - installed November 25, 2026

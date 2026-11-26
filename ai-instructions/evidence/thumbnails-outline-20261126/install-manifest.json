@@ -1,0 +1,56 @@
+[
+  {
+    "file": "bin/FreeCADBase.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADBase.dll",
+    "sha256": "346e8722423ee34625c68426114386d192d6b3888739942b0815e9a225c20c8c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADBase.dll.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCADApp.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADApp.dll",
+    "sha256": "83520968b11b69904e1e971c36548935f477321d2f9598bd42ad3d8f1246cd99",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADApp.dll.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCADGui.dll",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.dll",
+    "sha256": "bbc2331e962a9206742ddb2e934990f838a18f94953558b99a3a44e7e2a6f7aa",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.dll.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCAD.exe",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCAD.exe",
+    "sha256": "1ceeb0d2f7eb27e84bb1f382f64832673a1611570818fe3c1b357797660e3dbb",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCAD.exe.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCADCmd.exe",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADCmd.exe",
+    "sha256": "1e780ebb854af144ba5b6bb9ab80881663dae41cc2f21f0b4485ccf7342131f9",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADCmd.exe.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCADGui.pyd",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.pyd",
+    "sha256": "b9ddfbfeab765045d89d37a1988c55b1701be13eda872cc9cdeeed09b61e4b81",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.pyd.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "lib/Start.pyd",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Start\\Start.pyd",
+    "sha256": "d3f76bdbd2bede85faebf7c26c55bb6dd0d1b3db79b2f6af15408e78a8e1764a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\Start.pyd.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "lib/StartGui.pyd",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Start\\StartGui.pyd",
+    "sha256": "99f3c6617aeb7d279d86a0f8ff7b5caae67f96d5dc32e06979dfcf6bf6657d0e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\StartGui.pyd.before-thumbnails-outline-20261126"
+  },
+  {
+    "file": "bin/FreeCADPlus.ico",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Main\\icon.ico",
+    "sha256": "0fc98b5ed10300af327e7f68d143fcc79648f2c0d46a1e847ae49196c735c878",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADPlus.ico.before-thumbnails-outline-20261126"
+  }
+]

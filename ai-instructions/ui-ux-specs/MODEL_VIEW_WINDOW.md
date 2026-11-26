@@ -24,6 +24,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ### Startup and workspace stability
 
+Owner approval, November 26, 2026: Recent Files must display the embedded model
+preview from `.cadprt` archives through the same native thumbnail reader as
+`.FCStd`, including uppercase extensions. Preserve file order, labels, card
+layout, click-to-open, Classic previews and the fallback icon for files with no
+saved thumbnail. Existing owner documents and preferences must remain unchanged;
+no conversion or resaving is required. Approval **"both approved. implement"**
+follows the diagnosed extension-routing omission and the
+[paired icon preview](TOOLBARS_AND_BUTTONS.md#freecad-plus-application-and-file-icon--november-26-2026).
+See [native validation](../evidence/thumbnails-outline-20261126/README.md).
+
 Owner decision, November 20, 2026: replace the Start page's **Parametric Body**
 and **Assembly** cards with one **New Component** card, described as
 "Creates a component for a part or an assembly". A component serves both roles.

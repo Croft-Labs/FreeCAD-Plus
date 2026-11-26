@@ -1,0 +1,15 @@
+test_01_plus_embedded_preview_bytes (TestStartThumbnails.TestStartThumbnails.test_01_plus_embedded_preview_bytes) ... ok
+test_02_classic_embedded_preview_unchanged (TestStartThumbnails.TestStartThumbnails.test_02_classic_embedded_preview_unchanged) ... ok
+test_03_missing_thumbnail_and_macro_fallback (TestStartThumbnails.TestStartThumbnails.test_03_missing_thumbnail_and_macro_fallback) ... ok
+test_04_original_files_untouched (TestStartThumbnails.TestStartThumbnails.test_04_original_files_untouched) ... ok
+test_05_native_icon_matches_approved_svg (TestStartThumbnails.TestStartThumbnails.test_05_native_icon_matches_approved_svg) ... ok
+test_06_recent_card_opens_native_plus (TestStartThumbnails.TestStartThumbnails.test_06_recent_card_opens_native_plus) ... ok
+test_actual_open_dialog_provider_and_catalog_icon (TestPlusIcon.TestPlusIcon.test_actual_open_dialog_provider_and_catalog_icon) ... ok
+test_assets_executable_window_and_shell (TestPlusIcon.TestPlusIcon.test_assets_executable_window_and_shell) ... ok
+test_association_registration (TestPlusIcon.TestPlusIcon.test_association_registration) ... ok
+test_saved_previews_display_without_modifying_owner_files (TestOwnerPreviews.TestOwnerPreviews.test_saved_previews_display_without_modifying_owner_files) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 8.333s
+
+OK

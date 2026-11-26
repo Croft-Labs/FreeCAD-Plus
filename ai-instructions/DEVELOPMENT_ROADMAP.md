@@ -1,3 +1,12 @@
+# November 26: Recent Files thumbnails and icon outline
+
+- [ X ] Route `.cadprt` embedded previews through the existing native reader.
+- [ X ] Apply the approved white outer silhouette to the Plus SVG/ICO resources.
+- [ X ] Build and install in the existing app; focused 6/6, regressions 30/30 and
+  existing-shortcut 10/10 pass; verify all four owner files/settings are unchanged.
+
+See [approval, delivery and blank-preview limitation](evidence/thumbnails-outline-20261126/README.md).
+
 # November 25: Open/import filters and conversion cursor
 
 ## FreeCAD Plus icon B - installed November 25, 2026
