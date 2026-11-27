@@ -127,7 +127,8 @@ def qualified_label(definition, viewing_doc):
 def _saved(doc):
     if not doc.FileName or not Path(doc.FileName).is_file():
         raise ValueError("Save both defining files as .cadprt before importing")
-    graph = archive_graph(doc.FileName)
+    from .file_recovery import pending
+    graph = archive_graph(doc.FileName, pending(doc))
     if graph[Path(doc.FileName).resolve()]["uid"] != str(doc.Uid):
         raise ValueError("Saved file identity does not match the open document")
     return graph
@@ -208,14 +209,24 @@ def save_definition(definition):
     return document.save_document(owner)
 
 
-def archive_graph(filename):
+class MissingReference(ValueError):
+    def __init__(self, path, uid=None, names=()):
+        self.path=Path(path).resolve();self.uid=uid;self.names=tuple(names)
+        super().__init__(f'Missing defining file: {self.path}. Locate the file or search folders.')
+
+
+def archive_graph(filename, replacements=None):
     """Read native XLink paths and UUIDs before any FreeCAD restore can run.
 
     Missing/replaced/unsupported dependencies fail without opening documents.
-    Recovery is restoring the original path/identity and retrying. Relocation UI
-    and automatic path searching are deliberately not part of this service.
+    An explicit replacement map is used by identity-checked relocation; searching
+    and user decisions remain outside this read-only graph validator.
     """
     active, done, identities, archives = set(), {}, {}, {}
+    replacements={Path(a).resolve():Path(b).resolve() for a,b in (replacements or {}).items()}
+    def relocated(path):
+        path=Path(path).resolve()
+        return replacements.get(path,path)
     def owned_routes(tree, definition):
         objects = {o.get('name'): o for o in tree.findall('./ObjectData/Object')}
         types = {o.get('name'): o.get('type') for o in tree.findall('./Objects/Object')}
@@ -246,7 +257,7 @@ def archive_graph(filename):
         if occurrence is None: return False
         occurrence_target = occurrence.find("./Properties/Property[@name='LinkedObject']/XLink")
         if occurrence_target is None: return False
-        if (path.parent / occurrence_target.get('file','')).resolve() != target_path: return False
+        if relocated(path.parent / occurrence_target.get('file','')) != target_path: return False
         target_name = link.get('name')
         route = owned_routes(archives[target_path], occurrence_target.get('name')).get(target_name)
         if not route or source.find('Sub').get('value') != ''.join(n+'.' for n in route): return False
@@ -255,8 +266,8 @@ def archive_graph(filename):
             routes = owned_routes(tree, definition.get('value'))
             if obj.get('name') in routes and routes.get(occurrence.get('name')) == [occurrence.get('name')]: return True
         return False
-    def visit(filename):
-        path = Path(filename).resolve()
+    def visit(filename, expected_uid=None, names=()):
+        path = relocated(filename)
         if path in active:
             raise ValueError("Circular file imports are not allowed")
         if path in done:
@@ -264,7 +275,7 @@ def archive_graph(filename):
         if path.suffix.lower() != ".cadprt":
             raise ValueError("Component documents require an exact .cadprt filename")
         if not path.is_file():
-            raise ValueError(f"Missing defining file: {path}. Restore it and retry.")
+            raise MissingReference(filename,expected_uid,names)
         with zipfile.ZipFile(path) as archive:
             tree = ET.fromstring(archive.read("Document.xml"))
         archives[path] = tree
@@ -298,8 +309,11 @@ def archive_graph(filename):
             raise ValueError("Missing or mismatched imported file identity")
         allowed = set()
         for link, expected in zip(imports, ids):
-            child = (path.parent / link.get("file", "")).resolve()
-            info = visit(child)
+            original = (path.parent / link.get("file", "")).resolve()
+            child = relocated(original)
+            required = [node.get('name') for node in tree.findall('.//XLink')
+                        if node.get('file') and relocated(path.parent/node.get('file'))==child]
+            info = visit(original, expected, required)
             if info["uid"] != expected or info["root"] != link.get("name"):
                 raise ValueError(f"Imported file identity mismatch: {child}")
             allowed.update([child, *info["dependencies"]])
@@ -310,7 +324,7 @@ def archive_graph(filename):
                 for link in property_node.findall(".//XLink"):
                     if not link.get("file"):
                         continue
-                    target_path = (path.parent / link.get("file")).resolve()
+                    target_path = relocated(path.parent / link.get("file"))
                     if target_path not in allowed:
                         raise ValueError("External reference is outside the defining-file catalog")
                     target = done[target_path]

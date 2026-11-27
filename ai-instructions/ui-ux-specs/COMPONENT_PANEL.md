@@ -880,6 +880,26 @@ dock area, with Properties directly below it. Components must be available throu
 the panel menu, not only a developer Python call.
 
 See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).
+# Approved Parts file workflows — November 27, 2026
+
+The same owner approval covers Parts file-actions review `e2cefeaaa3b9`, fingerprint
+`01658d784c8d20b8c2738350e2b8b1ec29b817d36bbfc5768832824906d91596`.
+Create new part file appears above Import and uses the native Save picker. It
+creates a default part and links its catalog into the current file without placing
+an assembly instance. Sub-file menus offer Open file in new window, Import models
+to file, and Search folders; a missing sub-file also offers Locate file and disables
+Open/Copy until recovered. Independent copying targets the current file even while
+editing an imported component. Dependent copies prompt for copying the editable
+dependency graph, baking final shapes/meshes with placements, or Cancel. Shared
+dependencies are copied once; unique domestic labels avoid imported-name collisions.
+
+Search folders uses the approved task with multiple locations, recursive search,
+Stop, verified candidates, explicit Use selected file, and optional locations saved
+in the host. Pre-open missing-file prompts reuse Locate/Search/Cancel. Recovery
+checks file UUID, required object names, graph validity and cycles. Searches never
+change files. Relocations preserve loaded native object identities and become
+durable on normal Save; originals are not rewritten during recovery.
+
 # Approved Assembly controls — November 27, 2026
 
 Owner approval covers review `ae8dafb11414`, fingerprint

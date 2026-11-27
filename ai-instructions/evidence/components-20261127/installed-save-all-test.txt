@@ -1,0 +1,6 @@
+test_gui_save_all_uses_document_specific_extensions (TestFileWorkflows.TestFileWorkflows.test_gui_save_all_uses_document_specific_extensions) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.964s
+
+OK

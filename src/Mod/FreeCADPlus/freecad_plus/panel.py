@@ -1408,6 +1408,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             row = group.children[0]
         component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused', 'assembly')
         history_component = row is not None and row.kind == 'history_component'
+        if tree == self.trees[0] and row is not None and row.kind == 'import':
+            from .file_actions_ui import subfile_menu
+            return subfile_menu(self, tree, point, row)
         if tree == self.trees[0] and row is not None and row.kind == 'model':
             from .appearance_ui import parts_menu
             return parts_menu(self, tree, point, item, row)
@@ -1418,6 +1421,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if history_component:
             actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[0]:
+            from .file_actions_ui import run_action
+            actions[menu.addAction('Create new part file\u2026')] = lambda row: run_action(self, 'create', row)
             actions[menu.addAction('Import Models from File')] = self.import_models
             if row is not None and row.kind == 'model':
                 actions[menu.addAction('Make active assembly')] = self.make_active_assembly
@@ -1605,6 +1610,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         super().closeEvent(event)
 
     def dispose(self):
+        from . import file_search_task
+        if file_search_task._active is not None:
+            file_search_task._active.reject()
         from . import appearance_task
         if appearance_task._active is not None:
             appearance_task._active.reject()

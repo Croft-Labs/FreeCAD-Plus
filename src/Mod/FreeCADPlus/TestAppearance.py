@@ -127,7 +127,7 @@ class TestAppearance(unittest.TestCase):
             states.extend('---' if a.isSeparator() else a.text() for a in menu.actions())
             action=next(a for a in menu.actions() if a.text()=='Appearance\u2026');action.trigger();menu.close()
         QtCore.QTimer.singleShot(100,choose);w._menu(tree,point);settle()
-        self.assertEqual(states,['---','Edit','Make active assembly','Add to active component\u2026','Open in new window','Rename','---','Appearance\u2026','Part Type','Visibility','---','Import\u2026','Export\u2026','---'])
+        self.assertEqual(states,['---','Edit','Make active assembly','Add to active component\u2026','Open in new window','Rename','---','Appearance\u2026','Part Type','Visibility','---','Create new part file\u2026','Import\u2026','Export\u2026','---'])
         t=appearance_task._active;self.assertIsNotNone(t);self.assertEqual(t.form.mode,'face')
         self.assertEqual(t.form.targets,[(panel.identity(self.box),'Face2')])
         Gui.Selection.clearSelection();Gui.Selection.addSelection(self.lid,'Face3');settle()

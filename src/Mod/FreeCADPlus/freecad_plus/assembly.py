@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Assembly navigation and counts; never change component membership or placement."""
 import json
+import zipfile
+import xml.etree.ElementTree as ET
 import FreeCAD as App
 from . import document, display
 
@@ -61,6 +63,7 @@ def _resolve_reference(ref):
 def remember(doc, part, path=()):
     """Store navigation in the host archive without creating dependency edges."""
     value = json.dumps({'version': 1, 'part': _reference(part),
+                        'file': part.Document.FileName if part.Document != doc else '',
                         'path': [_reference(obj) for obj in path]}, sort_keys=True)
     meta = dict(doc.Meta)
     if meta.get(BOOKMARK) != value:
@@ -89,13 +92,20 @@ def recalled(doc):
             if data.get('version') != 1:
                 return None
             ref = data['part']
+            if _resolve_reference(ref) is None and data.get('file'):
+                from pathlib import Path
+                from .external import archive_graph
+                path = Path(data['file']).resolve()
+                if path.is_file() and archive_graph(path)[path]['uid'] == ref[0]:
+                    document.open_document(path, hidden=True)
         else:
             # Migration fallback only: saved bookmarks always beat workspace history.
             ref = json.loads(prefs.GetString(str(doc.Uid)))
         part = _resolve_reference(ref)
         if part is not None and part in document.validate(part.Document).Definitions:
             return part
-    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, ReferenceError):
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, ReferenceError,
+            OSError, zipfile.BadZipFile, ET.ParseError):
         pass
     return None
 

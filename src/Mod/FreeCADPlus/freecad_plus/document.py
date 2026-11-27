@@ -438,7 +438,9 @@ def save_document(doc, filename=None, *, label=None):
     if not prefs.GetBool("BackupPolicy", True):
         raise ValueError("Enable native safe-save BackupPolicy before saving a component file")
     if path.exists():
-        inspect_archive(path)  # Do not overwrite foreign or future-schema files.
+        from .file_recovery import pending
+        from .external import archive_graph
+        archive_graph(path, pending(doc))  # Retain preflight for explicitly recovered links.
     gui_doc = None
     if App.GuiUp:
         import FreeCADGui as Gui

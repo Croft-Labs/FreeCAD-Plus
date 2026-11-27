@@ -1,0 +1,48 @@
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_chooser_flat_current_parts_counts_collapsed_files_and_cancel (TestActiveAssembly.TestActiveAssembly.test_chooser_flat_current_parts_counts_collapsed_files_and_cancel) ... ok
+test_copy_paste_into_selected_unused_assembly_and_stale_child_guard (TestActiveAssembly.TestActiveAssembly.test_copy_paste_into_selected_unused_assembly_and_stale_child_guard) ... ok
+test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded (TestActiveAssembly.TestActiveAssembly.test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded) ... ok
+test_loaded_unimported_assembly_edits_in_source_without_importing (TestActiveAssembly.TestActiveAssembly.test_loaded_unimported_assembly_edits_in_source_without_importing) ... ok
+test_parts_context_menu_sets_root_without_changing_edit_or_model (TestActiveAssembly.TestActiveAssembly.test_parts_context_menu_sets_root_without_changing_edit_or_model) ... ok
+test_pending_task_and_stale_chooser_are_refused (TestActiveAssembly.TestActiveAssembly.test_pending_task_and_stale_chooser_are_refused) ... ok
+test_per_view_choice_and_saved_reopen_preference (TestActiveAssembly.TestActiveAssembly.test_per_view_choice_and_saved_reopen_preference) ... ok
+test_root_rename_delete_and_undo (TestActiveAssembly.TestActiveAssembly.test_root_rename_delete_and_undo) ... ok
+test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence (TestActiveAssembly.TestActiveAssembly.test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence) ... ok
+test_counts_rename_singleton_transition_and_undo (TestInstanceDisplay.TestInstanceDisplay.test_counts_rename_singleton_transition_and_undo) ... ok
+test_external_qualification_preference_and_save_reopen (TestInstanceDisplay.TestInstanceDisplay.test_external_qualification_preference_and_save_reopen) ... ok
+test_group_display_is_atomic_and_single_instance_action_is_explicit (TestInstanceDisplay.TestInstanceDisplay.test_group_display_is_atomic_and_single_instance_action_is_explicit) ... ok
+test_group_has_no_component_action_or_native_selection (TestInstanceDisplay.TestInstanceDisplay.test_group_has_no_component_action_or_native_selection) ... ok
+test_group_menu_parity_and_copy_move_target_all_members (TestInstanceDisplay.TestInstanceDisplay.test_group_menu_parity_and_copy_move_target_all_members) ... ok
+test_grouping_identity_never_merges_equal_labels_or_different_parents (TestInstanceDisplay.TestInstanceDisplay.test_grouping_identity_never_merges_equal_labels_or_different_parents) ... ok
+test_hidden_selection_reveals_nested_exact_instance_without_rebuilding (TestInstanceDisplay.TestInstanceDisplay.test_hidden_selection_reveals_nested_exact_instance_without_rebuilding) ... ok
+test_individual_edit_copy_and_move_keep_exact_route (TestInstanceDisplay.TestInstanceDisplay.test_individual_edit_copy_and_move_keep_exact_route) ... ok
+test_modes_preserve_model_selection_and_occurrence_items (TestInstanceDisplay.TestInstanceDisplay.test_modes_preserve_model_selection_and_occurrence_items) ... ok
+test_nested_groups_collapsed_and_constraint_collectors_first (TestInstanceDisplay.TestInstanceDisplay.test_nested_groups_collapsed_and_constraint_collectors_first) ... ok
+test_bake_final_geometry_breaks_links_and_preserves_placements (TestPartsFiles.TestPartsFiles.test_bake_final_geometry_breaks_links_and_preserves_placements) ... ok
+test_bake_nested_transforms_and_mesh_material (TestPartsFiles.TestPartsFiles.test_bake_nested_transforms_and_mesh_material) ... ok
+test_copy_associative_external_geometry_and_expression (TestPartsFiles.TestPartsFiles.test_copy_associative_external_geometry_and_expression) ... ok
+test_copy_dependencies_shared_once_colors_placements_undo (TestPartsFiles.TestPartsFiles.test_copy_dependencies_shared_once_colors_placements_undo) ... ok
+test_create_default_part_linked_without_assembly_placement (TestPartsFiles.TestPartsFiles.test_create_default_part_linked_without_assembly_placement) ... ok
+test_loaded_relocation_and_search_cancel (TestPartsFiles.TestPartsFiles.test_loaded_relocation_and_search_cancel) ... ok
+test_missing_open_locate_and_cancel_workflow (TestPartsFiles.TestPartsFiles.test_missing_open_locate_and_cancel_workflow) ... ok
+test_parts_create_menu_and_copy_destinations (TestPartsFiles.TestPartsFiles.test_parts_create_menu_and_copy_destinations) ... ok
+test_recovery_validates_identity_and_keeps_files_unchanged_until_save (TestPartsFiles.TestPartsFiles.test_recovery_validates_identity_and_keeps_files_unchanged_until_save) ... ok
+test_search_task_real_worker_verified_selection_and_remember (TestPartsFiles.TestPartsFiles.test_search_task_real_worker_verified_selection_and_remember) ... ok
+test_subfile_menus_dependency_cancel_and_open_window (TestPartsFiles.TestPartsFiles.test_subfile_menus_dependency_cancel_and_open_window) ... ok
+test_fresh_saved_copy (TestPartsFiles.TestPartsFilesFresh.test_fresh_saved_copy) ... ok
+test_native_plus_save_as_copy_and_reopen (TestFileWorkflows.TestFileWorkflows.test_native_plus_save_as_copy_and_reopen) ... ok
+test_native_save_all_includes_hidden_nested_imports (unittest.loader._FailedTest.test_native_save_all_includes_hidden_nested_imports) ... ERROR
+
+======================================================================
+ERROR: test_native_save_all_includes_hidden_nested_imports (unittest.loader._FailedTest.test_native_save_all_includes_hidden_nested_imports)
+----------------------------------------------------------------------
+AttributeError: type object 'TestFileWorkflows' has no attribute 'test_native_save_all_includes_hidden_nested_imports'
+
+----------------------------------------------------------------------
+Ran 38 tests in 39.403s
+
+FAILED (errors=1)

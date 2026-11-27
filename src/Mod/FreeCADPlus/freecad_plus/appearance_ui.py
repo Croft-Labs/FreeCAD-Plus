@@ -42,6 +42,8 @@ def parts_menu(panel, tree, point, item, row):
             action.setEnabled(not (value and part_type == 'Excluded'))
             actions[action] = lambda r, value=value: panel.set_display(r, shown=value, expected=expected)
     menu.addSeparator()
+    from .file_actions_ui import run_action
+    actions[menu.addAction('Create new part file\u2026')] = lambda row: run_action(panel, 'create', row)
     actions[menu.addAction('Import\u2026')] = panel.import_models
     actions[menu.addAction('Export\u2026')] = lambda unused: panel.export_rows(selected)
     menu.addSeparator()

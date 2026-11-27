@@ -1,0 +1,94 @@
+{
+  "files": [
+    {
+      "path": "freecad_plus/assembly.py",
+      "before": "90b2714d0c07c85eeef7c0809fb414cd2708cbc113e15777ce879c350a57ffa6",
+      "installed": "3ec468e704375ed2f070e0e8c643d3e36e900e4e0ca6c9c5004377363040270b"
+    },
+    {
+      "path": "freecad_plus/assembly_ui.py",
+      "before": null,
+      "installed": "a1d9ed60d09284317144595bc4336181760f9eb1a7d0572e439a97443bdfe5aa"
+    },
+    {
+      "path": "freecad_plus/display.py",
+      "before": "565379cc0cb2c8b42fb200464b6c2907afff7256679e7df2013e06fc8acd8db2",
+      "installed": "4fb2f4c7ab23b855a518e5aa8828e79a786eaae9fb0f0cc88b9c35654c8ad7fc"
+    },
+    {
+      "path": "freecad_plus/panel.py",
+      "before": "ffdea1607290aa783ae7b1dee541d33955b062ff51e919d714a74a434a67644b",
+      "installed": "a274980775321d1b8fa31ab49d21fd18e0a3e3277cbde25646bcde6e164e0323"
+    },
+    {
+      "path": "freecad_plus/appearance_ui.py",
+      "before": "ecedffde580a57178ae84955d38b45f27152a1125ca48be9e12bcf99c7f3ccdc",
+      "installed": "306bfcee2bb17cd89699076dad1d6476eb694c70382caea57806bb170e0113a9"
+    },
+    {
+      "path": "freecad_plus/document.py",
+      "before": "0abae1ea9f5c058290e5818aae0b1f71cee930269535d0bfb6c363a027b18ccc",
+      "installed": "7c1f917839fe41414714707f410f3d4f50d86943e41a1780eb34b38857739145"
+    },
+    {
+      "path": "freecad_plus/external.py",
+      "before": "e5fc9a931af2c21eba24232ccd50d72d26a61bfbe74303a52851a52fe170ba75",
+      "installed": "8b68bab1039810f6afd3a67fdcc0d50f1ed1b2f7f3b2ef22557f40f164652e2d"
+    },
+    {
+      "path": "freecad_plus/file_workflows.py",
+      "before": "481158bd7d9a320ebbb82429f5a72b33ae083caeb6177fb73b091de004e5d8f0",
+      "installed": "8ab97aef0576aaf52a313e2411a0e836741e6ce87cf5f6f11c46353b64e46bd2"
+    },
+    {
+      "path": "freecad_plus/file_actions.py",
+      "before": null,
+      "installed": "03e4194ec527f8bdb433b9a15ee73f332f154a6e5d7c99b78966a9b43ff2663a"
+    },
+    {
+      "path": "freecad_plus/file_actions_ui.py",
+      "before": null,
+      "installed": "d441268453ddb70aec894caed0fbbe659b1ef2c1b29f444b77cb8575d5eaf4b8"
+    },
+    {
+      "path": "freecad_plus/file_recovery.py",
+      "before": null,
+      "installed": "15187b0203c1ebec0ba926ab6a787f5faaef4fb790dddc80095310d05a66754c"
+    },
+    {
+      "path": "freecad_plus/file_search_task.py",
+      "before": null,
+      "installed": "1fd64a7e8a74a535ad8b30782467d2788b64598e4f1ade33766b953016e588fa"
+    },
+    {
+      "path": "TestActiveAssembly.py",
+      "before": "864d140e7d11c39c266628a8563b43244f477dfaeb539c71c982f10a664861dd",
+      "installed": "ce176d2fbb827256fcd03ae37654d3fec478be04d81446dab87d0115e7b59b15"
+    },
+    {
+      "path": "TestInstanceDisplay.py",
+      "before": "595ca2c4ff991727184bfb16fb08af160bb9f36c5d0717a20d0eecf2684b14f8",
+      "installed": "654604e6818feb9f7ada0f7d817a9e40619f86e5e9fd8bdc681accfea080a71e"
+    },
+    {
+      "path": "TestComponentNavigation.py",
+      "before": null,
+      "installed": "9e163438c2573141ff6e015275e3d35e94195c9a83fd37c6b8c78fa25ffdb328"
+    },
+    {
+      "path": "TestPartsFiles.py",
+      "before": null,
+      "installed": "71d403eb9dbc2d80297fabee6e077c24740761a28ef087a6ca26a210cad4a4c5"
+    },
+    {
+      "path": "TestAppearance.py",
+      "before": "239945878ae0119311476c93b5067198a3a924b44c3451826b05df3954c3617c",
+      "installed": "616e6fab1187569559acf9e013c834039c294972a9fd8e282a0f34a716d5f110"
+    }
+  ],
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7483aacbcff5c8efb0ef0d17d920be284a6fb225fd444004b24e8f517a4c1a52",
+    "C:\\Users\\dgium\\Desktop\\freecad plus 0.1.0.lnk": "3fe445e0575129b44b5032cd058cb25f49762f27f5420f91e326592aad375751"
+  }
+}

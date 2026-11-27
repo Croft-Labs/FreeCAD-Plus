@@ -1,3 +1,13 @@
+# November 27: Approved Components panel previews
+
+- [x] Retain tabs/tree expansion during component activation; save active assembly.
+- [x] Add inline Assembly controls, per-parent grouping and complete group menus.
+- [x] Create linked part files; copy dependent parts or bake final geometry.
+- [x] Open sub-files, locate missing files, and search folders with verified matches.
+- [x] Pass source, fresh-process and installed checks; install 17 verified files.
+
+See [approval and delivery evidence](evidence/components-20261127/README.md).
+
 # November 27: Appearance task and Parts menu
 
 - [x] Implement the approved Body/Face task, native material edits and menu groups.
@@ -6,7 +16,7 @@
 - [x] Install eight hash-verified files with rollback; preserve owner settings and shortcut.
 
 See [approval and delivery evidence](evidence/appearance-20261127/README.md).
-Navigation and saved active-assembly persistence are separately pending.
+Navigation and saved active-assembly persistence were subsequently implemented above.
 
 # November 26: Save All and Hidden line correction
 

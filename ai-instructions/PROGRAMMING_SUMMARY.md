@@ -2,9 +2,11 @@
 
 ## Approved Components panel updates — November 27, 2026
 
-Navigation/tab retention and saved active-assembly metadata are implemented;
-13/13 native source checks pass. Assembly controls and Parts file workflows are
-in progress under the owner's approval of all previews. Delivery evidence is in
+All approved navigation, saved active assembly, compact Assembly controls, full
+condensed menus and Parts file/copy/recovery workflows are installed. Native source
+regressions pass 102/102; final focused/fresh-process checks pass 7/7; 38 installed
+cases pass. Seventeen installed hashes match, with rollback copies and unchanged
+owner settings/shortcut. Restart required. Delivery evidence is in
 [Components validation](evidence/components-20261127/README.md).
 
 ## Appearance task and Parts menu — installed November 27, 2026
@@ -16,7 +18,7 @@ The Parts menu uses the requested groups. Source regressions pass 43/43; install
 checks pass 11/11, with native colored-Body rendering verified. Eight installed
 hashes match; owner settings and shortcut are preserved. Restart required.
 See [approval, screenshots and delivery evidence](evidence/appearance-20261127/README.md).
-The separate navigation and saved active-assembly proposal remains pending.
+Navigation and saved active assembly were subsequently implemented above.
 
 ## Save All and Hidden line — installed November 26, 2026
 

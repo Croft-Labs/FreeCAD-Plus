@@ -23,6 +23,7 @@ set(FreeCADPlus_SRCS
     TestComponentNames.py
     TestActiveAssembly.py
     TestComponentNavigation.py
+    TestPartsFiles.py
     TestAppearance.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py
@@ -91,6 +92,10 @@ set(FreeCADPlus_SRCS
     freecad_plus/appearance_task.py
     freecad_plus/assembly.py
     freecad_plus/assembly_ui.py
+    freecad_plus/file_actions.py
+    freecad_plus/file_actions_ui.py
+    freecad_plus/file_recovery.py
+    freecad_plus/file_search_task.py
     freecad_plus/constraints.py
     freecad_plus/constraint_task.py
     freecad_plus/component_add.py
@@ -184,6 +189,10 @@ install(FILES
     freecad_plus/panel.py
     freecad_plus/assembly.py
     freecad_plus/assembly_ui.py
+    freecad_plus/file_actions.py
+    freecad_plus/file_actions_ui.py
+    freecad_plus/file_recovery.py
+    freecad_plus/file_search_task.py
     freecad_plus/component_add.py
     freecad_plus/part_transfer.py
     freecad_plus/part_transfer_ops.py

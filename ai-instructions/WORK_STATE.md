@@ -1,3 +1,12 @@
+# November 27: Approved Components panel changes installed
+
+All three approved previews are implemented: retained navigation/saved assembly,
+compact Assembly controls and full group menus, and Parts file creation/copy/search/
+recovery. Source integration passes 102/102, final focused/fresh checks 7/7, and
+38 installed cases pass. Seventeen payload hashes match; rollback copies retained;
+owner settings and shortcut are unchanged. Restart required. See
+[Components delivery evidence](evidence/components-20261127/README.md).
+
 # November 27: Appearance installed
 
 Approved Appearance task and Parts menu grouping are installed. Native source
@@ -5,7 +14,7 @@ regressions pass 43/43 and installed checks 11/11; renderer confirms whole-Body
 and selected-face colors. Eight payload hashes match with rollback copies.
 Owner CFG/shortcut preserved. Restart required. See
 [delivery evidence](evidence/appearance-20261127/README.md).
-Navigation/tab retention and saved active assembly remain a separate pending proposal.
+Navigation/tab retention and saved active assembly were subsequently implemented above.
 
 # November 26: Save All and Hidden line installed
 

@@ -11,7 +11,7 @@ import zipfile
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
-from . import document, conversion, task_status
+from . import document, conversion, task_status, external
 
 PLUS_FILTER = 'FreeCAD Plus document (*.cadprt)'
 CLASSIC_FILTER = 'FreeCAD Classic document (*.FCStd)'
@@ -186,7 +186,10 @@ def prepare_source(filename, parent=None, purpose='import'):
     if path.suffix.lower() == '.cadprt':
         if kind != 'plus':
             raise ValueError('This .cadprt contains Classic data. Restore its .FCStd extension before converting it.')
-        document.inspect_archive(path)
+        try:
+            document.inspect_archive(path)
+        except external.MissingReference:
+            if purpose != 'open':raise
         return str(path)
     dialog = ConversionDialog(parent or Gui.getMainWindow(), path, purpose, repair=kind == 'plus')
     try:
@@ -211,7 +214,12 @@ def open_file(filename):
     if not path:
         return None
     if Path(path).suffix.lower() == '.cadprt':
-        result = document.open_document(path)
+        try:
+            result = document.open_document(path)
+        except external.MissingReference:
+            from .file_search_task import recover_open
+            result = recover_open(path)
+        if result is None:return None
         App.setActiveDocument(result.Name)
         return result
     for existing in App.listDocuments().values():

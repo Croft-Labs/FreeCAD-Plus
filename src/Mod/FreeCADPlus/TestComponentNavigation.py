@@ -2,6 +2,7 @@
 """Component activation stays in place; saved assembly choices belong to the file."""
 import json
 import unittest
+from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtTest
@@ -69,3 +70,17 @@ class TestComponentNavigation(unittest.TestCase):
         self.assertEqual(before, [(obj.Name, obj.ID, tuple(obj.OutList)) for obj in self.doc.Objects])
         self.assertEqual(undo, self.doc.UndoCount)
         self.assertEqual(assembly.recalled(self.doc), self.parent)
+
+    def test_saved_loaded_foreign_assembly_restores_without_catalog_import(self):
+        source = document.new_document('Foreign')
+        part = document.validate(source).Definitions[0];part.Label='Foreign assembly'
+        source_path = self.output/'Foreign.cadprt'
+        document.save_document(source,source_path)
+        App.setActiveDocument(self.doc.Name);self.widget.refresh();self.widget.activate_assembly(part)
+        path=self.output/'Host.cadprt';document.save_document(self.doc,path)
+        App.closeDocument(self.doc.Name);App.closeDocument(source.Name)
+        self.doc=document.open_document(path)
+        restored=assembly.recalled(self.doc)
+        self.assertEqual(restored.Label,'Foreign assembly')
+        self.assertEqual(Path(restored.Document.FileName),source_path)
+        self.assertEqual(list(document.validate(self.doc).Imports),[])
