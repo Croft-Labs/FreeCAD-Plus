@@ -27,4 +27,3 @@ with (run/'stdout.txt').open('w') as stdout,(run/'stderr.txt').open('w') as stde
         time.sleep(.5)
 result=json.loads((run/'result.json').read_text());print(json.dumps(result,indent=2))
 if not result['ok'] :raise RuntimeError(result)
-
