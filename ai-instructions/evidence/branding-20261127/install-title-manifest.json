@@ -1,0 +1,50 @@
+{
+  "files": [
+    {
+      "name": "FreeCAD.exe",
+      "before": "e4e069ac01443f1ea0c7ed19841292fd7ef56b6a553ca682f9ef2171d9661a1a",
+      "built": "e4e069ac01443f1ea0c7ed19841292fd7ef56b6a553ca682f9ef2171d9661a1a",
+      "installed": "e4e069ac01443f1ea0c7ed19841292fd7ef56b6a553ca682f9ef2171d9661a1a"
+    },
+    {
+      "name": "FreeCADCmd.exe",
+      "before": "d023408f2174bc6f0d30d3b69633e7f9be2b68864a10f6ad40826f4fcde97242",
+      "built": "d023408f2174bc6f0d30d3b69633e7f9be2b68864a10f6ad40826f4fcde97242",
+      "installed": "d023408f2174bc6f0d30d3b69633e7f9be2b68864a10f6ad40826f4fcde97242"
+    },
+    {
+      "name": "FreeCAD.pyd",
+      "before": "635572c525e6662a3560ec57479fba879d42711be6ea397467e593fffb460603",
+      "built": "635572c525e6662a3560ec57479fba879d42711be6ea397467e593fffb460603",
+      "installed": "635572c525e6662a3560ec57479fba879d42711be6ea397467e593fffb460603"
+    },
+    {
+      "name": "FreeCADGui.pyd",
+      "before": "59bd67e56bbcdcc511449d1c859746042eef781580a60d16a3662002d68e9c5d",
+      "built": "59bd67e56bbcdcc511449d1c859746042eef781580a60d16a3662002d68e9c5d",
+      "installed": "59bd67e56bbcdcc511449d1c859746042eef781580a60d16a3662002d68e9c5d"
+    },
+    {
+      "name": "FreeCADBase.dll",
+      "before": "7b1aa0345a490e7f476dbc994d533f7edb5ae1b00a172383338079ed49953aa7",
+      "built": "7b1aa0345a490e7f476dbc994d533f7edb5ae1b00a172383338079ed49953aa7",
+      "installed": "7b1aa0345a490e7f476dbc994d533f7edb5ae1b00a172383338079ed49953aa7"
+    },
+    {
+      "name": "FreeCADApp.dll",
+      "before": "5c1de34e607bf1047b5090d6304bdb87a3700e615aa102e348fffea422a9f32d",
+      "built": "5c1de34e607bf1047b5090d6304bdb87a3700e615aa102e348fffea422a9f32d",
+      "installed": "5c1de34e607bf1047b5090d6304bdb87a3700e615aa102e348fffea422a9f32d"
+    },
+    {
+      "name": "FreeCADGui.dll",
+      "before": "ed7a0ad7eb32ff481409a11f3e8b7065530c4aef1539ca69cc6f12621fd94ed7",
+      "built": "b218d013c6413c70be349f466a0ef17ec0d01bec677088163b96522b8abd5c79",
+      "installed": "b218d013c6413c70be349f466a0ef17ec0d01bec677088163b96522b8abd5c79"
+    }
+  ],
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "2b857515bad269cd93fc6c37ca41ff0863446817831c0e4570a0943f6e5b1016"
+  }
+}

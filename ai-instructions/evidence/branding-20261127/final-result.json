@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "checks": [
+    "native version, Qt application/display name, empty-window title",
+    "all product icon, About and 28 splash resource aliases",
+    "document/modified title and native save/reopen geometry",
+    "ShowVersionInTitle preference",
+    "native About product, version and rendered banner"
+  ],
+  "windows_caption": "FreeCAD Plus 2.0.0",
+  "config": {
+    "Application": "FreeCAD Plus",
+    "ExeName": "FreeCAD",
+    "ExeVendor": "FreeCAD",
+    "ExeVersion": "2.0.0",
+    "UserAppData": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\branding27\\installed-final\\profile\\data\\",
+    "UserParameter": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\branding27\\installed-final\\profile\\user.cfg",
+    "AppIcon": "freecad-plus",
+    "AboutImage": ":/icons/plus-about.svg",
+    "SplashScreen": ":/icons/plus-splash.svg",
+    "SplashInfoVersion": "",
+    "SplashInfoExeName": ""
+  },
+  "title_with_document": "[*] branding - FreeCAD Plus 2.0.0",
+  "tests": 5,
+  "errors": 0,
+  "failures": 0
+}

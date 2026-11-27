@@ -1,5 +1,6 @@
 
 // Version Number
+#define FCApplicationName "${PACKAGE_DISPLAY_NAME}"
 #define FCVersionMajor  "${PACKAGE_VERSION_MAJOR}"
 #define FCVersionMinor  "${PACKAGE_VERSION_MINOR}"
 #define FCVersionName   "${PACKAGE_VERSION_NAME}"

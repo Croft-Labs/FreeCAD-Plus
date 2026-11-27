@@ -71,6 +71,15 @@ See [evidence](evidence/file-dialog-fix-20261125/README.md).
 
 # FreeCAD Plus: Current work state
 
+## FreeCAD Plus 2.0.0 branding — installed November 27, 2026
+
+Name, version, About/splash and remaining product logos are updated. Native
+Windows caption and both executable property versions are verified. Desktop
+shortcut renamed with launcher/profile preserved. Build, 32 staged and 32
+installed regressions pass; final GUI correction passes branding and 5 navigation
+checks. See [evidence](evidence/branding-20261127/README.md). Restart an older
+running instance. Component edit-modes proposal remains pending.
+
 ## Clone and Extract geometry - installed November 25, 2026
 
 Modeling > Other now offers Clone and Extract geometry. Whole objects from direct

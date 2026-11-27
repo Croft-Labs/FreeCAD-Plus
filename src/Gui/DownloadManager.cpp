@@ -24,6 +24,7 @@
 #include <iostream>
 
 #include <QByteArray>
+#include <QCoreApplication>
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QNetworkRequest>
@@ -230,7 +231,7 @@ void DownloadManager::setRemovePolicy(RemovePolicy policy)
 
 void DownloadManager::save() const
 {
-    QSettings settings;
+    QSettings settings(QCoreApplication::organizationName(), QStringLiteral("FreeCAD"));
     settings.beginGroup(QLatin1String("downloadmanager"));
     QMetaEnum removePolicyEnum = staticMetaObject.enumerator(
         staticMetaObject.indexOfEnumerator("RemovePolicy")
@@ -265,7 +266,7 @@ void DownloadManager::save() const
 
 void DownloadManager::load()
 {
-    QSettings settings;
+    QSettings settings(QCoreApplication::organizationName(), QStringLiteral("FreeCAD"));
     settings.beginGroup(QLatin1String("downloadmanager"));
     QSize size = settings.value(QLatin1String("size")).toSize();
     if (size.isValid()) {

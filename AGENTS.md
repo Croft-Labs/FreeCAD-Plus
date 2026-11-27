@@ -41,7 +41,10 @@ specific reimplementation work is authorized.
   archived-fork target for reference. Use the separate `freecad plus 0.1.0.lnk`
   for the new development build. Verify its executable and reopen/check target
   and working directory after updates. Preserve unrelated shortcuts and retained
-  reference builds. A verified shortcut is not a claim of completed owner packaging.
+  reference builds. November 27 owner branding approval supersedes the development
+  shortcut label above: use `FreeCAD Plus 2.0.0.lnk`, preserving its launcher,
+  arguments, working directory and isolated settings. A verified shortcut is not
+  a claim of completed owner packaging.
 - Batch related authorized changes before costly builds; use proportionate quick
   checks and record deferred runtime validation.
 - Generated validation output belongs only in

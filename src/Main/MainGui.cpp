@@ -196,10 +196,11 @@ int main(int argc, char** argv)
     // set the banner (for logging and console)
     App::Application::Config()["CopyrightInfo"] = sBanner;
     App::Application::Config()["AppIcon"] = "freecad-plus";
-    App::Application::Config()["SplashScreen"] = "freecadsplash";
-    App::Application::Config()["AboutImage"] = App::Application::isDevelopmentVersion()
-        ? "freecadaboutdev"
-        : "freecadabout";
+    App::Application::Config()["SplashScreen"] = ":/icons/plus-splash.svg";
+    App::Application::Config()["AboutImage"] = ":/icons/plus-about.svg";
+    // The branded SVG includes both the product name and version.
+    App::Application::Config()["SplashInfoExeName"] = "";
+    App::Application::Config()["SplashInfoVersion"] = "";
     App::Application::Config()["StartWorkbench"] = "PartDesignWorkbench";
     // App::Application::Config()["HiddenDockWindow"] = "Property editor";
     App::Application::Config()["SplashAlignment"] = "Bottom|Left";

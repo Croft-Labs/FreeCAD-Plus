@@ -2357,7 +2357,7 @@ void processProgramOptions(const boost::program_options::variables_map& vm, std:
 {
     if (vm.contains("version") && !vm.contains("verbose")) {
         std::stringstream str;
-        str << mConfig["ExeName"] << " " << mConfig["ExeVersion"]
+        str << mConfig["Application"] << " " << mConfig["ExeVersion"]
             << " Revision: " << mConfig["BuildRevision"] << '\n';
         throw Base::ProgramInformation(str.str());
     }
@@ -2494,6 +2494,8 @@ void processProgramOptions(const boost::program_options::variables_map& vm, std:
 
 void Application::initConfig(int argc, char ** argv)
 {
+    // Display branding is independent of executable/module names and profile paths.
+    mConfig.try_emplace("Application", FCApplicationName);
     // find the home path....
     mConfig["AppHomePath"] = Base::FileInfo::pathToString(
         ApplicationDirectories::findHomePath(argv[0])
@@ -2629,7 +2631,7 @@ void Application::initConfig(int argc, char ** argv)
         // Python interpreter
         if (mConfig["Verbose"] != "Strict")
             Base::Console().message("%s %s, Libs: %s.%s.%s%sR%s\n%s",
-                              mConfig["ExeName"].c_str(),
+                              mConfig["Application"].c_str(),
                               mConfig["ExeVersion"].c_str(),
                               mConfig["BuildVersionMajor"].c_str(),
                               mConfig["BuildVersionMinor"].c_str(),
@@ -2639,7 +2641,7 @@ void Application::initConfig(int argc, char ** argv)
                               mConfig["CopyrightInfo"].c_str());
         else
             Base::Console().message("%s %s, Libs: %s.%s.%s%sR%s\n",
-                              mConfig["ExeName"].c_str(),
+                              mConfig["Application"].c_str(),
                               mConfig["ExeVersion"].c_str(),
                               mConfig["BuildVersionMajor"].c_str(),
                               mConfig["BuildVersionMinor"].c_str(),

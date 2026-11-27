@@ -1,3 +1,13 @@
+# November 27: FreeCAD Plus 2.0.0 branding
+
+- [x] Apply approved product name, version and Plus logo resources.
+- [x] Build and verify native GUI, CLI, Windows properties and file/navigation behavior.
+- [x] Install seven verified binaries and rename the development shortcut; preserve settings.
+- [x] Update packaging identity/assets without publishing packages.
+
+See [delivery evidence](evidence/branding-20261127/README.md).
+The separate component edit-modes proposal remains pending approval.
+
 # November 27: Approved Components panel previews
 
 - [x] Retain tabs/tree expansion during component activation; save active assembly.

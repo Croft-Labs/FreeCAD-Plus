@@ -1,5 +1,23 @@
 # Default settings
 
+## FreeCAD Plus 2.0.0 branding — November 27, 2026
+
+Owner requests the product name **FreeCAD Plus**, version **2.0.0** in current
+product/version displays, and the existing outlined green-plus logo wherever the
+Classic product logo was still used. This includes the title/taskbar, development
+shortcut, About/splash, runtime/CLI diagnostics, Windows executable properties and
+packaging assets. Preserve accurate contributor/license/dependency information,
+historical source identifiers, executable/module identities, saved documents and
+settings paths. Unrelated command and external-service icons remain unchanged.
+
+The owner approved the direct branding preview with “implement changes” on
+November 27. Companion `a83ce5b7558e`, fixture baseline
+`bd5a5fe56ed009945a74bffbf0a9a67692c995c6`, fingerprint
+`61d19a00c60cb49a836a29314ca939d7d67fbd12732868b83c95809e7a7aea41`.
+Chat approval is authoritative; no companion approval state was set on the
+owner's behalf. See [branding delivery evidence](../evidence/branding-20261127/README.md).
+The separate component edit-modes preview is not approved by this branding request.
+
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
 
 ## Confirmed defaults

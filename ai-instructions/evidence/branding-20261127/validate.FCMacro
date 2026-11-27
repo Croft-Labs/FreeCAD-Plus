@@ -1,0 +1,82 @@
+import os,sys,json,traceback,unittest,hashlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def settle():Gui.updateGui();QtTest.QTest.qWait(130)
+def run():
+    result={'ok':False,'checks':[]}
+    try:
+        from freecad_plus import document,ui_modes
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,980);win.show();settle()
+        assert App.Version()[:3]==['2','0','0'],App.Version()
+        assert App.ConfigGet('Application')=='FreeCAD Plus'
+        assert App.ConfigGet('ExeName')=='FreeCAD'
+        assert QtWidgets.QApplication.applicationName()=='FreeCAD Plus'
+        assert QtWidgets.QApplication.applicationDisplayName()=='FreeCAD Plus'
+        assert 'FreeCAD Plus 2.0.0' in win.windowTitle(),win.windowTitle()
+        import ctypes
+        user32=ctypes.windll.user32
+        user32.GetWindowTextW.argtypes=[ctypes.c_void_p,ctypes.c_wchar_p,ctypes.c_int]
+        title_buffer=ctypes.create_unicode_buffer(1024)
+        user32.GetWindowTextW(int(win.winId()),title_buffer,1024)
+        assert title_buffer.value=='FreeCAD Plus 2.0.0',title_buffer.value
+        result['windows_caption']=title_buffer.value
+        result['checks'].append('native version, Qt application/display name, empty-window title')
+        result['config']={key:App.ConfigGet(key) for key in ('Application','ExeName','ExeVendor','ExeVersion','UserAppData','UserParameter','AppIcon','AboutImage','SplashScreen','SplashInfoVersion','SplashInfoExeName')}
+        assert str(out/'profile') in App.ConfigGet('UserAppData')
+        plus=QtGui.QImage(':/icons/freecad-plus.svg');assert not plus.isNull()
+        def same(a,b):
+            a=a.convertToFormat(QtGui.QImage.Format_ARGB32);b=b.convertToFormat(QtGui.QImage.Format_ARGB32)
+            return a.size()==b.size() and bytes(a.constBits())==bytes(b.constBits())
+        for prefix in (':/icons/',':/icons/FreeCAD-default/scalable/'):
+            for name in ('freecad.svg','freecad-doc.svg','freecad-doc.png'):
+                icon=QtGui.QImage(prefix+name);assert same(plus,icon),prefix+name
+        for name in ['freecadsplash.png','freecadsplash_2x.png']+[f'freecadsplash{i}{scale}.png' for i in range(13) for scale in ('','_2x')]:
+            image=QtGui.QImage(':/icons/'+name);assert not image.isNull(),name
+            assert same(image,QtGui.QImage(':/icons/plus-splash.svg')),name
+        for name in ('freecadabout.png','freecadaboutdev.png'):
+            assert same(QtGui.QImage(':/icons/'+name),QtGui.QImage(':/icons/plus-about.svg'))
+        result['checks'].append('all product icon, About and 28 splash resource aliases')
+        assert QtGui.QImage(App.ConfigGet('SplashScreen')).save(str(out/'splash.png'))
+        assert not App.ConfigGet('SplashInfoVersion') and not App.ConfigGet('SplashInfoExeName')
+        d=document.new_document('BrandingFixture');owner=document.validate(d).Definitions[0]
+        owner.newObject('Part::Box','Box');d.recompute();settle()
+        assert 'BrandingFixture' in win.windowTitle() and 'FreeCAD Plus 2.0.0' in win.windowTitle(),win.windowTitle()
+        path=out/'branding.cadprt';document.save_document(d,path);App.closeDocument(d.Name)
+        d=App.openDocument(str(path));settle();assert abs(d.getObject('Box').Shape.Volume-1000)<1e-6
+        result['title_with_document']=win.windowTitle()
+        assert 'FreeCAD Plus 2.0.0' in win.windowTitle()
+        result['checks'].append('document/modified title and native save/reopen geometry')
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General');old=prefs.GetBool('ShowVersionInTitle',True)
+        prefs.SetBool('ShowVersionInTitle',False);extra=App.newDocument('VersionHidden');settle()
+        assert 'FreeCAD Plus' in win.windowTitle() and '2.0.0' not in win.windowTitle(),win.windowTitle()
+        prefs.SetBool('ShowVersionInTitle',old);App.closeDocument(extra.Name);settle()
+        result['checks'].append('ShowVersionInTitle preference')
+        errors=[]
+        def about():
+            dialog=QtWidgets.QApplication.activeModalWidget()
+            try:
+                assert dialog is not None
+                assert '2.0.0' in dialog.findChild(QtWidgets.QLabel,'labelBuildVersion').text()
+                assert 'FreeCAD Plus' in dialog.findChild(QtWidgets.QLabel,'labelAuthor').text()
+                image=dialog.findChild(QtWidgets.QLabel,'labelSplashPicture').pixmap().toImage();assert not image.isNull()
+                assert dialog.grab().save(str(out/'about.png'))
+                result['checks'].append('native About product, version and rendered banner')
+            except BaseException:errors.append(traceback.format_exc())
+            finally:
+                if dialog:dialog.reject()
+        QtCore.QTimer.singleShot(350,about);Gui.runCommand('Std_About');assert not errors,errors
+        App.closeDocument(d.Name)
+        sys.path.insert(0,str(Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')))
+        names=os.environ.get('PLUS_TEST_NAMES','TestFileWorkflows,TestComponentNavigation').split(',')
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(n) for n in names if n)
+        with (out/'tests.txt').open('w') as stream:r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=r.wasSuccessful(),tests=r.testsRun,errors=len(r.errors),failures=len(r.failures))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1500,run)

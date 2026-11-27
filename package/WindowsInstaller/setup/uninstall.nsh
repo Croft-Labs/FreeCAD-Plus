@@ -19,6 +19,7 @@ Section "un.FreeCAD" un.SecUnProgramFiles
   RMDir /r "$0"
   # delete desktop icon
   Delete "$DESKTOP\${APP_NAME} ${APP_SERIES_NAME}.lnk"
+  Delete "$DESKTOP\${APP_DISPLAY_NAME} ${APP_VERSION}.lnk"
 
   # remove file extension .FCStd
   ReadRegStr $R0 SHCTX "Software\Classes\${APP_EXT}" ""

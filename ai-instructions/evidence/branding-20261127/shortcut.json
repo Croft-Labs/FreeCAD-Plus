@@ -1,0 +1,11 @@
+{
+  "Old": "C:\\Users\\dgium\\Desktop\\freecad plus 0.1.0.lnk",
+  "New": "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk",
+  "Properties": {
+    "TargetPath": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\Launch FreeCAD Plus.bat",
+    "Arguments": "",
+    "WorkingDirectory": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus",
+    "IconLocation": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADPlus.ico,0"
+  },
+  "Description": "FreeCAD Plus 2.0.0"
+}

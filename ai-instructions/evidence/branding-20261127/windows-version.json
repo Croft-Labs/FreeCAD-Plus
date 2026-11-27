@@ -1,0 +1,21 @@
+{
+  "Cli": "FreeCAD Plus 2.0.0 Revision: 44227 +1040 (Git)",
+  "Windows": [
+    {
+      "Name": "FreeCAD.exe",
+      "Description": "FreeCAD Plus",
+      "Product": "FreeCAD Plus",
+      "FileVersion": "2.0.0",
+      "ProductVersion": "2.0.0",
+      "NumericVersion": "2.0.0.0"
+    },
+    {
+      "Name": "FreeCADCmd.exe",
+      "Description": "FreeCAD Plus command line executable",
+      "Product": "FreeCAD Plus",
+      "FileVersion": "2.0.0",
+      "ProductVersion": "2.0.0",
+      "NumericVersion": "2.0.0.0"
+    }
+  ]
+}

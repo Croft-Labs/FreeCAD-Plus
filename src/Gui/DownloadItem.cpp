@@ -36,6 +36,7 @@
 #include <QNetworkRequest>
 #include <QNetworkProxy>
 #include <QSettings>
+#include <QCoreApplication>
 #include <QStandardPaths>
 
 #include "DownloadItem.h"
@@ -309,7 +310,7 @@ QString DownloadItem::getDownloadDirectory() const
 
 void DownloadItem::getFileName()
 {
-    QSettings settings;
+    QSettings settings(QCoreApplication::organizationName(), QStringLiteral("FreeCAD"));
     settings.beginGroup(QLatin1String("downloadmanager"));
     QString defaultLocation = getDownloadDirectory();
     QString downloadDirectory

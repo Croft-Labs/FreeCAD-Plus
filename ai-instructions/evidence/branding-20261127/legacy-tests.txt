@@ -1,0 +1,76 @@
+test_add_existing_converts_without_changing_edit_context (TestFileWorkflows.TestFileWorkflows.test_add_existing_converts_without_changing_edit_context) ... ok
+test_classic_data_cannot_open_as_cadprt (TestFileWorkflows.TestFileWorkflows.test_classic_data_cannot_open_as_cadprt) ... ok
+test_combined_filter_opens_and_imports_plus_documents (TestFileWorkflows.TestFileWorkflows.test_combined_filter_opens_and_imports_plus_documents) ... ok
+test_component_source_chooser_shows_both_formats (TestFileWorkflows.TestFileWorkflows.test_component_source_chooser_shows_both_formats) ... ok
+test_conversion_cancel_and_existing_destination (TestFileWorkflows.TestFileWorkflows.test_conversion_cancel_and_existing_destination) ... ok
+test_conversion_cursor_restores_after_error_cancel_and_success (TestFileWorkflows.TestFileWorkflows.test_conversion_cursor_restores_after_error_cancel_and_success) ... ok
+test_conversion_preserves_another_documents_pending_transaction (TestFileWorkflows.TestFileWorkflows.test_conversion_preserves_another_documents_pending_transaction) ... ok
+test_convert_dialog_preserves_source_and_live_unsaved_edits (TestFileWorkflows.TestFileWorkflows.test_convert_dialog_preserves_source_and_live_unsaved_edits) ... ok
+test_direct_save_rejects_wrong_extension_even_with_preference_disabled (TestFileWorkflows.TestFileWorkflows.test_direct_save_rejects_wrong_extension_even_with_preference_disabled) ... ok
+test_gui_open_filters_keep_geometry_importers (TestFileWorkflows.TestFileWorkflows.test_gui_open_filters_keep_geometry_importers) ... ok
+test_gui_save_all_uses_document_specific_extensions (TestFileWorkflows.TestFileWorkflows.test_gui_save_all_uses_document_specific_extensions) ... ok
+test_gui_save_as_plus_filter_and_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_as_plus_filter_and_filename) ... ok
+test_gui_save_cancel_retains_filename_and_modified_state (TestFileWorkflows.TestFileWorkflows.test_gui_save_cancel_retains_filename_and_modified_state) ... ok
+test_gui_save_copy_classic_filter (TestFileWorkflows.TestFileWorkflows.test_gui_save_copy_classic_filter) ... ok
+test_gui_save_repairs_mislabelled_filename (TestFileWorkflows.TestFileWorkflows.test_gui_save_repairs_mislabelled_filename) ... ok
+test_mislabelled_plus_repair_preserves_links_and_source (TestFileWorkflows.TestFileWorkflows.test_mislabelled_plus_repair_preserves_links_and_source) ... ok
+test_native_classic_cannot_save_as_cadprt (TestFileWorkflows.TestFileWorkflows.test_native_classic_cannot_save_as_cadprt) ... ok
+test_native_import_converts_to_catalog_without_placement (TestFileWorkflows.TestFileWorkflows.test_native_import_converts_to_catalog_without_placement) ... ok
+test_native_import_defaults_to_both_formats_even_after_single_format (TestFileWorkflows.TestFileWorkflows.test_native_import_defaults_to_both_formats_even_after_single_format) ... ok
+test_native_open_command_converts_and_opens_plus (TestFileWorkflows.TestFileWorkflows.test_native_open_command_converts_and_opens_plus) ... ok
+test_native_open_repair_cursor_idle_until_save_copy (TestFileWorkflows.TestFileWorkflows.test_native_open_repair_cursor_idle_until_save_copy) ... ok
+test_native_plus_save_as_copy_and_reopen (TestFileWorkflows.TestFileWorkflows.test_native_plus_save_as_copy_and_reopen) ... ok
+test_native_save_as_and_copy_keep_external_links_in_other_directory (TestFileWorkflows.TestFileWorkflows.test_native_save_as_and_copy_keep_external_links_in_other_directory) ... ok
+test_open_classic_choice_does_not_convert (TestFileWorkflows.TestFileWorkflows.test_open_classic_choice_does_not_convert) ... ok
+test_panel_import_converts_without_placing_children (TestFileWorkflows.TestFileWorkflows.test_panel_import_converts_without_placing_children) ... ok
+test_save_on_close_uses_cadprt (TestFileWorkflows.TestFileWorkflows.test_save_on_close_uses_cadprt) ... ok
+test_unsupported_conversion_reports_error_without_output (TestFileWorkflows.TestFileWorkflows.test_unsupported_conversion_reports_error_without_output) ... ok
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup) ... ok
+test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation) ... FAIL
+test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory) ... FAIL
+test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly) ... ERROR
+test_projection_ownership_and_history_without_body_rows (TestComponentPanel.TestComponentPanel.test_projection_ownership_and_history_without_body_rows) ... ok
+test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context) ... ok
+
+======================================================================
+ERROR: test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 176, in test_nested_import_labels_and_external_edit_remain_in_assembly
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Shared child" conflicts with "Shared child" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 214, in test_file_origin_visibility_persistence_and_no_display_model_mutation
+    self.assertEqual(self.widget.trees[1].topLevelItemCount(), 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 112, in test_mouse_selection_double_click_edit_and_model_occurrence_memory
+    self.assertEqual(self.widget.tabs.currentIndex(), 2)
+AssertionError: 1 != 2
+
+----------------------------------------------------------------------
+Ran 38 tests in 31.685s
+
+FAILED (failures=2, errors=1)

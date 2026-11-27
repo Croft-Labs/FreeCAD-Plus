@@ -50,15 +50,16 @@ endif()
 
 project(FreeCAD)
 
-set(PACKAGE_VERSION_MAJOR "1")
-set(PACKAGE_VERSION_MINOR "1")
-set(PACKAGE_VERSION_PATCH "4") # number of patch release (e.g. "4" for the 0.18.4 release)
+set(PACKAGE_DISPLAY_NAME "FreeCAD Plus")
+set(PACKAGE_VERSION_MAJOR "2")
+set(PACKAGE_VERSION_MINOR "0")
+set(PACKAGE_VERSION_PATCH "0")
 set(PACKAGE_VERSION_SUFFIX "") # either "dev" for development snapshot or "" (empty string)
 set(PACKAGE_BUILD_VERSION "0") # used when the same FreeCAD version will be re-released (for example using an updated LibPack)
 string(TIMESTAMP PACKAGE_COPYRIGHT_YEAR "%Y")
 
 set(PACKAGE_VERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
-set(PACKAGE_STRING "${PROJECT_NAME} ${PACKAGE_VERSION}")
+set(PACKAGE_STRING "${PACKAGE_DISPLAY_NAME} ${PACKAGE_VERSION}")
 
 # include local modules
 include(CheckCXXCompilerFlag)

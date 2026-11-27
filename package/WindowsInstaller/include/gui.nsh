@@ -9,7 +9,7 @@ Installer user interface settings
 #--------------------------------
 # General
 
-Name "${APP_NAME} ${APP_VERSION}"
+Name "${APP_DISPLAY_NAME} ${APP_VERSION}"
 BrandingText " "
 
 #--------------------------------
@@ -86,8 +86,8 @@ BrandingText " "
 # Version information
 
 VIProductVersion "${APP_VERSION_NUMBER}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${APP_NAME}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "${APP_DIR}.${APP_VERSION_PATCH}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${APP_DISPLAY_NAME}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "${APP_VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "${APP_INFO}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${APP_VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "${APP_COPYRIGHT}"

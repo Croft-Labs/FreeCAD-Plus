@@ -88,7 +88,7 @@ macro(InitializeFreeCADBuildOptions)
             install(CODE "
                 execute_process(COMMAND
                     sed -i \"\" -e s/VERSION_STRING_FROM_CMAKE/${PACKAGE_VERSION}/
-                    -e s/NAME_STRING_FROM_CMAKE/${PROJECT_NAME}/
+                    -e \"s/NAME_STRING_FROM_CMAKE/${PACKAGE_DISPLAY_NAME}/\"
                     ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/Info.plist)
                    ")
 

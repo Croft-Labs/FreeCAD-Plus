@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## FreeCAD Plus 2.0.0 branding — installed November 27, 2026
+
+Native title/taskbar metadata, About/splash, CLI and Windows properties now use
+FreeCAD Plus 2.0.0, with the Plus logo in remaining product resource aliases and
+platform assets. The desktop shortcut is FreeCAD Plus 2.0.0. Native build passes;
+32 staged and 32 installed regressions pass, plus final branding/5 navigation
+checks. Seven installed binary hashes match; owner settings are unchanged.
+See [delivery evidence and package limits](evidence/branding-20261127/README.md).
+The separate component edit-modes preview remains pending approval.
+
 ## Approved Components panel updates — November 27, 2026
 
 All approved navigation, saved active assembly, compact Assembly controls, full

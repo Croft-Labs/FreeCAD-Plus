@@ -1,0 +1,10 @@
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 5.320s
+
+OK

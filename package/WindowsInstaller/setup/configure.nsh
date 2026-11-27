@@ -24,21 +24,21 @@ Section -InstallData
    StrCpy $StartmenuFolder "${APP_DIR}"
   ${endif}
   CreateDirectory "$SMPROGRAMS\$StartmenuFolder"
-  CreateShortCut "$SMPROGRAMS\$StartmenuFolder\${APP_NAME}.lnk" "$INSTDIR\${APP_RUN}" "" "$INSTDIR\${APP_RUN}" "" "" "" "${APP_SHORTCUT_INFO}"
+  CreateShortCut "$SMPROGRAMS\$StartmenuFolder\${APP_DISPLAY_NAME}.lnk" "$INSTDIR\${APP_RUN}" "" "$INSTDIR\${APP_RUN}" "" "" "" "${APP_SHORTCUT_INFO}"
   # Link to website and Wiki
   WriteINIStr "$SMPROGRAMS\$StartmenuFolder\${APP_WEBPAGE_INFO}.url" "InternetShortcut" "URL" "${APP_WEBPAGE}"
   WriteINIStr "$SMPROGRAMS\$StartmenuFolder\${APP_WIKI_INFO}.url" "InternetShortcut" "URL" "${APP_WIKI}"
   # create desktop icon
   ${if} $CreateDesktopIcon == "true"
    SetOutPath "$INSTDIR\bin"
-   CreateShortCut "$DESKTOP\${APP_NAME} ${APP_SERIES_NAME}.lnk" "$INSTDIR\${APP_RUN}" "" "$INSTDIR\${APP_RUN}" "" "" "" "${APP_SHORTCUT_INFO}"
+   CreateShortCut "$DESKTOP\${APP_DISPLAY_NAME} ${APP_VERSION}.lnk" "$INSTDIR\${APP_RUN}" "" "$INSTDIR\${APP_RUN}" "" "" "" "${APP_SHORTCUT_INFO}"
   ${endif}
 
   # Uninstaller information
   ${If} $MultiUser.InstallMode == "CurrentUser"
-    WriteRegStr SHCTX ${APP_UNINST_KEY} "DisplayName" "${APP_NAME} ${APP_VERSION} $(TEXT_INSTALL_CURRENTUSER)"
+    WriteRegStr SHCTX ${APP_UNINST_KEY} "DisplayName" "${APP_DISPLAY_NAME} ${APP_VERSION} $(TEXT_INSTALL_CURRENTUSER)"
   ${Else}
-    WriteRegStr SHCTX ${APP_UNINST_KEY} "DisplayName" "${APP_NAME} ${APP_VERSION}"
+    WriteRegStr SHCTX ${APP_UNINST_KEY} "DisplayName" "${APP_DISPLAY_NAME} ${APP_VERSION}"
   ${EndIf}
 
   WriteRegStr SHCTX ${APP_UNINST_KEY} "UninstallString" '"$INSTDIR\${SETUP_UNINSTALLER}"'
