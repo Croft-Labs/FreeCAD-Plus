@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## Appearance task and Parts menu — installed November 27, 2026
+
+Parts > Appearance now edits owned bodies, meshes and selected CAD faces through
+the approved native task. Body/Face conversion, color, linked transparency fields,
+Done/Apply/Cancel, shared source/host Undo and saved materials are implemented.
+The Parts menu uses the requested groups. Source regressions pass 43/43; installed
+checks pass 11/11, with native colored-Body rendering verified. Eight installed
+hashes match; owner settings and shortcut are preserved. Restart required.
+See [approval, screenshots and delivery evidence](evidence/appearance-20261127/README.md).
+The separate navigation and saved active-assembly proposal remains pending.
+
 ## Save All and Hidden line — installed November 26, 2026
 
 The common toolbar now orders Save, Save All, Save As; actual saves cover every

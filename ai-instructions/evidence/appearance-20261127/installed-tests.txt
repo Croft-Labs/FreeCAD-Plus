@@ -1,0 +1,16 @@
+test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation) ... ok
+test_cancel_and_stale_geometry (TestAppearance.TestAppearance.test_cancel_and_stale_geometry) ... ok
+test_external_source_owns_undo_and_persistence (TestAppearance.TestAppearance.test_external_source_owns_undo_and_persistence) ... ok
+test_mesh_body_tip_and_rejected_child (TestAppearance.TestAppearance.test_mesh_body_tip_and_rejected_child) ... ok
+test_native_save_and_reopen (TestAppearance.TestAppearance.test_native_save_and_reopen) ... ok
+test_native_task_modes_and_slider (TestAppearance.TestAppearance.test_native_task_modes_and_slider) ... ok
+test_occurrence_face_picks_and_toggle (TestAppearance.TestAppearance.test_occurrence_face_picks_and_toggle) ... ok
+test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces) ... ok
+test_transparency_only_preserves_face_colors (TestAppearance.TestAppearance.test_transparency_only_preserves_face_colors) ... ok
+test_undo_redo_and_geometry_identity (TestAppearance.TestAppearance.test_undo_redo_and_geometry_identity) ... ok
+test_whole_and_faces_preserve_other_material_fields_and_children (TestAppearance.TestAppearance.test_whole_and_faces_preserve_other_material_fields_and_children) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 9.412s
+
+OK

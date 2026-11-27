@@ -1,3 +1,12 @@
+# November 27: Appearance installed
+
+Approved Appearance task and Parts menu grouping are installed. Native source
+regressions pass 43/43 and installed checks 11/11; renderer confirms whole-Body
+and selected-face colors. Eight payload hashes match with rollback copies.
+Owner CFG/shortcut preserved. Restart required. See
+[delivery evidence](evidence/appearance-20261127/README.md).
+Navigation/tab retention and saved active assembly remain a separate pending proposal.
+
 # November 26: Save All and Hidden line installed
 
 Both reviewed changes are installed after chat approval. The native renderer

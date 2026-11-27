@@ -287,7 +287,7 @@ class TestPartTransfer(unittest.TestCase):
         def select_export():
             menu = QtWidgets.QApplication.activePopupWidget()
             try:
-                action = next(a for a in menu.actions() if a.text() == 'Export parts to file…')
+                action = next(a for a in menu.actions() if a.text() == 'Export…')
                 menu.grab().save(str(self.out/'parts-menu.png'))
                 QtCore.QTimer.singleShot(100, accept_dialog); action.trigger()
             except BaseException as error: errors.append(str(error))

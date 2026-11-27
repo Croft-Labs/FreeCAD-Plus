@@ -1,5 +1,27 @@
 # Task panel
 
+## Appearance workflow — owner approval November 27, 2026
+
+Parts > Appearance opens a native task panel. Body and Face radio buttons choose
+the selection mode; a list shows the targeted geometry. Body-to-Face expands all
+CAD faces of the listed bodies; Face-to-Body lists each owning body once. The
+collector follows existing click/Shift-click, Remove, Clear and Delete behavior.
+Eligible initial viewport faces are retained. Otherwise the component's own
+modeled results are listed. Body tips represent their current results; sketches,
+historical Body features and child components are excluded. Meshes support whole
+Body appearance; mesh facets are not CAD faces.
+
+Color uses a native chooser. Transparency uses a synchronized 0–100 percent slider
+and number field, with Mixed displayed for differing initial values. Only edited
+appearance fields change. A whole-body color replaces its face colors; editing
+selected faces preserves other faces and all unrelated material fields.
+
+Done applies and closes. Apply commits and keeps the task open. Cancel discards
+unapplied edits, retaining earlier Apply results. Each application uses native Undo;
+shared imported definitions retain native linked Undo across source and host files.
+Changes affect all instances of the shared definition, with no occurrence overrides
+or geometry/history nodes. Stale geometry/context is rejected before applying.
+
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
 
 ## Confirmed requirements

@@ -22,6 +22,7 @@ set(FreeCADPlus_SRCS
     TestComponentRename.py
     TestComponentNames.py
     TestActiveAssembly.py
+    TestAppearance.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py
     TestInstanceRemoval.py
@@ -84,6 +85,9 @@ set(FreeCADPlus_SRCS
     freecad_plus/legacy_hierarchy.py
     freecad_plus/external.py
     freecad_plus/panel.py
+    freecad_plus/appearance.py
+    freecad_plus/appearance_ui.py
+    freecad_plus/appearance_task.py
     freecad_plus/assembly.py
     freecad_plus/constraints.py
     freecad_plus/constraint_task.py

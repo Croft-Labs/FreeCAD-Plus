@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "path": "freecad_plus/appearance.py",
+      "before": null,
+      "installed": "530e63624718555bcc0d33d078b67c5d66ca08d5ec7f6bbcb87e7420e9da9b14"
+    },
+    {
+      "path": "freecad_plus/appearance_ui.py",
+      "before": null,
+      "installed": "ecedffde580a57178ae84955d38b45f27152a1125ca48be9e12bcf99c7f3ccdc"
+    },
+    {
+      "path": "freecad_plus/appearance_task.py",
+      "before": null,
+      "installed": "f26757efe16b6dcfbb3f808d9894b0bc438301baeb3d300f1b691562271b9574"
+    },
+    {
+      "path": "freecad_plus/panel.py",
+      "before": "19c0c6f14ba8b7043f7709d10a79c8f24502c307765945b56a83c62205464222",
+      "installed": "ffdea1607290aa783ae7b1dee541d33955b062ff51e919d714a74a434a67644b"
+    },
+    {
+      "path": "freecad_plus/selection_list.py",
+      "before": "663d11bf6d2c5da8b443eff982013756827fa76d3f04b181c4ee330aa6ee7db6",
+      "installed": "eae8eac06abe6892ab6080bf1c2ba7342c26a5c81c0146602bd9e51b8878c7ee"
+    },
+    {
+      "path": "TestAppearance.py",
+      "before": null,
+      "installed": "239945878ae0119311476c93b5067198a3a924b44c3451826b05df3954c3617c"
+    },
+    {
+      "path": "TestComponentImport.py",
+      "before": "fe28226a132cb456d68d43483685871daa2d9c78485c839469d5f7835efbac67",
+      "installed": "15c12d080ca52401097e0be9146658095fa99c94489b3e3ec3cded85f0f39064"
+    },
+    {
+      "path": "TestPartTransfer.py",
+      "before": "41749b73d3fa68b0a0394d6592d2ff4a00e4a469b741d601e63e96146159e639",
+      "installed": "c0eac38279315abac4e5edcf07bc9eb350830e54cb56640a282e0cd31a4652b6"
+    }
+  ],
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7483aacbcff5c8efb0ef0d17d920be284a6fb225fd444004b24e8f517a4c1a52",
+    "C:\\Users\\dgium\\Desktop\\freecad plus 0.1.0.lnk": "3fe445e0575129b44b5032cd058cb25f49762f27f5420f91e326592aad375751"
+  }
+}

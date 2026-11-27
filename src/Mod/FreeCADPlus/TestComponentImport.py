@@ -44,7 +44,7 @@ class TestComponentImport(unittest.TestCase):
                 if isinstance(modal,QtWidgets.QDialog):modal.reject()
                 return
             if isinstance(popup,QtWidgets.QMenu) and not observed:
-                action=next((a for a in popup.actions() if a.text()=='Import Models from File'),None)
+                action=next((a for a in popup.actions() if a.text() in ('Import Models from File','Import…')),None)
                 if action is None:observed.append('missing');popup.close();return
                 observed.append('menu')
                 QtTest.QTest.mouseClick(popup, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,

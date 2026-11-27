@@ -1,0 +1,50 @@
+import os,sys,json,traceback,unittest,importlib
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import panel,ui_modes
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        Gui.getMainWindow().showNormal();Gui.getMainWindow().resize(1400,980);Gui.getMainWindow().show()
+        source=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+        if os.environ['PLUS_TEST_PHASE'] in ('source','regression'):
+            if panel._panel:
+                old=panel._panel;old.dispose();Gui.getMainWindow().removeDockWidget(old);old.deleteLater()
+            import freecad_plus
+            freecad_plus.__path__.insert(0,str(source/'freecad_plus'))
+            importlib.reload(panel)
+            from freecad_plus import selection_list
+            importlib.reload(selection_list)
+        sys.path.insert(0,str(source))
+        names=['TestAppearance']
+        if os.environ['PLUS_TEST_PHASE']=='regression':
+            names+=['TestActiveAssembly.TestActiveAssembly','TestPartTransfer.TestPartTransfer','TestComponentImport.TestComponentImport']
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name) for name in names)
+        with (out/'tests.txt').open('w') as stream:r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=r.wasSuccessful(),tests=r.testsRun,errors=len(r.errors),failures=len(r.failures))
+        if result['ok'] and os.environ['PLUS_TEST_PHASE']=='installed':
+            import Part
+            from PySide6 import QtGui
+            from freecad_plus import document,appearance_task
+            doc=document.new_document('AppearanceExample');owner=document.validate(doc).Definitions[0];owner.Label='Enclosure'
+            body=owner.newObject('PartDesign::Body','Body');body.Label='Housing'
+            tip=body.newObject('PartDesign::Feature','Result');tip.Shape=Part.makeBox(40,30,12);body.Tip=tip;doc.recompute()
+            task=appearance_task.open_task(owner,());f=task.form
+            f.color_value=QtGui.QColor('#2479bc');f.color_changed=True;assert task.apply()
+            f.face.setChecked(True);f.targets=[(panel.identity(tip),'Face6')];f.refresh_targets();task.load_values()
+            f.color_value=QtGui.QColor('#dfa52d');f.color_changed=True;f.refresh_color();assert task.apply()
+            Gui.Selection.clearSelection();Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll();Gui.updateGui();QtTest.QTest.qWait(200)
+            Gui.activeDocument().activeView().saveImage(str(out/'colored-body.png'),900,650,'White')
+            win=Gui.getMainWindow();full=win.grab();ratio=full.devicePixelRatio();pos=f.mapTo(win,QtCore.QPoint(0,0))
+            crop=full.copy(QtCore.QRect(round(pos.x()*ratio),round(pos.y()*ratio),round(f.width()*ratio),round(f.height()*ratio)))
+            crop.save(str(out/'task-panel.png'))
+            document.save_document(doc,out/'AppearanceExample.cadprt')
+            task.reject()
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2300,run)

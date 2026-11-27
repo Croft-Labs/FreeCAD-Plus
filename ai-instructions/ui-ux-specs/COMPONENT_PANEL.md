@@ -1,5 +1,22 @@
 # Component panel
 
+## Appearance and Parts context menu — November 27, 2026
+
+Owner approved implementation of the reviewed Appearance task workflow. Component
+rows in Parts use these groups, with separators before, between, and after them:
+
+1. Edit; Make active assembly; Add to active component; Open in new window; Rename.
+2. Appearance; Part Type; Visibility.
+3. Import; Export.
+
+Appearance opens the shared task described in TASK_PANEL.md. Right-clicking the
+component preserves eligible faces previously selected in the viewport. Part Type
+and Visibility retain their existing ownership restrictions and are disabled when
+the current edit context cannot change them. Other tree menus retain their behavior.
+
+The separately previewed navigation/tab retention and saved active-assembly changes
+are not included in this appearance implementation approval.
+
 ## Imported meshes in History — November 26, 2026
 
 Owner clarification: a mesh imported into a part is an item in that part's History.

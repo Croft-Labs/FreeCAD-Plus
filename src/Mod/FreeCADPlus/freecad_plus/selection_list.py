@@ -36,9 +36,9 @@ def pick_intent(remove):
 def feature_picker_active():
     """Only feature collectors own History clicks; ordinary trees stay native."""
     import FreeCADGui as Gui
-    from . import extrude_task, plane_task, sketch_task, clone_task
+    from . import extrude_task, plane_task, sketch_task, clone_task, appearance_task
     if any(task is not None and not task.closed for task in
-           (extrude_task._active, plane_task._active, sketch_task._active, clone_task._active)):
+           (extrude_task._active, plane_task._active, sketch_task._active, clone_task._active, appearance_task._active)):
         return True
     # Native component dress-up collectors expose this control only in Plus docs.
     return any(widget.isVisible() for widget in

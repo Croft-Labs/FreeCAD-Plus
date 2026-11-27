@@ -1,3 +1,13 @@
+# November 27: Appearance task and Parts menu
+
+- [x] Implement the approved Body/Face task, native material edits and menu groups.
+- [x] Preserve preselected faces; verify mixed values, Cancel, linked Undo and save/reopen.
+- [x] Pass 43 source regressions and 11 installed checks; inspect native colored-Body render.
+- [x] Install eight hash-verified files with rollback; preserve owner settings and shortcut.
+
+See [approval and delivery evidence](evidence/appearance-20261127/README.md).
+Navigation and saved active-assembly persistence are separately pending.
+
 # November 26: Save All and Hidden line correction
 
 - [x] Apply the reviewed Save All toolbar placement and native renderer correction.

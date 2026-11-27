@@ -521,6 +521,12 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._message(str(error))
 
     def eventFilter(self, watched, event):
+        if (self.trees and watched == self.trees[0].viewport()
+                and event.type() == QtCore.QEvent.MouseButtonPress
+                and event.button() == QtCore.Qt.RightButton):
+            # Capture viewport faces before Qt selects the clicked catalog row.
+            from .appearance_task import selection_snapshot
+            self._appearance_selection = selection_snapshot()
         if (len(self.trees) > 1 and watched in (self.trees[1], self.trees[1].viewport())
                 and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress)
                 and event.key() == QtCore.Qt.Key_Delete):
@@ -1412,6 +1418,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             return
         component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused', 'assembly')
         history_component = row is not None and row.kind == 'history_component'
+        if tree == self.trees[0] and row is not None and row.kind == 'model':
+            from .appearance_ui import parts_menu
+            return parts_menu(self, tree, point, item, row)
         if not component_row and not history_component and tree != self.trees[0]:
             return
         menu = QtWidgets.QMenu(self)
@@ -1586,6 +1595,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         super().closeEvent(event)
 
     def dispose(self):
+        from . import appearance_task
+        if appearance_task._active is not None:
+            appearance_task._active.reject()
         if self._closed:
             return
         self._sketch_exit_fit = None
