@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Approved Components panel updates — November 27, 2026
+
+Navigation/tab retention and saved active-assembly metadata are implemented;
+13/13 native source checks pass. Assembly controls and Parts file workflows are
+in progress under the owner's approval of all previews. Delivery evidence is in
+[Components validation](evidence/components-20261127/README.md).
+
 ## Appearance task and Parts menu — installed November 27, 2026
 
 Parts > Appearance now edits owned bodies, meshes and selected CAD faces through

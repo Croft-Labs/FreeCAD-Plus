@@ -880,3 +880,18 @@ dock area, with Properties directly below it. Components must be available throu
 the panel menu, not only a developer Python call.
 
 See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).
+# Approved Components navigation — November 27, 2026
+
+Owner: “implement all components tab changes previewed.” Approval covers native
+review `30a2bb731e86` (fingerprint
+`ab8728c6fbd9edac71464463805ba562a111f8030ee5ff28cf06eba2a66c955d`).
+Component activation and Add existing/new retain the selected panel tab. Assembly
+parent activation retains tree expansion. Standalone New Part still opens History;
+modeling/sketch tasks retain their existing temporary History routing.
+
+The active assembly and preferred occurrence are saved with the host document,
+separately from the edited component. Saved choices override workspace history;
+unavailable targets do not bind by label or a reused object name. Different views
+retain their choices; saving uses the current view for that file. Older files remain
+readable. See `evidence/components-20261127` for implementation validation.
+

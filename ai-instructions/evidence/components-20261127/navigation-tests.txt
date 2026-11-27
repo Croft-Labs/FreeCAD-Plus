@@ -1,0 +1,18 @@
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_chooser_flat_current_parts_counts_collapsed_files_and_cancel (TestActiveAssembly.TestActiveAssembly.test_chooser_flat_current_parts_counts_collapsed_files_and_cancel) ... ok
+test_copy_paste_into_selected_unused_assembly_and_stale_child_guard (TestActiveAssembly.TestActiveAssembly.test_copy_paste_into_selected_unused_assembly_and_stale_child_guard) ... ok
+test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded (TestActiveAssembly.TestActiveAssembly.test_counts_include_nested_repeated_hidden_but_not_reference_or_excluded) ... ok
+test_loaded_unimported_assembly_edits_in_source_without_importing (TestActiveAssembly.TestActiveAssembly.test_loaded_unimported_assembly_edits_in_source_without_importing) ... ok
+test_parts_context_menu_sets_root_without_changing_edit_or_model (TestActiveAssembly.TestActiveAssembly.test_parts_context_menu_sets_root_without_changing_edit_or_model) ... ok
+test_pending_task_and_stale_chooser_are_refused (TestActiveAssembly.TestActiveAssembly.test_pending_task_and_stale_chooser_are_refused) ... ok
+test_per_view_choice_and_saved_reopen_preference (TestActiveAssembly.TestActiveAssembly.test_per_view_choice_and_saved_reopen_preference) ... ok
+test_root_rename_delete_and_undo (TestActiveAssembly.TestActiveAssembly.test_root_rename_delete_and_undo) ... ok
+test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence (TestActiveAssembly.TestActiveAssembly.test_unused_assembly_child_edit_never_uses_unrelated_placed_occurrence) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 16.374s
+
+OK

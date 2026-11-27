@@ -22,6 +22,7 @@ set(FreeCADPlus_SRCS
     TestComponentRename.py
     TestComponentNames.py
     TestActiveAssembly.py
+    TestComponentNavigation.py
     TestAppearance.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py

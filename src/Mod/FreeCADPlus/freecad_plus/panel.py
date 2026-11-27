@@ -382,6 +382,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             tree.customContextMenuRequested.connect(lambda point, t=tree: self._menu(t, point))
             tree.itemChanged.connect(self._visibility_changed)
             if label == 'Part Tree':
+                # Double-click edits a component; only the disclosure arrow
+                # changes its expansion. Condensed groups are handled below.
+                tree.setExpandsOnDoubleClick(False)
                 page = QtWidgets.QWidget()
                 layout = QtWidgets.QVBoxLayout(page)
                 layout.setContentsMargins(0, 0, 0, 0)
@@ -930,7 +933,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if 'assembly' not in state:
             chosen = assembly.recalled(doc) or active
             state['assembly'] = identity(chosen) if chosen is not None else None
-            state['assembly_path'] = ()
+            state['assembly_path'] = tuple(identity(o) for o in assembly.recalled_path(doc, chosen))
         try:
             owner = lookup(state['assembly']) if state['assembly'] else None
             if owner is None:
@@ -967,9 +970,18 @@ class ComponentPanel(QtWidgets.QDockWidget):
         state = self._state(binding)
         state['assembly'] = identity(definition)
         state['assembly_path'] = tuple(identity(o) for o in path) if path else ()
-        assembly.remember(binding[0], definition)
         self.refresh()
-        self.tabs.setCurrentIndex(1)
+        owner, route = self._assembly_context(binding)
+        assembly.remember(binding[0], owner, route)
+
+    def slotStartSaveDocument(self, doc, *args):
+        # Save the current view's choice, including when the last explicit choice
+        # was made in a different view of this file. Other files keep their bookmark.
+        current = self._current()
+        if current and current[0] == doc:
+            owner, route = self._assembly_context(current)
+            if owner is not None:
+                assembly.remember(doc, owner, route)
 
     def make_active_assembly(self, row):
         self._assembly_guard()
@@ -1317,7 +1329,6 @@ class ComponentPanel(QtWidgets.QDockWidget):
         # Entering Edit marks the exact occurrence separately from all active rows.
         if row.kind != 'file':
             self._select_context(doc)
-            self.tabs.setCurrentIndex(2)
 
     def _select_context(self, doc):
         definition, route = editing.context_path(doc)
@@ -1335,7 +1346,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def _edit_clicked(self, item):
         if item.data(0, _ROLE).kind == 'instance_group':
-            return  # Qt expands/collapses this presentation collector; it has no Edit action.
+            if not item.treeWidget().expandsOnDoubleClick():
+                item.setExpanded(not item.isExpanded())
+            return  # A presentation collector has no Edit action.
         try:
             self.edit_row(item.data(0, _ROLE))
         except (ValueError, RuntimeError, ReferenceError) as error:

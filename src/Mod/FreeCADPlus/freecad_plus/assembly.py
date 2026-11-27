@@ -44,21 +44,58 @@ def label(part, current):
     return part.Label if part.Document == current else part.Label + ' (' + (Path(part.Document.FileName).stem if part.Document.FileName else part.Document.Label) + ')'
 
 
-def remember(doc, part):
-    """Last explicit choice is a workspace preference, not document geometry/data."""
-    prefs = App.ParamGet('User parameter:BaseApp/Preferences/FreeCADPlus/Assembly')
-    prefs.SetString(str(doc.Uid), json.dumps([str(part.Document.Uid), part.Name, part.ID]))
+BOOKMARK = 'FreeCADPlus.ActiveAssembly'
+
+
+def _reference(obj):
+    return [str(obj.Document.Uid), obj.Name, obj.ID]
+
+
+def _resolve_reference(ref):
+    uid, name, object_id = ref
+    source = next((d for d in App.listDocuments().values() if str(d.Uid) == uid), None)
+    obj = source.getObject(name) if source else None
+    return obj if obj is not None and obj.ID == object_id else None
+
+
+def remember(doc, part, path=()):
+    """Store navigation in the host archive without creating dependency edges."""
+    value = json.dumps({'version': 1, 'part': _reference(part),
+                        'path': [_reference(obj) for obj in path]}, sort_keys=True)
+    meta = dict(doc.Meta)
+    if meta.get(BOOKMARK) != value:
+        meta[BOOKMARK] = value
+        doc.Meta = meta
+
+
+def recalled_path(doc, part):
+    try:
+        data = json.loads(doc.Meta.get(BOOKMARK, '{}'))
+        path = tuple(_resolve_reference(ref) for ref in data.get('path', ()))
+        if path and all(obj is not None for obj in path):
+            from . import hierarchy
+            if hierarchy.resolve(doc, path)[0] == part:
+                return path
+    except (ValueError, TypeError, KeyError, RuntimeError, ReferenceError):
+        pass
+    return ()
 
 
 def recalled(doc):
     prefs = App.ParamGet('User parameter:BaseApp/Preferences/FreeCADPlus/Assembly')
     try:
-        uid, name, object_id = json.loads(prefs.GetString(str(doc.Uid)))
-        source = next((d for d in App.listDocuments().values() if str(d.Uid) == uid), None)
-        part = source.getObject(name) if source else None
-        if part is not None and part.ID == object_id and part in document.validate(source).Definitions:
+        if BOOKMARK in doc.Meta:
+            data = json.loads(doc.Meta[BOOKMARK])
+            if data.get('version') != 1:
+                return None
+            ref = data['part']
+        else:
+            # Migration fallback only: saved bookmarks always beat workspace history.
+            ref = json.loads(prefs.GetString(str(doc.Uid)))
+        part = _resolve_reference(ref)
+        if part is not None and part in document.validate(part.Document).Definitions:
             return part
-    except (ValueError, TypeError, RuntimeError, ReferenceError):
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, ReferenceError):
         pass
     return None
 
