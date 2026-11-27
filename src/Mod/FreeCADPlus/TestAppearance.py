@@ -70,7 +70,7 @@ class TestAppearance(unittest.TestCase):
         with self.assertRaises(ValueError):appearance.apply(self.owner,[(mesh,1)],(.2,.1,.4))
 
     def test_native_task_modes_and_slider(self):
-        t=appearance_task.open_task(self.owner,());f=t.form;settle()
+        t=appearance_task.open_task(self.owner,((panel.identity(self.box),''),(panel.identity(self.lid),'')));f=t.form;settle()
         QtTest.QTest.mouseClick(f.face,QtCore.Qt.LeftButton);self.assertEqual(len(f.targets),12)
         f.targets=[(panel.identity(self.box),'Face1'),(panel.identity(self.box),'Face3'),(panel.identity(self.lid),'Face2')]
         QtTest.QTest.mouseClick(f.body,QtCore.Qt.LeftButton);self.assertEqual(len(f.targets),2)
@@ -80,7 +80,7 @@ class TestAppearance(unittest.TestCase):
 
     def test_apply_cancel_done_and_mixed_preservation(self):
         appearance.apply(self.owner,[(self.box,1)],(.1,.8,.2),25)
-        t=appearance_task.open_task(self.owner,());f=t.form;settle()
+        t=appearance_task.open_task(self.owner,((panel.identity(self.box),''),));f=t.form;settle()
         self.assertIsNone(f.color_value);self.assertEqual(f.value.value(),-1)
         original=colors(self.box);undo=self.doc.UndoCount
         self.assertTrue(t.apply());self.assertEqual(self.doc.UndoCount,undo)
@@ -89,7 +89,7 @@ class TestAppearance(unittest.TestCase):
         f.value.setValue(40);self.assertTrue(t.apply());self.assertIs(appearance_task._active,t)
         self.assertEqual([c for c,a in colors(self.box)],[c for c,a in original])
         applied=colors(self.box);f.value.setValue(80);t.reject();self.assertEqual(colors(self.box),applied)
-        t=appearance_task.open_task(self.owner,());t.form.value.setValue(20);self.assertTrue(t.accept())
+        t=appearance_task.open_task(self.owner,((panel.identity(self.box),''),));t.form.value.setValue(20);self.assertTrue(t.accept())
         self.assertIsNone(appearance_task._active);self.assertTrue(all(a==.2 for c,a in colors(self.box)))
 
     def test_occurrence_face_picks_and_toggle(self):
@@ -110,7 +110,7 @@ class TestAppearance(unittest.TestCase):
         before=colors(self.box);undo=self.doc.UndoCount
         t=appearance_task.open_task(self.owner,());t.form.value.setValue(70);t.reject()
         self.assertEqual(colors(self.box),before);self.assertEqual(self.doc.UndoCount,undo)
-        t=appearance_task.open_task(self.owner,());self.box.Length=30;self.doc.recompute()
+        t=appearance_task.open_task(self.owner,((panel.identity(self.box),'Face1'),));self.box.Length=30;self.doc.recompute()
         t.form.value.setValue(70);self.assertFalse(t.apply());self.assertTrue(t.form.status.error)
         self.assertEqual(colors(self.box),before)
 
@@ -152,7 +152,7 @@ class TestAppearance(unittest.TestCase):
         document.save_document(host,Path(os.environ['PLUS_TEST_DIR'])/'host.cadprt')
         external.import_file(host,source);hierarchy.add_child(document.validate(host).Definitions[0],owner);settle()
         host_undo=host.UndoCount;source_undo=source.UndoCount
-        t=appearance_task.open_task(owner,());t.form.value.setValue(45);self.assertTrue(t.apply())
+        t=appearance_task.open_task(owner,((panel.identity(box),''),));t.form.value.setValue(45);self.assertTrue(t.apply())
         self.assertEqual(host.UndoCount,host_undo+1);self.assertEqual(source.UndoCount,source_undo+1)
         self.assertTrue(all(a==.45 for c,a in colors(box)));t.reject()
         document.save_document(source);Gui.runCommand('Std_Undo');settle()

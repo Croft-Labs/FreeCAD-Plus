@@ -501,7 +501,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._message(str(error))
 
     def eventFilter(self, watched, event):
-        if (self.trees and watched == self.trees[0].viewport()
+        if (self.trees and watched in [tree.viewport() for tree in self.trees[::2]]
                 and event.type() == QtCore.QEvent.MouseButtonPress
                 and event.button() == QtCore.Qt.RightButton):
             # Capture viewport faces before Qt selects the clicked catalog row.
@@ -1446,6 +1446,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def _menu(self, tree, point):
         item = tree.itemAt(point)
         row = item.data(0, _ROLE) if item else None
+        if tree == self.trees[2] and row is not None and row.kind in ('history_component', 'history'):
+            from .history_appearance_ui import history_menu
+            try:history_menu(self, tree, point, row)
+            except (ValueError, RuntimeError, ReferenceError) as error:self._message(str(error))
+            return
         if row is not None and row.kind == 'constraint':
             menu = QtWidgets.QMenu(self)
             edit = menu.addAction('Edit')

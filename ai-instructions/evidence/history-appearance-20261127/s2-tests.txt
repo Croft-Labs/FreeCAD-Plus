@@ -1,0 +1,7 @@
+test_imported_history_feature_edits_source_with_linked_undo (TestHistoryAppearance.TestHistoryAppearance.test_imported_history_feature_edits_source_with_linked_undo) ... ok
+test_native_history_face_screenshot (TestHistoryAppearance.TestHistoryAppearance.test_native_history_face_screenshot) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 4.869s
+
+OK

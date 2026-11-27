@@ -1,0 +1,26 @@
+test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation) ... ok
+test_cancel_and_stale_geometry (TestAppearance.TestAppearance.test_cancel_and_stale_geometry) ... ok
+test_external_source_owns_undo_and_persistence (TestAppearance.TestAppearance.test_external_source_owns_undo_and_persistence) ... ok
+test_mesh_body_tip_and_rejected_child (TestAppearance.TestAppearance.test_mesh_body_tip_and_rejected_child) ... ok
+test_native_save_and_reopen (TestAppearance.TestAppearance.test_native_save_and_reopen) ... ok
+test_native_task_modes_and_slider (TestAppearance.TestAppearance.test_native_task_modes_and_slider) ... ok
+test_occurrence_face_picks_and_toggle (TestAppearance.TestAppearance.test_occurrence_face_picks_and_toggle) ... ok
+test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces) ... ok
+test_transparency_only_preserves_face_colors (TestAppearance.TestAppearance.test_transparency_only_preserves_face_colors) ... ok
+test_undo_redo_and_geometry_identity (TestAppearance.TestAppearance.test_undo_redo_and_geometry_identity) ... ok
+test_whole_and_faces_preserve_other_material_fields_and_children (TestAppearance.TestAppearance.test_whole_and_faces_preserve_other_material_fields_and_children) ... ok
+test_explicit_body_empty_edge_and_hover_inputs (TestHistoryAppearance.TestHistoryAppearance.test_explicit_body_empty_edge_and_hover_inputs) ... ok
+test_highlight_extracts_only_selected_and_hovered_face (TestHistoryAppearance.TestHistoryAppearance.test_highlight_extracts_only_selected_and_hovered_face) ... ok
+test_historical_feature_apply_reset_cancel_undo (TestHistoryAppearance.TestHistoryAppearance.test_historical_feature_apply_reset_cancel_undo) ... ok
+test_historical_geometry_stale_and_child_rejection (TestHistoryAppearance.TestHistoryAppearance.test_historical_geometry_stale_and_child_rejection) ... ok
+test_history_face_apply_and_saved_material (TestHistoryAppearance.TestHistoryAppearance.test_history_face_apply_and_saved_material) ... ok
+test_native_history_face_screenshot (TestHistoryAppearance.TestHistoryAppearance.test_native_history_face_screenshot) ... ok
+test_non_geometry_history_has_no_appearance (TestHistoryAppearance.TestHistoryAppearance.test_non_geometry_history_has_no_appearance) ... ok
+test_part_menu_preserves_faces_and_no_selection (TestHistoryAppearance.TestHistoryAppearance.test_part_menu_preserves_faces_and_no_selection) ... ok
+test_native_face_highlights_follow_preferences_and_leave_materials_unchanged (TestPendingWorkflows.TestPendingWorkflows.test_native_face_highlights_follow_preferences_and_leave_materials_unchanged) ... ok
+test_surface_toolbar_pick_expansion_shift_reset_and_materials (TestPendingWorkflows.TestPendingWorkflows.test_surface_toolbar_pick_expansion_shift_reset_and_materials) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 26.096s
+
+OK

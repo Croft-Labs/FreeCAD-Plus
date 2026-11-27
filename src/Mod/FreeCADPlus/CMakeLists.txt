@@ -25,6 +25,7 @@ set(FreeCADPlus_SRCS
     TestComponentNavigation.py
     TestPartsFiles.py
     TestAppearance.py
+    TestHistoryAppearance.py
     TestPendingWorkflows.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py
@@ -95,6 +96,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/appearance_ui.py
     freecad_plus/appearance_task.py
     freecad_plus/appearance_highlight.py
+    freecad_plus/history_appearance_ui.py
     freecad_plus/assembly.py
     freecad_plus/assembly_ui.py
     freecad_plus/file_actions.py

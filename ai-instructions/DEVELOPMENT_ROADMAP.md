@@ -1,3 +1,13 @@
+# November 27: History Appearance and face highlighting
+
+- [x] Preserve prior selected bodies/faces from the History part menu.
+- [x] Target the exact clicked History feature, including older Body features.
+- [x] Keep empty Appearance selection empty and highlight only selected faces.
+- [x] Verify materials, visibility, Cancel/Apply/reset, Undo and imported ownership.
+- [x] Install seven checked files; all 22 installed regressions pass.
+
+See [approval and delivery evidence](evidence/history-appearance-20261127/README.md).
+
 # November 27: Joined surface extraction
 
 - [x] Default Join surfaces on; create one connected surface History result.

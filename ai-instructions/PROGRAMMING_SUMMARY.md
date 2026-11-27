@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## History Appearance and face selection — installed November 27, 2026
+
+History now offers Appearance on part headers and geometric features. Header
+actions preserve prior selection; feature actions target the exact historical
+feature. Empty selection stays empty. Highlight overlays now extract only the
+selected face, preserving other faces' appearance. Source checks and all 22
+installed checks pass, including imported-source Undo and saved materials.
+Seven installed files match; settings/shortcut are unchanged. See
+[delivery evidence](evidence/history-appearance-20261127/README.md).
+
 ## Joined surface extraction — installed November 27, 2026
 
 Extract geometry defaults Join surfaces on. Connected faces produce one valid

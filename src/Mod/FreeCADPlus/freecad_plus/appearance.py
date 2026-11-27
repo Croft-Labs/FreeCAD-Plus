@@ -11,8 +11,8 @@ def clone(material):
     return App.Material(**{key: getattr(material, key) for key in FIELDS})
 
 
-def results(owner):
-    """Use Body tips, never historical features, sketches or child components."""
+def results(owner, include_history=False):
+    """Catalog owned geometry; historical features require explicit selection."""
     found = []
     for obj in owner.Group:
         if obj.TypeId == 'App::Link' or obj.TypeId == 'App::Part':
@@ -23,6 +23,17 @@ def results(owner):
             continue
         if obj.isDerivedFrom('Mesh::Feature') or (obj.isDerivedFrom('Part::Feature') and not obj.Shape.isNull()):
             found.append(obj)
+    if include_history:
+        def visit(parent):
+            for child in document.owned_children(parent):
+                if child.TypeId in ('App::Link', 'App::Part'):
+                    continue
+                if child.TypeId != 'PartDesign::Body' and not child.isDerivedFrom('Sketcher::SketchObject'):
+                    if (child.isDerivedFrom('Mesh::Feature') or
+                            (child.isDerivedFrom('Part::Feature') and bool(child.Shape.Faces))):
+                        found.append(child)
+                visit(child)
+        visit(owner)
     return tuple(dict.fromkeys(found))
 
 
@@ -56,7 +67,7 @@ def resolve_pick(owner, obj, sub):
         target = target.LinkedObject
     if target.TypeId == 'PartDesign::Body':
         target = target.Tip
-    if target not in results(owner):
+    if target not in results(owner, include_history=True):
         raise ValueError('Choose geometry owned by ' + owner.Label + ', not a child component')
     element = Part.splitSubname(sub)[2] if sub else ''
     face = int(element[4:]) if element.startswith('Face') and element[4:].isdigit() else None
@@ -75,7 +86,7 @@ def apply(owner, targets, color=None, transparency=None):
         return False
     if transparency is not None and not 0 <= transparency <= 100:
         raise ValueError('Transparency must be between 0 and 100 percent')
-    eligible = results(owner); grouped = {}
+    eligible = results(owner, include_history=True); grouped = {}
     for obj, face in targets:
         if obj not in eligible:
             raise ValueError('The selected body is no longer owned by this component')

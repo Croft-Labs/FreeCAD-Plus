@@ -25,14 +25,21 @@ This section supersedes earlier retained-input/default-off descriptions below.
 
 ## Appearance workflow — owner approval November 27, 2026
 
-Parts > Appearance opens a native task panel. Body and Face radio buttons choose
+Parts/History > Appearance opens a native task panel. Body and Face radio buttons choose
 the selection mode; a list shows the targeted geometry. Body-to-Face expands all
 CAD faces of the listed bodies; Face-to-Body lists each owning body once. The
 collector follows existing click/Shift-click, Remove, Clear and Delete behavior.
-Eligible initial viewport faces are retained. Otherwise the component's own
-modeled results are listed. Body tips represent their current results; sketches,
-historical Body features and child components are excluded. Meshes support whole
-Body appearance; mesh facets are not CAD faces.
+Eligible explicitly selected bodies/faces are retained. Without such a selection,
+the list starts empty; hover, edge and vertex inputs never select all component
+results. A History feature action selects that exact owned feature, including
+older Body features. Selecting a Body container resolves its current tip. Sketches
+and child components remain excluded. Meshes support whole Body appearance;
+mesh facets are not CAD faces. The November 27 approved History/selection correction
+supersedes the earlier automatic whole-component default.
+
+Selected/preselected face overlays contain only the requested face subelement,
+never the whole source solid. Other faces retain their authored appearance, and
+the existing selection preferences control highlight colors and enable flags.
 
 Color uses a native chooser. Transparency uses a synchronized 0–100 percent slider
 and number field, with Mixed displayed for differing initial values. Only edited

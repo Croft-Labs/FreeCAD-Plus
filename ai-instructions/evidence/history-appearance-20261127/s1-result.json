@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "modules": {
+    "freecad_plus.appearance": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance.py",
+    "freecad_plus.appearance_highlight": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_highlight.py",
+    "freecad_plus.appearance_task": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_task.py",
+    "freecad_plus.panel": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  "tests": 21,
+  "errors": 0,
+  "failures": 0
+}

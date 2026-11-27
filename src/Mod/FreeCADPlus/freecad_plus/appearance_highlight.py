@@ -62,8 +62,8 @@ class Highlights:
         light = coin.SoLightModel();light.model = coin.SoLightModel.BASE_COLOR;node.addChild(light)
         for obj, face, packed, hovered in values:
             for root, sub in routes(self.task, owner, obj, face):
-                shape = Part.getShape(root, sub)
-                if shape.isNull():continue
+                shape = Part.getShape(root, sub, needSubElement=True)
+                if shape.isNull() or shape.ShapeType != 'Face':continue
                 branch = coin.SoSeparator()
                 offset = coin.SoPolygonOffset();offset.factor = -2 if hovered else -1
                 offset.units = -2 if hovered else -1;branch.addChild(offset)

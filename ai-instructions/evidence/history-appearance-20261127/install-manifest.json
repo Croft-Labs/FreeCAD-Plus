@@ -1,0 +1,51 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "277d5af45e91d037fc949129eda1c798bf3f2310047e412c2ddbcd396bc1b23f",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/TestAppearance.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAppearance.py",
+      "before": "f3abed3f7ab95117a120088518df276bbdeef5870c1756f7817a00c493be8bd5",
+      "installed": "206f37f990d467eb15e7d8f2a0b465095e6489441459610062138d645b8fb227"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestHistoryAppearance.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestHistoryAppearance.py",
+      "before": null,
+      "installed": "5f812319840b0e8de5563bb83bfead26e39903e71063cd4480455798cd2ba62c"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance.py",
+      "before": "530e63624718555bcc0d33d078b67c5d66ca08d5ec7f6bbcb87e7420e9da9b14",
+      "installed": "b931e37a0c69c236c80ae18f7945565ce42c40ec93cd580a2c757c110f7d792e"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance_highlight.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_highlight.py",
+      "before": "37d8eeb3c5ed3e8a6a8bb6f83ff4f725b602d85eb3963c5cc09c2253d7a6765e",
+      "installed": "b6b7f6b4b3e2b60ba0814e7f063292758e78aca999f0da183c8aa2ffb1374de7"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance_task.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_task.py",
+      "before": "25f3e2bdca38757da7b32a1a72e99f165ccd0034ccee6f1ed42fc143ef8741d8",
+      "installed": "ef8b2f89e659060f8ddfb37cf6430f179ca288fd64ba2e26e5f368052c646164"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+      "before": "918cd979e8dade1e3b6c37d50e1c6bad1a3e92521d837a5128d6aac773aafcb8",
+      "installed": "ad669461a9e0e82f70bf3cf7ab6427578dd43eb3985a38ab01ad0f5ed3710e8b"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/history_appearance_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\history_appearance_ui.py",
+      "before": null,
+      "installed": "6436315da9e119e46f4d8ef7584846c57527eefcfc70a0658336578b0f8667f0"
+    }
+  ]
+}

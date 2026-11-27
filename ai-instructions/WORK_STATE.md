@@ -1,3 +1,10 @@
+# November 27: History Appearance and face highlighting installed
+
+Approved History menu and face-selection corrections are implemented, script-built
+and installed. All 22 installed regressions pass; seven payload hashes match and
+owner settings/shortcut are preserved. See [delivery evidence](evidence/history-appearance-20261127/README.md).
+The separately previewed saved active-part/default active-part change remains pending.
+
 # November 27: Joined surface extraction installed
 
 Modeling > Other > Extract geometry now defaults Join surfaces on, creating one

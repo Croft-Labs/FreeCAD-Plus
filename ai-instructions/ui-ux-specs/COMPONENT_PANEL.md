@@ -1,5 +1,21 @@
 # Component panel
 
+## History Appearance — approved November 27, 2026
+
+History's part header retains Rename and adds Appearance. Its right-click action
+preserves the bodies/faces selected before the click; an empty selection stays empty.
+Geometric feature rows offer Appearance with exactly that feature preselected,
+including older Body features. Do not substitute the current Body tip. Sketches,
+origins and coordinate groups without editable surface/mesh geometry have no such
+action. Opening Appearance does not change visibility, active component/assembly,
+the selected Components tab or document Undo state.
+
+The owner approved companion `f336305f1145` with “approved. implement the history
+appearance menu and the face highlighting correction”. The reviewed fingerprint
+was `a8aa6bf2633e54f4940909a0c4f73313872a6f994870ca30cf04deb893ce938b`.
+Direct screenshots were approved in chat; companion approval state was not edited.
+See [delivery evidence](../evidence/history-appearance-20261127/README.md).
+
 ## Assembly edit modes and default assembly — approved November 27, 2026
 
 Parts and Assembly component menus offer **Edit within assembly** and **Edit in

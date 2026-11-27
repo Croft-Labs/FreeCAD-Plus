@@ -2,6 +2,7 @@
 """Appearance task: deferred edits, source-owned Undo, checked face picks."""
 import FreeCAD as App
 import FreeCADGui as Gui
+import Part
 from PySide6 import QtCore, QtGui
 from . import appearance, panel
 from .appearance_ui import AppearanceForm
@@ -23,20 +24,20 @@ class AppearanceTask(QtCore.QObject):
         self.owner_ref = panel.identity(owner)
         self.host = App.ActiveDocument;self.view = Gui.activeDocument().activeView()
         self.edit_context = self.view.getActiveObject('PlusEdit', False)
-        self.objects = {panel.identity(obj): obj for obj in appearance.results(owner)}
+        self.objects = {panel.identity(obj): obj for obj in appearance.results(owner, include_history=True)}
         self.shapes = {key: obj.Shape for key, obj in self.objects.items() if hasattr(obj, 'Shape')}
         catalog = {key: {'label': obj.Label, 'faces': ['Face'+str(i+1) for i in range(appearance.face_count(obj))]}
                    for key, obj in self.objects.items()}
         chosen = []
         for ref, sub in selection_snapshot() if initial is None else initial:
             try:
+                if Part.splitSubname(sub)[2].startswith(('Edge','Vertex')):continue
                 obj, face = appearance.resolve_pick(owner, panel.lookup(ref), sub)
                 chosen.append((panel.identity(obj), 'Face'+str(face) if face else None))
             except (ValueError, RuntimeError, ReferenceError):
                 continue
         face_mode = any(face for key, face in chosen)
         targets = list(dict.fromkeys((key, face if face_mode else None) for key, face in chosen if face or not face_mode))
-        if not targets: targets = [(key, None) for key in self.objects]
         self.form = AppearanceForm(owner.Label, catalog, targets)
         if face_mode:
             self.form.mode = 'face'
@@ -104,7 +105,7 @@ class AppearanceTask(QtCore.QObject):
         if (App.ActiveDocument != self.host or Gui.activeDocument().activeView() != self.view
                 or self.view.getActiveObject('PlusEdit', False) != self.edit_context):
             raise ValueError('The active file or component changed. Cancel and reopen Appearance.')
-        eligible = appearance.results(owner)
+        eligible = appearance.results(owner, include_history=True)
         for key, face in self.form.targets:
             obj = panel.lookup(key)
             if obj not in eligible:raise ValueError('A selected body changed. Cancel and reopen Appearance.')
@@ -129,9 +130,9 @@ class AppearanceTask(QtCore.QObject):
             colors = {tuple(round(c, 6) for c in mat.DiffuseColor[:3]) for mat in values}
             alphas = {round(mat.Transparency*100) for mat in values}
             self.busy = True
-            self.form.color_value = QtGui.QColor.fromRgbF(*next(iter(colors))) if len(colors)==1 else None
+            self.form.color_value = QtGui.QColor.fromRgbF(*next(iter(colors))) if len(colors)==1 else (QtGui.QColor('#b9c4cf') if not values else None)
             self.form.color_changed = False;self.form.refresh_color()
-            self.form.value.setValue(next(iter(alphas)) if len(alphas)==1 else -1)
+            self.form.value.setValue(next(iter(alphas)) if len(alphas)==1 else (0 if not values else -1))
             self.alpha_changed = False
             self.form.status.hide()
         except (ValueError, RuntimeError, ReferenceError, IndexError) as error:self.error(error)
@@ -153,6 +154,8 @@ class AppearanceTask(QtCore.QObject):
 
     def pick(self, obj, sub='', remove=False):
         owner = self.check();target,face = appearance.resolve_pick(owner,obj,sub)
+        if panel.identity(target) not in self.objects:
+            raise ValueError('The component geometry changed. Cancel and reopen Appearance.')
         if self.form.mode=='face' and face is None:
             raise ValueError('Pick a CAD face, or switch to Body for whole objects and meshes.')
         value = (panel.identity(target),'Face'+str(face) if self.form.mode=='face' else None)
@@ -227,7 +230,7 @@ def open_task(owner, initial=None):
     global _active
     if Gui.Control.activeDialog() or Gui.activeDocument().getInEdit():
         raise ValueError('Finish the current task before opening Appearance')
-    if not appearance.results(owner):raise ValueError('This component has no bodies or meshes to color')
+    if not appearance.results(owner, include_history=True):raise ValueError('This component has no bodies or meshes to color')
     task = AppearanceTask(owner,initial);_active = task
     try:Gui.Control.showDialog(task)
     except Exception:task.finish();raise
