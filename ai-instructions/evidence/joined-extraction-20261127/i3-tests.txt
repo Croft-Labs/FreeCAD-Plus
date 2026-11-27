@@ -1,0 +1,11 @@
+unittest.case.FunctionTestCase (<lambda>)
+Joined.cadprt ... ok
+unittest.case.FunctionTestCase (<lambda>)
+Exported.cadprt ... ok
+unittest.case.FunctionTestCase (<lambda>)
+Host.cadprt ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.618s
+
+OK

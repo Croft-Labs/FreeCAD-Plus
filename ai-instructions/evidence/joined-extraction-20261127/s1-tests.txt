@@ -1,0 +1,44 @@
+test_connected_chain_closed_shell_and_source_update (TestJoinedExtraction.TestJoinedExtraction.test_connected_chain_closed_shell_and_source_update) ... ok
+test_disconnected_point_contact_and_overlap_are_atomic (TestJoinedExtraction.TestJoinedExtraction.test_disconnected_point_contact_and_overlap_are_atomic) ... FAIL
+test_edit_join_split_identity_downstream_cancel_and_cycle (TestJoinedExtraction.TestJoinedExtraction.test_edit_join_split_identity_downstream_cancel_and_cycle) ... ok
+test_external_component_owns_join_and_repeated_occurrences (TestJoinedExtraction.TestJoinedExtraction.test_external_component_owns_join_and_repeated_occurrences) ... ok
+test_legacy_load_and_stale_source_guard (TestJoinedExtraction.TestJoinedExtraction.test_legacy_load_and_stale_source_guard) ... ok
+test_multiple_objects_placement_save_reopen_and_export (TestJoinedExtraction.TestJoinedExtraction.test_multiple_objects_placement_save_reopen_and_export) ... ok
+test_separate_history_and_undo_redo (TestJoinedExtraction.TestJoinedExtraction.test_separate_history_and_undo_redo) ... ok
+test_task_default_error_recovery_gestures_and_no_preview_writes (TestJoinedExtraction.TestJoinedExtraction.test_task_default_error_recovery_gestures_and_no_preview_writes) ... ok
+test_archive_rejects_unrelated_external_geometry (TestDerivedGeometry.TestDerivedGeometry.test_archive_rejects_unrelated_external_geometry) ... ok
+test_browser_exact_occurrence_and_no_grandchildren (TestDerivedGeometry.TestDerivedGeometry.test_browser_exact_occurrence_and_no_grandchildren) ... ok
+test_direct_child_whole_object_boundary (TestDerivedGeometry.TestDerivedGeometry.test_direct_child_whole_object_boundary) ... ok
+test_external_parent_owns_results_and_cancel_is_clean (TestDerivedGeometry.TestDerivedGeometry.test_external_parent_owns_results_and_cancel_is_clean) ... ok
+test_external_sources_export_and_raw_foreign_guard (TestDerivedGeometry.TestDerivedGeometry.test_external_sources_export_and_raw_foreign_guard) ... ok
+test_instances_updates_extract_and_edit (TestDerivedGeometry.TestDerivedGeometry.test_instances_updates_extract_and_edit) ... ok
+test_missing_source_repair_and_schema_undo (TestDerivedGeometry.TestDerivedGeometry.test_missing_source_repair_and_schema_undo) ... FAIL
+test_native_boolean_and_body_coordinate_frame (TestDerivedGeometry.TestDerivedGeometry.test_native_boolean_and_body_coordinate_frame) ... ok
+test_native_features_and_dumb_sketch (TestDerivedGeometry.TestDerivedGeometry.test_native_features_and_dumb_sketch) ... ok
+test_origin_plane_and_multiple_whole_surfaces (TestDerivedGeometry.TestDerivedGeometry.test_origin_plane_and_multiple_whole_surfaces) ... ok
+test_real_commands_unresolved_picks_and_stale_task (TestDerivedGeometry.TestDerivedGeometry.test_real_commands_unresolved_picks_and_stale_task) ... ok
+test_task_preview_selection_cancel_and_history_edit (TestDerivedGeometry.TestDerivedGeometry.test_task_preview_selection_cancel_and_history_edit) ... ok
+test_whole_body_surface_sketch_plane (TestDerivedGeometry.TestDerivedGeometry.test_whole_body_surface_sketch_plane) ... ok
+
+======================================================================
+FAIL: test_disconnected_point_contact_and_overlap_are_atomic (TestJoinedExtraction.TestJoinedExtraction.test_disconnected_point_contact_and_overlap_are_atomic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestJoinedExtraction.py", line 51, in test_disconnected_point_contact_and_overlap_are_atomic
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_source_repair_and_schema_undo (TestDerivedGeometry.TestDerivedGeometry.test_missing_source_repair_and_schema_undo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestDerivedGeometry.py", line 150, in test_missing_source_repair_and_schema_undo
+    self.assertTrue(extracted.GeometryError);self.assertTrue(extracted.Shape.isNull())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '' is not true
+
+----------------------------------------------------------------------
+Ran 21 tests in 17.757s
+
+FAILED (failures=2)

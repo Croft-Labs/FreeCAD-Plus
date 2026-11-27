@@ -1,3 +1,15 @@
+# November 27: Joined surface extraction installed
+
+Modeling > Other > Extract geometry now defaults Join surfaces on, creating one
+connected surface/shell History feature. Turning it off creates one entry per face.
+Disconnected, point-only, overlapping and invalid shell inputs are rejected before
+a transaction. Saved multi-face references, native recompute, History editing,
+split-in-place, missing-source recovery, Cancel and Undo are implemented. Native
+script build and 32 source/32 installed regressions pass; final button-state checks
+are recorded in [delivery evidence](evidence/joined-extraction-20261127/README.md).
+Five Python payloads are installed with rollback copies; settings and shortcut are
+unchanged. Restart FreeCAD Plus to load the workflow in an already-running window.
+
 # November 27: All six pending workflow groups installed
 
 Implemented the approved assembly edit modes, single-local-part default assembly,

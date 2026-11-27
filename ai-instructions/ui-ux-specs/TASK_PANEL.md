@@ -70,6 +70,24 @@ the pattern; independent Quantity links can be moved/constrained. See
 
 ### Unified Clone and separate Extract geometry — November 25, 2026
 
+Owner-approved extension, November 27: **Join surfaces** is checked by default
+for new Extract geometry tasks. One face or one connected set of faces sharing
+edges creates one extracted surface History feature. Connectivity may pass through
+other selected faces; point-only contact is insufficient. Disconnected, overlapping
+or invalid/nonmanifold joined input shows prominent TaskStatus feedback and blocks
+acceptance without changing the document. The user can correct the selected faces
+or uncheck Join surfaces. Unchecked creates one separate History feature per face,
+in selection order, including disconnected faces. Keep the source solid intact.
+
+History Edit restores the saved faces and checkbox. Joined results retain all source
+associations and recompute as surfaces/shells, never solids. Splitting an existing
+joined result retains its identity for the first face and appends the other results,
+in one Undo step. Cancel preserves the existing feature. Missing source faces must
+produce an error rather than silently shrink the joined result. Legacy extractions
+open as separate-face results. Retain existing component ownership, face selection
+gestures, preview controls, and contextual surface-selection toolbar behavior.
+See [delivery evidence](../evidence/joined-extraction-20261127/README.md).
+
 One Clone workflow collects whole geometric objects from direct child occurrences,
 with parent-owned results named cloned body/surface/sketch/plane. Faces, edges and
 vertices cannot be Clone inputs. Extraction is a later, separate operation: select

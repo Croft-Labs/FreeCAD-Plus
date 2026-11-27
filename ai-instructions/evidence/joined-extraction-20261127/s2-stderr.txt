@@ -1,0 +1,47 @@
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 281, in execute
+    values, shell = evaluate_extract(definition, refs, obj.JoinSurfaces)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 225, in evaluate_extract
+    values = [evaluate(definition, ref, 'Extract', feature=feature) for ref in refs]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 107, in evaluate
+    source = whole_source(definition, ref, admission=admission) if operation == 'Clone' else face_source(definition, ref)
+                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 69, in face_source
+    obj = target(ref)
+          ^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 26, in target
+    if base is None: raise ValueError('The source is missing. Edit this feature to choose a source.')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The source is missing. Edit this feature to choose a source.
+extracted surface: The source is missing. Edit this feature to choose a source.
+<PropertyLinks> PropertyLinks.cpp(4187): PropertyXLink export without saving the document
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 281, in execute
+    values, shell = evaluate_extract(definition, refs, obj.JoinSurfaces)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 228, in evaluate_extract
+    return values, joined_surface([value[2] for value in values]) if join else None
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 212, in joined_surface
+    raise ValueError('Cannot join these surfaces: the selection contains disconnected groups. '
+<class 'ValueError'>: Cannot join these surfaces: the selection contains disconnected groups. Select faces connected by shared edges, or clear Join surfaces to extract them separately.
+extracted surface: Cannot join these surfaces: the selection contains disconnected groups. Select faces connected by shared edges, or clear Join surfaces to extract them separately.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract001'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract001'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract001'. Instead, the linked object(s) reside within 'File Part001 File Part001'.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 290, in execute
+    raise ValueError('The original source is missing or replaced. Edit this feature to repair it.')
+<class 'ValueError'>: The original source is missing or replaced. Edit this feature to repair it.
+cloned surface: The original source is missing or replaced. Edit this feature to repair it.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 278, in execute
+    raise ValueError('The original source is missing or changed. Edit this feature to repair it.')
+<class 'ValueError'>: The original source is missing or changed. Edit this feature to repair it.
+extracted surface: The original source is missing or changed. Edit this feature to repair it.
+Part::FeaturePython: Link(s) to object(s) 'Clone' go out of the allowed scope 'Extract'. Instead, the linked object(s) reside within 'Part001 File Part001 File'.

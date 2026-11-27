@@ -1,3 +1,14 @@
+# November 27: Joined surface extraction
+
+- [x] Default Join surfaces on; create one connected surface History result.
+- [x] Reject disconnected, point-only, overlapping and invalid joined selections atomically.
+- [x] Keep unchecked extraction as one separate History result per face.
+- [x] Persist multiple references and join mode; preserve edit identity, Cancel and Undo.
+- [x] Verify native geometry, source updates, external ownership, save/reopen and selection.
+- [x] Install five checked Python payloads with rollback and preserved settings.
+
+See [delivery evidence](evidence/joined-extraction-20261127/README.md).
+
 # November 27: Pending workflow delivery
 
 - [x] Implement Edit within assembly and Edit in isolation, retaining exact occurrences.

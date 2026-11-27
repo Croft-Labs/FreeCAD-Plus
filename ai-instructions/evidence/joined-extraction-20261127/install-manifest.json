@@ -1,0 +1,39 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "b4b360ae57bcfad11951d54097a7701bd53ac916f42bf0135ab141366a599a96",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/Init.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\Init.py",
+      "before": "bf8519a0e9800cfbc51209bcd06245073ca8e1d401d3e2ed87a1dba8ad485853",
+      "installed": "2a5a85967bd84e8b3e59e166d9e4ee4a1acf182ffe483ffdcb383b6a9ff02884"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestJoinedExtraction.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestJoinedExtraction.py",
+      "before": null,
+      "installed": "24e28be3685fa6cd1e45b728ec0a20bc10d234bf767e3bf42bc3f20c2ffe739e"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_ui.py",
+      "before": "b7e34834636b8b59e9dbd5d244cb4f4913c29834fbc400bc7858ad9904ea56c0",
+      "installed": "681a1db7b6ce142086066e4fd058eb33dffe26408cd2e0fd8c9ffbf45a18740a"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_task.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py",
+      "before": "a9ceb7c54fe4ac19e77a759f9ca1a5b143d8e77646724c93ef074fa4dbe74297",
+      "installed": "66ab0d0eca2ac5560d16b2e585f4f054a9eea319555449b1582768b3ccde4000"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/derived_geometry.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\derived_geometry.py",
+      "before": "88080c07615b975b2a2dcfb4543c4ecc17d7e8b83845bf07aaaa8f2a486072e8",
+      "installed": "cd9feafc22e4a9711fd79dc5c7c1ea7041173b31807b08d620eb4ac4f06daab2"
+    }
+  ]
+}

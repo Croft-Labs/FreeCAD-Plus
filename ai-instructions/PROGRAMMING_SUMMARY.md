@@ -1,5 +1,20 @@
 # FreeCAD Plus: Programming Summary
 
+## Joined surface extraction — installed November 27, 2026
+
+Extract geometry defaults Join surfaces on. Connected faces produce one valid
+shell (or one face); disconnected/overlapping/invalid selections fail atomically.
+Unchecked creates independent History features. Version-2 Extract metadata stores
+all face references, source-object identities, original face count and join mode;
+version-1 Clone and legacy single-face Extract remain supported. Newer Extract
+metadata is rejected by older validators rather than interpreted as a single face.
+Global-scope native link properties permit component-owned geometry inside Bodies;
+existing component ownership/cross-file admission remains enforced. Missing sources
+stay visibly invalid until repaired. History editing preserves the first result
+identity when splitting and uses one Undo transaction. Native build and 32 source/
+32 installed checks pass; see [delivery evidence](evidence/joined-extraction-20261127/README.md).
+
+
 ## Pending workflow delivery — installed November 27, 2026
 
 All six approved groups are implemented: exact-occurrence assembly/isolated editing,

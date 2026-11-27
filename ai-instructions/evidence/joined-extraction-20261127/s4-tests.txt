@@ -1,0 +1,6 @@
+test_task_default_error_recovery_gestures_and_no_preview_writes (TestJoinedExtraction.TestJoinedExtraction.test_task_default_error_recovery_gestures_and_no_preview_writes) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.389s
+
+OK

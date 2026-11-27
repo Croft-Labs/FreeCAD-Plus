@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "modules": {
+    "freecad_plus.derived_geometry": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\derived_geometry.py",
+    "freecad_plus.clone_ui": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\clone_ui.py",
+    "freecad_plus.clone_task": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py"
+  },
+  "tests": 1,
+  "errors": 0,
+  "failures": 0
+}
