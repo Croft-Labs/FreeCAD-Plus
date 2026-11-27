@@ -1,0 +1,7 @@
+test_condensed_groups_never_disclose_but_real_assemblies_do (TestInstanceDisplay.TestInstanceDisplay.test_condensed_groups_never_disclose_but_real_assemblies_do) ... ok
+test_condensed_menu_remains_available_when_editing_one_member (TestInstanceDisplay.TestInstanceDisplay.test_condensed_menu_remains_available_when_editing_one_member) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 3.784s
+
+OK

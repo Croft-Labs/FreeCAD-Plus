@@ -115,6 +115,42 @@ class TestInstanceDisplay(unittest.TestCase):
         with patch.object(QtWidgets.QInputDialog,'getItem',return_value=('',False)):
             calls=[];assembly_ui.choose_member(self.dock,group,calls.append);self.assertEqual(calls,[])
 
+    def test_condensed_groups_never_disclose_but_real_assemblies_do(self):
+        self.mode('Condensed'); before = self.snapshot()
+        tree = self.dock.trees[1]; group = self.groups(self.motor)[0]
+        self.assertEqual(group.childIndicatorPolicy(), QtWidgets.QTreeWidgetItem.DontShowIndicator)
+        root = tree.topLevelItem(0)
+        self.assertEqual(root.childIndicatorPolicy(), QtWidgets.QTreeWidgetItem.DontShowIndicatorWhenChildless)
+        tree.setCurrentItem(group); tree.setFocus(); tree.scrollToItem(group); settle()
+        for key in (QtCore.Qt.Key_Right, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Asterisk):
+            QtTest.QTest.keyClick(tree, key); settle()
+            self.assertFalse(group.isExpanded())
+        QtTest.QTest.mouseDClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                tree.visualItemRect(group).center()); settle()
+        self.assertFalse(group.isExpanded())
+        tree.expandAll(); settle()
+        self.assertTrue(all(not entry.isExpanded() for entries in (self.groups(self.motor), self.groups(self.gear), self.groups(self.bolt)) for entry in entries))
+        self.dock.refresh(); self.assertFalse(group.isExpanded())
+        self.menu(self.groups(self.gear)[0], 'Expand instances')
+        gear = self.row(self.gears[0]); tree.setCurrentItem(gear)
+        gear.setExpanded(False); QtTest.QTest.keyClick(tree, QtCore.Qt.Key_Right); settle()
+        self.assertTrue(gear.isExpanded())
+        self.assertEqual(gear.childIndicatorPolicy(), QtWidgets.QTreeWidgetItem.DontShowIndicatorWhenChildless)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_condensed_menu_remains_available_when_editing_one_member(self):
+        self.mode('Condensed')
+        self.dock.edit_row(self.row(self.motors[0]).data(0,panel._ROLE)); settle()
+        group = self.groups(self.motor)[0]
+        entries = self.menu(group)
+        names = [name for name, enabled, children in entries]
+        self.assertIn('Expand instances', names)
+        self.assertIn('Copy', names)
+        self.assertIn('Remove instance\u2026', names)
+        self.assertFalse(group.isExpanded())
+        self.menu(group, 'Expand instances')
+        self.assertFalse(self.groups(self.motor), self.dock.message.text())
+
     def row(self, *links):
         key = ('occurrence', tuple(panel.identity(o) for o in (self.top, *links)))
         return self.dock._maps[1][key]
@@ -148,7 +184,8 @@ class TestInstanceDisplay(unittest.TestCase):
         self.assertEqual(group.text(0), 'Motor \u00d73')
         self.assertIs(self.row(self.motors[0]), first)
         self.assertIs(self.row(self.motors[1]), second)
-        self.assertTrue(first.isSelected() and second.isSelected() and group.isExpanded())
+        self.assertTrue(first.isSelected() and second.isSelected())
+        self.assertFalse(group.isExpanded())
         self.assertEqual([(s.ObjectName, tuple(s.SubElementNames)) for s in Gui.Selection.getSelectionEx('', 0)], selected)
         self.mode('Expanded')
         self.assertFalse(self.groups(self.motor))
@@ -175,25 +212,32 @@ class TestInstanceDisplay(unittest.TestCase):
             self.assertFalse(collector.isExpanded())
         self.dock.grab().save(str(self.output / 'condensed.png'))
         for group in self.groups(self.motor) + self.groups(self.gear): group.setExpanded(True)
+        self.assertTrue(all(not group.isExpanded() for group in self.groups(self.motor) + self.groups(self.gear)))
+        self.mode('Expanded')
         self.row(self.gears[1]).setExpanded(False)
         self.dock.grab().save(str(self.output / 'individuals.png'))
         self.assertEqual(self.snapshot(), before)
 
-    def test_hidden_selection_reveals_nested_exact_instance_without_rebuilding(self):
+    def test_hidden_selection_preserves_condensed_groups_and_exact_instance(self):
         self.mode('Condensed')
         item = self.row(self.gears[1], self.bolts[1])
         self.select(self.gears[1], self.bolts[1])
         self.assertTrue(item.isSelected())
         parent = item.parent()
         while parent:
-            self.assertTrue(parent.isExpanded()); parent = parent.parent()
+            self.assertEqual(parent.isExpanded(), parent.data(0, panel._ROLE).kind != 'instance_group')
+            parent = parent.parent()
         self.assertFalse(self.row(self.gears[0], self.bolts[1]).isSelected())
         group = self.groups(self.gear)[0]; group.setExpanded(False)
         self.dock.refresh()
         self.assertFalse(group.isExpanded())  # Refresh respects a manual fold.
         self.assertIs(self.row(self.gears[1], self.bolts[1]), item)
         Gui.Selection.clearSelection(); self.select(self.gears[1], self.bolts[1])
-        self.assertTrue(group.isExpanded())
+        self.assertFalse(group.isExpanded())
+        self.mode('Expanded')
+        self.assertIs(self.row(self.gears[1], self.bolts[1]), item)
+        self.assertTrue(item.isSelected())
+        self.assertFalse(self.dock.trees[1].visualItemRect(item).isEmpty())
 
     def test_group_has_no_component_action_or_native_selection(self):
         self.mode('Condensed'); group = self.groups(self.motor)[0]
@@ -213,7 +257,8 @@ class TestInstanceDisplay(unittest.TestCase):
 
     def test_individual_edit_copy_and_move_keep_exact_route(self):
         self.mode('Condensed')
-        item = self.row(self.motors[1]); group = item.parent(); group.setExpanded(True)
+        item = self.row(self.motors[1]); group = item.parent()
+        self.menu(group, 'Expand instances')
         tree = self.dock.trees[1]; tree.scrollToItem(item); settle()
         QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, tree.visualItemRect(item).center())
         settle()
@@ -228,7 +273,8 @@ class TestInstanceDisplay(unittest.TestCase):
         settle()
         self.assertEqual(len(pasted), 1)
         self.assertEqual(pasted[0].LinkedObject, self.motor)
-        self.assertEqual(self.groups(self.motor)[0].childCount(), 4)
+        self.assertFalse(self.groups(self.motor))
+        self.assertTrue(all(self.row(link).parent() == tree.topLevelItem(0) for link in (*self.motors, pasted[0])))
         self.assertTrue(self.row(pasted[0]).isSelected())
         QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, tree.visualItemRect(item).center())
         QtTest.QTest.mouseDClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, tree.visualItemRect(item).center())

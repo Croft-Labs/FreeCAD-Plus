@@ -1,3 +1,12 @@
+# November 27: Corrected Assembly instance views
+
+- [x] Remove disclosure arrows from condensed groups; guard keyboard and selection folding.
+- [x] Preserve numbered expanded occurrences, real assembly disclosure and full group menus.
+- [x] Verify 26 installed regressions and three payload hashes; preserve settings/shortcut.
+
+See [delivery evidence](evidence/instance-views-20261127/README.md).
+Separate component edit-mode menus remain pending.
+
 # November 27: FreeCAD Plus 2.0.0 branding
 
 - [x] Apply approved product name, version and Plus logo resources.

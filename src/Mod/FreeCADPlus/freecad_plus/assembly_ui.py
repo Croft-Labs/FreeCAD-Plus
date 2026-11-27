@@ -10,6 +10,20 @@ def configure(panel, page, tree):
     tree.header().setSectionResizeMode(0,QtWidgets.QHeaderView.Stretch)
     tree.header().setSectionResizeMode(1,QtWidgets.QHeaderView.Fixed);tree.setColumnWidth(1,112)
     tree.setTextElideMode(QtCore.Qt.ElideRight)
+    tree.itemExpanded.connect(keep_group_folded)
+    # Qt bulk expansion finishes updating its internal state after signals fire.
+    tree.itemExpanded.connect(keep_group_folded, QtCore.Qt.QueuedConnection)
+
+
+def keep_group_folded(item):
+    """Qt keyboard/scroll/expand-all paths must not open presentation groups."""
+    from .panel import _ROLE
+    try:
+        row = item.data(0, _ROLE)
+    except RuntimeError:
+        return  # A queued expansion may outlive a group removed by refresh.
+    if row is not None and row.kind == 'instance_group':
+        item.setExpanded(False)
 
 
 def set_all(panel, condensed):
@@ -20,8 +34,6 @@ def set_all(panel, condensed):
 
 def set_group(panel, key, condensed):
     state(panel)[key]=condensed;panel.refresh()
-    item=panel._maps[1].get(('instance_group',*key))
-    if condensed and item and not any(item.child(i).isSelected() for i in range(item.childCount())):item.setExpanded(False)
 
 
 def attach(panel, tree):

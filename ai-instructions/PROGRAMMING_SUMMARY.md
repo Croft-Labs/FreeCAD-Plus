@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Assembly instance-view correction — installed November 27, 2026
+
+Condensed groups have no disclosure arrows and stay folded during selection,
+double-click and keyboard/bulk expansion. Explicit Expand instances restores the
+numbered rows; real assemblies retain normal arrows. Full group menus remain
+available while editing a member. Final installed regressions pass 26/26; three
+payload hashes match and owner settings/shortcut are unchanged. Restart required.
+See [delivery evidence](evidence/instance-views-20261127/README.md).
+The separate Edit within assembly/Edit in isolation menu revision remains pending.
+
 ## FreeCAD Plus 2.0.0 branding — installed November 27, 2026
 
 Native title/taskbar metadata, About/splash, CLI and Windows properties now use

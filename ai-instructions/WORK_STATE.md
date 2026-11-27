@@ -1,3 +1,12 @@
+# November 27: Corrected Assembly instance views installed
+
+Arrow-free condensed groups stay folded; explicit per-group/global expansion
+restores numbered native occurrences. Real assembly disclosure, exact selection,
+menu parity and model/Undo state are preserved. Final installed checks pass 26/26;
+three payload hashes match, with rollback and unchanged settings/shortcut.
+See [delivery evidence](evidence/instance-views-20261127/README.md).
+Edit-mode menus, single-part default assembly and Sketcher Symmetry remain pending.
+
 # November 27: Approved Components panel changes installed
 
 All three approved previews are implemented: retained navigation/saved assembly,

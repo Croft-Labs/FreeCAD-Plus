@@ -1,0 +1,6 @@
+test_condensed_menu_remains_available_when_editing_one_member (TestInstanceDisplay.TestInstanceDisplay.test_condensed_menu_remains_available_when_editing_one_member) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.749s
+
+OK

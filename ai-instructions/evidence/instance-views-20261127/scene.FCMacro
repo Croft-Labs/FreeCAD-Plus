@@ -1,0 +1,31 @@
+import os,sys,json,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import panel,ui_modes
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        Gui.getMainWindow().showNormal();Gui.getMainWindow().resize(1400,980);Gui.getMainWindow().show()
+        source=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+        if os.environ['PLUS_TEST_PHASE']!='installed':
+            if panel._panel:
+                old=panel._panel;old.dispose();Gui.getMainWindow().removeDockWidget(old);old.deleteLater()
+            import freecad_plus
+            freecad_plus.__path__.insert(0,str(source/'freecad_plus'))
+            for name in ('document','external','assembly','assembly_ui','display','panel','appearance_ui','file_workflows'):
+                importlib.reload(importlib.import_module('freecad_plus.'+name))
+        sys.path.insert(0,str(source))
+        names=os.environ.get('PLUS_TEST_NAMES','').split(',')
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name) for name in names if name)
+        with (out/'tests.txt').open('w') as stream:r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=r.wasSuccessful(),tests=r.testsRun,errors=len(r.errors),failures=len(r.failures))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(2300,run)

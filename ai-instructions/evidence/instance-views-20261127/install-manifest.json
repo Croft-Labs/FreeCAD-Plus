@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "freecad_plus/assembly_ui.py",
+      "before": "534eaa95e35fde9122bb8c47ffab4b785139006b6e4fe8ad30af2d40080b093d",
+      "installed": "534eaa95e35fde9122bb8c47ffab4b785139006b6e4fe8ad30af2d40080b093d"
+    },
+    {
+      "path": "freecad_plus/panel.py",
+      "before": "c477b67e6ff23aa84318e133c0d4d3605aaa6772d3512b4e0300cf3ea89fb07b",
+      "installed": "c477b67e6ff23aa84318e133c0d4d3605aaa6772d3512b4e0300cf3ea89fb07b"
+    },
+    {
+      "path": "TestInstanceDisplay.py",
+      "before": "3b42cab120d5966515a1ee9292d1c098824ad22f529b558dd9a02f444e55b140",
+      "installed": "244f4ba445a3371539618689fac47e0845d6c32c19a533fb6a542f1057fed831"
+    }
+  ],
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "2b857515bad269cd93fc6c37ca41ff0863446817831c0e4570a0943f6e5b1016",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  }
+}

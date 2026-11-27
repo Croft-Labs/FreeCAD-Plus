@@ -205,10 +205,12 @@ identity beneath their immediate parent, never by matching labels. Condensed
 shows `part2 ×3`; Expanded shows `part2 (1)`, `part2 (2)`, `part2 (3)`. Numbers are
 display ordinals, not persistent occurrence identifiers or definition renames.
 Singletons retain their names; imported labels retain their source filename.
-Condensed groups start collapsed. Expand them to reach original instances and
-their own constraint collectors. A group has no visibility eye or component action.
-Switching modes preserves selection and existing subtree folds; selecting a hidden
-occurrence reveals its containing groups. No definitions, placements, Edit/active
+The November 27 corrections below supersede the original expandable collectors:
+condensed groups remain folded without disclosure arrows. Use Expand instances
+to restore original occurrence rows and their own constraint collectors. Groups
+retain the complete context menu and have no visibility eye.
+Switching modes preserves exact selection and existing subtree folds; selecting a
+hidden occurrence keeps its group condensed until explicitly expanded. No definitions, placements, Edit/active
 assembly state, or Undo entries change. Keep individual instances reachable for
 placement, constraint and visibility actions. See
 [implementation and verification](../evidence/instance-display-20261125/README.md).
@@ -911,6 +913,23 @@ Condensed menus retain all occurrence actions, replacing Condense with Expand.
 Copy/Move and display choices address the grouped siblings; single-instance
 removal/pattern actions explicitly choose an instance before the existing review.
 Group display changes are atomic and reflect mixed values without false checkmarks.
+
+## Corrected condensed and expanded views — November 27, 2026
+
+Owner: “implement the corrected condensed and expanded instances views in the
+assembly tree.” This approves the instance-view portion of review `5826d20f99b1`,
+fingerprint `03fda706509a442b0c616aa334b6b8f154c2275a62a119f7f8e1a1eccd98bc68`.
+The separate Edit within assembly/Edit in isolation menu revision remains pending.
+
+Condensed groups are presentation rows with no disclosure arrow; double-click,
+keyboard expansion, bulk tree expansion and viewport selection do not open them.
+Expand instances and Expand all instances restore numbered occurrence rows;
+real assembly branches keep their normal disclosure controls. Exact selection
+survives both mode changes, including nested/imported occurrences. Full group
+menus remain available when one member is being edited; grouped display actions
+are disabled when all members cannot be addressed in that edit context.
+Geometry, placements, object identities, active assembly, selected tab and Undo
+are unchanged by presentation switches.
 
 # Approved Components navigation — November 27, 2026
 

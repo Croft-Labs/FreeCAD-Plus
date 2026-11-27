@@ -1094,12 +1094,17 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     flags |= QtCore.Qt.ItemIsDragEnabled
                 item.setFlags(flags)
                 if row.kind == 'instance_group':
-                    item.setToolTip(0, 'Expand to choose an individual instance')
+                    item.setChildIndicatorPolicy(QtWidgets.QTreeWidgetItem.DontShowIndicator)
+                    item.setToolTip(0, 'Right-click for Expand instances or component actions')
+                else:
+                    item.setChildIndicatorPolicy(QtWidgets.QTreeWidgetItem.DontShowIndicatorWhenChildless)
                 current[row.key] = item
                 coordinate_row = coordinate_branch or (index == 2 and row.kind == 'history_group'
                                                         and row.label == 'Coordinate System')
                 sync(item, row.children, coordinate_row)
-                if fresh:
+                if row.kind == 'instance_group':
+                    item.setExpanded(False)
+                elif fresh:
                     item.setExpanded(not coordinate_row and row.kind not in ('constraints', 'instance_group'))
                 else:
                     # Qt clears expansion when a reused occurrence changes parent.
@@ -1319,8 +1324,6 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if item.data(0, _ROLE) is None:
             return
         if item.data(0, _ROLE).kind == 'instance_group':
-            if not item.treeWidget().expandsOnDoubleClick():
-                item.setExpanded(not item.isExpanded())
             return  # A presentation collector has no Edit action.
         try:
             self.edit_row(item.data(0, _ROLE))
@@ -1464,10 +1467,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
             part_type, shown = display.state(child if child is not None else owner)
             if group is not None:
                 from .assembly_ui import group_display
-                group_states = [display.state(c if c is not None else o)
-                                for o, c in (self._display_target(member) for member in group.children)]
+                try:
+                    group_states = [display.state(c if c is not None else o)
+                                    for o, c in (self._display_target(member) for member in group.children)]
+                except ValueError:
+                    group_states = []
             menu.addSeparator()
             types = menu.addMenu('Part Type')
+            if group is not None:
+                types.setEnabled(bool(group_states))
             for title in display.TYPES:
                 action = types.addAction(title); action.setCheckable(True); action.setChecked(title == part_type)
                 actions[action] = lambda r, value=title: self.set_display(r, part_type=value, expected=expected)
@@ -1475,6 +1483,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     action.setChecked(all(kind == title for kind, visible in group_states))
                     actions[action] = lambda unused, value=title: group_display(self, group, part_type=value)
             visibility = menu.addMenu('Visibility')
+            if group is not None:
+                visibility.setEnabled(bool(group_states))
             for title, value in (('Shown', True), ('Hidden', False)):
                 action = visibility.addAction(title); action.setCheckable(True); action.setChecked(value == shown)
                 action.setEnabled(not (value and part_type == 'Excluded'))
@@ -1580,7 +1590,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 if tree is self.trees[1] and chosen and (reveal or newly_selected):
                     parent = item.parent()
                     while parent is not None:
-                        parent.setExpanded(True)
+                        # Preserve exact native selection without turning a condensed
+                        # presentation group into an expandable assembly branch.
+                        if parent.data(0, _ROLE).kind != 'instance_group':
+                            parent.setExpanded(True)
                         parent = parent.parent()
             del blocker
 
