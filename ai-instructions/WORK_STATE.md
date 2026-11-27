@@ -1,3 +1,10 @@
+# November 27: Reference image View button installed
+
+The approved View > Reference > Reference image button is installed. Native click,
+Cancel/document preservation and no-component eligibility checks pass. Source,
+build and installed hashes match; owner settings and shortcut are unchanged.
+See [delivery evidence](evidence/view-image-button-20261127/README.md).
+
 # November 27: Reference image workflow installed
 
 The approved task is implemented and installed, with the owner's final simple

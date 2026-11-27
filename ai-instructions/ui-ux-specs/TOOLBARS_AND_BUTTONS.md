@@ -1,5 +1,13 @@
 # Toolbars and buttons
 
+## Reference image on View — approved November 27, 2026
+
+The Plus View tab includes a large **Reference image** button in a **Reference**
+group after Individual Views. It opens the existing reference-image task for the
+active component and shares that command's eligibility rules and native image-plane
+icon. This is an additional entry to the same workflow available from Design Tasks.
+See [approved preview and installed verification](../evidence/view-image-button-20261127/README.md).
+
 ## Design toolbar simplification — approved November 27, 2026
 
 Design in Plus UI has Home, Modeling, Sketch, Assembly, Mesh, View and Part; remove

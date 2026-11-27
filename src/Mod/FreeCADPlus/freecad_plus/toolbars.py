@@ -681,6 +681,10 @@ class Ribbon(QtCore.QObject):
                             entries.append((original.toolTip(), 'small', (key,)))
                 if entries or self.tab == 'All Tools':
                     self._group(row, native.windowTitle() if native else name, entries)
+        if self.tab == 'View':
+            self._group(row, 'Reference', (
+                ('Reference image', 'large', ('Plus_ReferenceImage',)),
+            ))
         row.addStretch()
         old = self.scroll.takeWidget()
         self.scroll.setWidget(page)

@@ -1,0 +1,15 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "f185d791f773de0835a979fb610964967b900aa1349c5f61d3ff5e44815ac1b7",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/toolbars.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+      "before": "de173cf02e457cdde47f03729be01956c7df869f7a2111e01fc8cd5b1d82d8b4",
+      "installed": "7a8b8dc0c5db761704045d77632c5664bd76e2da0a4bb1eb2be56cc1a5ed4e74"
+    }
+  ]
+}

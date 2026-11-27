@@ -1,3 +1,11 @@
+# November 27: Reference image View button
+
+- [x] Add the approved large Reference image action to View > Reference.
+- [x] Build/install the Python toolbar and verify native task entry and Cancel.
+- [x] Verify eligibility without an active component and unchanged owner settings.
+
+See [approval and delivery evidence](evidence/view-image-button-20261127/README.md).
+
 # November 27: Reference image workflow
 
 - [x] Add Reference image to Design Tasks for the active component.

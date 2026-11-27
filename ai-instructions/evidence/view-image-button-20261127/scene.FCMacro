@@ -1,0 +1,34 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def settle():Gui.updateGui();QtTest.QTest.qWait(250)
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import ui_modes,toolbars,document,reference_image_task
+        win=Gui.getMainWindow();win.showNormal();win.resize(1650,1050);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        doc=document.new_document('ViewImageButtonCheck');owner=document.validate(doc).Definitions[0]
+        r=toolbars._controller;r.select_tab(next(i for i,(name,_) in enumerate(r.tabs) if name=='View'))
+        Gui.Selection.clearSelection();settle()
+        button=r.scroll.widget().findChild(QtWidgets.QToolButton,'Plus_Plus_ReferenceImage')
+        assert button is not None and button.isEnabled()
+        assert button.defaultAction() in Gui.Command.get('Plus_ReferenceImage').getAction()
+        before=(len(doc.Objects),doc.UndoCount)
+        QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton);settle()
+        task=reference_image_task._active
+        assert task is not None and task.owner==owner
+        task.reject();settle();assert before==(len(doc.Objects),doc.UndoCount)
+        r.bar.grab().save(str(out/'installed-view-tab.png'))
+        App.closeDocument(doc.Name);settle()
+        assert not Gui.Command.get('Plus_ReferenceImage').isActive()
+        result.update(ok=True,module=toolbars.__file__,native_button_opens_existing_task=True,
+                      cancel_preserves_document=True,disabled_without_component=True)
+    except Exception:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1600,run)

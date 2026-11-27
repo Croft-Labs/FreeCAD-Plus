@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Reference image View button — installed November 27, 2026
+
+View > Reference now opens the existing Reference image task. The installed native
+button was clicked successfully; Cancel preserves the document and the command is
+disabled without an active component. The single Python payload matches the source
+and build. See [delivery evidence](evidence/view-image-button-20261127/README.md).
+
 ## Reference image task — installed November 27, 2026
 
 Design Tasks > Create Geometry now includes Reference image. Images attach to
