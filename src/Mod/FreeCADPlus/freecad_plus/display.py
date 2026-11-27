@@ -57,8 +57,8 @@ def enable(root):
     root.PlusSchema = max(root.PlusSchema, 5)
 
 
-def set_state(owner, child=None, *, part_type=None, shown=None):
-    """Store a self/direct-child choice in the parent's defining file, atomically."""
+def prepare_state(owner, child=None, *, part_type=None, shown=None):
+    """Validate a setting before a single or grouped atomic update."""
     root = document.validate(owner.Document)
     if owner not in [root, *root.Definitions] or (child is None and owner == root):
         raise ValueError('Choose a component or a direct child of the active context')
@@ -76,7 +76,13 @@ def set_state(owner, child=None, *, part_type=None, shown=None):
             raise ValueError('This component display setting is read-only')
         if any(prop == name for prop, expression in obj.ExpressionEngine):
             raise ValueError('This component display setting is expression-driven')
-    if value == (old_type, old_shown): return False
+    return root, obj, value
+
+
+def set_state(owner, child=None, *, part_type=None, shown=None):
+    """Store a self/direct-child choice in the parent's defining file, atomically."""
+    root, obj, value = prepare_state(owner, child, part_type=part_type, shown=shown)
+    if value == state(obj): return False
     # Visibility is usable inside native tasks; changing Part Type still requires
     # the normal, independent modeling transaction.
     transaction = document.visibility_transaction if part_type is None else document.transaction

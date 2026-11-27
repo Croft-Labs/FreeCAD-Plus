@@ -1,0 +1,15 @@
+test_counts_rename_singleton_transition_and_undo (TestInstanceDisplay.TestInstanceDisplay.test_counts_rename_singleton_transition_and_undo) ... ok
+test_external_qualification_preference_and_save_reopen (TestInstanceDisplay.TestInstanceDisplay.test_external_qualification_preference_and_save_reopen) ... ok
+test_group_display_is_atomic_and_single_instance_action_is_explicit (TestInstanceDisplay.TestInstanceDisplay.test_group_display_is_atomic_and_single_instance_action_is_explicit) ... ok
+test_group_has_no_component_action_or_native_selection (TestInstanceDisplay.TestInstanceDisplay.test_group_has_no_component_action_or_native_selection) ... ok
+test_group_menu_parity_and_copy_move_target_all_members (TestInstanceDisplay.TestInstanceDisplay.test_group_menu_parity_and_copy_move_target_all_members) ... ok
+test_grouping_identity_never_merges_equal_labels_or_different_parents (TestInstanceDisplay.TestInstanceDisplay.test_grouping_identity_never_merges_equal_labels_or_different_parents) ... ok
+test_hidden_selection_reveals_nested_exact_instance_without_rebuilding (TestInstanceDisplay.TestInstanceDisplay.test_hidden_selection_reveals_nested_exact_instance_without_rebuilding) ... ok
+test_individual_edit_copy_and_move_keep_exact_route (TestInstanceDisplay.TestInstanceDisplay.test_individual_edit_copy_and_move_keep_exact_route) ... ok
+test_modes_preserve_model_selection_and_occurrence_items (TestInstanceDisplay.TestInstanceDisplay.test_modes_preserve_model_selection_and_occurrence_items) ... ok
+test_nested_groups_collapsed_and_constraint_collectors_first (TestInstanceDisplay.TestInstanceDisplay.test_nested_groups_collapsed_and_constraint_collectors_first) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 13.180s
+
+OK

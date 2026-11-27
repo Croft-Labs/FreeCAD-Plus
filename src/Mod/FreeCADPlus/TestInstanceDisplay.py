@@ -9,7 +9,7 @@ from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtTest, QtWidgets
-from freecad_plus import constraints, document, editing, external, hierarchy, movement, panel
+from freecad_plus import constraints, document, editing, external, hierarchy, movement, panel, assembly_ui
 
 
 def settle():
@@ -45,7 +45,7 @@ class TestInstanceDisplay(unittest.TestCase):
         self.top = self.root.Group[0]
         editing.edit((self.top,))
         self.dock = panel.show_panel()
-        self.dock.instance_mode.setCurrentText('Expanded')
+        assembly_ui.set_all(self.dock, False)
         self.dock.activate_assembly(self.owner, (self.top,))
         self.dock.tabs.setCurrentIndex(1)
         Gui.getMainWindow().resizeDocks([self.dock], [370], QtCore.Qt.Horizontal)
@@ -55,14 +55,65 @@ class TestInstanceDisplay(unittest.TestCase):
         if movement._active:
             movement._active.finish()
         Gui.Selection.clearSelection()
-        self.dock.instance_mode.setCurrentIndex(1 if self.old_mode else 0)
+        assembly_ui.set_all(self.dock, self.old_mode)
         for name in set(App.listDocuments()) - self.before:
             App.closeDocument(name)
         self.prefs.SetBool('CondensedInstances', self.old_mode)
         settle()
 
     def mode(self, value):
-        self.dock.instance_mode.setCurrentText(value); settle()
+        assembly_ui.set_all(self.dock, value == 'Condensed'); settle()
+
+    def menu(self, item, choose=None):
+        tree=self.dock.trees[1];tree.scrollToItem(item);settle();result=[]
+        def drive():
+            menu=QtWidgets.QApplication.activePopupWidget()
+            if not isinstance(menu,QtWidgets.QMenu):return
+            def entries(menu):
+                return [(a.text(),a.isEnabled(),entries(a.menu()) if a.menu() else [])
+                        for a in menu.actions() if not a.isSeparator()]
+            result.extend(entries(menu))
+            menu.grab().save(str(self.output/('group-menu.png' if item.data(0,panel._ROLE).kind=='instance_group' else 'instance-menu.png')))
+            if choose:
+                action=next(a for a in menu.actions() if a.text()==choose)
+                action.trigger()
+            menu.close()
+        QtCore.QTimer.singleShot(100,drive)
+        self.dock._menu(tree,tree.visualItemRect(item).center())
+        return result
+
+    def test_group_menu_parity_and_copy_move_target_all_members(self):
+        expanded=self.menu(self.row(self.motors[0]))
+        key,_=assembly_ui.group_key(self.row(self.motors[0]))
+        assembly_ui.set_group(self.dock,key,True)
+        group=self.groups(self.motor)[0]
+        condensed=self.menu(group)
+        self.assertEqual(condensed,[(name.replace('Condense instances','Expand instances'),enabled,children)
+                                   for name,enabled,children in expanded])
+        self.assertFalse(self.groups(self.gear))
+        with patch.object(self.dock,'copy_rows') as copy:
+            self.menu(group,'Copy')
+            self.assertEqual([r.path[-1] for r in copy.call_args.args[0]], [panel.identity(o) for o in self.motors])
+        with patch.object(self.dock,'move_rows') as move:
+            self.menu(group,'Move Components')
+            self.assertEqual(len(move.call_args.args[0]),3)
+        self.menu(group,'Expand instances');self.assertFalse(self.groups(self.motor))
+        self.dock.grab().save(str(self.output/'assembly-controls.png'))
+
+    def test_group_display_is_atomic_and_single_instance_action_is_explicit(self):
+        from freecad_plus import display
+        self.mode('Condensed');group=self.groups(self.motor)[0].data(0,panel._ROLE)
+        before=[display.state(obj) for obj in self.motors]
+        assembly_ui.group_display(self.dock,group,shown=False)
+        self.assertTrue(all(not display.state(obj)[1] for obj in self.motors))
+        self.doc.undo();settle()
+        self.assertEqual([display.state(obj) for obj in self.motors],before)
+        group=self.groups(self.motor)[0].data(0,panel._ROLE)
+        with patch.object(QtWidgets.QInputDialog,'getItem',return_value=(group.children[1].label,True)):
+            calls=[];assembly_ui.choose_member(self.dock,group,calls.append)
+            self.assertEqual(calls[0].path[-1],panel.identity(self.motors[1]))
+        with patch.object(QtWidgets.QInputDialog,'getItem',return_value=('',False)):
+            calls=[];assembly_ui.choose_member(self.dock,group,calls.append);self.assertEqual(calls,[])
 
     def row(self, *links):
         key = ('occurrence', tuple(panel.identity(o) for o in (self.top, *links)))
@@ -156,8 +207,8 @@ class TestInstanceDisplay(unittest.TestCase):
         with patch.object(self.dock, 'edit_row') as edit:
             self.dock._edit_clicked(group)
             edit.assert_not_called()
-        self.dock._menu(self.dock.trees[1], self.dock.trees[1].visualItemRect(group).center())
-        self.assertIsNone(QtWidgets.QApplication.activePopupWidget())
+        # Menu dispatch now offers component actions; the presentation row itself
+        # still cannot masquerade as one individual occurrence in backend calls.
         self.assertEqual(self.snapshot(), before)
 
     def test_individual_edit_copy_and_move_keep_exact_route(self):
@@ -228,5 +279,7 @@ class TestInstanceDisplay(unittest.TestCase):
                     selected=[self.top.Name, imported[1].Name])
         (self.output / 'reopen.json').write_text(json.dumps(info))
         other = panel.ComponentPanel(Gui.getMainWindow())
-        try: self.assertEqual(other.instance_mode.currentText(), 'Condensed')
+        try:
+            other.refresh()
+            self.assertTrue(assembly_ui.state(other)[None])
         finally: other.dispose(); other.deleteLater()

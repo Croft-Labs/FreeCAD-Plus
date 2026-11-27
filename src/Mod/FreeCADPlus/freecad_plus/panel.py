@@ -58,7 +58,7 @@ def instance_rows(rows, condensed=False, parent_key=()):
     for row in rows:
         members = siblings.get(row.ref, ()) if row.kind == 'occurrence' else ()
         if len(members) > 1:
-            if condensed:
+            if (condensed.get((parent_key, row.ref), condensed.get(None, False)) if isinstance(condensed, dict) else condensed):
                 if row.ref in emitted:
                     continue
                 emitted.add(row.ref)
@@ -389,30 +389,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 layout = QtWidgets.QVBoxLayout(page)
                 layout.setContentsMargins(0, 0, 0, 0)
                 layout.setSpacing(4)
-                self.assembly_button = QtWidgets.QPushButton('Choose active assembly...')
-                self.assembly_button.clicked.connect(self.choose_assembly)
-                tools = QtWidgets.QHBoxLayout()
-                tools.addWidget(self.assembly_button)
-                self.move_button = QtWidgets.QToolButton()
-                self.move_button.setIcon(Gui.getIcon('Std_TransformManip'))
-                self.move_button.setToolTip('Move Components')
-                self.move_button.setAccessibleName('Move Components')
-                self.move_button.clicked.connect(self.move_selected)
-                tools.addWidget(self.move_button)
-                layout.addLayout(tools)
-                host = QtWidgets.QWidget()
-                bar = QtWidgets.QHBoxLayout(host)
-                bar.setContentsMargins(2, 0, 2, 0)
-                bar.addWidget(QtWidgets.QLabel('Instances'))
-                self.instance_mode = QtWidgets.QComboBox()
-                self.instance_mode.setObjectName('PlusInstanceDisplay')
-                self.instance_mode.setAccessibleName('Instances')
-                self.instance_mode.addItems(('Expanded', 'Condensed'))
-                prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/FreeCADPlus')
-                self.instance_mode.setCurrentIndex(1 if prefs.GetBool('CondensedInstances', False) else 0)
-                bar.addWidget(self.instance_mode)
-                bar.addStretch()
-                layout.addWidget(host)
+                from . import assembly_ui
+                assembly_ui.configure(self, page, tree)
                 layout.addWidget(tree)
                 self.tabs.addTab(page, 'Assembly')
             else:
@@ -430,7 +408,6 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._timer = QtCore.QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.timeout.connect(self.refresh)
-        self.instance_mode.currentIndexChanged.connect(self._instance_mode_changed)
         self._mdi = parent.findChild(QtWidgets.QMdiArea)
         if self._mdi:
             self._mdi.subWindowActivated.connect(self.schedule)
@@ -831,11 +808,6 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 return definition, path
         raise ValueError('Select Edit on the file or a component to establish an editing context')
 
-    def _instance_mode_changed(self, index):
-        App.ParamGet('User parameter:BaseApp/Preferences/Mod/FreeCADPlus').SetBool('CondensedInstances', index == 1)
-        self.refresh()
-        self._sync_selection(reveal=True)
-
     def refresh(self):
         if self._closed:
             return
@@ -874,18 +846,14 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     self._message(str(error))
                 state = self._state(current)
                 owner, owner_path = self._assembly_context(current, active, path)
-                rows = projection(doc, active, path, owner, owner_path, self.instance_mode.currentIndex() == 1)
-                self.assembly_button.setText('Active assembly: ' + assembly.label(owner, doc) + '...'
-                                             if owner else 'Choose active assembly...')
+                from .assembly_ui import state as instance_state
+                rows = projection(doc, active, path, owner, owner_path, instance_state(self))
                 if state.get('component_window'):
                     label = external.qualified_label(active, doc) if active else doc.Label
                     state['window'].widget().setWindowTitle(label + ' [*]')
                 if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
             self._history_eyes = active is not None
-            self.assembly_button.setEnabled(current is not None)
-            if current is None:
-                self.assembly_button.setText('Choose active assembly...')
             self.trees[2].setColumnHidden(1, not self._history_eyes)
             self._updating = True
             self.setUpdatesEnabled(False)
@@ -1143,6 +1111,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 parent = item.parent() or tree.invisibleRootItem()
                 parent.takeChild(parent.indexOfChild(item))
         self._maps[index] = current
+        if index == 1:
+            from .assembly_ui import attach
+            attach(self, tree)
         del blocker
 
     def prepare_history_move(self, row):
@@ -1345,6 +1316,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._sync_selection()
 
     def _edit_clicked(self, item):
+        if item.data(0, _ROLE) is None:
+            return
         if item.data(0, _ROLE).kind == 'instance_group':
             if not item.treeWidget().expandsOnDoubleClick():
                 item.setExpanded(not item.isExpanded())
@@ -1429,6 +1402,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self._message(str(error))
             menu.deleteLater()
             return
+        group = row if row is not None and row.kind == 'instance_group' else None
+        if group is not None:
+            from .assembly_ui import choose_member
+            row = group.children[0]
         component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused', 'assembly')
         history_component = row is not None and row.kind == 'history_component'
         if tree == self.trees[0] and row is not None and row.kind == 'model':
@@ -1452,18 +1429,19 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 from .instance_patterns import controller
                 if controller(lookup(row.path[-1])) is not None:
                     from .instance_task import edit_row
-                    actions[menu.addAction('Edit instance pattern')] = edit_row
+                    actions[menu.addAction('Edit instance pattern')] = (lambda unused: choose_member(self, group, edit_row)) if group else edit_row
             actions[menu.addAction('Edit')] = self.edit_row
             if row.kind != 'file':
                 actions[menu.addAction('Open in new window')] = self.open_row
                 actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[1]:
-            selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
+            from .assembly_ui import members
+            selected = members(tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (group or row,))
             menu.addSeparator()
             if row.kind == 'occurrence':
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
                 actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
-                actions[menu.addAction('Remove instance…')] = self.remove_instance
+                actions[menu.addAction('Remove instance…')] = (lambda unused: choose_member(self, group, self.remove_instance)) if group else self.remove_instance
             elif row.kind == 'assembly' and row.path:
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
             if row.kind in ('file', 'occurrence', 'assembly'):
@@ -1479,16 +1457,30 @@ class ComponentPanel(QtWidgets.QDockWidget):
         else:
             expected = (identity(owner), identity(child) if child is not None else None)
             part_type, shown = display.state(child if child is not None else owner)
+            if group is not None:
+                from .assembly_ui import group_display
+                group_states = [display.state(c if c is not None else o)
+                                for o, c in (self._display_target(member) for member in group.children)]
             menu.addSeparator()
             types = menu.addMenu('Part Type')
             for title in display.TYPES:
                 action = types.addAction(title); action.setCheckable(True); action.setChecked(title == part_type)
                 actions[action] = lambda r, value=title: self.set_display(r, part_type=value, expected=expected)
+                if group is not None:
+                    action.setChecked(all(kind == title for kind, visible in group_states))
+                    actions[action] = lambda unused, value=title: group_display(self, group, part_type=value)
             visibility = menu.addMenu('Visibility')
             for title, value in (('Shown', True), ('Hidden', False)):
                 action = visibility.addAction(title); action.setCheckable(True); action.setChecked(value == shown)
                 action.setEnabled(not (value and part_type == 'Excluded'))
                 actions[action] = lambda r, value=value: self.set_display(r, shown=value, expected=expected)
+                if group is not None:
+                    action.setChecked(all(visible == value for kind, visible in group_states))
+                    action.setEnabled(not value or all(kind != 'Excluded' for kind, visible in group_states))
+                    actions[action] = lambda unused, value=value: group_display(self, group, shown=value)
+        if tree == self.trees[1] and row is not None and row.kind == 'occurrence':
+            from .assembly_ui import add_group_action
+            add_group_action(self, item, menu, actions)
         binding = self._binding
         # Capture a Python callback while the native action is alive. Qt may
         # replace nested QAction wrappers as the popup closes.
@@ -1500,6 +1492,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
             try:
                 if self._current() != binding:
                     raise ValueError('The active file tab changed; select the item again')
+                if group is not None:
+                    current_group = self._maps[1].get(group.key)
+                    if current_group is None or current_group.data(0, _ROLE).children != group.children:
+                        raise ValueError('The group changed; reopen its menu')
                 chosen_callbacks[-1](row)
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
@@ -1535,7 +1531,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def move_selected(self):
         try:
             rows = [item.data(0, _ROLE) for item in self.trees[1].selectedItems()]
-            self.move_rows([row for row in rows if row.kind == 'occurrence'])
+            from .assembly_ui import members
+            self.move_rows([row for row in members(rows) if row.kind == 'occurrence'])
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
 

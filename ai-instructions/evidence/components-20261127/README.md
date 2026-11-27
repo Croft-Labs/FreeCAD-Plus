@@ -13,3 +13,15 @@ reopening against conflicting preferences and unsaved later choices, stale ident
 per-view choice and preserved geometry/object identity/Undo. Metadata is host-owned
 `Document.Meta[FreeCADPlus.ActiveAssembly]`, version 1; no schema or geometry edges.
 Installation and integrated validation follow with the other approved groups.
+
+## Assembly controls and full group menus
+
+Review `ae8dafb11414`, fingerprint
+`5a69bfb4d52c9bd1fe05376e4a91cdf41492ddc1e9e36fc7e140440791ec7658`.
+Native source checks pass 10/10 after correcting per-view grouping on immediate
+file switches and submenu QAction lifetime. No hidden dropdown remains. Inline
+root controls, per-parent grouping, menu parity, exact occurrence selection,
+Copy/Move group targeting, atomic grouped display/Undo, rename and singleton/Undo
+transitions pass. Remove instance and pattern editing explicitly select a member
+before opening their existing review/editor; they never silently choose one.
+Shared-definition Edit/Rename/Open and Paste retain the existing definition semantics.

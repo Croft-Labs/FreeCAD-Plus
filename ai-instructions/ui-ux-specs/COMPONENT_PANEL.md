@@ -880,6 +880,18 @@ dock area, with Properties directly below it. Components must be available throu
 the panel menu, not only a developer Python call.
 
 See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).
+# Approved Assembly controls — November 27, 2026
+
+Owner approval covers review `ae8dafb11414`, fingerprint
+`5a69bfb4d52c9bd1fe05376e4a91cdf41492ddc1e9e36fc7e140440791ec7658`.
+The first assembly row has inline Expand all instances, Condense all instances,
+Choose active assembly, and Move Components icons. The old Instances dropdown
+and large chooser are removed. Repeated siblings can be condensed per parent.
+Condensed menus retain all occurrence actions, replacing Condense with Expand.
+Copy/Move and display choices address the grouped siblings; single-instance
+removal/pattern actions explicitly choose an instance before the existing review.
+Group display changes are atomic and reflect mixed values without false checkmarks.
+
 # Approved Components navigation — November 27, 2026
 
 Owner: “implement all components tab changes previewed.” Approval covers native
@@ -894,4 +906,3 @@ separately from the edited component. Saved choices override workspace history;
 unavailable targets do not bind by label or a reused object name. Different views
 retain their choices; saving uses the current view for that file. Older files remain
 readable. See `evidence/components-20261127` for implementation validation.
-

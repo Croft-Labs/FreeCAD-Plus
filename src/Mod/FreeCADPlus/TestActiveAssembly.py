@@ -140,7 +140,7 @@ class TestActiveAssembly(unittest.TestCase):
         other=document.new_document('Temporary catalog');part=document.validate(other).Definitions[0]
         App.setActiveDocument(self.doc.Name);self.widget.refresh();self.widget.activate_assembly(part)
         App.closeDocument(other.Name);settle();self.widget.refresh()
-        self.assertEqual(self.widget.trees[1].topLevelItemCount(),0)
+        self.assertEqual(len(self.widget._maps[1]),0)
         self.assertEqual(self.widget.assembly_button.text(),'Choose active assembly...')
 
     def test_copy_paste_into_selected_unused_assembly_and_stale_child_guard(self):
