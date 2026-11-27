@@ -31,6 +31,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepGProp.hxx>
 #include <BRepLProp_SLProps.hxx>
+#include <BRepLib.hxx>
 #include <BRepOffsetAPI_MakeOffset.hxx>
 #include <BRepPrimAPI_MakeHalfSpace.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
@@ -453,6 +454,41 @@ PyObject* TopoShapeFacePy::valueAt(PyObject* args) const
     BRepLProp_SLProps prop(adapt, u, v, 0, Precision::Confusion());
     const gp_Pnt& V = prop.Value();
     return new Base::VectorPy(new Base::Vector3d(V.X(), V.Y(), V.Z()));
+}
+
+PyObject* TopoShapeFacePy::isTangentAt(PyObject* args) const
+{
+    PyObject* edgeObject;
+    PyObject* faceObject;
+    double tolerance = 1e-7;
+    if (!PyArg_ParseTuple(args, "O!O!|d", &TopoShapeEdgePy::Type, &edgeObject,
+                          &TopoShapeFacePy::Type, &faceObject, &tolerance)) {
+        return nullptr;
+    }
+    if (!std::isfinite(tolerance) || tolerance <= 0) {
+        PyErr_SetString(PyExc_ValueError, "Expected a positive finite angular tolerance");
+        return nullptr;
+    }
+    try {
+        const auto first = getTopoDSFace(this);
+        const auto second = getTopoDSFace(static_cast<TopoShapeFacePy*>(faceObject));
+        const auto edge = TopoDS::Edge(static_cast<TopoShapeEdgePy*>(edgeObject)->getTopoShapePtr()->getShape());
+        for (const auto& face : {first, second}) {
+            bool found = false;
+            for (TopExp_Explorer explorer(face, TopAbs_EDGE); explorer.More(); explorer.Next()) {
+                if (edge.IsSame(explorer.Current())) { found = true; break; }
+            }
+            if (!found) {
+                PyErr_SetString(PyExc_ValueError, "The edge must belong to both faces");
+                return nullptr;
+            }
+        }
+        return PyBool_FromLong(BRepLib::ContinuityOfFaces(edge, first, second, tolerance) != GeomAbs_C0);
+    }
+    catch (const Standard_Failure& error) {
+        PyErr_SetString(PartExceptionOCCError, error.GetMessageString());
+        return nullptr;
+    }
 }
 
 PyObject* TopoShapeFacePy::normalAt(PyObject* args) const

@@ -21,6 +21,11 @@ class TopoShapeFace(TopoShape):
     Tolerance: float = ...
     """Set or get the tolerance of the vertex"""
 
+    @constmethod
+    def isTangentAt(self, edge: TopoShape, other: TopoShape, tolerance: float = 1e-7) -> bool:
+        """Test OCCT geometric continuity across an edge shared by both faces."""
+        ...
+
     ParameterRange: Final[Tuple] = ...
     """Returns a 4 tuple with the parameter range"""
 

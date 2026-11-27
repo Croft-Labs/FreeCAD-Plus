@@ -25,6 +25,7 @@ set(FreeCADPlus_SRCS
     TestComponentNavigation.py
     TestPartsFiles.py
     TestAppearance.py
+    TestPendingWorkflows.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py
     TestInstanceRemoval.py
@@ -77,6 +78,8 @@ set(FreeCADPlus_SRCS
     freecad_plus/toolbars.py
     freecad_plus/selection_toolbar.py
     freecad_plus/curve_selection.py
+    freecad_plus/surface_selection.py
+    freecad_plus/selection_scope.py
     freecad_plus/category_selection.py
     freecad_plus/display.py
     freecad_plus/geometry.py
@@ -90,6 +93,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/appearance.py
     freecad_plus/appearance_ui.py
     freecad_plus/appearance_task.py
+    freecad_plus/appearance_highlight.py
     freecad_plus/assembly.py
     freecad_plus/assembly_ui.py
     freecad_plus/file_actions.py

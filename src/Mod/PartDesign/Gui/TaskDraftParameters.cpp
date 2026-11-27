@@ -188,6 +188,8 @@ void TaskDraftParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 
 void TaskDraftParameters::setButtons(const selectionModes mode)
 {
+    ui->listWidgetReferences->setProperty("FreeCADPlusPickDomain",
+        mode == refSel ? QStringLiteral("surface") : QString());
     ui->buttonRefSel->setText(mode == refSel ? stopSelectionLabel() : startSelectionLabel());
     ui->buttonRefSel->setChecked(mode == refSel);
     ui->buttonLine->setChecked(mode == line);

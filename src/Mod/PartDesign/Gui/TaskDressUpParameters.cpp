@@ -555,6 +555,10 @@ void TaskDressUpParameters::setSelectionMode(selectionModes mode)
     selectionMode = mode;
     setButtons(mode);
     if (referenceList) {
+        // Explicit collector capability for the Plus selection toolbar. Other
+        // fields (axis/neutral plane) keep their native single-reference gate.
+        referenceList->setProperty("FreeCADPlusPickDomain",
+            mode == refSel && allowFaces && !allowEdges ? QStringLiteral("surface") : QString());
         referenceList->setStyleSheet(mode == refSel
             ? QStringLiteral("QListWidget { border: 2px solid #347bb7; }") : QString());
         referenceHint->setText(mode == refSel ? tr("Click references in the view to add them.")

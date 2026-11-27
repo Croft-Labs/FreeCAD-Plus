@@ -110,15 +110,21 @@ class MoveTask(QtCore.QObject):
         for label, callback in (('Remove', self.remove_selected), ('Clear', self.clear)):
             button = QtWidgets.QPushButton(label); button.clicked.connect(lambda checked=False, c=callback: self.run(c)); row.addWidget(button)
         box.addLayout(row)
-        self.persistent = QtWidgets.QCheckBox('Keep selection after Apply'); self.persistent.setChecked(True)
-        box.addWidget(self.persistent); layout.addWidget(group)
+        layout.addWidget(group)
         self.method_host = QtWidgets.QWidget(); self.method_layout = QtWidgets.QVBoxLayout(self.method_host)
         self.method_layout.setContentsMargins(0, 0, 0, 0); layout.addWidget(self.method_host)
         self.auto = QtWidgets.QCheckBox('Automatic preview'); self.auto.setChecked(True)
         update = QtWidgets.QPushButton('Update preview'); update.clicked.connect(lambda: self.update_preview(force=True))
         self.auto.toggled.connect(self.update_preview)
         row = QtWidgets.QHBoxLayout(); row.addWidget(self.auto); row.addWidget(update); layout.addLayout(row)
-        self.message = task_status.TaskStatus(); layout.addWidget(self.message); layout.addStretch()
+        self.message = task_status.TaskStatus(); layout.addWidget(self.message)
+        footer = QtWidgets.QHBoxLayout()
+        self.done = QtWidgets.QPushButton('Done'); self.apply_button = QtWidgets.QPushButton('Apply')
+        self.cancel = QtWidgets.QPushButton('Cancel')
+        for button in (self.done, self.apply_button, self.cancel): footer.addWidget(button)
+        layout.addLayout(footer); layout.addStretch()
+        self.done.clicked.connect(self.accept); self.apply_button.clicked.connect(lambda: self.run(self.apply))
+        self.cancel.clicked.connect(self.reject)
         self.kind.currentTextChanged.connect(self.change_type); self.method.currentTextChanged.connect(self.change_method)
         self.change_type('Move'); self.busy = False
         try:
@@ -200,12 +206,8 @@ class MoveTask(QtCore.QObject):
         self.clear_preview(); self.message.setError(str(error)); self.enable_commit(False)
 
     def enable_commit(self, enabled, ok=None):
-        if _active is not self: return
-        for buttons in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox):
-            if buttons.isVisible():
-                for role in (QtWidgets.QDialogButtonBox.Apply, QtWidgets.QDialogButtonBox.Ok):
-                    button = buttons.button(role)
-                    if button: button.setEnabled((enabled if ok is None else ok) if role == QtWidgets.QDialogButtonBox.Ok else enabled)
+        self.apply_button.setEnabled(enabled)
+        self.done.setEnabled(not self.paths or (enabled if ok is None else ok))
 
     def check(self):
         from .panel import lookup, identity
@@ -289,7 +291,7 @@ class MoveTask(QtCore.QObject):
         else: self.add_rows(rows)
 
     def addSelection(self, *args):
-        if not self.closed and not self.selecting:
+        if not self.closed and not self.selecting and not self.busy:
             from .selection_list import removing
             self.pick_remove = removing(); self.pick_timer.start(0)
 
@@ -587,26 +589,36 @@ class MoveTask(QtCore.QObject):
         if self.method.currentText() == 'Dynamic drag' and self.drag_dirty:
             self.numeric_drag(force=True)
         motion = self.motion()
-        if motion.isSame(App.Placement(), 1e-12): return
+        if motion.isSame(App.Placement(), 1e-12):
+            self.reset_inputs(); return
         placements = [motion.multiply(link.LinkPlacement) for link in links]
         self.busy = True; self.clear_preview(); self.close_handles()
         try:
             with document.transaction(owner.Document, 'Move component instances'):
                 for link, placement in zip(links, placements): link.LinkPlacement = placement
         finally: self.busy = False
-        if not self.persistent.isChecked(): self.paths.clear(); self.parent_path = self.parent_ref = None
-        self.refresh_list(); self.change_method(self.method.currentText())
+        self.reset_inputs()
+
+    def reset_inputs(self):
+        self.pick_timer.stop(); self.timer.stop()
+        self.busy = True
+        try:
+            self.paths.clear(); self.parent_path = self.parent_ref = None
+            self.pick_remove = False
+            self.kind.setCurrentText('Move'); self.change_type('Move')
+            self.auto.setChecked(True); self.refresh_list()
+        finally: self.busy = False
         self.after_apply = True
-        self.enable_commit(bool(self.paths) and self.method.currentText() not in ('Point to point', 'Axes', 'Coordinate systems'), ok=True)
+        self.update_preview(); self.enable_commit(False, ok=True)
 
     def getStandardButtons(self):
-        return QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Apply
+        return 0
 
     def clicked(self, button):
         if button == QtWidgets.QDialogButtonBox.Apply: self.run(self.apply)
 
     def accept(self):
-        if self.after_apply:
+        if not self.paths or self.after_apply:
             if self.run(self.check): self.finish()
         elif self.run(self.apply): self.finish()
         return False

@@ -78,7 +78,9 @@ class TestMoveWorkflow(unittest.TestCase):
         self.assertTrue(self.second.LinkPlacement.Rotation.isSame(start.Rotation, 1e-8))
         self.assertTrue(self.top.LinkPlacement.isSame(top, 1e-8)); self.assertEqual(self.doc.UndoCount, undo + 1)
         self.assertEqual(self.dock._context(self.doc, self.view), context)
-        task.apply(); self.assertEqual(self.doc.UndoCount, undo + 1)
+        self.assertFalse(task.paths);self.assertFalse(task.apply_button.isEnabled())
+        self.assertEqual(task.kind.currentText(),'Move');self.assertEqual(task.method.currentText(),'Distance and vector')
+        self.assertEqual(self.doc.UndoCount, undo + 1)
         task.distance.setProperty('rawValue', 99.0); task.reject(); settle()
         self.close_enough(self.first.LinkPlacement.Base, App.Vector(6, 8, 0))
         self.doc.undo(); self.doc.recompute(); settle(); self.close_enough(self.first.LinkPlacement.Base, App.Vector())
@@ -158,8 +160,10 @@ class TestMoveWorkflow(unittest.TestCase):
         self.assertEqual(self.doc.UndoCount, undo); self.close_enough(self.first.LinkPlacement.Base, App.Vector())
         task.control.setCurrentIndex(1); pivot = task.dynamic_pivot(); task.drag_value.setText('3 mm'); task.numeric_drag()
         self.close_enough(task.dynamic_pivot(), pivot + App.Vector(4, 0, 0)); self.close_enough(task.motion().Base, App.Vector(6, 0, 0))
+        handles = task.handles
         task.control.setCurrentIndex(0); task.apply(); self.close_enough(self.first.LinkPlacement.Base, App.Vector(6, 0, 0))
-        handles = task.handles; task.reject(); settle(); self.assertTrue(handles.closed); self.assertLess(scene.getNumChildren(), count + 1)
+        self.assertIsNone(task.handles)
+        task.reject(); settle(); self.assertTrue(handles.closed); self.assertLess(scene.getNumChildren(), count + 1)
 
     def test_dynamic_native_translation_and_rotation_callbacks(self):
         task = self.task(self.first); task.method.setCurrentText('Dynamic drag'); settle()
@@ -241,6 +245,7 @@ class TestMoveWorkflow(unittest.TestCase):
         self.assertTrue(task.motion().isSame(first_move, 1e-6))
         task.form.grab().save(str(self.output / 'dynamic-task.png'))
         task.apply(); self.assertGreater(self.first.LinkPlacement.Base.x, 4)
+        task.add_rows([self.row(self.first)])
         task.kind.setCurrentText('Rotate'); task.method.setCurrentText('Dynamic drag'); settle()
         pivot = task.dynamic_pivot(); size = max(5., task.selection_size() * .45)
         gesture(pivot + App.Vector(size * .707, size * .707, 0), pivot + App.Vector(-size * .707, size * .707, 0))
@@ -305,7 +310,7 @@ class TestMoveWorkflow(unittest.TestCase):
         task.refs.update({'from': App.Vector(), 'to': App.Vector(0, 5, 0)})
         task.apply(); settle(); self.assertEqual(self.doc.UndoCount, undo + 1)
         task.accept(); settle(); self.assertTrue(task.closed); self.assertEqual(self.doc.UndoCount, undo + 1)
-        task = self.task(self.first); task.persistent.setChecked(False); task.distance.setText('2 mm'); task.apply()
+        task = self.task(self.first); task.distance.setText('2 mm'); task.apply()
         self.assertEqual(task.paths, []); task.accept(); self.assertTrue(task.closed)
 
     def test_native_frame_pick_and_dynamic_plane_snap(self):

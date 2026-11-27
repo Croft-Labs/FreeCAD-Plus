@@ -11,7 +11,7 @@ def parts_menu(panel, tree, point, item, row):
     actions = {}
     selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
     menu.addSeparator()
-    actions[menu.addAction('Edit')] = panel.edit_row
+    panel.add_edit_actions(menu, actions, row)
     actions[menu.addAction('Make active assembly')] = panel.make_active_assembly
     actions[menu.addAction('Add to active component\u2026')] = lambda unused: panel.add_component_rows(selected)
     actions[menu.addAction('Open in new window')] = panel.open_row
@@ -79,7 +79,6 @@ class AppearanceForm(QtWidgets.QWidget):
         self.apply = QtWidgets.QPushButton('Apply')
         self.cancel = QtWidgets.QPushButton('Cancel')
         for button in (self.done, self.apply, self.cancel): buttons.addWidget(button)
-        layout.addLayout(buttons)
         title = QtWidgets.QLabel(component); font = title.font();font.setBold(True);title.setFont(font)
         layout.addWidget(title)
         modes = QtWidgets.QHBoxLayout()
@@ -115,6 +114,7 @@ class AppearanceForm(QtWidgets.QWidget):
         help = QtWidgets.QLabel('Apply keeps this task open. Cancel discards unapplied changes.');help.setWordWrap(True);layout.addWidget(help)
         from .task_status import TaskStatus
         self.status = TaskStatus();self.status.hide();layout.addWidget(self.status)
+        layout.addLayout(buttons)
         layout.addStretch()
         self.body.toggled.connect(lambda checked: self.switch('body') if checked else None)
         self.face.toggled.connect(lambda checked: self.switch('face') if checked else None)
@@ -141,7 +141,7 @@ class AppearanceForm(QtWidgets.QWidget):
         self.count.setText(('Selected bodies' if self.mode == 'body' else 'Selected faces')+' ('+str(len(self.targets))+')')
         self.hint.setText('Click the list, then pick '+('bodies' if self.mode == 'body' else 'faces')+' in the 3D view. Shift-click removes an item.')
         self.scope.setText('A new color replaces face colors on the listed bodies. Child components keep their colors.' if self.mode == 'body' else 'Only the listed faces change. Other faces keep their appearance.')
-        self.done.setEnabled(bool(self.targets));self.apply.setEnabled(bool(self.targets))
+        self.done.setEnabled(True);self.apply.setEnabled(bool(self.targets))
 
     def remove_selected(self):
         rows = {self.items.row(item) for item in self.items.selectedItems()}

@@ -14,6 +14,7 @@ class ThickenTask(extrude_task.ExtrudeTask):
     title = 'Thicken'
     icon = 'Part_Offset'
     selection_noun = 'sheets'
+    face_collectors = frozenset(('profile',))
 
     def usable_geometry(self, obj, sheet=False):
         return (not obj.isDerivedFrom('Sketcher::SketchObject')

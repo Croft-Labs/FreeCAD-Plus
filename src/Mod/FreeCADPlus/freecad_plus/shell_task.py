@@ -13,6 +13,7 @@ from .task_status import TaskStatus
 
 class ShellTask(extrude_task.ExtrudeTask):
     title = 'Shell'
+    face_collectors = frozenset(('profile',))
 
     def __init__(self, feature=None):
         QtCore.QObject.__init__(self)
@@ -181,7 +182,7 @@ class ShellTask(extrude_task.ExtrudeTask):
             self.check()
             result = shell.evaluate(self.owner, self.refs, self.settings(), self.feature)
             self.result_shape = result; self.valid = True; self.revisions += 1
-            self.world = hierarchy.world_placement(self.doc, self.path) if self.path else App.Placement()
+            self.world = editing.world_placement(self.doc, self.path)
             self.overlay = coin.SoSeparator()
             pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE; self.overlay.addChild(pick)
             if self.visible.isChecked():

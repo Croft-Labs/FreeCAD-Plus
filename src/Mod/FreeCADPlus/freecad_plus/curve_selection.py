@@ -192,9 +192,12 @@ class Controller(QtCore.QObject):
 
     def addSelection(self, doc, name, sub, point):
         from .selection_list import removing
+        from . import selection_scope, surface_selection
         remove = removing()
-        mode = intent()
-        if not self.active or not self.picking or self.busy or mode == INTENTS[0]:
+        scope = selection_scope.current()
+        surfaces = scope[0] == 'surface'
+        mode = surface_selection.intent() if surfaces else intent()
+        if not self.active or not self.picking or self.busy or mode in (INTENTS[0], surface_selection.INTENTS[0]):
             return
         document = App.getDocument(doc)
         root = document.getObject(name) if document else None
@@ -208,7 +211,7 @@ class Controller(QtCore.QObject):
             key = (doc, name, seed)
             if key in self.pending:
                 return
-            chain = candidates(root, sub, mode, self.cache)
+            chain = (surface_selection.candidates if surfaces else candidates)(root, sub, mode, self.cache)
             keys = {(doc, name, candidate) for candidate in chain} | {key}
             extra = [candidate for candidate in chain
                      if candidate != seed and (doc, name, candidate) not in self.pending]
@@ -218,18 +221,26 @@ class Controller(QtCore.QObject):
             gui = Gui.activeDocument()
             editor = gui.getInEdit() if gui else None
             task = Gui.Control.activeDialog()
+            owner = root.getSubObject(prefix, 1) if prefix else root
+            owner = owner.getLinkedObject(True) if owner is not None else None
+            geometry = (owner, owner.Shape, prefix) if surfaces and owner is not None and hasattr(owner, 'Shape') else None
             # SelectionSingleton queues notifications made inside an observer.
             # A consuming task (Fillet, for example) clears each pick. Expanding
             # its queued picks again can therefore refill that queue forever.
             # Start after the seed notification drains, then deliver each extra
             # pick synchronously under the guard, retaining the native gate.
-            QtCore.QTimer.singleShot(0, self, lambda: self.expand(root, extra, keys, gui, editor, task, remove))
+            QtCore.QTimer.singleShot(0, self, lambda: self.expand(root, extra, keys, gui, editor, task, remove, scope, geometry))
         except (RuntimeError, ValueError, AttributeError) as exc:
             App.Console.PrintWarning('Plus curve selection: %s\n' % exc)
 
-    def expand(self, root, extra, keys, gui, editor, task, remove=False):
+    def expand(self, root, extra, keys, gui, editor, task, remove=False, scope=None, geometry=None):
         self.busy = True
         try:
+            from . import selection_scope
+            if (scope is not None and scope != selection_scope.current()):return
+            if geometry is not None:
+                current = root.getSubObject(geometry[2], 1) if geometry[2] else root
+                if current is None or current.getLinkedObject(True) != geometry[0] or not geometry[0].Shape.isSame(geometry[1]):return
             if (not self.active or Gui.activeDocument() != gui
                     or (gui and gui.getInEdit() != editor) or Gui.Control.activeDialog() != task):
                 return
