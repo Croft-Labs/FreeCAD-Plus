@@ -107,7 +107,7 @@ class TestSketchSymmetry(unittest.TestCase):
         self.pick('V_Axis',axis=True);self.apply.click();self.settle()
         self.assertEqual(self.sketch.GeometryCount,6)
         self.assertAlmostEqual(self.sketch.Geometry[4].StartPoint.x,-5)
-        self.assertEqual(self.sketch.ConstraintCount,0)
+        self.assertEqual(self.sketch.ConstraintCount,4)
         self.assertEqual(self.items.count(),0);self.assertTrue(self.items.isVisible())
         self.assertFalse(self.axis.text())
         self.pick('Edge3');self.pick('V_Axis',axis=True);self.apply.click();self.settle()
@@ -143,7 +143,7 @@ class TestSketchSymmetry(unittest.TestCase):
         self.enter(('Edge1',))
         delete=self.child(QtWidgets.QCheckBox,'SymmetryDeleteOriginal')
         constraints=self.child(QtWidgets.QCheckBox,'SymmetryConstraints')
-        self.assertFalse(delete.isChecked());self.assertFalse(constraints.isChecked())
+        self.assertFalse(delete.isChecked());self.assertTrue(constraints.isChecked())
         delete.setChecked(True);constraints.setChecked(True);self.assertFalse(delete.isChecked())
         delete.setChecked(True);self.assertFalse(constraints.isChecked())
         delete.setChecked(False)
@@ -163,6 +163,33 @@ class TestSketchSymmetry(unittest.TestCase):
         self.assertAlmostEqual(self.sketch.Geometry[3].StartPoint.y,19)
         self.done.click()
 
+    def check_axis_endpoint(self, start, end, axis):
+        index = self.sketch.addGeometry(Part.LineSegment(App.Vector(*start), App.Vector(*end)), False)
+        self.doc.recompute()
+        self.enter(('Edge'+str(index+1),))
+        self.pick(axis, axis=True); self.apply.click(); self.settle()
+        constraints = [c for c in self.sketch.Constraints if c.First == index]
+        self.assertEqual([(c.Type, int(c.FirstPos)) for c in constraints], [('Coincident',1),('Symmetric',2)])
+        self.assertEqual(self.sketch.solve(), 0)
+        self.assertTrue(self.child(QtWidgets.QCheckBox,'SymmetryConstraints').isChecked())
+        self.assertFalse(self.child(QtWidgets.QCheckBox,'SymmetryDeleteOriginal').isChecked())
+        self.assertEqual(self.items.count(),0);self.assertFalse(self.axis.text())
+        cancel=self.child(QtWidgets.QPushButton,'SymmetryCancel')
+        self.assertTrue(cancel.isVisible())
+        self.assertFalse(self.child(QtWidgets.QPushButton,'SketchCancelAction').isVisible())
+        count=self.sketch.GeometryCount;cancel.click();self.assert_restored()
+        self.assertEqual(self.sketch.GeometryCount,count)
+
+    def test_horizontal_axis_endpoint_coincident(self):
+        self.check_axis_endpoint((8,0,0),(14,9,0),'H_Axis')
+
+    def test_vertical_axis_endpoint_coincident(self):
+        self.check_axis_endpoint((0,8,0),(14,9,0),'V_Axis')
+
+    def test_oblique_axis_endpoint_coincident(self):
+        axis=self.sketch.addGeometry(Part.LineSegment(App.Vector(0,0,0),App.Vector(30,30,0)),True)
+        self.check_axis_endpoint((8,8,0),(14,9,0),'Edge'+str(axis+1))
+
     def test_constraints_cancel_escape_and_other_tool(self):
         self.enter(('Edge1',))
         self.child(QtWidgets.QCheckBox,'SymmetryConstraints').setChecked(True)
@@ -170,7 +197,7 @@ class TestSketchSymmetry(unittest.TestCase):
         self.assertGreater(self.sketch.ConstraintCount,0)
         count=self.sketch.GeometryCount
         self.pick('Edge2')
-        self.child(QtWidgets.QPushButton,'SketchCancelAction').click();self.assert_restored()
+        self.child(QtWidgets.QPushButton,'SymmetryCancel').click();self.assert_restored()
         self.assertEqual(self.sketch.GeometryCount,count)
         self.enter()
         self.focus(self.axis);QtTest.QTest.keyClick(self.axis,QtCore.Qt.Key_Escape)

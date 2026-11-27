@@ -104,6 +104,7 @@ TaskDlgEditSketch::~TaskDlgEditSketch()
 void TaskDlgEditSketch::slotToolChanged(const std::string& toolname)
 {
     const bool isolatedTool = toolname == "DSH_Symmetry" || toolname == "DSH_Pattern";
+    hasToolFooter = isolatedTool;
     if (isolatedTool && symmetryPanelVisibility.empty()) {
         for (QWidget* panel : {static_cast<QWidget*>(Messages), static_cast<QWidget*>(Constraints),
                                static_cast<QWidget*>(Elements), static_cast<QWidget*>(SolverAdvanced)}) {
@@ -148,7 +149,7 @@ void TaskDlgEditSketch::updateCancelButton()
 {
     if (cancelButton) {
         cancelButton->setVisible(
-            sketchView && sketchView->getSketchMode() == ViewProviderSketch::STATUS_SKETCH_UseHandler
+            !hasToolFooter && sketchView && sketchView->getSketchMode() == ViewProviderSketch::STATUS_SKETCH_UseHandler
         );
     }
 }

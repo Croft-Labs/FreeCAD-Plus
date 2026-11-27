@@ -4617,6 +4617,22 @@ int SketchObject::addSymmetric(const std::vector<int>& geoIdList, int refGeoId,
                 symConstr->FirstPos = firstPos;
                 symConstr->SecondPos = secondPos;
                 symConstr->ThirdPos = refPosId;
+                // Classify the original point, before the mirrored arc endpoint
+                // perturbation. Symmetric is singular for a point on the axis.
+                if (refPosId == PointPos::none) {
+                    const auto* axis = dynamic_cast<const Part::GeomLineSegment*>(getGeometry(refGeoId));
+                    if (axis) {
+                        const auto point = getPoint(first, firstPos);
+                        const auto origin = axis->getStartPoint();
+                        const auto direction = axis->getEndPoint() - origin;
+                        if ((point.Perpendicular(origin, direction) - point).Length()
+                            <= Precision::Confusion()) {
+                            symConstr->Type = Coincident;
+                            symConstr->Third = GeoEnum::GeoUndef;
+                            symConstr->ThirdPos = PointPos::none;
+                        }
+                    }
+                }
                 newconstrVals.push_back(symConstr);
             };
             auto createEqualityConstr = [&]

@@ -90,6 +90,7 @@ public:
         symmetryConstraints = new QCheckBox(tr("Create symmetry constraints (J)"), this);
         deleteOriginal->setObjectName(QStringLiteral("SymmetryDeleteOriginal"));
         symmetryConstraints->setObjectName(QStringLiteral("SymmetryConstraints"));
+        symmetryConstraints->setChecked(true);
         layout->addWidget(deleteOriginal);
         layout->addWidget(symmetryConstraints);
         connect(deleteOriginal, &QCheckBox::toggled, this, [this](bool checked) {
@@ -108,13 +109,17 @@ public:
         apply->setObjectName(QStringLiteral("SymmetryApply"));
         auto* done = new QPushButton(tr("Done"), this);
         done->setObjectName(QStringLiteral("SymmetryDone"));
+        auto* cancel = new QPushButton(tr("Cancel"), this);
+        cancel->setObjectName(QStringLiteral("SymmetryCancel"));
         row->addWidget(done);
         row->addWidget(apply);
+        row->addWidget(cancel);
         layout->addLayout(row);
         connect(remove, &QPushButton::clicked, this, [this] { invoke(removeSelection); });
         connect(clear, &QPushButton::clicked, this, [this] { invoke(clearSelection); });
         connect(apply, &QPushButton::clicked, this, [this] { invoke(applySelection); });
         connect(done, &QPushButton::clicked, this, [this] { invoke(acceptSelection); });
+        connect(cancel, &QPushButton::clicked, this, [this] { invoke(finish); });
         setAxisPicking(false);
     }
 
@@ -435,6 +440,8 @@ private:
             }
             tryAutoRecomputeIfNotSolve(sketch);
             Gui::Command::commitCommand();
+            widget->deleteOriginal->setChecked(false);
+            widget->symmetryConstraints->setChecked(true);
             geometryIds.clear();
             refGeoId = Sketcher::GeoEnum::GeoUndef;
             refPosId = Sketcher::PointPos::none;

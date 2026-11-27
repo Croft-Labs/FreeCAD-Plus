@@ -296,6 +296,12 @@ class TestPatternTask(unittest.TestCase):
         self.p.apply.click(); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4, self.p.status.text())
         self.assertGreater(self.s.ConstraintCount, 0)
         self.assertEqual(self.p.items.count(), 0); self.assertFalse(self.p.d1.reference.text())
+        self.assertEqual(self.p.d1.count.value(),5);self.assertEqual(self.p.d1.value.value(),20)
+        self.assertEqual(self.p.mode.currentText(),'Linear');self.assertEqual(self.p.layout_mode.currentIndex(),0)
+        self.assertTrue(self.p.lock.isChecked());self.assertFalse(self.p.hide_spacing.isChecked())
+        self.assertTrue(all(value is None for value in self.p.references.values()))
+        self.assertTrue(self.p.cancel.isVisible())
+        self.assertFalse(self.win.findChild(self.QtWidgets.QPushButton,'SketchCancelAction').isVisible())
         self.doc.undo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 2)
         self.doc.redo(); self.QtTest.QTest.qWait(100); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4)
         self.p.done.click(); self.QtTest.QTest.qWait(100)
@@ -313,7 +319,7 @@ class TestPatternTask(unittest.TestCase):
         self.assertEqual(len(self.p.get_preview()), 7)
         self.win.findChild(self.QtWidgets.QDockWidget, 'Tasks').grab().save(str(Path(os.environ['PLUS_TEST_DIR']) / 'pattern-circular.png'))
         self.p.apply.click(); self.assertEqual(self.s.GeometryCount, 9, self.p.status.text())
-        self.win.findChild(self.QtWidgets.QPushButton, 'SketchCancelAction').click(); self.QtTest.QTest.qWait(100)
+        self.p.cancel.click(); self.QtTest.QTest.qWait(100)
         self.assertTrue(all(not w.isHidden() == visible for w, visible in self.sections))
 
     def test_preselection_grid_numeric_input_and_escape(self):

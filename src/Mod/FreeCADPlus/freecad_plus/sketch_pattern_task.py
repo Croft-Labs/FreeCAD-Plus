@@ -117,7 +117,8 @@ class PatternControls(QtWidgets.QWidget):
         self.summary=QtWidgets.QLabel(); self.summary.setWordWrap(True); layout.addWidget(self.summary)
         self.status=TaskStatus(); layout.addWidget(self.status)
         row=QtWidgets.QHBoxLayout(); self.apply=QtWidgets.QPushButton('Apply'); self.done=QtWidgets.QPushButton('Done')
-        row.addWidget(self.done); row.addWidget(self.apply); layout.addLayout(row)
+        self.cancel=QtWidgets.QPushButton('Cancel')
+        row.addWidget(self.done); row.addWidget(self.apply); row.addWidget(self.cancel); layout.addLayout(row)
 
 
         self.mode.currentIndexChanged.connect(self.change_mode); self.layout_mode.currentIndexChanged.connect(self.sync)
@@ -207,6 +208,7 @@ class PatternTask(PatternControls):
             child.installEventFilter(self)
         self.apply.clicked.connect(self.apply_pattern)
         self.done.clicked.connect(self.finish_pattern)
+        self.cancel.clicked.connect(lambda: self.notify('finish'))
         for index in ids:
             if 0 <= index < sketch.GeometryCount:
                 self.add_geometry('Edge' + str(index + 1))
@@ -272,7 +274,7 @@ class PatternTask(PatternControls):
     def toggle_spacing(self, hidden):
         # Pending controls affect only the preview. With no pending geometry the
         # checkbox can still show/hide existing saved chains.
-        if not self.edit_group and not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
+        if self.ready and not self.edit_group and not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
             self.sketch.Document.openTransaction('Hide pattern spacing chain' if hidden else 'Show pattern spacing chain')
             try:
                 pattern.set_chain_hidden(self.sketch, hidden)
@@ -478,13 +480,23 @@ class PatternTask(PatternControls):
 
     def reset_inputs(self):
         if self.closed: return
-        self.ready=False
+        self.ready=False; self.building=True
         self.edit_group='';self.edit_record=None;self.edit_error='';self.updating=False
         self.items.clear()
         for field in self.references:
             self.references[field] = None; field.clear()
+        self.mode.setCurrentIndex(0); self.change_mode(); self.layout_mode.setCurrentIndex(0)
+        self.lock.setChecked(True); self.hide_spacing.setChecked(False)
+        for extent in (self.d1,self.d2,self.angular,self.radial):
+            extent.extent.setCurrentIndex(0); extent.reverse.setChecked(False)
+            extent.spacing.setCurrentIndex(0); extent.spacing2.setCurrentIndex(0)
+            extent.value.setValue(45 if extent.kind=='angular' else 20)
+            extent.value2.setValue(30 if extent.kind=='angular' else 10)
+            extent.count.setValue(5); extent.count2.setValue(3)
+            if extent.kind=='linear':
+                extent.method.setCurrentIndex(0); extent.x.setValue(1); extent.y.setValue(0)
         self.activate_pick(self.items)
-        self.ready=True
+        self.ready=True; self.building=False
         self.sync()
 
     def detach(self):
