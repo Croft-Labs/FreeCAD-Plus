@@ -202,6 +202,10 @@ def edit_feature(doc, feature):
     definition, path = context_path(doc)
     if feature not in history(doc, definition):
         raise ValueError("The feature must belong to the edited component")
+    from . import reference_image
+    if reference_image.is_image(feature):
+        from . import reference_image_task
+        return reference_image_task.show(feature)
     from . import derived_geometry
     if derived_geometry.is_derived(feature):
         from . import clone_task

@@ -1,0 +1,14 @@
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats
+TypeError: expected a sequence with 3 floats

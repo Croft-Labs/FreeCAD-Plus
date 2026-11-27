@@ -1,3 +1,14 @@
+# November 27: Reference image workflow
+
+- [x] Add Reference image to Design Tasks for the active component.
+- [x] Attach to fundamental or created planes with distance offset; retain free placement.
+- [x] Support fixed preset/picked anchors, calibration, transparency and 0.01-degree rotation.
+- [x] Embed images, preserve attachments, and reopen the same task from History.
+- [x] Verify Apply/reset, Cancel, Undo, imported editing and missing-plane recovery.
+- [x] Build/install ten payloads; all 45 installed checks pass.
+
+See [approval and delivery evidence](evidence/reference-image-20261127/README.md).
+
 # November 27: Design toolbar update
 
 - [x] Remove Design All Tools and reduce Home to the requested controls.

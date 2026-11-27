@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Reference image task — installed November 27, 2026
+
+Design Tasks > Create Geometry now includes Reference image. Images attach to
+fundamental or created planes with offset, or use free XYZ placement. The task
+supports fixed preset/picked anchors, scaling/calibration, two-decimal rotations,
+transparency, Apply/reset and History edit/hide/delete. Native attachment and
+embedded images persist in schema 9. All 45 installed checks pass; ten payloads
+match and owner settings/shortcut are unchanged. See
+[delivery evidence](evidence/reference-image-20261127/README.md).
+
 ## Design toolbar update — installed November 27, 2026
 
 Design has a reduced Home tab and no All Tools. New component is beside Save As

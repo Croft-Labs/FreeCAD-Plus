@@ -26,6 +26,7 @@ set(FreeCADPlus_SRCS
     TestPartsFiles.py
     TestAppearance.py
     TestDesignToolbarUpdate.py
+    TestReferenceImage.py
     TestHistoryAppearance.py
     TestPendingWorkflows.py
     TestInstanceDisplay.py
@@ -95,6 +96,9 @@ set(FreeCADPlus_SRCS
     freecad_plus/panel.py
     freecad_plus/appearance.py
     freecad_plus/appearance_command.py
+    freecad_plus/reference_image.py
+    freecad_plus/reference_image_ui.py
+    freecad_plus/reference_image_task.py
     freecad_plus/appearance_ui.py
     freecad_plus/appearance_task.py
     freecad_plus/appearance_highlight.py
@@ -153,6 +157,9 @@ set(FreeCADPlus_SRCS
     freecad_plus/document_import.py
 )
 add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
+install(FILES TestReferenceImage.py DESTINATION Mod/FreeCADPlus)
+install(FILES freecad_plus/reference_image.py freecad_plus/reference_image_ui.py
+    freecad_plus/reference_image_task.py DESTINATION Mod/FreeCADPlus/freecad_plus)
 install(FILES TestInstanceQuantity.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestInstanceRemoval.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestDerivedGeometry.py DESTINATION Mod/FreeCADPlus)

@@ -1,5 +1,14 @@
 # Component panel
 
+## Reference image History — approved November 27, 2026
+
+Reference images belong to the active component's History, including when that
+component is edited through an imported-file occurrence. Double-click or Edit
+reference image opens the same populated task used for creation. The context menu
+offers Edit reference image, Hide/Show, and Delete. Visibility and deletion use
+native Undo in the defining file. Plane dependencies participate in History order.
+See the [reference image workflow](TASK_PANEL.md#reference-image--approved-november-27-2026).
+
 ## History Appearance — approved November 27, 2026
 
 History's part header retains Rename and adds Appearance. Its right-click action

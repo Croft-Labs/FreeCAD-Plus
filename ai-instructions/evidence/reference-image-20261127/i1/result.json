@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "modules": {
+    "freecad_plus.reference_image": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\reference_image.py",
+    "freecad_plus.reference_image_task": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\reference_image_task.py",
+    "freecad_plus.reference_image_ui": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\reference_image_ui.py"
+  },
+  "tests": 45,
+  "errors": 0,
+  "failures": 0
+}

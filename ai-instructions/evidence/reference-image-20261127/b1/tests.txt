@@ -1,0 +1,48 @@
+test_external_source_and_occurrence_guards (TestComponentPlanes.TestComponentPlanes.test_external_source_and_occurrence_guards) ... ERROR
+test_origin_axis_toggle_and_delete_restore_defaults (TestComponentPlanes.TestComponentPlanes.test_origin_axis_toggle_and_delete_restore_defaults) ... FAIL
+test_preselection_toggle_delete_and_highlight_cleanup (TestComponentPlanes.TestComponentPlanes.test_preselection_toggle_delete_and_highlight_cleanup) ... FAIL
+
+======================================================================
+ERROR: test_external_source_and_occurrence_guards (TestComponentPlanes.TestComponentPlanes.test_external_source_and_occurrence_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPlanes.py", line 188, in test_external_source_and_occurrence_guards
+    external.import_file(self.doc,source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in PlaneAssembly.cadprt; the other component is in PlaneSource.cadprt. Names must be unique within this file and all imported files (PlaneAssembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_origin_axis_toggle_and_delete_restore_defaults (TestComponentPlanes.TestComponentPlanes.test_origin_axis_toggle_and_delete_restore_defaults)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPlanes.py", line 309, in test_origin_axis_toggle_and_delete_restore_defaults
+    self.assertEqual(task.origin_refs,expected)
+AssertionError: Lists differ: [(<Part::Feature>, 'Vertex1')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+(<Part::Feature>, 'Vertex1')
+
+- [(<Part::Feature>, 'Vertex1')]
++ []
+
+======================================================================
+FAIL: test_preselection_toggle_delete_and_highlight_cleanup (TestComponentPlanes.TestComponentPlanes.test_preselection_toggle_delete_and_highlight_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestComponentPlanes.py", line 284, in test_preselection_toggle_delete_and_highlight_cleanup
+    self.assertEqual(len(task.refs),1)
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.707s
+
+FAILED (failures=2, errors=1)

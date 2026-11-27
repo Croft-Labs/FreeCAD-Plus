@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "placement1": "Placement [Pos=(4,6,12), Yaw-Pitch-Roll=(12.35,0,0)]",
+  "state1": [
+    "Up-to-date"
+  ],
+  "placement2": "Placement [Pos=(11,22,37), Yaw-Pitch-Roll=(12.35,0,0)]",
+  "origin": "Placement [Pos=(1,-7,2), Yaw-Pitch-Roll=(2.44192e-15,-12.35,90)]",
+  "reopened": "Placement [Pos=(1,-7,2), Yaw-Pitch-Roll=(2.44192e-15,-12.35,90)]"
+}

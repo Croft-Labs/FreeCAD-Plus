@@ -1,0 +1,18 @@
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats
+TypeError: sequence must contain 4 sequences where every sequence contains 4 floats
+TypeError: expected a sequence with 3 floats

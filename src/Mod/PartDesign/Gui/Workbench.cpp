@@ -405,7 +405,8 @@ void Workbench::activated()
     ));
 
     const char* componentStart[] = {"PartDesign_NewSketch", "PartDesign_Plane",
-                                    "FreeCADPlus_DatumLine", "FreeCADPlus_DatumPoint", nullptr};
+                                    "FreeCADPlus_DatumLine", "FreeCADPlus_DatumPoint",
+                                    "Plus_ReferenceImage", nullptr};
     Watcher.push_back(new ComponentStartWatcher(
         componentStart, "Create Geometry", "Sketcher_NewSketch", true));
 

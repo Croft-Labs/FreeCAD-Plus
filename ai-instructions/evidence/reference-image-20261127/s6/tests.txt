@@ -1,0 +1,6 @@
+test_native_history_menu_edit_visibility_delete (TestReferenceImage.TestReferenceImage.test_native_history_menu_edit_visibility_delete) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.484s
+
+OK

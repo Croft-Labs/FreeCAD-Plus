@@ -10,8 +10,8 @@ from pathlib import Path
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 8
-SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6, 7, 8)
+SCHEMA = 9
+SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
 @contextmanager
@@ -124,6 +124,10 @@ def _validate_local(doc, external_definitions=()):
             if root.PlusSchema >= 2 and obj.isDerivedFrom("Part::Feature"):
                 continue
             if root.PlusSchema >= 8 and obj.isDerivedFrom("Mesh::Feature"):
+                continue
+            if root.PlusSchema >= 9 and obj.TypeId == 'Image::ImagePlane':
+                from .reference_image import structural_check
+                structural_check(definition,obj)
                 continue
             raise ValueError("Unsupported component modeling content for this schema")
         if len(solvers) > 1:

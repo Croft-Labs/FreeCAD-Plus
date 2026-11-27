@@ -6,6 +6,9 @@ from PySide6 import QtWidgets,QtGui
 def history_menu(widget,tree,point,row):
     from . import appearance,appearance_task,panel
     doc,obj=widget._checked(row);owner=widget._context(*widget._binding)[0]
+    from . import reference_image,reference_image_task
+    if reference_image.is_image(obj):
+        return reference_image_task.history_menu(widget,tree,point,row)
     initial=getattr(widget,'_appearance_selection',None)
     widget._appearance_selection=None
     if initial is None:initial=appearance_task.selection_snapshot()

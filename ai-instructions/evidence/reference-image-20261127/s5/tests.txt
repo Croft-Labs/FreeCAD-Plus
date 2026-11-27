@@ -1,0 +1,19 @@
+test_anchor_fixed_resize_rotate_all_nine_and_custom (TestReferenceImage.TestReferenceImage.test_anchor_fixed_resize_rotate_all_nine_and_custom) ... ok
+test_apply_resets_and_edit_reuses_identity (TestReferenceImage.TestReferenceImage.test_apply_resets_and_edit_reuses_identity) ... ok
+test_bad_input_is_atomic_and_retains_fields (TestReferenceImage.TestReferenceImage.test_bad_input_is_atomic_and_retains_fields) ... ok
+test_context_change_blocks_apply_without_document_changes (TestReferenceImage.TestReferenceImage.test_context_change_blocks_apply_without_document_changes) ... ok
+test_fundamental_planes_and_free_xyz (TestReferenceImage.TestReferenceImage.test_fundamental_planes_and_free_xyz) ... ok
+test_gui_capture_history_and_entry (TestReferenceImage.TestReferenceImage.test_gui_capture_history_and_entry) ... ok
+test_imported_component_edits_own_file_and_copy_is_independent (TestReferenceImage.TestReferenceImage.test_imported_component_edits_own_file_and_copy_is_independent) ... ok
+test_missing_plane_can_be_replaced_without_losing_panel (TestReferenceImage.TestReferenceImage.test_missing_plane_can_be_replaced_without_losing_panel) ... ok
+test_native_attachment_recompute_and_embedded_save (TestReferenceImage.TestReferenceImage.test_native_attachment_recompute_and_embedded_save) ... ok
+test_native_mouse_anchor_in_orthographic_and_perspective (TestReferenceImage.TestReferenceImage.test_native_mouse_anchor_in_orthographic_and_perspective) ... ok
+test_nonzero_component_placement_and_transformed_occurrence (TestReferenceImage.TestReferenceImage.test_nonzero_component_placement_and_transformed_occurrence) ... ok
+test_picked_anchor_no_jump_and_calibration (TestReferenceImage.TestReferenceImage.test_picked_anchor_no_jump_and_calibration) ... ok
+test_preview_cancel_keeps_document_and_undo (TestReferenceImage.TestReferenceImage.test_preview_cancel_keeps_document_and_undo) ... ok
+test_schema_upgrade_transaction_undo_and_delete (TestReferenceImage.TestReferenceImage.test_schema_upgrade_transaction_undo_and_delete) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 8.502s
+
+OK

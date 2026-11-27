@@ -1,0 +1,69 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "f185d791f773de0835a979fb610964967b900aa1349c5f61d3ff5e44815ac1b7",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/InitGui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\InitGui.py",
+      "before": "fba209143a5b226085999b3b45800f98fdff1ccdd8712e4123cc9812623b5500",
+      "installed": "225b4b5565831cc2b074454e95b91fed7e04731d185583aead2e090d8f143d3f"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestReferenceImage.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestReferenceImage.py",
+      "before": null,
+      "installed": "6afe7a77495c98fc20d3c8ba0db5a6fdb9097bce90ac00527eb5f2998a65a83b"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestTaskEntryWorkflows.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestTaskEntryWorkflows.py",
+      "before": "985425b7e130654fb6e357e5ce802a97447135404fd2ff822971a6c0f5b16164",
+      "installed": "e9098a8ae46efbc2e8a721b0ad56eab8641b0fbb95f1a8b6d93e3498692464d0"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+      "before": "7c1f917839fe41414714707f410f3d4f50d86943e41a1780eb34b38857739145",
+      "installed": "9080eabc152b2aee72b8de636be7502f511aca543aad25e96e97ef556c43e694"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+      "before": "360a32f77fefb5dd7308a91cf611a4633e966b211428a778c6e5b42f1ff24fff",
+      "installed": "43780ba3982c98ddb0b3965911daf74e7e1175a0bb2086108b6d5b75de9afc7d"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/history_appearance_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\history_appearance_ui.py",
+      "before": "6436315da9e119e46f4d8ef7584846c57527eefcfc70a0658336578b0f8667f0",
+      "installed": "6de73dd1171d509eb87ae771bc3d2f2445ce9f8ad2abb62b6cac0d6aef83fa5b"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/reference_image.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\reference_image.py",
+      "before": null,
+      "installed": "b453a942cafda1075ec33c7ccbf4164d884dff227dc9049c9f20c6fd19032e45"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/reference_image_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\reference_image_ui.py",
+      "before": null,
+      "installed": "f91941cbe535064647c8c5dfafb474de09deedd91abca5243d9fe243cc6690a8"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/reference_image_task.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\reference_image_task.py",
+      "before": null,
+      "installed": "8cc72deaaa86d207ecda27878418483b2337f92185f4963ee7bc295940efabd0"
+    },
+    {
+      "path": "lib/PartDesignGui.pyd",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\PartDesignGui.pyd",
+      "before": "c0e3f6788666592fb2083aede894e852e18dbe6ea9f5c4822913991f83dad0af",
+      "installed": "51939c935ad5a619dc23104b4e9c781db78c5d1200628e1d1cc1be8641cd11ec"
+    }
+  ]
+}

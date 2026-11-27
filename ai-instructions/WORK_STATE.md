@@ -1,11 +1,20 @@
+# November 27: Reference image workflow installed
+
+The approved task is implemented and installed, with the owner's final simple
+fundamental/created-plane attachment and offset correction. Native image storage,
+attachment recompute, all anchors, 0.01-degree rotations, calibration/transparency,
+History editing/visibility/deletion and Apply/reset are verified. All 45 installed
+checks pass; nine Python payloads and PartDesignGui match, with protected settings
+and shortcut unchanged. See [evidence](evidence/reference-image-20261127/README.md).
+Three broader legacy plane-test failures reproduce in the untouched baseline.
+
 # November 27: Design toolbar changes installed
 
 The approved Home/common/Assembly/Modeling changes are installed, including Part's
 exact Boolean group, functional Appearance and Clone's sheep icon. All 12 final
 installed regressions pass; seven payloads match with preserved settings/shortcut.
 See [delivery evidence](evidence/design-toolbar-20261127/README.md).
-Reference-image support remains unimplemented; the owner's latest inquiry was
-answered with a read-only native capability check, not an implementation approval.
+The later approved reference-image workflow is delivered above.
 
 # November 27: History Appearance and face highlighting installed
 

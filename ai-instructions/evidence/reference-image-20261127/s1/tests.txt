@@ -1,0 +1,69 @@
+test_anchor_fixed_resize_rotate_all_nine_and_custom (TestReferenceImage.TestReferenceImage.test_anchor_fixed_resize_rotate_all_nine_and_custom) ... ok
+test_apply_resets_and_edit_reuses_identity (TestReferenceImage.TestReferenceImage.test_apply_resets_and_edit_reuses_identity) ... ERROR
+test_bad_input_is_atomic_and_retains_fields (TestReferenceImage.TestReferenceImage.test_bad_input_is_atomic_and_retains_fields) ... ok
+test_fundamental_planes_and_free_xyz (TestReferenceImage.TestReferenceImage.test_fundamental_planes_and_free_xyz) ... ok
+test_gui_capture_history_and_entry (TestReferenceImage.TestReferenceImage.test_gui_capture_history_and_entry) ... ok
+test_native_attachment_recompute_and_embedded_save (TestReferenceImage.TestReferenceImage.test_native_attachment_recompute_and_embedded_save) ... ok
+test_nonzero_component_placement_and_transformed_occurrence (TestReferenceImage.TestReferenceImage.test_nonzero_component_placement_and_transformed_occurrence) ... ERROR
+test_picked_anchor_no_jump_and_calibration (TestReferenceImage.TestReferenceImage.test_picked_anchor_no_jump_and_calibration) ... ok
+test_preview_cancel_keeps_document_and_undo (TestReferenceImage.TestReferenceImage.test_preview_cancel_keeps_document_and_undo) ... ERROR
+test_schema_upgrade_transaction_undo_and_delete (TestReferenceImage.TestReferenceImage.test_schema_upgrade_transaction_undo_and_delete) ... ok
+
+======================================================================
+ERROR: test_apply_resets_and_edit_reuses_identity (TestReferenceImage.TestReferenceImage.test_apply_resets_and_edit_reuses_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestReferenceImage.py", line 91, in test_apply_resets_and_edit_reuses_identity
+    task.reject();task=editing.edit_feature(self.doc,feature)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\editing.py", line 208, in edit_feature
+    return reference_image_task.show(feature)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 321, in show
+    task=ImageTask(feature);_active=task
+         ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 52, in __init__
+    self.load(feature)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 88, in load
+    if index<0:raise ValueError('The attached plane is unavailable')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: The attached plane is unavailable
+
+======================================================================
+ERROR: test_nonzero_component_placement_and_transformed_occurrence (TestReferenceImage.TestReferenceImage.test_nonzero_component_placement_and_transformed_occurrence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestReferenceImage.py", line 130, in test_nonzero_component_placement_and_transformed_occurrence
+    task=tasks.show(feature);task.refresh();self.assertIsNotNone(task.overlay,task.form.status.text())
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 321, in show
+    task=ImageTask(feature);_active=task
+         ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 52, in __init__
+    self.load(feature)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 88, in load
+    if index<0:raise ValueError('The attached plane is unavailable')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: The attached plane is unavailable
+
+======================================================================
+ERROR: test_preview_cancel_keeps_document_and_undo (TestReferenceImage.TestReferenceImage.test_preview_cancel_keeps_document_and_undo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestReferenceImage.py", line 78, in test_preview_cancel_keeps_document_and_undo
+    task=tasks.show(feature);task.form.angle.setValue(23.45);task.form.alpha.setValue(65);task.refresh()
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 321, in show
+    task=ImageTask(feature);_active=task
+         ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 52, in __init__
+    self.load(feature)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\reference_image_task.py", line 88, in load
+    if index<0:raise ValueError('The attached plane is unavailable')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: The attached plane is unavailable
+
+----------------------------------------------------------------------
+Ran 10 tests in 5.216s
+
+FAILED (errors=3)

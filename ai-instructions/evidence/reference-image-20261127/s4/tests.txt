@@ -1,0 +1,127 @@
+test_anchor_fixed_resize_rotate_all_nine_and_custom (TestReferenceImage.TestReferenceImage.test_anchor_fixed_resize_rotate_all_nine_and_custom) ... ok
+test_apply_resets_and_edit_reuses_identity (TestReferenceImage.TestReferenceImage.test_apply_resets_and_edit_reuses_identity) ... ok
+test_bad_input_is_atomic_and_retains_fields (TestReferenceImage.TestReferenceImage.test_bad_input_is_atomic_and_retains_fields) ... ok
+test_context_change_blocks_apply_without_document_changes (TestReferenceImage.TestReferenceImage.test_context_change_blocks_apply_without_document_changes) ... ok
+test_fundamental_planes_and_free_xyz (TestReferenceImage.TestReferenceImage.test_fundamental_planes_and_free_xyz) ... ok
+test_gui_capture_history_and_entry (TestReferenceImage.TestReferenceImage.test_gui_capture_history_and_entry) ... ok
+test_imported_component_edits_own_file_and_copy_is_independent (TestReferenceImage.TestReferenceImage.test_imported_component_edits_own_file_and_copy_is_independent) ... ERROR
+test_missing_plane_can_be_replaced_without_losing_panel (TestReferenceImage.TestReferenceImage.test_missing_plane_can_be_replaced_without_losing_panel) ... ok
+test_native_attachment_recompute_and_embedded_save (TestReferenceImage.TestReferenceImage.test_native_attachment_recompute_and_embedded_save) ... ok
+test_nonzero_component_placement_and_transformed_occurrence (TestReferenceImage.TestReferenceImage.test_nonzero_component_placement_and_transformed_occurrence) ... ok
+test_picked_anchor_no_jump_and_calibration (TestReferenceImage.TestReferenceImage.test_picked_anchor_no_jump_and_calibration) ... ok
+test_preview_cancel_keeps_document_and_undo (TestReferenceImage.TestReferenceImage.test_preview_cancel_keeps_document_and_undo) ... ok
+test_schema_upgrade_transaction_undo_and_delete (TestReferenceImage.TestReferenceImage.test_schema_upgrade_transaction_undo_and_delete) ... ok
+test_attached_sketch_recomputes_with_plane (TestComponentPlanes.TestComponentPlanes.test_attached_sketch_recomputes_with_plane) ... ok
+test_axis_origin_flip_and_clear (TestComponentPlanes.TestComponentPlanes.test_axis_origin_flip_and_clear) ... ok
+test_body_face_transforms_and_two_point_axis (TestComponentPlanes.TestComponentPlanes.test_body_face_transforms_and_two_point_axis) ... ok
+test_cancel_and_deferred_numeric_task (TestComponentPlanes.TestComponentPlanes.test_cancel_and_deferred_numeric_task) ... ok
+test_command_opens_component_task_without_body (TestComponentPlanes.TestComponentPlanes.test_command_opens_component_task_without_body) ... ok
+test_create_undo_recompute_save (TestComponentPlanes.TestComponentPlanes.test_create_undo_recompute_save) ... ok
+test_edit_reuses_create_task_and_preserves_feature_identity (TestComponentPlanes.TestComponentPlanes.test_edit_reuses_create_task_and_preserves_feature_identity) ... ok
+test_external_source_and_occurrence_guards (TestComponentPlanes.TestComponentPlanes.test_external_source_and_occurrence_guards) ... ERROR
+test_infinite_datum_lines_have_finite_highlights_and_plane (TestComponentPlanes.TestComponentPlanes.test_infinite_datum_lines_have_finite_highlights_and_plane) ... ok
+test_older_plane_defaults_without_mutation_on_open_or_cancel (TestComponentPlanes.TestComponentPlanes.test_older_plane_defaults_without_mutation_on_open_or_cancel) ... ok
+test_origin_axis_toggle_and_delete_restore_defaults (TestComponentPlanes.TestComponentPlanes.test_origin_axis_toggle_and_delete_restore_defaults) ... FAIL
+test_partial_input_and_invalid_geometry_have_actionable_guidance (TestComponentPlanes.TestComponentPlanes.test_partial_input_and_invalid_geometry_have_actionable_guidance) ... ok
+test_planar_face_line_point_two_lines (TestComponentPlanes.TestComponentPlanes.test_planar_face_line_point_two_lines) ... ok
+test_preselection_toggle_delete_and_highlight_cleanup (TestComponentPlanes.TestComponentPlanes.test_preselection_toggle_delete_and_highlight_cleanup) ... FAIL
+test_real_picking_and_accept (TestComponentPlanes.TestComponentPlanes.test_real_picking_and_accept) ... ok
+test_reject_degenerate_and_cycles (TestComponentPlanes.TestComponentPlanes.test_reject_degenerate_and_cycles) ... ok
+test_reverse_axis_combines_with_flip_and_explicit_y (TestComponentPlanes.TestComponentPlanes.test_reverse_axis_combines_with_flip_and_explicit_y) ... ok
+test_reverse_axis_persists_edits_undo_and_preserves_plane_footprint (TestComponentPlanes.TestComponentPlanes.test_reverse_axis_persists_edits_undo_and_preserves_plane_footprint) ... ok
+test_rotated_definition_projects_universal_origin (TestComponentPlanes.TestComponentPlanes.test_rotated_definition_projects_universal_origin) ... ok
+test_task_cleans_up_when_document_closes (TestComponentPlanes.TestComponentPlanes.test_task_cleans_up_when_document_closes) ... ok
+test_three_points_and_reference_updates (TestComponentPlanes.TestComponentPlanes.test_three_points_and_reference_updates) ... ok
+test_typing_does_not_rebuild_move_preview (TestComponentPlanes.TestMoveNumericCommit.test_typing_does_not_rebuild_move_preview) ... ok
+test_shared_editors_wait_for_focus_leave (TestComponentPlanes.TestNumericCommit.test_shared_editors_wait_for_focus_leave) ... ok
+test_child_target_not_parent_or_native_body (TestMeshImport.TestMeshImport.test_child_target_not_parent_or_native_body) ... ok
+test_classic_document_retains_native_mesh_import (TestMeshImport.TestMeshImport.test_classic_document_retains_native_mesh_import) ... ok
+test_external_unused_target_uses_defining_document (TestMeshImport.TestMeshImport.test_external_unused_target_uses_defining_document) ... ok
+test_failed_or_cancelled_reader_rolls_back (TestMeshImport.TestMeshImport.test_failed_or_cancelled_reader_rolls_back) ... ok
+test_mesh_workbench_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_mesh_workbench_import_dialog_history_and_atomic_undo) ... ok
+test_missing_edit_does_not_create_orphan (TestMeshImport.TestMeshImport.test_missing_edit_does_not_create_orphan) ... ok
+test_native_import_dialog_history_and_atomic_undo (TestMeshImport.TestMeshImport.test_native_import_dialog_history_and_atomic_undo) ... ok
+test_pending_edit_is_preserved (TestMeshImport.TestMeshImport.test_pending_edit_is_preserved) ... ok
+test_save_reopen_preserves_mesh_and_identity (TestMeshImport.TestMeshImport.test_save_reopen_preserves_mesh_and_identity) ... ok
+test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation) ... ok
+test_cancel_and_stale_geometry (TestAppearance.TestAppearance.test_cancel_and_stale_geometry) ... ok
+test_external_source_owns_undo_and_persistence (TestAppearance.TestAppearance.test_external_source_owns_undo_and_persistence) ... ok
+test_mesh_body_tip_and_rejected_child (TestAppearance.TestAppearance.test_mesh_body_tip_and_rejected_child) ... ok
+test_native_save_and_reopen (TestAppearance.TestAppearance.test_native_save_and_reopen) ... ok
+test_native_task_modes_and_slider (TestAppearance.TestAppearance.test_native_task_modes_and_slider) ... ok
+test_occurrence_face_picks_and_toggle (TestAppearance.TestAppearance.test_occurrence_face_picks_and_toggle) ... ok
+test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces) ... ok
+test_transparency_only_preserves_face_colors (TestAppearance.TestAppearance.test_transparency_only_preserves_face_colors) ... ok
+test_undo_redo_and_geometry_identity (TestAppearance.TestAppearance.test_undo_redo_and_geometry_identity) ... ok
+test_whole_and_faces_preserve_other_material_fields_and_children (TestAppearance.TestAppearance.test_whole_and_faces_preserve_other_material_fields_and_children) ... ok
+test_explicit_body_empty_edge_and_hover_inputs (TestHistoryAppearance.TestHistoryAppearance.test_explicit_body_empty_edge_and_hover_inputs) ... ok
+test_highlight_extracts_only_selected_and_hovered_face (TestHistoryAppearance.TestHistoryAppearance.test_highlight_extracts_only_selected_and_hovered_face) ... ok
+test_historical_feature_apply_reset_cancel_undo (TestHistoryAppearance.TestHistoryAppearance.test_historical_feature_apply_reset_cancel_undo) ... ok
+test_historical_geometry_stale_and_child_rejection (TestHistoryAppearance.TestHistoryAppearance.test_historical_geometry_stale_and_child_rejection) ... ok
+test_history_face_apply_and_saved_material (TestHistoryAppearance.TestHistoryAppearance.test_history_face_apply_and_saved_material) ... ok
+test_imported_history_feature_edits_source_with_linked_undo (TestHistoryAppearance.TestHistoryAppearance.test_imported_history_feature_edits_source_with_linked_undo) ... ok
+test_native_history_face_screenshot (TestHistoryAppearance.TestHistoryAppearance.test_native_history_face_screenshot) ... ok
+test_non_geometry_history_has_no_appearance (TestHistoryAppearance.TestHistoryAppearance.test_non_geometry_history_has_no_appearance) ... ok
+test_part_menu_preserves_faces_and_no_selection (TestHistoryAppearance.TestHistoryAppearance.test_part_menu_preserves_faces_and_no_selection) ... ok
+
+======================================================================
+ERROR: test_imported_component_edits_own_file_and_copy_is_independent (TestReferenceImage.TestReferenceImage.test_imported_component_edits_own_file_and_copy_is_independent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestReferenceImage.py", line 137, in test_imported_component_edits_own_file_and_copy_is_independent
+    external.import_file(assembly,self.doc)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in image-assembly.cadprt; the other component is in image-source.cadprt. Names must be unique within this file and all imported files (image-assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_source_and_occurrence_guards (TestComponentPlanes.TestComponentPlanes.test_external_source_and_occurrence_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPlanes.py", line 188, in test_external_source_and_occurrence_guards
+    external.import_file(self.doc,source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in PlaneAssembly.cadprt; the other component is in PlaneSource.cadprt. Names must be unique within this file and all imported files (PlaneAssembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_origin_axis_toggle_and_delete_restore_defaults (TestComponentPlanes.TestComponentPlanes.test_origin_axis_toggle_and_delete_restore_defaults)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPlanes.py", line 309, in test_origin_axis_toggle_and_delete_restore_defaults
+    self.assertEqual(task.origin_refs,expected)
+AssertionError: Lists differ: [(<Part::Feature>, 'Vertex1')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+(<Part::Feature>, 'Vertex1')
+
+- [(<Part::Feature>, 'Vertex1')]
++ []
+
+======================================================================
+FAIL: test_preselection_toggle_delete_and_highlight_cleanup (TestComponentPlanes.TestComponentPlanes.test_preselection_toggle_delete_and_highlight_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPlanes.py", line 284, in test_preselection_toggle_delete_and_highlight_cleanup
+    self.assertEqual(len(task.refs),1)
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 65 tests in 48.582s
+
+FAILED (failures=2, errors=2)

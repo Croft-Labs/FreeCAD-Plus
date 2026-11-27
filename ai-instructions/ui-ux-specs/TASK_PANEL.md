@@ -1688,3 +1688,26 @@ references so stale indices cannot be reused. A reference removed by Delete orig
 geometries is cleared; surviving internal references are remapped.
 
 See the [approved native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).
+## Reference image — approved November 27, 2026
+
+Design Tasks > Create Geometry includes Reference image for the active component.
+Use one task for creation and History editing. Browse selects an image that is
+embedded in the part file. Attachment is deliberately simple: select XY, XZ, YZ,
+or an existing created plane in this component and enter a normal distance offset.
+Do not introduce the sketch/plane-definition collector here. Free placement offers
+component-local XYZ position and rotation instead of a support.
+
+Width and height provide scaling, with aspect lock enabled initially. Two picked
+image points and a known distance calibrate the size. Scaling and rotation use one
+anchor: nine rectangle presets or a picked image point. Changing the anchor keeps
+the image stationary; resizing and rotating keep the selected anchor stationary.
+Attached images rotate within their plane; all rotation fields display two decimal
+places and step by 0.01 degrees. Transparency uses a synchronized slider and percent
+field. Preview is temporary; Done commits and closes, Apply commits and clears the
+task to defaults for another image, and Cancel discards unapplied changes. Buttons
+are below all fields. Invalid inputs retain fields and use the shared error display.
+
+Each image appears in component History. Double-click and Edit reference image
+reopen its populated task. History offers Hide/Show and Delete, with native Undo.
+Images follow their attached planes after recompute and reopen. A missing plane
+can be replaced in the image task without making the Components panel disappear.

@@ -63,7 +63,7 @@ class TestTaskEntryWorkflows(unittest.TestCase):
                 lists = [labels for _, labels in action_boxes()]
                 self.assertFalse(any('New Body' in labels for labels in lists), lists)
                 if mode == 0 and active:
-                    self.assertIn(['New Sketch', 'Datum Plane', 'Datum Line', 'Datum Point'], lists)
+                    self.assertIn(['New Sketch', 'Datum Plane', 'Datum Line', 'Datum Point', 'Reference image'], lists)
         empty = App.newDocument('EmptyTaskEntry');self.select()
         for mode in (0, 1):
             self.prefs.SetInt('TaskPanelUIMode', mode)
