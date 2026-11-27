@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Single-part opening correction — installed November 27, 2026
+
+The opening path no longer forces file-level Edit for one-part files. It activates
+the sole local component and populates History, retaining the selected tab. Normal,
+recovered and sub-file-window opening share initialization; hidden imports and
+explicit live file-level Edit remain unchanged. All 17 focused installed checks
+pass; five installed payloads match and owner settings/shortcut are unchanged.
+See [delivery evidence](evidence/single-part-open-20261127/README.md).
+
 ## Reference image View button — installed November 27, 2026
 
 View > Reference now opens the existing Reference image task. The installed native

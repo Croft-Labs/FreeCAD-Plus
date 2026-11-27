@@ -406,7 +406,7 @@ def open_document(filename, *, hidden=False):
         validate(doc)
         if App.GuiUp and not hidden:
             from . import editing
-            editing.edit_file(doc)
+            editing.initialize_document(doc)
         if hidden and previous and previous.Name in App.listDocuments():
             App.setActiveDocument(previous.Name)
         return doc

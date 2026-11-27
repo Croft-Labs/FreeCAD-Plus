@@ -1,0 +1,64 @@
+test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view) ... ERROR
+test_multiple_definitions_remain_at_file_level (TestSinglePartOpen.TestSinglePartOpen.test_multiple_definitions_remain_at_file_level) ... ok
+test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit (TestSinglePartOpen.TestSinglePartOpen.test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit) ... ok
+test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch) ... ERROR
+test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata) ... FAIL
+test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance) ... ERROR
+test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence) ... ERROR
+
+======================================================================
+ERROR: test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 113, in test_hidden_open_keeps_host_context_and_does_not_create_view
+    self.assertEqual(Gui.getDocument(doc.Name).mdiViews(), [])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Gui.Document' object has no attribute 'mdiViews'
+
+======================================================================
+ERROR: test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 56, in test_reopen_activates_single_part_and_populates_history_without_tab_switch
+    self.assertEqual(editing.context_path(doc), (doc.getObject(name), (doc.getObject(route_name),)))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+======================================================================
+ERROR: test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 97, in test_repeated_single_definition_does_not_choose_arbitrary_instance
+    self.assertEqual(editing.context_path(doc), (root.Definitions[0], ()))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+======================================================================
+ERROR: test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 85, in test_unused_single_definition_opens_without_creating_occurrence
+    path = self.save_close()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 38, in save_close
+    document.save_document(self.doc, path)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\document.py", line 430, in save_document
+    raise ValueError("Finish the current operation before saving")
+ValueError: Finish the current operation before saving
+
+======================================================================
+FAIL: test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 79, in test_reopen_preserves_geometry_visibility_and_metadata
+    self.assertEqual(doc.getObject('Solid').Shape.Volume, 1000)
+AssertionError: 999.9999999999998 != 1000
+
+----------------------------------------------------------------------
+Ran 7 tests in 4.817s
+
+FAILED (failures=1, errors=4)

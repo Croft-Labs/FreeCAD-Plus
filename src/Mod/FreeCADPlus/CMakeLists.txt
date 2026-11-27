@@ -23,6 +23,7 @@ set(FreeCADPlus_SRCS
     TestComponentNames.py
     TestActiveAssembly.py
     TestComponentNavigation.py
+    TestSinglePartOpen.py
     TestPartsFiles.py
     TestAppearance.py
     TestDesignToolbarUpdate.py

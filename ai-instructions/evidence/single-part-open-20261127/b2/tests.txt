@@ -1,0 +1,56 @@
+test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view) ... ok
+test_multiple_definitions_remain_at_file_level (TestSinglePartOpen.TestSinglePartOpen.test_multiple_definitions_remain_at_file_level) ... ok
+test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit (TestSinglePartOpen.TestSinglePartOpen.test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit) ... ok
+test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch) ... ERROR
+test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata) ... ERROR
+test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance) ... ERROR
+test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence) ... ERROR
+
+======================================================================
+ERROR: test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 56, in test_reopen_activates_single_part_and_populates_history_without_tab_switch
+    self.assertEqual(editing.context_path(doc), (doc.getObject(name), (doc.getObject(route_name),)))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+======================================================================
+ERROR: test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 79, in test_reopen_preserves_geometry_visibility_and_metadata
+    self.assertIsNotNone(editing.context_path(doc)[0])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+======================================================================
+ERROR: test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 96, in test_repeated_single_definition_does_not_choose_arbitrary_instance
+    self.assertEqual(editing.context_path(doc), (root.Definitions[0], ()))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+======================================================================
+ERROR: test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 87, in test_unused_single_definition_opens_without_creating_occurrence
+    self.assertEqual(editing.context_path(doc), (root.Definitions[0], ()))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\editing.py", line 158, in context_path
+    raise ValueError("Explicitly Edit a component before creating modeling geometry")
+ValueError: Explicitly Edit a component before creating modeling geometry
+
+----------------------------------------------------------------------
+Ran 7 tests in 5.274s
+
+FAILED (errors=4)

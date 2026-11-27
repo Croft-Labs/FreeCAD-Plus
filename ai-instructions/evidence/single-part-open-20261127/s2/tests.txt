@@ -1,0 +1,51 @@
+test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view) ... ok
+test_imported_file_new_window_activates_part_without_changing_old_view (TestSinglePartOpen.TestSinglePartOpen.test_imported_file_new_window_activates_part_without_changing_old_view) ... ERROR
+test_multiple_definitions_remain_at_file_level (TestSinglePartOpen.TestSinglePartOpen.test_multiple_definitions_remain_at_file_level) ... ok
+test_recovered_file_activates_sole_local_part_with_external_child (TestSinglePartOpen.TestSinglePartOpen.test_recovered_file_activates_sole_local_part_with_external_child) ... ERROR
+test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit (TestSinglePartOpen.TestSinglePartOpen.test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit) ... ok
+test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch) ... ok
+test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata) ... ok
+test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance) ... ok
+test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence) ... ok
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_recovery_validates_identity_and_keeps_files_unchanged_until_save (TestPartsFiles.TestPartsFiles.test_recovery_validates_identity_and_keeps_files_unchanged_until_save) ... ok
+test_subfile_menus_dependency_cancel_and_open_window (TestPartsFiles.TestPartsFiles.test_subfile_menus_dependency_cancel_and_open_window) ... ok
+
+======================================================================
+ERROR: test_imported_file_new_window_activates_part_without_changing_old_view (TestSinglePartOpen.TestSinglePartOpen.test_imported_file_new_window_activates_part_without_changing_old_view)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 131, in test_imported_file_new_window_activates_part_without_changing_old_view
+    external.import_file(host, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 143, in prepare_import
+    _saved(doc)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 129, in _saved
+    raise ValueError("Save both defining files as .cadprt before importing")
+ValueError: Save both defining files as .cadprt before importing
+
+======================================================================
+ERROR: test_recovered_file_activates_sole_local_part_with_external_child (TestSinglePartOpen.TestSinglePartOpen.test_recovered_file_activates_sole_local_part_with_external_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSinglePartOpen.py", line 148, in test_recovered_file_activates_sole_local_part_with_external_child
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 143, in prepare_import
+    _saved(doc)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 129, in _saved
+    raise ValueError("Save both defining files as .cadprt before importing")
+ValueError: Save both defining files as .cadprt before importing
+
+----------------------------------------------------------------------
+Ran 16 tests in 14.735s
+
+FAILED (errors=2)

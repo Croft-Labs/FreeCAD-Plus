@@ -1,3 +1,12 @@
+# November 27: Single-part opening correction installed
+
+One-part files now activate their part and populate History when opened. The bug
+was unconditional file-level Edit, despite the separate sole-part active-assembly
+default. Normal opening, recovered files and sub-file windows share the correction.
+All 17 installed checks pass; source/build/installed payload hashes match. Owner
+settings and shortcut are unchanged. See [evidence](evidence/single-part-open-20261127/README.md).
+Saved active-part bookmarks for multi-part files remain pending separately.
+
 # November 27: Reference image View button installed
 
 The approved View > Reference > Reference image button is installed. Native click,
@@ -28,7 +37,8 @@ The later approved reference-image workflow is delivered above.
 Approved History menu and face-selection corrections are implemented, script-built
 and installed. All 22 installed regressions pass; seven payload hashes match and
 owner settings/shortcut are preserved. See [delivery evidence](evidence/history-appearance-20261127/README.md).
-The separately previewed saved active-part/default active-part change remains pending.
+The single-part opening fallback is now delivered above. The separately previewed
+saved active-part restoration remains pending.
 
 # November 27: Joined surface extraction installed
 

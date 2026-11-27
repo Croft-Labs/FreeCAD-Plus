@@ -1,0 +1,39 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "c15e3c4613422c3dcf9753a540beb359a4ed22d7ce31fbf2a2262b4ac6aec882",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+      "before": "9080eabc152b2aee72b8de636be7502f511aca543aad25e96e97ef556c43e694",
+      "installed": "cdb7ebd202be78ee6031b0798b1bda547b9677ce5f04ff285f9a91a815698be1"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+      "before": "43780ba3982c98ddb0b3965911daf74e7e1175a0bb2086108b6d5b75de9afc7d",
+      "installed": "cd7e51eada7d3ff6d9e1770fcfee8f6b4a8489b52867fc7912f6346762874965"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/file_recovery.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\file_recovery.py",
+      "before": "15187b0203c1ebec0ba926ab6a787f5faaef4fb790dddc80095310d05a66754c",
+      "installed": "292f39fa605e796f49c1a022975c4930872ef85677e1e591cadbcac63af03592"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/file_actions_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\file_actions_ui.py",
+      "before": "d441268453ddb70aec894caed0fbbe659b1ef2c1b29f444b77cb8575d5eaf4b8",
+      "installed": "14349b32fc9e6ee9ffc8af5db736adb7de25e84a566e26733cc58f036330357b"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestSinglePartOpen.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSinglePartOpen.py",
+      "before": null,
+      "installed": "13ebacc47c50932eee68ac08ada7278a7bb66a2725a1ea6d33fb8c15f00465f9"
+    }
+  ]
+}

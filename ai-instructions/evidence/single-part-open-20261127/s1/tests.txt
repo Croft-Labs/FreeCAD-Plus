@@ -1,0 +1,78 @@
+test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view) ... ok
+test_multiple_definitions_remain_at_file_level (TestSinglePartOpen.TestSinglePartOpen.test_multiple_definitions_remain_at_file_level) ... ok
+test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit (TestSinglePartOpen.TestSinglePartOpen.test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit) ... ok
+test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch) ... ok
+test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata) ... ok
+test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance) ... ok
+test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence) ... ok
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup) ... FAIL
+test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation) ... FAIL
+test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory) ... FAIL
+test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly) ... ERROR
+test_projection_ownership_and_history_without_body_rows (TestComponentPanel.TestComponentPanel.test_projection_ownership_and_history_without_body_rows) ... ok
+test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context) ... FAIL
+
+======================================================================
+ERROR: test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 176, in test_nested_import_labels_and_external_edit_remain_in_assembly
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Shared child" conflicts with "Shared child" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 230, in test_event_coalescing_idle_and_observer_cleanup
+    self.assertEqual(len(editing._context_observers), callbacks - 1)
+AssertionError: 0 != -1
+
+======================================================================
+FAIL: test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 214, in test_file_origin_visibility_persistence_and_no_display_model_mutation
+    self.assertEqual(self.widget.trees[1].topLevelItemCount(), 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 112, in test_mouse_selection_double_click_edit_and_model_occurrence_memory
+    self.assertEqual(self.widget.tabs.currentIndex(), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestComponentPanel.py", line 145, in test_tab_guard_stale_rows_and_per_view_context
+    self.assertEqual(editing.context_path(self.doc)[1], (self.first, self.nested))
+AssertionError: Tuples differ: (<App::Link object>, <App::Link object>) != (<App::Link object>, <App::Link object>)
+
+First differing element 0:
+<App::Link object>
+<App::Link object>
+
+  (<App::Link object>, <App::Link object>)
+
+----------------------------------------------------------------------
+Ran 18 tests in 19.338s
+
+FAILED (failures=4, errors=1)

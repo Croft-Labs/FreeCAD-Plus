@@ -1,3 +1,13 @@
+# November 27: Single-part opening correction
+
+- [x] Activate the sole local part on opening and populate History without tab switching.
+- [x] Cover recovered files and sub-file windows, including unused/repeated definitions.
+- [x] Preserve hidden import context, geometry, visibility, Undo and explicit live file Edit.
+- [x] Build/install five payloads and pass all 17 focused installed checks.
+
+See [delivery evidence](evidence/single-part-open-20261127/README.md).
+Saved last-active-part bookmarks remain a separate pending implementation.
+
 # November 27: Reference image View button
 
 - [x] Add the approved large Reference image action to View > Reference.

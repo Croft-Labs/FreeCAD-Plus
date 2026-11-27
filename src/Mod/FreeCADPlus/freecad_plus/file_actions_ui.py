@@ -152,7 +152,7 @@ def run_action(panel, action, row=None):
         guard();App.setActiveDocument(source.Name)
         Gui.getDocument(source.Name).createView('Gui::View3DInventor')
         from . import editing
-        editing.edit_file(source);panel.refresh()
+        editing.initialize_document(source);panel.refresh()
     elif action=='copy':
         if not Path(source.FileName).is_file():raise ValueError('Locate the missing file first')
         parts=tuple(document.validate(source).Definitions);dependencies=file_actions.dependencies(parts)

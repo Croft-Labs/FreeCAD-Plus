@@ -165,7 +165,7 @@ def open_resolved(filename, replacements, *, hidden=False):
                 App.setActiveDocument(result.Name)
                 Gui.getDocument(result.Name).createView('Gui::View3DInventor')
                 from . import editing
-                editing.edit_file(result)
+                editing.initialize_document(result)
             return result
     except Exception:
         for name in reversed(list(App.listDocuments())):

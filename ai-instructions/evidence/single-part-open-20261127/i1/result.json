@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "modules": {
+    "freecad_plus.document": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "freecad_plus.editing": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "freecad_plus.file_recovery": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\file_recovery.py",
+    "freecad_plus.file_actions_ui": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\file_actions_ui.py"
+  },
+  "tests": 17,
+  "errors": 0,
+  "failures": 0
+}

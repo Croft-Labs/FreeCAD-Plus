@@ -57,6 +57,20 @@ def edit(instance):
     return definition
 
 
+def initialize_document(doc):
+    """Initialize a newly opened file/view; never reapply on ordinary refresh."""
+    definitions = validate(doc).Definitions
+    if len(definitions) != 1:
+        return edit_file(doc)
+    definition = definitions[0]
+    paths = isolation.occurrences(doc, definition)
+    if len(paths) == 1:
+        return edit(paths[0])
+    # A catalog-only part still has History. Multiple instances share that same
+    # definition, but none is an authoritative placement for editing on open.
+    return edit_unused(doc, definition, detached=bool(paths))
+
+
 def edit_file(doc):
     view = _view(doc)
     if Gui.activeDocument().getInEdit():

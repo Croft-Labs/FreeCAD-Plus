@@ -1,5 +1,21 @@
 # Component panel
 
+## Active part on opening a one-part file — November 27, 2026
+
+Opening a file with exactly one local component definition makes that component
+the active Edit part and populates its History. Use its sole occurrence when
+unambiguous; an unplaced definition or a repeated definition opens in definition
+isolation without adding an occurrence or arbitrarily choosing a placement.
+Imported catalogs and feature/Body objects do not count as extra local parts.
+
+Apply this initialization to normal opening, recovered-file opening and the
+Parts sub-file menu's Open file in new window. Hidden imports do not change the
+host's active part. Preserve the current Components tab, native document data,
+Undo and active-assembly rules. Do not reapply the default on refresh or override
+an explicit file-level Edit in an already-open view. Multi-part files retain their
+current opening behavior; saved active-part restoration is a separate pending item.
+See [correction evidence](../evidence/single-part-open-20261127/README.md).
+
 ## Reference image History — approved November 27, 2026
 
 Reference images belong to the active component's History, including when that
