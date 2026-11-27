@@ -1,0 +1,44 @@
+import os,sys,json,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import ui_modes,toolbars,toolbar_layout,clone_task
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        win=Gui.getMainWindow();win.showNormal();win.resize(1700,1000);win.show()
+        source=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+        sys.path.insert(0,str(source))
+        if os.environ['PLUS_TEST_PHASE']=='source':
+            old=toolbars._controller
+            if old:
+                old.apply(False)
+                QtWidgets.QApplication.instance().focusChanged.disconnect(old.observe_customization)
+                for action in Gui.Command.get('Std_DlgCustomize').getAction():
+                    action.triggered.disconnect(old.customization_opened)
+                    action.setProperty('FreeCADPlusObserved',False)
+                for bar in old.native_bars():bar.setProperty('FreeCADPlusObserved',False)
+            import freecad_plus
+            freecad_plus.__path__.insert(0,str(source/'freecad_plus'))
+            importlib.reload(toolbar_layout);importlib.reload(toolbars);importlib.reload(clone_task)
+            clone_task.install()
+            for action in Gui.Command.get('Plus_Clone').getAction():action.setIcon(Gui.getIcon(clone_task.Command().GetResources()['Pixmap']))
+            from freecad_plus import appearance_command
+            appearance_command.install();toolbars.apply('Plus');ui_modes.apply_modes()
+        modules=[toolbars,toolbar_layout,clone_task]
+        if os.environ['PLUS_TEST_PHASE']!='baseline':
+            from freecad_plus import appearance_command
+            modules.append(appearance_command)
+        result['modules']={m.__name__:m.__file__ for m in modules}
+        names=os.environ.get('PLUS_TEST_NAMES','').split(',')
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(n) for n in names if n)
+        with (out/'tests.txt').open('w') as stream:r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=r.wasSuccessful(),tests=r.testsRun,errors=len(r.errors),failures=len(r.failures))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1600,run)

@@ -1,0 +1,59 @@
+test_classic_restore_and_independent_preferences (TestPlusToolbars.TestPlusToolbars.test_classic_restore_and_independent_preferences) ... ok
+test_design_columns_and_split_hit_areas (TestPlusToolbars.TestPlusToolbars.test_design_columns_and_split_hit_areas)
+Realized layout stays compact, preserves groups and separates click targets. ...
+  test_design_columns_and_split_hit_areas (TestPlusToolbars.TestPlusToolbars.test_design_columns_and_split_hit_areas) (tab='View', width=1300, theme='FreeCAD Light')
+Realized layout stays compact, preserves groups and separates click targets. ... ERROR
+test_native_widget_factory_and_all_tools (TestPlusToolbars.TestPlusToolbars.test_native_widget_factory_and_all_tools) ... ok
+test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh) ... FAIL
+test_plus_group_last_choice_and_native_state (TestPlusToolbars.TestPlusToolbars.test_plus_group_last_choice_and_native_state) ... FAIL
+test_captions_and_icon_only_controls_on_narrow_window (TestPlusToolbars.TestPlusToolbars.test_captions_and_icon_only_controls_on_narrow_window) ... FAIL
+
+======================================================================
+ERROR: test_design_columns_and_split_hit_areas (TestPlusToolbars.TestPlusToolbars.test_design_columns_and_split_hit_areas) (tab='View', width=1300, theme='FreeCAD Light')
+Realized layout stays compact, preserves groups and separates click targets.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPlusToolbars.py", line 2374, in test_design_columns_and_split_hit_areas
+    self.ribbon.refresh()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 336, in refresh
+    self._build_page(items)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 642, in _build_page
+    self._group(row, title, entries)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 542, in _group
+    control = self._split(commands, caption, group) if commands else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 419, in _split
+    button = self._button(commands[0], parent)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 403, in _button
+    button.setDefaultAction(action)
+RuntimeError: Internal C++ object (PySide6.QtGui.QAction) already deleted.
+
+======================================================================
+FAIL: test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPlusToolbars.py", line 2679, in test_live_customization_refresh
+    self.assertTrue(group.findChild(QtWidgets.QToolButton, 'Plus_Std_ViewRear'))
+AssertionError: None is not true
+
+======================================================================
+FAIL: test_plus_group_last_choice_and_native_state (TestPlusToolbars.TestPlusToolbars.test_plus_group_last_choice_and_native_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPlusToolbars.py", line 2808, in test_plus_group_last_choice_and_native_state
+    self.assertEqual(button.defaultAction(), actions[1])
+AssertionError: <PySide6.QtGui.QAction(0x1c32c5d3920 text="Pocket" toolTip="<p [310 chars]1140> != <PySide6.QtGui.QAction object at 0x000001C32C584280>
+
+======================================================================
+FAIL: test_captions_and_icon_only_controls_on_narrow_window (TestPlusToolbars.TestPlusToolbars.test_captions_and_icon_only_controls_on_narrow_window)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPlusToolbars.py", line 256, in test_captions_and_icon_only_controls_on_narrow_window
+    self.assertFalse(pending)
+AssertionError: [<PySide6.QtWidgets.QToolButton(0x1c34c346860) at 0x000001C333628B40>] is not false
+
+----------------------------------------------------------------------
+Ran 6 tests in 24.322s
+
+FAILED (failures=3, errors=1)

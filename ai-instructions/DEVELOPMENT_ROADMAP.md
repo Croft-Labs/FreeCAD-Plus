@@ -1,3 +1,13 @@
+# November 27: Design toolbar update
+
+- [x] Remove Design All Tools and reduce Home to the requested controls.
+- [x] Add New component beside Save As and to Assembly; use the sheep Clone icon.
+- [x] Match Modeling Boolean Tools exactly to the current Part tab.
+- [x] Open existing Appearance from Modeling with active-component selection routing.
+- [x] Preserve other modes and native commands; all 12 installed regressions pass.
+
+See [approval and delivery evidence](evidence/design-toolbar-20261127/README.md).
+
 # November 27: History Appearance and face highlighting
 
 - [x] Preserve prior selected bodies/faces from the History part menu.

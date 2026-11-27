@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "modules": {
+    "freecad_plus.toolbars": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+    "freecad_plus.toolbar_layout": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py",
+    "freecad_plus.clone_task": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py",
+    "freecad_plus.appearance_command": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\appearance_command.py"
+  },
+  "tests": 12,
+  "errors": 0,
+  "failures": 0
+}

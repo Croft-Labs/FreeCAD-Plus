@@ -1,0 +1,11 @@
+test_00_boolean_group_exactly_matches_part_and_survives_reload (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_00_boolean_group_exactly_matches_part_and_survives_reload) ... ok
+test_appearance_active_child_import_and_unavailable_context (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_appearance_active_child_import_and_unavailable_context) ... ok
+test_appearance_faces_apply_and_empty_selection (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_appearance_faces_apply_and_empty_selection) ... ok
+test_home_tabs_common_and_sheep (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_home_tabs_common_and_sheep) ... ok
+test_new_component_buttons_dispatch_native_command_once (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_new_component_buttons_dispatch_native_command_once) ... ok
+test_other_modes_and_classic_remain_unchanged (TestDesignToolbarUpdate.TestDesignToolbarUpdate.test_other_modes_and_classic_remain_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 15.002s
+
+OK

@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Design toolbar update — installed November 27, 2026
+
+Design has a reduced Home tab and no All Tools. New component is beside Save As
+and on Assembly. Modeling includes Part's exact Boolean Tools group, the existing
+Plus Appearance task entry and Clone's sheep icon. All 12 installed checks pass;
+seven installed files match and settings/shortcut are unchanged. See
+[delivery evidence](evidence/design-toolbar-20261127/README.md).
+
 ## History Appearance and face selection — installed November 27, 2026
 
 History now offers Appearance on part headers and geometric features. Header

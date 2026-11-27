@@ -1,3 +1,12 @@
+# November 27: Design toolbar changes installed
+
+The approved Home/common/Assembly/Modeling changes are installed, including Part's
+exact Boolean group, functional Appearance and Clone's sheep icon. All 12 final
+installed regressions pass; seven payloads match with preserved settings/shortcut.
+See [delivery evidence](evidence/design-toolbar-20261127/README.md).
+Reference-image support remains unimplemented; the owner's latest inquiry was
+answered with a read-only native capability check, not an implementation approval.
+
 # November 27: History Appearance and face highlighting installed
 
 Approved History menu and face-selection corrections are implemented, script-built

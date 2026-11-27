@@ -1,0 +1,14 @@
+test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh) ... FAIL
+
+======================================================================
+FAIL: test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestPlusToolbars.py", line 2678, in test_live_customization_refresh
+    self.assertTrue(group.findChild(QtWidgets.QToolButton, 'Plus_Std_ViewRear'))
+AssertionError: None is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 3.961s
+
+FAILED (failures=1)

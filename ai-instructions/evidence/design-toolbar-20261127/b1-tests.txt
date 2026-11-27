@@ -1,0 +1,6 @@
+test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.994s
+
+OK

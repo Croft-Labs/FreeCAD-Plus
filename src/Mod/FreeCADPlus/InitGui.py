@@ -13,3 +13,5 @@ from freecad_plus import loft_task
 loft_task.install()
 from freecad_plus import clone_task
 clone_task.install()
+from freecad_plus import appearance_command
+appearance_command.install()

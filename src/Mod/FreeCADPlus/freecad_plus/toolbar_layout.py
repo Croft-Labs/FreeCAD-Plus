@@ -9,7 +9,6 @@ DESIGN_TABS = (
     ('Mesh', 'MeshWorkbench'),
     ('View', None),
     ('Part', 'PartWorkbench'),
-    ('All Tools', None),
 )
 MODE_WORKBENCHES = (
     ('Draft', 'DraftWorkbench'),
@@ -57,9 +56,31 @@ MODELING = (
         ('Multi Transform', 'medium', ('PartDesign_MultiTransform',)),
     )),
     ('Primitives', (('Primitives', 'large', ('PartDesign_CompPrimitiveAdditive',)),)),
+    ('Boolean Tools', (
+        ('Compound Tools', 'small', ('Part_CompCompoundTools',)),
+        ('Boolean Operation', 'small', ('Part_Boolean',)),
+        ('Cut', 'small', ('Part_Cut',)),
+        ('Union', 'small', ('Part_Fuse',)),
+        ('Intersection', 'small', ('Part_Common',)),
+        ('Join Features', 'small', ('Part_CompJoinFeatures',)),
+        ('Split Features', 'small', ('Part_CompSplitFeatures',)),
+        ('Check Geometry', 'small', ('Part_CheckGeometry',)),
+        ('Defeaturing', 'small', ('Part_Defeaturing',)),
+    )),
     ('Other', (
         ('Delete Face / Defeaturing', 'medium', ('PartDesign_Defeaturing',)),
         ('Clone', 'medium', ('Plus_Clone',)),
         ('Extract geometry', 'medium', ('Plus_ExtractGeometry',)),
+        ('Appearance', 'large', ('Plus_Appearance',)),
+    )),
+)
+
+
+HOME = (
+    ('Tools', (('Check geometry', 'large', ('Part_CheckGeometry',)),)),
+    ('Structure', (
+        ('New component', 'large', ('Std_Part',)),
+        ('New group', 'large', ('Std_Group',)),
+        ('Variables', 'large', ('Std_VarSet',)),
     )),
 )

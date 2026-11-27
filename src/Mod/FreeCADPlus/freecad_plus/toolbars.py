@@ -470,7 +470,7 @@ class Ribbon(QtCore.QObject):
                 if button:
                     row.addWidget(button)
             if name == 'File':
-                for command in ('Std_SaveAll', 'Std_SaveAs'):
+                for command in ('Std_SaveAll', 'Std_SaveAs') + (('Std_Part',) if self.mode_workbench == 'PartDesignWorkbench' else ()):
                     button = self._button(command, common)
                     if button:
                         row.addWidget(button)
@@ -597,6 +597,44 @@ class Ribbon(QtCore.QObject):
         box.addWidget(label)
         row.addWidget(group)
 
+    def _part_boolean_entries(self):
+        """Use Part's inventory and native group factories, including cold startup."""
+        from shiboken6 import isValid
+        if Gui.Command.get('Part_BooleanFragments') is None:
+            Gui.getWorkbench('PartWorkbench').Initialize()
+        workbench = Gui.getWorkbench('PartWorkbench')
+        commands = (workbench.getToolbarItems().get('Boolean Tools')
+                    if hasattr(workbench, '__Workbench__') else None)
+        if commands is None:
+            commands = [entry[2][0] for title, entries in layout.MODELING
+                        if title == 'Boolean Tools' for entry in entries]
+        # Before Part has been activated, its toolbar widgets don't exist yet.
+        # Build equivalent hidden native controls, rather than treating native
+        # compound commands as nested toolbars with a different ribbon layout.
+        if not hasattr(self, '_boolean_sources'):
+            self._boolean_sources = QtWidgets.QToolBar(self.host)
+            self._boolean_sources.hide()
+            self._boolean_actions = {}
+        for command in commands:
+            if command == 'Separator' or command in self.sources:
+                continue
+            cached = self._boolean_actions.get(command)
+            if cached and not all(isValid(item) for item in cached if item is not None):
+                del self._boolean_actions[command]
+            if command not in self._boolean_actions:
+                native = Gui.Command.get(command)
+                if native is None:continue
+                before = self._boolean_sources.actions()
+                native.addToToolbar(self._boolean_sources)
+                added = [a for a in self._boolean_sources.actions() if a not in before]
+                if not added:continue
+                action = added[0]
+                self._boolean_actions[command] = (action, self._boolean_sources.widgetForAction(action))
+            self.sources[command] = self._boolean_actions[command]
+        return [(None, 'separator', ()) if c == 'Separator' else
+                (re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', c.split('_', 1)[-1]), 'small', (c,))
+                for c in commands]
+
     def _build_page(self, items):
         page = QtWidgets.QWidget()
         row = QtWidgets.QHBoxLayout(page)
@@ -604,9 +642,15 @@ class Ribbon(QtCore.QObject):
         row.setSpacing(0)
         if self.mode_workbench == 'PartDesignWorkbench' and self.tab == 'Modeling':
             for title, entries in layout.MODELING:
+                if title == 'Boolean Tools':entries = self._part_boolean_entries()
                 self._group(row, title, entries)
         else:
-            if self.tab == 'View':
+            if self.mode_workbench == 'PartDesignWorkbench' and self.tab == 'Home':
+                import PartGui
+                for title, entries in layout.HOME:
+                    self._group(row, title, entries)
+                names = [n for n in ('Macro', 'Help') if n in items]
+            elif self.tab == 'View':
                 names = layout.VIEW
             elif self.tab == 'All Tools':
                 names = list(items)
@@ -618,9 +662,13 @@ class Ribbon(QtCore.QObject):
                 if self.tab == 'Home':
                     names += [n for n in ('Structure', 'Macro', 'Help') if n in items]
             for name in names:
+                commands = list(items.get(name, ()))
+                if (self.mode_workbench == 'PartDesignWorkbench' and self.tab == 'Assembly'
+                        and name == 'Assembly' and 'Assembly_Insert' in commands and 'Std_Part' not in commands):
+                    commands.insert(commands.index('Assembly_Insert') + 1, 'Std_Part')
                 entries = [(None, 'separator', ()) if c == 'Separator' else
                            (re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', c.split('_', 1)[-1]),
-                            'small', (c,)) for c in items.get(name, ()) if c != 'Assembly_CreateAssembly']
+                            'small', (c,)) for c in commands if c != 'Assembly_CreateAssembly']
                 native = self.native.get(name)
                 if native:
                     # Spreadsheet appends its native color pickers after command

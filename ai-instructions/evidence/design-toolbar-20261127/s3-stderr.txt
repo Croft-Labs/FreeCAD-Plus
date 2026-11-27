@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 259, in select_tab
+    self.refresh()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 336, in refresh
+    self._build_page(items)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 642, in _build_page
+    self._group(row, title, entries)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 542, in _group
+    control = self._split(commands, caption, group) if commands else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 419, in _split
+    button = self._button(commands[0], parent)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 403, in _button
+    button.setDefaultAction(action)
+RuntimeError: Internal C++ object (PySide6.QtGui.QAction) already deleted.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 259, in select_tab
+    self.refresh()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 336, in refresh
+    self._build_page(items)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 679, in _build_page
+    self._group(row, native.windowTitle() if native else name, entries)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 542, in _group
+    control = self._split(commands, caption, group) if commands else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 419, in _split
+    button = self._button(commands[0], parent)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\toolbars.py", line 403, in _button
+    button.setDefaultAction(action)
+RuntimeError: Internal C++ object (PySide6.QtGui.QAction) already deleted.

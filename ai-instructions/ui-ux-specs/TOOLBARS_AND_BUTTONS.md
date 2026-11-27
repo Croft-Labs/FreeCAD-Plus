@@ -1,5 +1,33 @@
 # Toolbars and buttons
 
+## Design toolbar simplification — approved November 27, 2026
+
+Design in Plus UI has Home, Modeling, Sketch, Assembly, Mesh, View and Part; remove
+All Tools only from Design. Home contains only Check geometry, New component,
+New group, Variables, the existing Macro group buttons and Help. Place the native
+New component (`Std_Part`) action immediately after Save As in the common toolbar,
+and also in Assembly. Keep native command semantics and Save/Save All/Save As order.
+
+Modeling uses the existing sheep icon for `Plus_Clone`. Add the **Boolean Tools**
+group exactly as displayed on Part, with the same command inventory, positions,
+sizes, native dropdowns and remembered native actions. This includes Compound Tools,
+Boolean Operation, Cut, Union, Intersection, Join Features, Split Features, Check
+Geometry and Defeaturing. Adding access does not change Boolean operation semantics.
+
+Modeling > Other also has **Appearance**, opening the existing Plus task for the
+active component. Preserve explicitly selected eligible bodies/faces, including
+imported definitions; no selection stays empty. Disable this entry without an
+eligible active component or while another task is open. Native Classic commands,
+other Plus modes, responsive tabs and saved independent UI modes are unchanged.
+
+Owner's “add the boolean tools group to the modeling tab exactly as it currently
+is in the part tab. the implement” approves the combined toolbar preview
+`a400a781fd04`, fingerprint
+`1d6d2cbd9596761050bdc23d50b2882b9f70e1da383cbc703489f04b4cf45ac2`, with the
+explicit correction to match the current Part group exactly. The preceding
+preview `915de99ac4a6` is included and superseded. Chat approval is authoritative;
+no companion approval state was changed. See [delivery evidence](../evidence/design-toolbar-20261127/README.md).
+
 ## Responsive tabs and contextual selection — approved November 27, 2026
 
 The ribbon reuses the Components panel's tab sizing: equal preferred widths,

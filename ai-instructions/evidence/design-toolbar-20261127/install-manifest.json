@@ -1,0 +1,51 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "f185d791f773de0835a979fb610964967b900aa1349c5f61d3ff5e44815ac1b7",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/InitGui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\InitGui.py",
+      "before": "6ae47d73553975ca67a504de194eb41fb65814ff2135a5b0e1cd6ed59b2d134b",
+      "installed": "fba209143a5b226085999b3b45800f98fdff1ccdd8712e4123cc9812623b5500"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestDesignToolbarUpdate.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestDesignToolbarUpdate.py",
+      "before": null,
+      "installed": "f7d8b0a364a50e180940bf1ed2f0512b2986ec6f2bc5b03c9201a070c7a58bf1"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestPlusToolbars.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPlusToolbars.py",
+      "before": "7bee6c0700df33e0f898bfeec3b2bbe4d9b7776664acb56b6219cd23ea59331f",
+      "installed": "f020c93a9b5b6db751b3d8cf9715e136c67805a2545ffee1ec14ae3fbb567bf2"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/toolbars.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+      "before": "cccd3bfa2dfff5de35e7178dcfc8ad981e13e9c854845b32a1a62cfb2db6edfe",
+      "installed": "de173cf02e457cdde47f03729be01956c7df869f7a2111e01fc8cd5b1d82d8b4"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/toolbar_layout.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py",
+      "before": "b5d5ce2a9b8cfbc135e72fca2225c6891278818f1267bbff7b4b4162fbdd2a8d",
+      "installed": "48d245356c455ac5a213f0596b10255ac1b730927e8579daa4a2cddd81e794c4"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_task.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py",
+      "before": "66ab0d0eca2ac5560d16b2e585f4f054a9eea319555449b1582768b3ccde4000",
+      "installed": "e5be8272792dd90f161ac7cc94f80064f7d7a638716bcc1433af2fbc59406a5f"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance_command.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_command.py",
+      "before": null,
+      "installed": "583dab9ddcfce9365d67f66776787bcd72c8ec9f0c3d08a245937685e952042c"
+    }
+  ]
+}

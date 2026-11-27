@@ -284,7 +284,7 @@ class Command:
     def GetResources(self):
         return dict(MenuText='Extract geometry' if self.extract else 'Clone',
             ToolTip='Extract faces from parent-owned geometry' if self.extract else 'Clone whole objects from direct children',
-            Pixmap='PartDesign_SubShapeBinder' if self.extract else 'PartDesign_ShapeBinder')
+            Pixmap='PartDesign_SubShapeBinder' if self.extract else 'PartDesign_Clone')
     def IsActive(self):
         doc=App.ActiveDocument
         return doc is not None and not Gui.Control.activeDialog() and any('PlusFormat' in o.PropertiesList for o in doc.Objects)
