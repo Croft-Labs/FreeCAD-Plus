@@ -1,5 +1,24 @@
 # Toolbars and buttons
 
+## Responsive tabs and contextual selection — approved November 27, 2026
+
+The ribbon reuses the Components panel's tab sizing: equal preferred widths,
+equal narrower widths as space shrinks, text-safe minimums and native scrolling
+when all labels cannot fit. Workbench and independent Classic/Plus choices persist.
+
+Face-only collectors show **Single Surface, Connected Surfaces, Tangent Surfaces**:
+Appearance Face mode, Extract, Thicken and Shell face lists, and native face-only
+dress-up reference lists. Other fields and Body mode restore curve choices.
+Curve and surface intent are remembered separately; category preferences are not
+rewritten. Native collector gates remain authoritative, including Draft's mixed
+neutral-plane and edge direction fields.
+
+Connected faces share native edges within one geometry owner and exact occurrence;
+touching independent solids do not join. Tangent traversal asks OCCT for geometric
+continuity across each common edge. Viewport click adds, Shift-click removes;
+programmatic ordinary selections do not trigger expansion. Deferred expansion is
+cancelled when task, collector, document/editor, topology or linked source changes.
+
 ## Save All and Hidden line — approved November 26, 2026
 
 The common top toolbar orders **Save, Save All, Save As**. Save All uses the native

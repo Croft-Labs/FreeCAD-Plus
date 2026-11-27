@@ -1,5 +1,19 @@
 # FreeCAD Plus: Programming Summary
 
+## Pending workflow delivery — installed November 27, 2026
+
+All six approved groups are implemented: exact-occurrence assembly/isolated editing,
+single-local-part default assembly, Symmetry defaults and on-axis Coincident
+constraints, responsive equal toolbar tabs, Plus task bottom buttons/reset and
+selection-preference face highlights, and contextual surface-selection intents.
+Surface adjacency uses shared native edges and OCCT face continuity. Native
+face-only collectors declare their domain; mixed collectors retain curve behavior.
+Native build passes. Final source checks pass 53/53 plus 2/2; installed checks
+pass 89/91, with both viewport misses passing in a fresh 3/3 gesture rerun.
+Six legacy isolation-test failures reproduce on the unchanged installed baseline.
+All 31 installed files match; settings/shortcut are unchanged and rollback retained.
+See [implementation and verification evidence](evidence/pending-workflows-20261127/README.md).
+
 ## Assembly instance-view correction — installed November 27, 2026
 
 Condensed groups have no disclosure arrows and stay folded during selection,
@@ -8,7 +22,7 @@ numbered rows; real assemblies retain normal arrows. Full group menus remain
 available while editing a member. Final installed regressions pass 26/26; three
 payload hashes match and owner settings/shortcut are unchanged. Restart required.
 See [delivery evidence](evidence/instance-views-20261127/README.md).
-The separate Edit within assembly/Edit in isolation menu revision remains pending.
+The separate Edit within assembly/Edit in isolation menu revision was subsequently installed above.
 
 ## FreeCAD Plus 2.0.0 branding — installed November 27, 2026
 
@@ -18,7 +32,7 @@ platform assets. The desktop shortcut is FreeCAD Plus 2.0.0. Native build passes
 32 staged and 32 installed regressions pass, plus final branding/5 navigation
 checks. Seven installed binary hashes match; owner settings are unchanged.
 See [delivery evidence and package limits](evidence/branding-20261127/README.md).
-The separate component edit-modes preview remains pending approval.
+The separate component edit modes were subsequently approved and installed above.
 
 ## Approved Components panel updates — November 27, 2026
 

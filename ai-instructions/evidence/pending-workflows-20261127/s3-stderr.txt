@@ -1,0 +1,20 @@
+Part::Feature: Link(s) to object(s) 'Pad' go out of the allowed scope 'OwnedDerived'. Instead, the linked object(s) reside within 'Component Part001 File File Component Part001 File File'.
+<Gui> Document.cpp(611): cannot edit object 'Component': not found in document 'PanelFixture'
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 194, in execute
+    raise ValueError('The original source is missing or replaced. Edit this feature to repair it.')
+<class 'ValueError'>: The original source is missing or replaced. Edit this feature to repair it.
+cloned surface: The original source is missing or replaced. Edit this feature to repair it.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 192, in execute
+    source, kind, shape = evaluate(definition, saved_ref(obj), obj.DerivedOperation, admission=False)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 114, in evaluate
+    shape = local_shape(definition, ref)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\planes.py", line 57, in shape
+    raise ValueError('A plane reference is missing or no longer has geometry')
+<class 'ValueError'>: A plane reference is missing or no longer has geometry
+extracted surface: A plane reference is missing or no longer has geometry
+Fillet: Fillet not possible on selected shapes
+Chamfer: No edges specified

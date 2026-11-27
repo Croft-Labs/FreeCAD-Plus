@@ -1,0 +1,46 @@
+test_exact_edit_modes_preserve_fixed_assembly_tab_expansion_and_undo (TestPendingWorkflows.TestPendingWorkflows.test_exact_edit_modes_preserve_fixed_assembly_tab_expansion_and_undo) ... ok
+test_queued_surface_pick_cannot_cross_mode_change (TestPendingWorkflows.TestPendingWorkflows.test_queued_surface_pick_cannot_cross_mode_change) ... ok
+test_responsive_tabs_equal_shrink_and_scroll (TestPendingWorkflows.TestPendingWorkflows.test_responsive_tabs_equal_shrink_and_scroll) ... ok
+test_single_part_default_stale_cache_and_saved_manual_choice (TestPendingWorkflows.TestPendingWorkflows.test_single_part_default_stale_cache_and_saved_manual_choice) ... ok
+test_surface_toolbar_pick_expansion_shift_reset_and_materials (TestPendingWorkflows.TestPendingWorkflows.test_surface_toolbar_pick_expansion_shift_reset_and_materials) ... ok
+test_surface_topology_sharp_smooth_and_independent_solids (TestPendingWorkflows.TestPendingWorkflows.test_surface_topology_sharp_smooth_and_independent_solids) ... ok
+test_unused_assembly_child_edits_keep_assembly_preview (TestPendingWorkflows.TestPendingWorkflows.test_unused_assembly_child_edits_keep_assembly_preview) ... ok
+test_apply_repeated_and_undo_redo (TestSketchSymmetry.TestSketchSymmetry.test_apply_repeated_and_undo_redo) ... ok
+test_component_sketch_both_presentations (TestSketchSymmetry.TestSketchSymmetry.test_component_sketch_both_presentations) ... ok
+test_constraints_cancel_escape_and_other_tool (TestSketchSymmetry.TestSketchSymmetry.test_constraints_cancel_escape_and_other_tool) ... ok
+test_delete_original_and_axis_remapping (TestSketchSymmetry.TestSketchSymmetry.test_delete_original_and_axis_remapping) ... ok
+test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat (TestSketchSymmetry.TestSketchSymmetry.test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat) ... ok
+test_empty_entry_large_list_and_done_restore (TestSketchSymmetry.TestSketchSymmetry.test_empty_entry_large_list_and_done_restore) ... ok
+test_empty_sketch_can_open_and_cancel (TestSketchSymmetry.TestSketchSymmetry.test_empty_sketch_can_open_and_cancel) ... ok
+test_external_line_reference_and_scrollable_many_inputs (TestSketchSymmetry.TestSketchSymmetry.test_external_line_reference_and_scrollable_many_inputs) ... ok
+test_horizontal_axis_endpoint_coincident (TestSketchSymmetry.TestSketchSymmetry.test_horizontal_axis_endpoint_coincident) ... ok
+test_native_options_construction_and_point_center (TestSketchSymmetry.TestSketchSymmetry.test_native_options_construction_and_point_center) ... ok
+test_oblique_axis_endpoint_coincident (TestSketchSymmetry.TestSketchSymmetry.test_oblique_axis_endpoint_coincident) ... ok
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+test_save_reopen (TestSketchSymmetry.TestSketchSymmetry.test_save_reopen) ... ok
+test_shift_delete_clear_and_invalid_axis_recovery (TestSketchSymmetry.TestSketchSymmetry.test_shift_delete_clear_and_invalid_axis_recovery) ... ok
+test_standalone_point_selected_after_open (TestSketchSymmetry.TestSketchSymmetry.test_standalone_point_selected_after_open) ... ok
+test_vertical_axis_endpoint_coincident (TestSketchSymmetry.TestSketchSymmetry.test_vertical_axis_endpoint_coincident) ... ok
+test_allocation_failure_logs_trace_retains_inputs_and_allows_retry (TestSketchPattern.TestPatternTask.test_allocation_failure_logs_trace_retains_inputs_and_allows_retry) ... ok
+test_empty_sketch_and_component_presentations (TestSketchPattern.TestPatternTask.test_empty_sketch_and_component_presentations) ... ok
+test_preselection_grid_numeric_input_and_escape (TestSketchPattern.TestPatternTask.test_preselection_grid_numeric_input_and_escape) ... ok
+test_radial_and_angular_reference_and_cancel (TestSketchPattern.TestPatternTask.test_radial_and_angular_reference_and_cancel) ... ok
+test_radius_pick_invalid_reference_and_removal (TestSketchPattern.TestPatternTask.test_radius_pick_invalid_reference_and_removal) ... ok
+test_real_viewport_click_shift_axis_and_apply (TestSketchPattern.TestPatternTask.test_real_viewport_click_shift_axis_and_apply) ... ok
+test_task_picks_apply_undo_done (TestSketchPattern.TestPatternTask.test_task_picks_apply_undo_done) ... ok
+test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation) ... ok
+test_cancel_and_stale_geometry (TestAppearance.TestAppearance.test_cancel_and_stale_geometry) ... ok
+test_external_source_owns_undo_and_persistence (TestAppearance.TestAppearance.test_external_source_owns_undo_and_persistence) ... ok
+test_mesh_body_tip_and_rejected_child (TestAppearance.TestAppearance.test_mesh_body_tip_and_rejected_child) ... ok
+test_native_save_and_reopen (TestAppearance.TestAppearance.test_native_save_and_reopen) ... ok
+test_native_task_modes_and_slider (TestAppearance.TestAppearance.test_native_task_modes_and_slider) ... ok
+test_occurrence_face_picks_and_toggle (TestAppearance.TestAppearance.test_occurrence_face_picks_and_toggle) ... ok
+test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces) ... ok
+test_transparency_only_preserves_face_colors (TestAppearance.TestAppearance.test_transparency_only_preserves_face_colors) ... ok
+test_undo_redo_and_geometry_identity (TestAppearance.TestAppearance.test_undo_redo_and_geometry_identity) ... ok
+test_whole_and_faces_preserve_other_material_fields_and_children (TestAppearance.TestAppearance.test_whole_and_faces_preserve_other_material_fields_and_children) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 75.116s
+
+OK

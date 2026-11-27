@@ -1,5 +1,26 @@
 # Component panel
 
+## Assembly edit modes and default assembly — approved November 27, 2026
+
+Parts and Assembly component menus offer **Edit within assembly** and **Edit in
+isolation**. Within assembly preserves surrounding components and the exact chosen
+occurrence; isolation shows the selected component and its descendants. Within
+assembly is disabled for components outside the fixed active assembly. Double-click
+on an assembly member uses within-assembly editing. Condensed groups edit their
+representative occurrence without expanding or acquiring disclosure arrows.
+Unplaced and imported assembly anchors preserve their native child coordinate frame.
+A loaded, unimported assembly is edited in its defining file without importing it.
+
+With no valid saved/manual assembly choice, a file containing exactly one local
+component definition automatically uses it as its active assembly. Bodies, native
+feature history and imported catalogs do not count as additional local components.
+Valid saved/manual choices win; empty/stale cached choices are reconsidered. The
+existing file bookmark persists this choice on save. Edit context, selected tab,
+tree expansion, model visibility and Undo remain independent of assembly navigation.
+
+These approved rules replace the earlier generic Edit menu item and supersede the
+historical pending-preview statements below.
+
 ## Appearance and Parts context menu — November 27, 2026
 
 Owner approved implementation of the reviewed Appearance task workflow. Component

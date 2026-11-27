@@ -1,5 +1,28 @@
 # Task panel
 
+## Shared Apply workflow — approved November 27, 2026
+
+The owner approved all pending previews together. Appearance, Move Components,
+Sketch Pattern and Sketch Symmetry place **Done, Apply, Cancel** below every input
+and selection field. Successful Apply commits once and restores fresh task defaults:
+empty lists/references, default modes/numbers/options, and cleared pending picks,
+previews and drag handles. Failed Apply retains inputs. Empty Done closes; otherwise
+Done applies valid inputs and closes. Cancel discards only unapplied inputs, retaining
+earlier Apply transactions. Move no longer offers Keep selection after Apply.
+Native workbench tasks outside these Plus workflows retain their own behavior.
+
+Symmetry starts with Create symmetry constraints enabled and Delete original disabled.
+These remain mutually exclusive. A source point on a line axis receives Coincident
+with its mirrored counterpart; other points retain Symmetric. Point-center symmetry
+retains its native behavior. The bottom Cancel exits the tool; Exit Sketch remains
+separate. The duplicate header Cancel is hidden for Pattern and Symmetry only.
+
+Appearance Face mode shows collected/hovered faces in the View selection/preselection
+preference colors, respecting both enable flags. Unpickable view overlays preserve
+original materials, placements, visibility, native picking and Undo. Removing/clearing
+targets, switching to Body, applying or closing removes these temporary highlights.
+This section supersedes earlier retained-input/default-off descriptions below.
+
 ## Appearance workflow — owner approval November 27, 2026
 
 Parts > Appearance opens a native task panel. Body and Face radio buttons choose

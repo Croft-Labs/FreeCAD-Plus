@@ -1,0 +1,1 @@
+<Gui> Document.cpp(611): cannot edit object 'Component': not found in document 'PanelFixture'

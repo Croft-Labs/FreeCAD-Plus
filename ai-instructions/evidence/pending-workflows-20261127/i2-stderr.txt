@@ -1,0 +1,9 @@
+During initialization the error "DLL load failed while importing Part: The specified module could not be found." occurred in C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\InitGui.py
+Look into the log file for further information
+DLL load failed while importing PartDesignGui: The specified module could not be found.
+DLL load failed while importing PartDesignGui: The specified module could not be found.
+DLL load failed while importing PartDesignGui: The specified module could not be found.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\PartDesign\InitGui.py", line 55, in Initialize
+    import PartDesignGui
+

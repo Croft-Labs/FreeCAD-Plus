@@ -1,0 +1,151 @@
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation) ... FAIL
+test_cancel_and_stale_geometry (TestAppearance.TestAppearance.test_cancel_and_stale_geometry) ... ok
+test_external_source_owns_undo_and_persistence (TestAppearance.TestAppearance.test_external_source_owns_undo_and_persistence) ... ok
+test_mesh_body_tip_and_rejected_child (TestAppearance.TestAppearance.test_mesh_body_tip_and_rejected_child) ... ok
+test_native_save_and_reopen (TestAppearance.TestAppearance.test_native_save_and_reopen) ... ok
+test_native_task_modes_and_slider (TestAppearance.TestAppearance.test_native_task_modes_and_slider) ... ok
+test_occurrence_face_picks_and_toggle (TestAppearance.TestAppearance.test_occurrence_face_picks_and_toggle) ... ok
+test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces) ... FAIL
+test_transparency_only_preserves_face_colors (TestAppearance.TestAppearance.test_transparency_only_preserves_face_colors) ... ok
+test_undo_redo_and_geometry_identity (TestAppearance.TestAppearance.test_undo_redo_and_geometry_identity) ... ok
+test_whole_and_faces_preserve_other_material_fields_and_children (TestAppearance.TestAppearance.test_whole_and_faces_preserve_other_material_fields_and_children) ... ok
+test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring) ... ERROR
+test_atomic_failure_context_and_view_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_atomic_failure_context_and_view_cleanup) ... ok
+test_axes_coincident_parallel_reverse (TestMoveWorkflow.TestMoveWorkflow.test_axes_coincident_parallel_reverse) ... ok
+test_dynamic_native_handles_numeric_snap_pivot_and_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_handles_numeric_snap_pivot_and_cleanup) ... ERROR
+test_dynamic_native_translation_and_rotation_callbacks (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_translation_and_rotation_callbacks) ... ok
+test_external_parent_owns_move_and_source_persistence (TestMoveWorkflow.TestMoveWorkflow.test_external_parent_owns_move_and_source_persistence) ... ok
+test_fixed_root_toolbar_and_click_collectors (TestMoveWorkflow.TestMoveWorkflow.test_fixed_root_toolbar_and_click_collectors) ... ok
+test_frames_roll_and_degenerate_axes (TestMoveWorkflow.TestMoveWorkflow.test_frames_roll_and_degenerate_axes) ... ok
+test_invalid_values_readonly_expression_constraint_and_scale (TestMoveWorkflow.TestMoveWorkflow.test_invalid_values_readonly_expression_constraint_and_scale) ... ok
+test_native_frame_pick_and_dynamic_plane_snap (TestMoveWorkflow.TestMoveWorkflow.test_native_frame_pick_and_dynamic_plane_snap) ... ok
+test_nested_shared_parent_mixed_parent_rejection (TestMoveWorkflow.TestMoveWorkflow.test_nested_shared_parent_mixed_parent_rejection) ... ok
+test_point_picks_and_orientation_preserved (TestMoveWorkflow.TestMoveWorkflow.test_point_picks_and_orientation_preserved) ... ok
+test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear) ... ERROR
+test_rotate_two_points_pivot_reverse (TestMoveWorkflow.TestMoveWorkflow.test_rotate_two_points_pivot_reverse) ... ok
+test_unused_assembly_anchor_and_reference_eligibility (TestMoveWorkflow.TestMoveWorkflow.test_unused_assembly_anchor_and_reference_eligibility) ... ok
+test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save) ... ERROR
+test_apply_repeated_and_undo_redo (TestSketchSymmetry.TestSketchSymmetry.test_apply_repeated_and_undo_redo) ... FAIL
+test_component_sketch_both_presentations (TestSketchSymmetry.TestSketchSymmetry.test_component_sketch_both_presentations) ... ok
+test_constraints_cancel_escape_and_other_tool (TestSketchSymmetry.TestSketchSymmetry.test_constraints_cancel_escape_and_other_tool) ... ok
+test_delete_original_and_axis_remapping (TestSketchSymmetry.TestSketchSymmetry.test_delete_original_and_axis_remapping) ... ok
+test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat (TestSketchSymmetry.TestSketchSymmetry.test_done_incomplete_keeps_inputs_and_empty_done_does_not_repeat) ... ok
+test_empty_entry_large_list_and_done_restore (TestSketchSymmetry.TestSketchSymmetry.test_empty_entry_large_list_and_done_restore) ... ok
+test_empty_sketch_can_open_and_cancel (TestSketchSymmetry.TestSketchSymmetry.test_empty_sketch_can_open_and_cancel) ... ok
+test_external_line_reference_and_scrollable_many_inputs (TestSketchSymmetry.TestSketchSymmetry.test_external_line_reference_and_scrollable_many_inputs) ... ok
+test_native_options_construction_and_point_center (TestSketchSymmetry.TestSketchSymmetry.test_native_options_construction_and_point_center) ... FAIL
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+test_save_reopen (TestSketchSymmetry.TestSketchSymmetry.test_save_reopen) ... ok
+test_shift_delete_clear_and_invalid_axis_recovery (TestSketchSymmetry.TestSketchSymmetry.test_shift_delete_clear_and_invalid_axis_recovery) ... ok
+test_standalone_point_selected_after_open (TestSketchSymmetry.TestSketchSymmetry.test_standalone_point_selected_after_open) ... ok
+
+======================================================================
+ERROR: test_actual_viewport_arrow_release_escape_and_ring (TestMoveWorkflow.TestMoveWorkflow.test_actual_viewport_arrow_release_escape_and_ring)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestMoveWorkflow.py", line 246, in test_actual_viewport_arrow_release_escape_and_ring
+    gesture(pivot + App.Vector(size * .707, size * .707, 0), pivot + App.Vector(-size * .707, size * .707, 0))
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestMoveWorkflow.py", line 225, in gesture
+    self.assertTrue(handles.dragging, 'The viewport did not grab the native handle')
+                    ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'dragging'
+
+======================================================================
+ERROR: test_dynamic_native_handles_numeric_snap_pivot_and_cleanup (TestMoveWorkflow.TestMoveWorkflow.test_dynamic_native_handles_numeric_snap_pivot_and_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestMoveWorkflow.py", line 162, in test_dynamic_native_handles_numeric_snap_pivot_and_cleanup
+    handles = task.handles; task.reject(); settle(); self.assertTrue(handles.closed); self.assertLess(scene.getNumChildren(), count + 1)
+                                                                     ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'closed'
+
+======================================================================
+ERROR: test_preview_toggle_method_reset_apply_then_ok_and_clear (TestMoveWorkflow.TestMoveWorkflow.test_preview_toggle_method_reset_apply_then_ok_and_clear)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestMoveWorkflow.py", line 308, in test_preview_toggle_method_reset_apply_then_ok_and_clear
+    task.apply(); settle(); self.assertEqual(self.doc.UndoCount, undo + 1)
+                                  ^^^^^^^^^^^^^^^
+AttributeError: 'MoveTask' object has no attribute 'persistent'
+
+======================================================================
+ERROR: test_vector_group_parent_frame_apply_undo_redo_cancel_save (TestMoveWorkflow.TestMoveWorkflow.test_vector_group_parent_frame_apply_undo_redo_cancel_save)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestMoveWorkflow.py", line 81, in test_vector_group_parent_frame_apply_undo_redo_cancel_save
+    self.assertFalse(task.paths);self.assertFalse(task.apply_button.isEnabled())
+    ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\movement.py", line 588, in apply
+    if not links: raise ValueError('Select sibling child component instances to move')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Select sibling child component instances to move
+
+======================================================================
+FAIL: test_apply_cancel_done_and_mixed_preservation (TestAppearance.TestAppearance.test_apply_cancel_done_and_mixed_preservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestAppearance.py", line 87, in test_apply_cancel_done_and_mixed_preservation
+    f.value.setValue(40);self.assertTrue(t.apply());self.assertIs(appearance_task._active,t)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_parts_context_menu_retains_selected_faces (TestAppearance.TestAppearance.test_parts_context_menu_retains_selected_faces)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestAppearance.py", line 130, in test_parts_context_menu_retains_selected_faces
+    self.assertEqual(states,['---','Edit','Make active assembly','Add to active component\u2026','Open in new window','Rename','---','Appearance\u2026','Part Type','Visibility','---','Create new part file\u2026','Import\u2026','Export\u2026','---'])
+AssertionError: Lists differ: ['---', 'Edit within assembly', 'Edit in isolation', '[187 chars]---'] != ['---', 'Edit', 'Make active assembly', 'Add to active[150 chars]---']
+
+First differing element 1:
+'Edit within assembly'
+'Edit'
+
+First list contains 1 additional elements.
+First extra element 15:
+'---'
+
+  ['---',
++  'Edit',
+-  'Edit within assembly',
+-  'Edit in isolation',
+   'Make active assembly',
+   'Add to active component…',
+   'Open in new window',
+   'Rename',
+   '---',
+   'Appearance…',
+   'Part Type',
+   'Visibility',
+   '---',
+   'Create new part file…',
+   'Import…',
+   'Export…',
+   '---']
+
+======================================================================
+FAIL: test_apply_repeated_and_undo_redo (TestSketchSymmetry.TestSketchSymmetry.test_apply_repeated_and_undo_redo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchSymmetry.py", line 110, in test_apply_repeated_and_undo_redo
+    self.assertEqual(self.sketch.ConstraintCount,4)
+AssertionError: 4 != 0
+
+======================================================================
+FAIL: test_native_options_construction_and_point_center (TestSketchSymmetry.TestSketchSymmetry.test_native_options_construction_and_point_center)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchSymmetry.py", line 146, in test_native_options_construction_and_point_center
+    self.assertFalse(delete.isChecked());self.assertTrue(constraints.isChecked())
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 45 tests in 80.489s
+
+FAILED (failures=4, errors=4)

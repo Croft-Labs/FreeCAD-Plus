@@ -1,0 +1,8 @@
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+test_real_viewport_click_shift_axis_and_apply (TestSketchPattern.TestPatternTask.test_real_viewport_click_shift_axis_and_apply) ... ok
+test_surface_toolbar_pick_expansion_shift_reset_and_materials (TestPendingWorkflows.TestPendingWorkflows.test_surface_toolbar_pick_expansion_shift_reset_and_materials) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 8.539s
+
+OK

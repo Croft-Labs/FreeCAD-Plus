@@ -1,3 +1,16 @@
+# November 27: Pending workflow delivery
+
+- [x] Implement Edit within assembly and Edit in isolation, retaining exact occurrences.
+- [x] Default a file with one local part to that active assembly unless a valid choice exists.
+- [x] Enable Symmetry constraints by default; use Coincident for source points on the axis.
+- [x] Give toolbar tabs equal widths with text-safe shrinking and overflow scrolling.
+- [x] Move Plus task Done/Apply/Cancel below fields and reset successful Apply inputs.
+- [x] Use configured selected/preselected face colors and respect their enable flags.
+- [x] Switch face-only collectors to Single/Connected/Tangent surface selection.
+- [x] Build, verify source and installed behavior, and install 31 verified payloads.
+
+See [test results and baseline limitations](evidence/pending-workflows-20261127/README.md).
+
 # November 27: Corrected Assembly instance views
 
 - [x] Remove disclosure arrows from condensed groups; guard keyboard and selection folding.
@@ -5,7 +18,7 @@
 - [x] Verify 26 installed regressions and three payload hashes; preserve settings/shortcut.
 
 See [delivery evidence](evidence/instance-views-20261127/README.md).
-Separate component edit-mode menus remain pending.
+Separate component edit-mode menus were subsequently installed above.
 
 # November 27: FreeCAD Plus 2.0.0 branding
 
@@ -15,7 +28,7 @@ Separate component edit-mode menus remain pending.
 - [x] Update packaging identity/assets without publishing packages.
 
 See [delivery evidence](evidence/branding-20261127/README.md).
-The separate component edit-modes proposal remains pending approval.
+The separate component edit modes were subsequently approved and installed above.
 
 # November 27: Approved Components panel previews
 

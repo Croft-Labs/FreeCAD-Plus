@@ -1,3 +1,17 @@
+# November 27: All six pending workflow groups installed
+
+Implemented the approved assembly edit modes, single-local-part default assembly,
+Sketcher Symmetry defaults/on-axis constraints, responsive toolbar tabs, Plus task
+Apply/reset/footer behavior and preference-based face highlights, and contextual
+surface selection. Native build and focused source checks pass. The installed run
+passed 89/91; both viewport misses passed in a fresh isolated rerun, alongside
+the surface gesture check. Six older isolation assertions also fail on the
+unchanged baseline and remain a recorded limitation. All 31 installed payloads
+match source/build hashes; owner settings and shortcut are unchanged. Rollback
+copies are retained. The owner saved and closed the app before installation;
+FreeCAD Plus can now be reopened. See
+[delivery evidence](evidence/pending-workflows-20261127/README.md).
+
 # November 27: Corrected Assembly instance views installed
 
 Arrow-free condensed groups stay folded; explicit per-group/global expansion
@@ -5,7 +19,7 @@ restores numbered native occurrences. Real assembly disclosure, exact selection,
 menu parity and model/Undo state are preserved. Final installed checks pass 26/26;
 three payload hashes match, with rollback and unchanged settings/shortcut.
 See [delivery evidence](evidence/instance-views-20261127/README.md).
-Edit-mode menus, single-part default assembly and Sketcher Symmetry remain pending.
+Edit-mode menus, single-part default assembly and Sketcher Symmetry were subsequently installed above.
 
 # November 27: Approved Components panel changes installed
 
@@ -87,7 +101,7 @@ Windows caption and both executable property versions are verified. Desktop
 shortcut renamed with launcher/profile preserved. Build, 32 staged and 32
 installed regressions pass; final GUI correction passes branding and 5 navigation
 checks. See [evidence](evidence/branding-20261127/README.md). Restart an older
-running instance. Component edit-modes proposal remains pending.
+running instance. Component edit modes were subsequently installed above.
 
 ## Clone and Extract geometry - installed November 25, 2026
 

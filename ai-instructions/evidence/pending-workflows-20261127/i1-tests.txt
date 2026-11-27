@@ -1,0 +1,67 @@
+test_editing_unused_keeps_assembly_root_and_restores_display (TestUnusedModels.TestUnusedModels.test_editing_unused_keeps_assembly_root_and_restores_display) ... FAIL
+test_external_context_is_per_view_and_rechecks_removed_import (TestUnusedModels.TestUnusedModels.test_external_context_is_per_view_and_rechecks_removed_import) ... FAIL
+test_external_history_native_editors_and_context_guards (TestUnusedModels.TestUnusedModels.test_external_history_native_editors_and_context_guards) ... ok
+test_external_isolation_close_source_and_panel_cleanup (TestUnusedModels.TestUnusedModels.test_external_isolation_close_source_and_panel_cleanup) ... FAIL
+test_external_unused_saved_child_display (TestUnusedModels.TestUnusedModels.test_external_unused_saved_child_display) ... ok
+test_external_unused_selection_edit_undo_save (TestUnusedModels.TestUnusedModels.test_external_unused_selection_edit_undo_save) ... FAIL
+test_isolation_is_per_view_and_panel_close_cleans_up (TestUnusedModels.TestUnusedModels.test_isolation_is_per_view_and_panel_close_cleans_up) ... FAIL
+test_modeling_undo_and_save_during_isolation (TestUnusedModels.TestUnusedModels.test_modeling_undo_and_save_during_isolation) ... ok
+test_native_sketch_editor_and_guarded_context_exit (TestUnusedModels.TestUnusedModels.test_native_sketch_editor_and_guarded_context_exit) ... ok
+test_removal_and_view_close_discard_transient_state (TestUnusedModels.TestUnusedModels.test_removal_and_view_close_discard_transient_state) ... ok
+test_saved_unused_display_reference_undo_and_persistence (TestUnusedModels.TestUnusedModels.test_saved_unused_display_reference_undo_and_persistence) ... ok
+test_unused_filters_do_not_leak_into_placed_view (TestUnusedModels.TestUnusedModels.test_unused_filters_do_not_leak_into_placed_view) ... FAIL
+test_curve_intent_native_viewport_and_filters (TestPlusToolbars.TestPlusToolbars.test_curve_intent_native_viewport_and_filters) ... ok
+
+======================================================================
+FAIL: test_editing_unused_keeps_assembly_root_and_restores_display (TestUnusedModels.TestUnusedModels.test_editing_unused_keeps_assembly_root_and_restores_display)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 75, in test_editing_unused_keeps_assembly_root_and_restores_display
+    self.assertTrue(all(session.scene.findChild(node) >= 0 for node, _ in session.hidden))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_external_context_is_per_view_and_rechecks_removed_import (TestUnusedModels.TestUnusedModels.test_external_context_is_per_view_and_rechecks_removed_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 249, in test_external_context_is_per_view_and_rechecks_removed_import
+    self.assertIsNone(first.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+
+======================================================================
+FAIL: test_external_isolation_close_source_and_panel_cleanup (TestUnusedModels.TestUnusedModels.test_external_isolation_close_source_and_panel_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 227, in test_external_isolation_close_source_and_panel_cleanup
+    self.assertIsNone(view.getActiveObject('SelectionContext'))
+AssertionError: <Part object> is not None
+
+======================================================================
+FAIL: test_external_unused_selection_edit_undo_save (TestUnusedModels.TestUnusedModels.test_external_unused_selection_edit_undo_save)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 153, in test_external_unused_selection_edit_undo_save
+    self.assertTrue(Gui.Selection.getSelectionEx(source.Name), 'The isolated external geometry must remain selectable')
+AssertionError: [] is not true : The isolated external geometry must remain selectable
+
+======================================================================
+FAIL: test_isolation_is_per_view_and_panel_close_cleans_up (TestUnusedModels.TestUnusedModels.test_isolation_is_per_view_and_panel_close_cleans_up)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 262, in test_isolation_is_per_view_and_panel_close_cleans_up
+    self.assertTrue(any(str(scene.getChild(i).getName()) == 'ObjectGroup' for i in range(scene.getNumChildren())))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_unused_filters_do_not_leak_into_placed_view (TestUnusedModels.TestUnusedModels.test_unused_filters_do_not_leak_into_placed_view)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestUnusedModels.py", line 347, in test_unused_filters_do_not_leak_into_placed_view
+    self.assertIsNotNone(view.getObjectInfoRay(*ray));self.assertIsNotNone(other.getObjectInfoRay(*ray))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 13 tests in 41.474s
+
+FAILED (failures=6)

@@ -1,0 +1,1 @@
+Part::Feature: Link(s) to object(s) 'Pad' go out of the allowed scope 'OwnedDerived'. Instead, the linked object(s) reside within 'Component Part001 File File Component Part001 File File'.
