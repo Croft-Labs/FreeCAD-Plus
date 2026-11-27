@@ -209,7 +209,7 @@ class ExtrudeTask(QtCore.QObject):
             sketch=self.refs[0][0]
             if not sketch.isDerivedFrom('Sketcher::SketchObject'):return
             frame=self.owner.getGlobalPlacement().inverse().multiply(sketch.getGlobalPlacement())
-            world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
+            world=editing.world_placement(self.doc,self.path)
             frame=world.multiply(frame)
             point=self.view.getPoint(x,y)
             camera=self.view.getCameraNode()
@@ -588,7 +588,7 @@ class ExtrudeTask(QtCore.QObject):
             if all(member.Visibility for member in route):return
             shape=planes.shape(self.owner,target)
             if shape.isNull() or not shape.Solids:return
-            self.world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
+            self.world=editing.world_placement(self.doc,self.path)
             node=coin.SoSeparator();pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;node.addChild(pick)
             packed=App.ParamGet('User parameter:BaseApp/Preferences/View').GetUnsigned('SelectionColor',0x1CAD1CFF)
             color=tuple(((packed>>shift)&255)/255. for shift in (24,16,8))
@@ -675,7 +675,7 @@ class ExtrudeTask(QtCore.QObject):
         self.result_shape=None;self.tool_shape=None
         try:
             self.check()
-            self.world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
+            self.world=editing.world_placement(self.doc,self.path)
             self.overlay=coin.SoSeparator()
             pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;self.overlay.addChild(pick)
             self.highlight_profile()

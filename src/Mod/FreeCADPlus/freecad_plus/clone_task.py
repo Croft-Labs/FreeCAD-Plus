@@ -182,7 +182,7 @@ class GeometryTask(QtCore.QObject):
             overlay=coin.SoSeparator();style=coin.SoDrawStyle();style.style=coin.SoDrawStyle.LINES;style.setOverride(True);overlay.addChild(style)
             pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;overlay.addChild(pick)
             color=coin.SoBaseColor();color.rgb=(.1,.8,1);color.setOverride(True);overlay.addChild(color)
-            frame=hierarchy.world_placement(self.doc,self.path) if self.path else self.definition.Placement
+            frame=editing.world_placement(self.doc,self.path)
             for _,_,shape in values:
                 shape=shape.copy();shape.Placement=frame.multiply(shape.Placement)
                 source=coin.SoInput();source.setBuffer(shape.writeInventor());overlay.addChild(coin.SoDB.readAll(source))

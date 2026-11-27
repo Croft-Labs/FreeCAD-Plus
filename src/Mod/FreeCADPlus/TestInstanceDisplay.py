@@ -250,7 +250,7 @@ class TestInstanceDisplay(unittest.TestCase):
             with self.assertRaises(ValueError): action(row)
         with patch.object(self.dock, 'edit_row') as edit:
             self.dock._edit_clicked(group)
-            edit.assert_not_called()
+            edit.assert_called_once_with(row.children[0])
         # Menu dispatch now offers component actions; the presentation row itself
         # still cannot masquerade as one individual occurrence in backend calls.
         self.assertEqual(self.snapshot(), before)

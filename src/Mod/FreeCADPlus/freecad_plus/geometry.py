@@ -22,8 +22,21 @@ def require_access(doc, obj, sub='', *, active=None, active_path=()):
     """
     root = document.validate(doc)
     active_path = tuple(active_path)
+    # An unplaced assembly has a borrowed native scene, with the same relative
+    # occurrence paths as a placed assembly. Preserve that frame for admission.
+    preview_root = None
+    if active is not None and not active_path:
+        import FreeCADGui as Gui
+        from . import isolation
+        gui = Gui.activeDocument()
+        session = isolation.current(gui.activeView()) if gui and gui.Document == doc else None
+        if session and session.definition() == active:
+            preview_root = session.anchor_definition()
+            active_path = tuple(isolation._resolve(ref) for ref in session.edit_path)
     if active_path:
-        if hierarchy.resolve(doc, active_path)[0] != active:
+        from .assembly import resolve
+        resolved = resolve(preview_root, active_path) if preview_root is not None else hierarchy.resolve(doc, active_path)[0]
+        if resolved != active:
             raise ValueError('The geometry editing context changed')
     elif active is not None and active not in external.available_definitions(root):
         raise ValueError('The edited component is not in this file catalog')
@@ -31,6 +44,7 @@ def require_access(doc, obj, sub='', *, active=None, active_path=()):
         raise ValueError('The geometry reference is no longer available')
 
     base = root
+    if preview_root is not None:root = base = preview_root
     if obj == root:
         objects = []
     elif active is not None and (owned := _owned_path(active, obj)) is not None:

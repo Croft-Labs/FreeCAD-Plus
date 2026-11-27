@@ -899,15 +899,28 @@ class ComponentPanel(QtWidgets.QDockWidget):
         doc, view = binding
         state = self._state(binding)
         if 'assembly' not in state:
-            chosen = assembly.recalled(doc) or active
+            definitions = document.validate(doc).Definitions
+            chosen = assembly.recalled(doc)
+            if chosen is None:
+                chosen = definitions[0] if len(definitions) == 1 else active
             state['assembly'] = identity(chosen) if chosen is not None else None
             state['assembly_path'] = tuple(identity(o) for o in assembly.recalled_path(doc, chosen))
         try:
             owner = lookup(state['assembly']) if state['assembly'] else None
+            if owner is not None and owner not in document.validate(owner.Document).Definitions:
+                owner = None
+        except (ValueError, RuntimeError, ReferenceError):
+            owner = None
+        if owner is None:
+            definitions = document.validate(doc).Definitions
+            owner = assembly.recalled(doc)
+            if owner is None and len(definitions) == 1:
+                owner = definitions[0]
+            state['assembly'] = identity(owner) if owner is not None else None
+            state['assembly_path'] = tuple(identity(o) for o in assembly.recalled_path(doc, owner))
+        try:
             if owner is None:
                 return None, ()
-            if owner not in document.validate(owner.Document).Definitions:
-                raise ValueError('The active assembly is no longer available')
             paths = isolation.occurrences(doc, owner)
             preferred = state.get('assembly_path', ())
             path = next((p for p in paths if tuple(identity(o) for o in p) == preferred), None)
@@ -1274,12 +1287,50 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._select_context(doc)
         return view
 
-    def edit_row(self, row):
+    def _assembly_edit_row(self, row):
+        """Find an exact occurrence in the fixed assembly, or a catalog member's first use."""
+        doc, obj = self._checked(row)
+        active, path = self._context(*self._binding)
+        anchor, route = self._assembly_context(self._binding, active, path)
+        if anchor is None:return None
+        rows = projection(doc, assembly_root=anchor, assembly_path=route)[1]
+        def visit(entries):
+            for entry in entries:
+                if entry.kind in ('assembly', 'occurrence') and entry.ref == row.ref:
+                    if row.kind not in ('assembly','occurrence') or (entry.path == row.path and entry.anchor == row.anchor):
+                        return entry
+                found = visit(entry.children)
+                if found is not None:return found
+        return visit(rows)
+
+    def add_edit_actions(self, menu, actions, row):
+        action = menu.addAction('Edit within assembly')
+        try:action.setEnabled(self._assembly_edit_row(row) is not None)
+        except (ValueError, RuntimeError, ReferenceError):action.setEnabled(False)
+        actions[action] = lambda r: self.edit_row(r, mode='assembly')
+        actions[menu.addAction('Edit in isolation')] = lambda r: self.edit_row(r, mode='isolation')
+
+    def edit_row(self, row, mode=None):
         doc, obj = self._checked(row)
         if row.kind == 'constraint':
             constraints.open_task(joint=obj)
             return
-        if row.kind == 'file':
+        member = self._assembly_edit_row(row) if row.kind in ('model','unused','assembly','occurrence') else None
+        if mode == 'assembly' and member is None:
+            raise ValueError('This component is outside the active assembly')
+        if member is not None and mode != 'isolation':
+            anchor = lookup(member.anchor) if member.anchor else (obj if not member.path else None)
+            if anchor is not None:
+                if anchor not in external.available_definitions(document.validate(doc)):
+                    App.setActiveDocument(anchor.Document.Name);doc = anchor.Document;self._binding = self._current()
+                editing.edit_in_assembly(doc, anchor, tuple(lookup(ref) for ref in member.path))
+            else:
+                editing.edit(tuple(lookup(ref) for ref in member.path))
+        elif mode == 'isolation':
+            if obj not in external.available_definitions(document.validate(doc)):
+                App.setActiveDocument(obj.Document.Name);doc = obj.Document;self._binding = self._current()
+            editing.edit_unused(doc, obj, detached=True)
+        elif row.kind == 'file':
             editing.edit_file(doc)
         elif row.kind in ('occurrence', 'assembly') and row.path and not row.anchor:
             editing.edit(tuple(lookup(ref) for ref in row.path))
@@ -1315,7 +1366,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
             if route:
                 Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname(route))
             else:
-                Gui.Selection.addSelection(definition.Document.Name, definition.Name)
+                session = isolation.current(self._binding[1])
+                if session and session.edit_path:
+                    anchor = session.anchor_definition()
+                    Gui.Selection.addSelection(anchor.Document.Name, anchor.Name,
+                                               hierarchy.subname(tuple(isolation._resolve(ref) for ref in session.edit_path)))
+                else:
+                    Gui.Selection.addSelection(definition.Document.Name, definition.Name)
         finally:
             self._selecting = False
         self._sync_selection()
@@ -1323,10 +1380,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def _edit_clicked(self, item):
         if item.data(0, _ROLE) is None:
             return
-        if item.data(0, _ROLE).kind == 'instance_group':
-            return  # A presentation collector has no Edit action.
+        row = item.data(0, _ROLE)
+        if row.kind == 'instance_group':
+            row = row.children[0]
         try:
-            self.edit_row(item.data(0, _ROLE))
+            self.edit_row(row)
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
 
@@ -1438,7 +1496,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 if controller(lookup(row.path[-1])) is not None:
                     from .instance_task import edit_row
                     actions[menu.addAction('Edit instance pattern')] = (lambda unused: choose_member(self, group, edit_row)) if group else edit_row
-            actions[menu.addAction('Edit')] = self.edit_row
+            if row.kind == 'file':
+                actions[menu.addAction('Edit')] = self.edit_row
+            else:
+                self.add_edit_actions(menu, actions, row)
             if row.kind != 'file':
                 actions[menu.addAction('Open in new window')] = self.open_row
                 actions[menu.addAction('Rename')] = self.rename_row

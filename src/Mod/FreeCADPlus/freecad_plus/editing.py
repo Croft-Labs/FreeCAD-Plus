@@ -81,7 +81,8 @@ def edit_unused(doc, definition, *, detached=False):
     if hasattr(view, 'setComponentHiddenPaths'):
         view.setComponentHiddenPaths()
     try:
-        isolation.begin(doc, view, definition, allow_placed=detached)
+        session = isolation.begin(doc, view, definition, allow_placed=detached)
+        session.edit_path = ()
     except Exception:
         _notify_context()  # Restore the previous placed-context filter after failed entry.
         raise
@@ -103,7 +104,42 @@ def unused_context(doc):
     return session.definition() if session else None
 
 
+def world_placement(doc, path=()):
+    """The editing frame in this view, including children of an unplaced assembly."""
+    if path:return hierarchy.world_placement(doc, path)
+    session = isolation.current(_view(doc))
+    if session:
+        anchor = session.anchor_definition()
+        route = tuple(isolation._resolve(ref) for ref in session.edit_path)
+        return anchor.getSubObject(hierarchy.subname(route), 3) if route else anchor.Placement
+    return App.Placement()
+
+
+def edit_in_assembly(doc, anchor, path=()):
+    """Edit a relative occurrence while displaying an unplaced assembly root."""
+    from .assembly import resolve
+    definition = resolve(anchor, path)
+    edit_unused(doc, anchor, detached=True)
+    view = _view(doc)
+    session = isolation.current(view)
+    session.edit_path = tuple(isolation._identity(link) for link in path)
+    sub = hierarchy.subname(path)
+    view.setActiveObject(_KEY, anchor, sub)
+    view.setActiveObject('part', anchor, sub)
+    bodies = [obj for obj in definition.Group if obj.TypeId == 'PartDesign::Body']
+    if bodies:
+        view.setActiveObject('pdbody', anchor, sub + bodies[-1].Name + '.')
+    else:
+        view.setActiveObject('pdbody', None)
+    _notify_context()
+    return definition
+
+
 def _restore(doc, definition, path):
+    session = isolation.current(_view(doc))
+    if session and session.definition() == definition:
+        edit_in_assembly(doc, session.anchor_definition(), tuple(isolation._resolve(ref) for ref in session.edit_path))
+        return
     if path:
         edit(path)
     else:

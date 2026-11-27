@@ -146,7 +146,8 @@ class Ribbon(QtCore.QObject):
         self.top_layout.addWidget(self.common)
         self.top_layout.addStretch()
         root.addWidget(self.top)
-        self.tabbar = QtWidgets.QTabBar()
+        from .panel import ComponentTabBar
+        self.tabbar = ComponentTabBar()
         self.tabbar.setObjectName('PlusRibbonTabs')
         self.tabbar.setExpanding(False)
         self.tabbar.setUsesScrollButtons(True)

@@ -96,6 +96,7 @@ class Isolation:
         self.doc = doc
         self.view = view
         self.ref = _identity(definition)
+        self.edit_path = ()
         self.allow_placed = allow_placed
         self.scene = view.getSceneGraph()
         self.preview = preview
@@ -135,11 +136,15 @@ class Isolation:
         if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
             self.view.setComponentPreviewHiddenPaths()
 
-    def definition(self):
+    def anchor_definition(self):
         definition = _resolve(self.ref)
         if definition not in external.available_definitions(document.validate(self.doc)):
             raise ValueError('The unused definition is no longer imported')
         return definition
+
+    def definition(self):
+        from .assembly import resolve
+        return resolve(self.anchor_definition(), tuple(_resolve(ref) for ref in self.edit_path))
 
     def schedule(self, *args):
         if not self.closed and not self.timer.isActive():
@@ -167,7 +172,8 @@ class Isolation:
         if any(doc.HasPendingTransaction for doc in App.listDocuments().values()):
             return
         try:
-            definition = self.definition()
+            definition = self.anchor_definition()
+            self.definition()  # A removed or retargeted edited child invalidates the context.
             if not self.allow_placed and occurrences(self.doc, definition):
                 self.close()
                 return

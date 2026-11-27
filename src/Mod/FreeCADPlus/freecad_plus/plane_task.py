@@ -357,7 +357,7 @@ class PlaneTask(QtCore.QObject):
         """View-local markers, never document geometry or selectable objects."""
         self.remove_highlights()
         if not self.reference_guidance or not self.visible.isChecked(): return
-        world = hierarchy.world_placement(self.doc, self.path) if self.path else App.Placement()
+        world = editing.world_placement(self.doc, self.path)
         overlay = coin.SoSeparator()
         pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE
         overlay.addChild(pick)
@@ -429,7 +429,7 @@ class PlaneTask(QtCore.QObject):
             button = box.button(QtWidgets.QDialogButtonBox.Ok)
             if button and button.isVisible(): button.setEnabled(self.valid)
         if not self.valid or not self.visible.isChecked(): return
-        world = hierarchy.world_placement(self.doc, self.path) if self.path else App.Placement()
+        world = editing.world_placement(self.doc, self.path)
         placement = world.multiply(placement)
         origin = placement.Base
         x_axis, y_axis, normal = [placement.Rotation.multVec(v) for v in
