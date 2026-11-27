@@ -30,6 +30,7 @@ set(FreeCADPlus_SRCS
     TestInstanceQuantity.py
     TestInstanceRemoval.py
     TestDerivedGeometry.py
+    TestJoinedExtraction.py
     TestAddComponent.py
     TestAssemblyConstraints.py
     TestPartTransfer.py
@@ -151,6 +152,7 @@ add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 install(FILES TestInstanceQuantity.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestInstanceRemoval.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestDerivedGeometry.py DESTINATION Mod/FreeCADPlus)
+install(FILES TestJoinedExtraction.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestMeshImport.py DESTINATION Mod/FreeCADPlus)
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
 install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)

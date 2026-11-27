@@ -25,8 +25,8 @@ class GeometryTask(QtCore.QObject):
         self.extract=self.operation=='Extract'
         if feature and (not derived.is_derived(feature) or derived.owner(feature)!=self.definition):
             raise ValueError('Edit a derived result owned by this component')
-        self.revision=(feature.Source,feature.SourceObject) if feature else None
-        self.refs=[derived.saved_ref(feature)] if feature else []
+        self.revision=derived.revision(feature) if feature else None
+        self.refs=derived.saved_refs(feature) if feature else []
         self.closed=False;self.busy=False;self.collecting=True;self.overlay=None;self.pending=[]
         self.form=GeometryForm(self.definition,self.extract,feature)
         self.timer=QtCore.QTimer(self);self.timer.setSingleShot(True);self.timer.timeout.connect(self.refresh)
@@ -35,6 +35,7 @@ class GeometryTask(QtCore.QObject):
         self.form.objects.removeRequested.connect(self.remove_inputs)
         self.form.remove.clicked.connect(self.remove_inputs);self.form.clear.clicked.connect(self.clear_inputs)
         self.form.preview.toggled.connect(self.refresh);self.form.update.toggled.connect(self.refresh)
+        if self.form.join:self.form.join.toggled.connect(self.change_join)
         if self.form.browse:self.form.browse.clicked.connect(self.browse)
         self.initial=[(e.Object,s) for e in Gui.Selection.getSelectionEx('*',0) for s in e.SubElementNames or ('',)]
         Gui.Selection.addObserver(self,0);App.addDocumentObserver(self)
@@ -52,7 +53,7 @@ class GeometryTask(QtCore.QObject):
         if context!=self.context:raise ValueError('The edited component or file tab changed. Cancel and reopen this task.')
         if self.feature_ref:
             feature=panel.lookup(self.feature_ref)
-            if (feature.Source,feature.SourceObject)!=self.revision:
+            if derived.revision(feature)!=self.revision:
                 raise ValueError('The derived source changed. Cancel and reopen its editor.')
 
     def title(self,ref):
@@ -64,15 +65,34 @@ class GeometryTask(QtCore.QObject):
 
     def fields(self):
         self.form.objects.clear()
-        for ref in self.refs:
+        names={o.Label for o in self.owner_doc.Objects};joined=self.extract and self.form.join.isChecked()
+        first_name=self.feature.Label if self.feature else None
+        for index,ref in enumerate(self.refs):
             try:
                 source=derived.target(ref)
                 kind='surface' if self.extract else derived.object_kind(source)
-                title=self.title(ref);name=self.feature.Label if self.feature else derived.label_for(kind,self.operation)
+                title=self.title(ref)
+                if self.feature and (index==0 or joined):name=self.feature.Label
+                elif joined and first_name:name=first_name
+                else:
+                    base=derived.label_for(kind,self.operation);name=base;n=2
+                    while name in names:name=base+' ('+str(n)+')';n+=1
+                    names.add(name)
+                if index==0:first_name=name
             except (ValueError,RuntimeError,ReferenceError):
                 title='Missing source — remove this entry and choose a replacement';name=self.feature.Label if self.feature else ''
             item=QtWidgets.QTreeWidgetItem(self.form.objects,[title,name]);item.setToolTip(0,title)
-        self.form.summary.setText(('Update existing result' if self.feature else str(len(self.refs))+' new result'+('s' if len(self.refs)!=1 else ''))+' · One Undo step')
+        self.summary()
+
+    def summary(self):
+        joined=self.extract and self.form.join.isChecked()
+        count=1 if joined and self.refs else len(self.refs)
+        new=max(0,count-(1 if self.feature else 0))
+        summary=('Update existing result'+(' + '+str(new)+' new result'+('s' if new!=1 else '') if new else '')) if self.feature else str(new)+' new result'+('s' if new!=1 else '')
+        self.form.summary.setText(summary+' · One Undo step')
+
+    def change_join(self,*args):
+        self.fields();self.refresh()
 
     def activate(self):
         self.collecting=True
@@ -105,7 +125,7 @@ class GeometryTask(QtCore.QObject):
         ref=derived.canonical(self.doc,self.definition,self.path,obj,sub,self.extract)
         derived.evaluate(self.definition,ref,self.operation,feature=self.feature)
         if remove:self.refs=[r for r in self.refs if r!=ref]
-        elif self.feature:self.refs=[ref]
+        elif self.feature and not self.extract:self.refs=[ref]
         elif ref not in self.refs:self.refs.append(ref)
         self.fields();self.refresh()
         self.busy=True
@@ -167,16 +187,30 @@ class GeometryTask(QtCore.QObject):
             if self.scene.findChild(self.overlay)>=0:self.scene.removeChild(self.overlay)
             self.overlay=None
 
+    def extraction_ready(self,ready):
+        if not self.extract:return
+        dock=Gui.getMainWindow().findChild(QtWidgets.QDockWidget,'Tasks')
+        if dock:
+            for box in dock.findChildren(QtWidgets.QDialogButtonBox):
+                button=box.button(QtWidgets.QDialogButtonBox.Ok)
+                if button:button.setEnabled(ready)
+
     def refresh(self,*args):
         if self.closed or self.busy:return
         self.clear_preview()
+        self.extraction_ready(False)
         try:
             self.check()
+            self.summary()
             if not self.refs:
                 self.form.status.setText('Click the list to pick faces.' if self.extract else 'Click the list or browse direct children to choose whole objects.')
                 return
             values=[derived.evaluate(self.definition,r,self.operation,feature=self.feature) for r in self.refs]
+            if self.extract and self.form.join.isChecked():
+                shape=derived.joined_surface([value[2] for value in values])
+                values=[(values[0][0],'surface',shape)]
             if self.feature and values[0][1]!=self.feature.GeometryKind:raise ValueError('Choose another '+self.feature.GeometryKind+' for this existing result')
+            self.extraction_ready(True)
             self.form.status.setText('Ready. One Undo step.' if self.form.update.isChecked() else 'Preview is paused. OK recomputes the result.')
             if not self.form.preview.isChecked() or not self.form.update.isChecked():return
             overlay=coin.SoSeparator();style=coin.SoDrawStyle();style.style=coin.SoDrawStyle.LINES;style.setOverride(True);overlay.addChild(style)
@@ -187,7 +221,9 @@ class GeometryTask(QtCore.QObject):
                 shape=shape.copy();shape.Placement=frame.multiply(shape.Placement)
                 source=coin.SoInput();source.setBuffer(shape.writeInventor());overlay.addChild(coin.SoDB.readAll(source))
             self.scene.addChild(overlay);self.overlay=overlay
-        except (ValueError,RuntimeError,ReferenceError,TypeError) as error:self.form.status.setError(str(error))
+        except (ValueError,RuntimeError,ReferenceError,TypeError,Part.OCCError) as error:
+            self.form.status.setError(str(error))
+            self.form.summary.setText('No result until the selection is corrected')
 
     def schedule(self,*args):
         if not self.closed and not self.busy:self.timer.start(0)
@@ -201,9 +237,10 @@ class GeometryTask(QtCore.QObject):
     def accept(self):
         try:
             self.check();self.busy=True
-            self.results=derived.save(self.doc,self.refs,self.operation,self.feature)
+            self.results=derived.save(self.doc,self.refs,self.operation,self.feature,
+                                      join=self.extract and self.form.join.isChecked())
             if self.definition.Document!=self.doc:self.doc.recompute()
-        except (ValueError,RuntimeError,ReferenceError,TypeError) as error:
+        except (ValueError,RuntimeError,ReferenceError,TypeError,Part.OCCError) as error:
             self.form.status.setError(str(error));return False
         finally:self.busy=False
         self.reject()

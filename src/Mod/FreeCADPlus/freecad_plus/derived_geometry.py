@@ -5,11 +5,12 @@ import Part
 from . import document, display, hierarchy
 
 MARKER = 'FreeCADPlus.DerivedGeometry.1'
+EXTRACT_MARKER = 'FreeCADPlus.DerivedGeometry.2'
 KINDS = ('body', 'surface', 'sketch', 'plane', 'curve', 'point')
 
 
 def is_derived(obj):
-    return getattr(obj, 'DerivedGeometryFormat', None) == MARKER
+    return getattr(obj, 'DerivedGeometryFormat', None) in (MARKER, EXTRACT_MARKER)
 
 
 def owner(obj):
@@ -140,6 +141,13 @@ def structural_check(obj):
                 'Sketcher::SketchObjectPython' if obj.GeometryKind == 'sketch' else 'Part::FeaturePython')
     if obj.TypeId != expected or (obj.DerivedOperation == 'Extract' and obj.GeometryKind != 'surface'):
         raise ValueError('Invalid derived geometry result type')
+    if obj.DerivedGeometryFormat == EXTRACT_MARKER:
+        if (obj.DerivedOperation != 'Extract'
+                or obj.getTypeIdOfProperty('ExtractSources') != 'App::PropertyLinkSubListGlobal'
+                or obj.getTypeIdOfProperty('ExtractSourceObjects') != 'App::PropertyLinkListGlobal'
+                or obj.getTypeIdOfProperty('ExtractFaceCount') != 'App::PropertyInteger'
+                or obj.getTypeIdOfProperty('JoinSurfaces') != 'App::PropertyBool'):
+            raise ValueError('Invalid extracted surface metadata')
 
 
 def external_source(obj):
@@ -159,6 +167,80 @@ def external_source(obj):
 def saved_ref(obj):
     base, subs = obj.Source if obj.Source else (None, [])
     return base, subs[0] if subs else ''
+
+
+def saved_refs(obj):
+    if obj.DerivedGeometryFormat == EXTRACT_MARKER:
+        refs = [(base, sub) for base, subs in obj.ExtractSources for sub in subs]
+        # Link-list properties may drop deleted objects. Keep missing inputs
+        # visible and invalid until explicitly repaired instead of shrinking a shell.
+        return refs + [(None, '')] * max(0, obj.ExtractFaceCount - len(refs))
+    return [saved_ref(obj)]
+
+
+def joined(obj):
+    return obj is not None and obj.DerivedGeometryFormat == EXTRACT_MARKER and obj.JoinSurfaces
+
+
+def revision(obj):
+    """Capture all saved sources/options, including their original target identities."""
+    return (tuple(saved_refs(obj)), saved_ref(obj), obj.SourceObject,
+            tuple(obj.ExtractSourceObjects) if obj.DerivedGeometryFormat == EXTRACT_MARKER else (),
+            joined(obj))
+
+
+def joined_surface(faces):
+    if not faces:
+        raise ValueError('Choose at least one face')
+    if len(faces) == 1:
+        return faces[0]
+    if any(face.common(other).Area > 1e-10
+           for i, face in enumerate(faces) for other in faces[:i]):
+        raise ValueError('Cannot join overlapping surfaces. Remove duplicate or overlapping faces, '
+                         'or clear Join surfaces to extract them separately.')
+    # Part.getShape returns copies in the component frame. Edges from distinct
+    # copies/objects can coincide without sharing a native TShape identity.
+    reached = {0}
+    while True:
+        adjacent = {i for i, face in enumerate(faces) if i not in reached
+                    and any(edge.isSame(other) or edge.common(other).Length > 1e-7
+                            for j in reached for edge in face.Edges for other in faces[j].Edges)}
+        if not adjacent:
+            break
+        reached.update(adjacent)
+    if len(reached) != len(faces):
+        raise ValueError('Cannot join these surfaces: the selection contains disconnected groups. '
+                         'Select faces connected by shared edges, or clear Join surfaces to extract them separately.')
+    # Native shell construction sews copied coincident boundaries when needed.
+    # Keep a shell even if all faces of a closed solid were selected.
+    result = Part.makeShell(faces)
+    if (result.ShapeType != 'Shell' or not result.isValid() or result.Solids
+            or len(result.Faces) != len(faces)):
+        raise ValueError('These faces cannot form one valid joined surface. '
+                         'Remove overlapping or branching faces, or clear Join surfaces.')
+    return result
+
+
+def evaluate_extract(definition, refs, join, feature=None):
+    values = [evaluate(definition, ref, 'Extract', feature=feature) for ref in refs]
+    if not values:
+        raise ValueError('Choose at least one face')
+    return values, joined_surface([value[2] for value in values]) if join else None
+
+
+def set_extract_sources(obj, refs, sources, join):
+    for kind, name in (('App::PropertyLinkSubListGlobal', 'ExtractSources'),
+                       ('App::PropertyLinkListGlobal', 'ExtractSourceObjects'),
+                       ('App::PropertyInteger', 'ExtractFaceCount'),
+                       ('App::PropertyBool', 'JoinSurfaces')):
+        if name not in obj.PropertiesList:
+            obj.addProperty(kind, name, 'Derived geometry')
+        obj.setEditorMode(name, 2)
+    obj.ExtractSources = [(base, [sub]) for base, sub in refs]
+    obj.ExtractSourceObjects = list(dict.fromkeys(sources))
+    obj.ExtractFaceCount = len(refs)
+    obj.JoinSurfaces = join
+    obj.DerivedGeometryFormat = EXTRACT_MARKER
 
 
 def label_for(kind, operation='Clone'):
@@ -189,7 +271,21 @@ class Derived:
     def execute(self, obj):
         try:
             definition = owner(obj)
-            source, kind, shape = evaluate(definition, saved_ref(obj), obj.DerivedOperation, admission=False)
+            if obj.DerivedGeometryFormat == EXTRACT_MARKER:
+                structural_check(obj)
+                refs = saved_refs(obj)
+                if not refs or refs[0] != saved_ref(obj):
+                    raise ValueError('The original source is missing or changed. Edit this feature to repair it.')
+                if not obj.JoinSurfaces and len(refs) != 1:
+                    raise ValueError('A separate extracted surface must have exactly one source face')
+                values, shell = evaluate_extract(definition, refs, obj.JoinSurfaces)
+                sources = list(dict.fromkeys(value[0] for value in values))
+                if sources != list(obj.ExtractSourceObjects):
+                    raise ValueError('An original source is missing or replaced. Edit this feature to repair it.')
+                source, kind, shape = values[0]
+                if obj.JoinSurfaces:shape = shell
+            else:
+                source, kind, shape = evaluate(definition, saved_ref(obj), obj.DerivedOperation, admission=False)
             if source != obj.SourceObject:
                 raise ValueError('The original source is missing or replaced. Edit this feature to repair it.')
             if kind != obj.GeometryKind:
@@ -238,23 +334,27 @@ class ViewDerived:
     def loads(self, state): pass
 
 
-def save(doc, refs, operation='Clone', feature=None):
+def save(doc, refs, operation='Clone', feature=None, *, join=False):
     from . import modeling
     definition, _ = modeling._context(doc)
     refs = list(dict.fromkeys(refs))
-    if not refs or (feature is not None and len(refs) != 1):
+    if not refs or (feature is not None and operation != 'Extract' and len(refs) != 1):
         raise ValueError('Choose one source when editing' if feature else 'Choose at least one source')
     if feature is not None:
         if not is_derived(feature) or owner(feature) != definition or feature.DerivedOperation != operation:
             raise ValueError('Edit a derived result owned by this component')
     values = [evaluate(definition, ref, operation, feature=feature) for ref in refs]
+    if operation == 'Extract' and join:
+        joined_surface([value[2] for value in values])  # Reject before opening an Undo transaction.
     if feature is not None and values[0][1] != feature.GeometryKind:
         raise ValueError('Choose another ' + feature.GeometryKind + ' to preserve this result and its references')
     result = []
     with document.transaction(definition.Document, ('Edit ' if feature else '') + operation + ' geometry'):
         root = document.validate(definition.Document); root.PlusSchema = max(root.PlusSchema,8)
-        for ref, (source, kind, shape) in zip(refs, values):
-            obj = feature
+        batches = [(refs, values)] if operation == 'Extract' and join else [([ref], [value]) for ref, value in zip(refs, values)]
+        for index, (batch_refs, batch_values) in enumerate(batches):
+            ref = batch_refs[0];source, kind, shape = batch_values[0]
+            obj = feature if index == 0 else None
             if obj is None:
                 if kind == 'body':
                     body = definition.newObject('PartDesign::Body','Body'); body.AllowCompound = len(shape.Solids)>1
@@ -265,6 +365,8 @@ def save(doc, refs, operation='Clone', feature=None):
                 Derived(obj,operation,kind); ViewDerived(obj.ViewObject)
                 obj.Label = allocate_label(definition,label_for(kind,operation))
             obj.Source = (ref[0],[ref[1]]); obj.SourceObject = source; obj.touch()
+            if operation == 'Extract':
+                set_extract_sources(obj, batch_refs, [value[0] for value in batch_values], join)
             result.append(obj)
         definition.Document.recompute()
         for obj in result:

@@ -48,9 +48,16 @@ class GeometryForm(QtWidgets.QGroupBox):
         layout.addWidget(self.objects)
         actions=QtWidgets.QHBoxLayout();self.remove=QtWidgets.QPushButton('Remove');self.clear=QtWidgets.QPushButton('Clear')
         actions.addWidget(self.remove);actions.addWidget(self.clear);actions.addStretch();layout.addLayout(actions)
+        self.join=None
         if extract:
             note('To extract a child component’s face, first clone its whole object into '+definition.Label+'.')
-            note('Creates a separate extracted surface. The cloned body remains available.')
+            self.join=QtWidgets.QCheckBox('Join surfaces')
+            self.join.setChecked(bool(getattr(feature,'JoinSurfaces',False)) if feature else True)
+            layout.addWidget(self.join)
+            self.join.setToolTip('Create one surface from faces connected by shared edges. Clear to create a separate History result for each face.')
+            self.join_hint=note('')
+            self.join.toggled.connect(self.update_join_hint)
+            self.update_join_hint()
         else:
             note('Bodies, surfaces, sketches and planes are cloned as complete objects. Faces, edges and vertices are not Clone inputs.')
             note('Source construction history stays in the child. Parent features can modify the cloned result or combine it with a parent body.')
@@ -61,3 +68,7 @@ class GeometryForm(QtWidgets.QGroupBox):
              'Updates from the source in the parent coordinate system.')
         self.status=TaskStatus();layout.addWidget(self.status)
         self.summary=note('');layout.addStretch()
+
+    def update_join_hint(self,*args):
+        self.join_hint.setText('Creates one extracted surface. Selected faces must form a connected set sharing edges.' if self.join.isChecked() else
+                              'Creates one extracted surface per face, each with its own History entry. Faces do not need to touch.')
