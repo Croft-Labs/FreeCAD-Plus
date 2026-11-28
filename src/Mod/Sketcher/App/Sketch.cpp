@@ -188,7 +188,8 @@ bool Sketch::analyseBlockedGeometry(
 int Sketch::setUpSketch(
     const std::vector<Part::Geometry*>& GeoList,
     const std::vector<Constraint*>& ConstraintList,
-    int extGeoCount
+    int extGeoCount,
+    const std::set<int>& fixedGeometry
 )
 {
     Base::TimeElapsed start_time;
@@ -214,6 +215,11 @@ int Sketch::setUpSketch(
     std::vector<int> blockedGeoIds;
     bool doesBlockAffectOtherConstraints
         = analyseBlockedGeometry(intGeoList, ConstraintList, onlyBlockedGeometry, blockedGeoIds);
+    for (size_t i = 0; i < intGeoList.size(); ++i) {
+        if (fixedGeometry.contains(int(i))
+            || GeometryFacade::getFacade(intGeoList[i])->testGeometryMode(GeometryMode::PatternGenerated))
+            onlyBlockedGeometry[i] = true;
+    }
 
 #ifdef DEBUG_BLOCK_CONSTRAINT
     if (doesBlockAffectOtherConstraints) {

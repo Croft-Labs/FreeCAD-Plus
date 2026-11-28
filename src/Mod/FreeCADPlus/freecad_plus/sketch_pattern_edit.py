@@ -179,6 +179,9 @@ def update(sketch,group,ids,options,dimensions):
     label=next((c.PatternLabel for c in cs if c.PatternGroup==group),record.get('label','Pattern'))
     doc=sketch.Document;doc.openTransaction('Edit Sketch Pattern')
     try:
+        if record.get('behavior')=='linked':
+            from . import sketch_pattern_linked as linked
+            linked.mark(sketch,[indexed[tag] for tag in all_owned],False)
         if members:sketch.delConstraints(members,False,True)
         # Apply only relative rigid motion, retaining every surviving native tag.
         facades=sketch.GeometryFacadeList

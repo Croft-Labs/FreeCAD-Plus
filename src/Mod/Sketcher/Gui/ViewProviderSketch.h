@@ -1015,6 +1015,8 @@ private:
 
     bool blockContextMenu;
     mutable std::vector<Sketcher::Constraint*> patternDisplaySources;
+    mutable bool patternDisplayValid = false;
+    mutable std::map<std::string, std::vector<int>> linkedPatternMembers;
     std::set<int> patternPreviewHidden;
     std::string patternPreviewGroup;
     mutable std::vector<std::unique_ptr<Sketcher::Constraint>> patternDisplayCopies;

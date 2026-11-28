@@ -136,6 +136,12 @@ public:
     */
     bool noRecomputes;
 
+    bool hasLinkedPatterns() const;
+    void prepareLinkedPatternDeletion(const std::vector<int>& ids);
+    int solveLinkedPatterns(bool updateGeometry, bool fromSolver = false);
+    int moveLinkedPatternsTemporary(const std::vector<GeoElementId>& ids,
+                                   const Base::Vector3d& point, bool relative);
+
     /*!
      \brief Returns true if the sketcher supports the given geometry
      \param geo - the geometry
@@ -1243,6 +1249,7 @@ inline int SketchObject::initTemporaryBSplinePieceMove(
 inline int SketchObject::
     moveGeometriesTemporary(std::vector<GeoElementId> geoEltIds, Base::Vector3d toPoint, bool relative /*=false*/)
 {
+    if (hasLinkedPatterns()) return moveLinkedPatternsTemporary(geoEltIds, toPoint, relative);
     return solvedSketch.moveGeometries(geoEltIds, toPoint, relative);
 }
 inline int SketchObject::moveGeometryTemporary(int geoId, PointPos pos, Base::Vector3d toPoint, bool relative /*=false*/)

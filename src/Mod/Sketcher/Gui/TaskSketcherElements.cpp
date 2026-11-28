@@ -2046,7 +2046,8 @@ void TaskSketcherElements::slotElementsChanged()
             row.label = record.value(QStringLiteral("label")).toString(tr("Pattern"));
             row.label += b.size() > 1 ? tr(" — %1 × %2").arg(a.size()).arg(b.size())
                                      : tr(" — %1 instances").arg(a.size());
-            row.hidden = record.value(QStringLiteral("options")).toObject().value(QStringLiteral("hide_spacing")).toBool();
+            row.hidden = record.value(QStringLiteral("behavior")).toString() != QStringLiteral("linked")
+                && record.value(QStringLiteral("options")).toObject().value(QStringLiteral("hide_spacing")).toBool();
             for (const auto* c : sketch->Constraints.getValues()) {
                 if (c->PatternGroup == group) {
                     row.label = QString::fromUtf8(c->PatternLabel.c_str());

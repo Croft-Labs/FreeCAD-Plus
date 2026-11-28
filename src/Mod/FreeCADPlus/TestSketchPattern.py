@@ -254,6 +254,11 @@ class TestPatternTask(unittest.TestCase):
         self.assertIsNotNone(self.p)
         self.assertTrue(self.p.isVisible())
         self.assertTrue(self.p.lock.isChecked())
+        # These historical fixtures exercise constraint-generated patterns.
+        # New linked-mode defaults are covered by TestLinkedSketchPattern.
+        self.p.open_options()
+        self.p.constraint_radio.setChecked(True)
+        self.p.accept_options()
 
     def pick(self, field, name, remove=False):
         self.p.activate_pick(field)

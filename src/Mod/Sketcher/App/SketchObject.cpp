@@ -549,6 +549,7 @@ void SketchObject::retrieveSolverDiagnostics()
 
 int SketchObject::solve(bool updateGeoAfterSolving /*=true*/)
 {
+    if (hasLinkedPatterns()) return solveLinkedPatterns(updateGeoAfterSolving);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -1489,6 +1490,14 @@ int SketchObject::moveGeometries(const std::vector<GeoElementId>& geoEltIds, con
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
+    if (hasLinkedPatterns()) {
+        for (const auto& id : geoEltIds) {
+            if (id.GeoId >= 0 && id.GeoId < Geometry.getSize()
+                && getGeometryFacade(id.GeoId)->testGeometryMode(GeometryMode::PatternGenerated))
+                return -1;
+        }
+    }
+
     // if we are moving a point at SketchObject level, we need to start from a solved sketch
     // if we have conflicts we can forget about moving. However, there is the possibility that we
     // need to do programmatically moves of new geometry that has not been solved yet and that
@@ -1529,6 +1538,7 @@ int SketchObject::moveGeometries(const std::vector<GeoElementId>& geoEltIds, con
 
     solvedSketch.resetInitMove();// reset solver point moving mechanism
 
+    if (lastSolverStatus == 0 && hasLinkedPatterns()) return solveLinkedPatterns(true);
     return lastSolverStatus;
 }
 
@@ -1892,6 +1902,8 @@ int SketchObject::delGeometry(int GeoId, DeleteOptions options)
         return -1;
     }
 
+    if (hasLinkedPatterns()) prepareLinkedPatternDeletion({GeoId});
+
     if (options.testFlag(DeleteOption::IncludeInternalGeometry) && hasInternalGeometry(getGeometry(GeoId))) {
         // Only for supported types
         this->deleteUnusedInternalGeometry(GeoId, true);
@@ -2010,6 +2022,8 @@ int SketchObject::delGeometriesExclusiveList(const std::vector<int>& GeoIds, Del
     if (sGeoIds.front() < 0 || sGeoIds.back() >= int(vals.size())) {
         return -1;
     }
+
+    if (hasLinkedPatterns()) prepareLinkedPatternDeletion(sGeoIds);
 
     std::vector<Part::Geometry*> newVals(vals);
     for (auto it = sGeoIds.rbegin(); it != sGeoIds.rend(); ++it) {
@@ -2142,8 +2156,18 @@ int SketchObject::deleteAllConstraints(DeleteOptions options)
     return 0;
 }
 
+namespace {
+void requireEditablePatternGeometry(const SketchObject& sketch, int id)
+{
+    if (id >= 0 && id < sketch.Geometry.getSize()
+        && GeometryFacade::getFacade(sketch.Geometry[id])->testGeometryMode(GeometryMode::PatternGenerated))
+        throw Base::ValueError("Edit the original pattern geometry or use Make independent before modifying a generated copy.");
+}
+}
+
 int SketchObject::toggleConstruction(int GeoId)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -2187,6 +2211,7 @@ int SketchObject::toggleConstruction(int GeoId)
 
 int SketchObject::setConstruction(int GeoId, bool on)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     // no need to check input data validity as this is an sketchobject managed operation.
     Base::StateLocker lock(managedoperation, true);
 
@@ -2889,6 +2914,7 @@ std::vector<int> SketchObject::chooseFilletsEdges(const std::vector<int>& GeoIdL
 }
 int SketchObject::fillet(int GeoId, PointPos PosId, double radius, bool trim, bool createCorner, bool chamfer)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     if (GeoId < 0 || GeoId > getHighestCurveIndex())
         return -1;
 
@@ -2920,6 +2946,8 @@ int SketchObject::fillet(int GeoId, PointPos PosId, double radius, bool trim, bo
 int SketchObject::fillet(int GeoId1, int GeoId2, const Base::Vector3d& refPnt1,
                          const Base::Vector3d& refPnt2, double radius, bool trim, bool createCorner, bool chamfer)
 {
+    requireEditablePatternGeometry(*this, GeoId1);
+    requireEditablePatternGeometry(*this, GeoId2);
     if (GeoId1 < 0 || GeoId1 > getHighestCurveIndex() || GeoId2 < 0 || GeoId2 > getHighestCurveIndex()) {
         return -1;
     }
@@ -3040,6 +3068,7 @@ int SketchObject::fillet(int GeoId1, int GeoId2, const Base::Vector3d& refPnt1,
 
 int SketchObject::extend(int GeoId, double increment, PointPos endpoint)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     if (GeoId < 0 || GeoId > getHighestCurveIndex())
         return -1;
 
@@ -3527,6 +3556,7 @@ std::optional<size_t> findPieceContainingPoint(
 
 int SketchObject::trim(int GeoId, const Base::Vector3d& point)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     if (!isGeoIdAllowedForTrim(this, GeoId)) {
         return -1;
     }
@@ -3969,6 +3999,7 @@ bool SketchObject::deriveConstraintsForPieces(
 
 int SketchObject::split(int GeoId, const Base::Vector3d& point)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     // No need to check input data validity as this is an sketchobject managed operation
 
     Base::StateLocker lock(managedoperation, true);
@@ -6339,6 +6370,7 @@ int SketchObject::exposeInternalGeometryForType<Part::GeomBSplineCurve>(const in
 
 int SketchObject::exposeInternalGeometry(int GeoId)
 {
+    requireEditablePatternGeometry(*this, GeoId);
     if (GeoId < 0 || GeoId > getHighestCurveIndex())
         return -1;
 
@@ -8066,6 +8098,7 @@ std::unique_ptr<const GeometryFacade> SketchObject::getGeometryFacade(int GeoId)
 }
 
 int SketchObject::setGeometry(int GeoId, const Part::Geometry *geo) {
+    requireEditablePatternGeometry(*this, GeoId);
     std::unique_ptr<Part::Geometry> g(geo->clone());
     if(GeoId>=0 && GeoId <Geometry.getSize()) {
         Geometry.set1Value(GeoId,std::move(g));

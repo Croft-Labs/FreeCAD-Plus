@@ -6,6 +6,7 @@ set(FreeCADPlus_SRCS
     TestApprovedNative.py
     TestApprovedWorkflows.py
     TestMeshSettings.py
+    TestLinkedSketchPattern.py
     TestActivePartBookmark.py
     freecad_plus/transforms.py
     freecad_plus/transform_ui.py
@@ -170,6 +171,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/plane_task.py
     freecad_plus/sketch_task.py
     freecad_plus/sketch_pattern.py
+    freecad_plus/sketch_pattern_linked.py
     freecad_plus/sketch_pattern_task.py
     freecad_plus/sketch_pattern_edit.py
     freecad_plus/sketch_pattern_legacy.py
@@ -295,3 +297,5 @@ install(FILES
 install(FILES TestShapeTransforms.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestApprovedNative.py TestApprovedWorkflows.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestMeshSettings.py TestActivePartBookmark.py DESTINATION Mod/FreeCADPlus)
+install(FILES freecad_plus/sketch_pattern_linked.py DESTINATION Mod/FreeCADPlus/freecad_plus)
+install(FILES TestLinkedSketchPattern.py DESTINATION Mod/FreeCADPlus)

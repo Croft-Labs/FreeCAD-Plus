@@ -23,6 +23,8 @@
 #ifndef SKETCHER_SKETCH_H
 #define SKETCHER_SKETCH_H
 
+#include <set>
+
 #include <Base/Persistence.h>
 #include <CXX/Objects.hxx>
 #include <Mod/Part/App/TopoShape.h>
@@ -77,7 +79,8 @@ public:
     int setUpSketch(
         const std::vector<Part::Geometry*>& GeoList,
         const std::vector<Constraint*>& ConstraintList,
-        int extGeoCount = 0
+        int extGeoCount = 0,
+        const std::set<int>& fixedGeometry = {}
     );
     /// return the actual geometry of the sketch a TopoShape
     Part::TopoShape toShape() const;

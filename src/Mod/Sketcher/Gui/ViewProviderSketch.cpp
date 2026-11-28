@@ -1002,6 +1002,39 @@ bool ViewProviderSketch::mouseButtonPressed(int Button, bool pressed, const SbVe
     // use scoped_ptr to make sure that instance gets deleted in all cases
     boost::scoped_ptr<SoPickedPoint> pp(this->getPointOnRay(cursorPos, viewer));
 
+    // Linked group symbols are display-only: never expose their display index
+    // to commands that edit, drag or delete real solver constraints.
+    if (Button == 1 && Mode == STATUS_NONE && pp) {
+        const auto hit = editCoinManager->detectPreselection(pp.get());
+        const auto display = getDisplayConstraints();
+        for (int id : hit.ConstrIndices) {
+            if (id < getSketchObject()->Constraints.getSize() || id >= int(display.size())) continue;
+            const auto group = display[id]->PatternGroup;
+            if (pressed) {
+                if (SbVec2f(cursorPos - DoubleClick::prvClickPos).length() < 5
+                    && (SbTime::getTimeOfDay() - DoubleClick::prvClickTime).getValue()
+                        < QApplication::doubleClickInterval() / 1000.0) {
+                    DoubleClick::prvClickTime = SbTime();
+                    editPattern(group);
+                }
+                else {
+                    DoubleClick::prvClickTime = SbTime::getTimeOfDay();
+                    DoubleClick::prvClickPos = cursorPos;
+                }
+            }
+            else {
+                if (!(QApplication::keyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier)))
+                    Gui::Selection().clearSelection(nullptr, false);
+                for (int geo : linkedPatternMembers[group]) {
+                    const auto name = "Edge" + std::to_string(geo + 1);
+                    Gui::Selection().addSelection(getObject()->getDocument()->getName(),
+                        getObject()->getNameInDocument(), name.c_str());
+                }
+            }
+            return true;
+        }
+    }
+
     // Radius maximum to allow double click event
     const int dblClickRadius = 5;
 
@@ -2469,6 +2502,15 @@ bool ViewProviderSketch::detectAndShowPreselection(SoPickedPoint* Point)
 
         EditModeCoinManager::PreselectionResult result = editCoinManager->detectPreselection(Point);
 
+        const auto display = getDisplayConstraints();
+        for (auto it = result.ConstrIndices.begin(); it != result.ConstrIndices.end();) {
+            if (*it >= getSketchObject()->Constraints.getSize()) {
+                if (*it < int(display.size())) result.GeoIndex = display[*it]->First;
+                it = result.ConstrIndices.erase(it);
+            }
+            else ++it;
+        }
+
         if (result.PointIndex != -1
             && result.PointIndex != preselection.PreselectPoint) {// if a new point is hit
             std::stringstream ss;
@@ -3258,7 +3300,9 @@ void ViewProviderSketch::drawEditMarkers(const std::vector<Base::Vector2d>& Edit
 }
 
 void ViewProviderSketch::updateData(const App::Property* prop) {
-    if (prop == &getSketchObject()->Constraints || prop == &getSketchObject()->Geometry) {
+    if (prop == &getSketchObject()->Constraints || prop == &getSketchObject()->Geometry
+        || std::string(prop->getName()) == "PatternDefinitions") {
+        patternDisplayValid = false;
         patternDisplaySources.clear();
         patternDisplayConstraints.clear();
         patternDisplayCopies.clear();
@@ -4453,6 +4497,7 @@ void ViewProviderSketch::setPatternPreviewHidden(std::set<int> ids, std::string 
     if (ids == patternPreviewHidden && group == patternPreviewGroup) return;
     patternPreviewHidden = std::move(ids);
     patternPreviewGroup = std::move(group);
+    patternDisplayValid = false;
     patternDisplaySources.clear();
     patternDisplayConstraints.clear();
     patternDisplayCopies.clear();
@@ -4462,8 +4507,10 @@ void ViewProviderSketch::setPatternPreviewHidden(std::set<int> ids, std::string 
 const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstraints() const
 {
     const auto& values = getSketchObject()->Constraints.getValues();
-    if (values == patternDisplaySources) return patternDisplayConstraints;
+    if (patternDisplayValid && values == patternDisplaySources) return patternDisplayConstraints;
+    patternDisplayValid = true;
     patternDisplaySources = values;
+    linkedPatternMembers.clear();
     patternDisplayCopies.clear();
     patternDisplayConstraints.clear();
     std::map<std::string, int> anchors;
@@ -4505,6 +4552,34 @@ const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstrain
         patternDisplayConstraints.push_back(display.get());
         patternDisplayCopies.push_back(std::move(display));
     }
+    // Reuse the native icon layout without adding a document constraint or any
+    // solver equations. Geometry IDs, not constraint indices, own these symbols.
+    if (auto* definitions = dynamic_cast<App::PropertyMap*>(
+            getSketchObject()->getPropertyByName("PatternDefinitions"))) {
+        std::map<QString, int> ids;
+        for (int i = 0; i < getSketchObject()->Geometry.getSize(); ++i)
+            ids[QString::number(Sketcher::GeometryFacade::getId(getSketchObject()->Geometry[i]))] = i;
+        for (const auto& [group, json] : definitions->getValues()) {
+            const auto record = QJsonDocument::fromJson(QByteArray::fromStdString(json)).object();
+            if (record.value(QStringLiteral("behavior")).toString() != QStringLiteral("linked")) continue;
+            auto& members = linkedPatternMembers[group];
+            for (const auto& value : record.value(QStringLiteral("instances")).toArray()) {
+                const auto geometry = value.toObject().value(QStringLiteral("geometry")).toObject();
+                for (auto it = geometry.begin(); it != geometry.end(); ++it) {
+                    if (auto found = ids.find(it.value().toString()); found != ids.end())
+                        members.push_back(found->second);
+                }
+            }
+            if (members.empty()) continue;
+            auto display = std::make_unique<Sketcher::Constraint>();
+            display->Type = Sketcher::Block;
+            display->First = members.back();
+            display->PatternGroup = group;
+            display->isVisible = group != patternPreviewGroup;
+            patternDisplayConstraints.push_back(display.get());
+            patternDisplayCopies.push_back(std::move(display));
+        }
+    }
     return patternDisplayConstraints;
 }
 
@@ -4512,7 +4587,7 @@ Sketcher::Constraint* ViewProviderSketch::getConstraint(int constid) const
 {
     Sketcher::SketchObject* obj = getSketchObject();
     const std::vector<Sketcher::Constraint*>& constrlist = obj->Constraints.getValues();
-    if (constid >= 0 || constid < int(constrlist.size())) {
+    if (constid >= 0 && constid < int(constrlist.size())) {
         return constrlist[constid];
     }
 
@@ -4692,6 +4767,11 @@ void ViewProviderSketch::removeNodeFromRoot(SoSeparator* node)
 
 bool ViewProviderSketch::isConstraintPreselected(int constraintId) const
 {
+    if (constraintId >= getSketchObject()->Constraints.getSize()) {
+        const auto display = getDisplayConstraints();
+        return constraintId < int(display.size())
+            && preselection.PreselectCurve == display[constraintId]->First;
+    }
     return preselection.PreselectConstraintSet.count(constraintId);
 }
 
@@ -4707,6 +4787,11 @@ bool ViewProviderSketch::isCurveSelected(int curveId) const
 
 bool ViewProviderSketch::isConstraintSelected(int constraintId) const
 {
+    if (constraintId >= getSketchObject()->Constraints.getSize()) {
+        const auto display = getDisplayConstraints();
+        return constraintId < int(display.size())
+            && selection.SelCurvSet.contains(display[constraintId]->First);
+    }
     return selection.SelConstraintSet.find(constraintId) != selection.SelConstraintSet.end();
 }
 

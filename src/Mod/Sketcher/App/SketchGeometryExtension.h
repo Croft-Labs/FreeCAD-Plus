@@ -61,6 +61,7 @@ enum GeometryMode
 {
     Blocked = 0,
     Construction = 1,
+    PatternGenerated = 2,  // Dependent pattern geometry, never solver unknowns.
     NumGeometryMode  // Must be the last
 };
 }  // namespace GeometryMode
@@ -151,7 +152,7 @@ public:
     };
 
     constexpr static std::array<const char*, GeometryMode::NumGeometryMode> geometrymode2str {
-        {"Blocked", "Construction"}
+        {"Blocked", "Construction", "PatternGenerated"}
     };
 
     static bool getInternalTypeFromName(std::string str, InternalType::InternalType& type);

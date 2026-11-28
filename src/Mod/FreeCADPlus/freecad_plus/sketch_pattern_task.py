@@ -174,6 +174,78 @@ class PatternControls(QtWidgets.QWidget):
             self.status.setText('Complete the remaining direction to preview and apply the full pattern.')
 
 
+InstalledPatternControls = PatternControls
+
+class PatternControls(InstalledPatternControls):
+    """Linked pattern controls, with the previous constraint mode in Advanced."""
+
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.linked=True;self.editing=False;self.independent=False
+        self.options_dialog=QtWidgets.QDialog(self)
+        self.options_dialog.setWindowTitle('Pattern options');self.options_dialog.setModal(True)
+        layout=QtWidgets.QVBoxLayout(self.options_dialog)
+        group=QtWidgets.QGroupBox('Pattern behavior');choices=QtWidgets.QVBoxLayout(group)
+        self.linked_radio=QtWidgets.QRadioButton('Linked pattern')
+        self.constraint_radio=QtWidgets.QRadioButton('Constraint-based pattern')
+        choices.addWidget(self.linked_radio)
+        label=QtWidgets.QLabel('Copies follow the original geometry. Edit the original or the pattern to change them.')
+        label.setWordWrap(True);choices.addWidget(label)
+        choices.addWidget(self.constraint_radio)
+        label=QtWidgets.QLabel('Copies use sketch constraints. Retains the previous pattern behavior.')
+        label.setWordWrap(True);choices.addWidget(label);layout.addWidget(group)
+        self.legacy=QtWidgets.QGroupBox('Constraint options');options=QtWidgets.QVBoxLayout(self.legacy)
+        self.layout().removeWidget(self.lock);self.layout().removeWidget(self.hide_spacing)
+        options.addWidget(self.lock);options.addWidget(self.hide_spacing);layout.addWidget(self.legacy)
+        self.constraint_radio.toggled.connect(self.legacy.setEnabled)
+        self.options_actions=QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Cancel)
+        self.options_actions.accepted.connect(self.accept_options)
+        self.options_actions.rejected.connect(self.options_dialog.reject)
+        self.options_dialog.rejected.connect(self.cancel_options)
+        layout.addWidget(self.options_actions)
+        self.mode_note=QtWidgets.QLabel();self.mode_note.setWordWrap(True)
+        self.advanced=QtWidgets.QPushButton('Advanced options…');self.advanced.clicked.connect(self.open_options)
+        self.make_independent=QtWidgets.QPushButton('Make independent…')
+        self.make_independent.clicked.connect(self.confirm_independent)
+        at=self.layout().indexOf(self.summary)
+        self.layout().insertWidget(at,self.mode_note)
+        actions=QtWidgets.QHBoxLayout()
+        actions.addWidget(self.advanced);actions.addWidget(self.make_independent)
+        self.layout().insertLayout(at+1,actions)
+        self.refresh_behavior()
+
+    def set_editing(self,linked=True):
+        self.editing=True;self.linked=linked;self.refresh_behavior()
+
+    def refresh_behavior(self):
+        self.mode_note.setText('Linked pattern · copies follow the original.' if self.linked else 'Constraint-based pattern · uses sketch constraints.')
+        self.make_independent.setVisible(self.editing and self.linked)
+
+    def open_options(self):
+        self.draft=(self.linked,self.lock.isChecked(),self.hide_spacing.isChecked())
+        self.linked_radio.setChecked(self.linked);self.constraint_radio.setChecked(not self.linked)
+        self.legacy.setEnabled(not self.linked)
+        self.options_dialog.resize(420,330);self.options_dialog.open()
+
+    def accept_options(self):
+        self.linked=self.linked_radio.isChecked();self.refresh_behavior();self.options_dialog.accept();self.sync()
+
+    def cancel_options(self):
+        self.linked,locked,hidden=self.draft
+        self.lock.setChecked(locked);self.hide_spacing.setChecked(hidden);self.refresh_behavior()
+
+    def confirm_independent(self):
+        dialog=QtWidgets.QDialog(self);dialog.setWindowTitle('Make pattern independent');dialog.setModal(True)
+        layout=QtWidgets.QVBoxLayout(dialog)
+        text=QtWidgets.QLabel('Convert all copies in this pattern into ordinary editable sketch curves?\n\nThe curves keep their current positions and stop following the original. No constraints are added. The original geometry is kept.')
+        text.setWordWrap(True);layout.addWidget(text)
+        buttons=QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel)
+        make=buttons.addButton('Make independent',QtWidgets.QDialogButtonBox.AcceptRole)
+        make.clicked.connect(dialog.accept);buttons.rejected.connect(dialog.reject)
+        dialog.accepted.connect(self.detach_pattern)
+        layout.addWidget(buttons);self.independent_dialog=dialog;dialog.resize(430,230);dialog.open()
+
+
 class PatternTask(PatternControls):
     """Controls owned by the native sketch tool; picks arrive through that tool."""
     def __init__(self, host, sketch, ids, group=''):
@@ -223,6 +295,7 @@ class PatternTask(PatternControls):
                 from . import sketch_pattern_edit as editing
                 self.edit_record,ids,options=editing.load(sketch,group)
                 self.load_inputs(ids,options,self.edit_record['dimensions'])
+                self.set_editing(self.edit_record.get('behavior')=='linked')
             except (ValueError,RuntimeError) as error:self.edit_error=str(error)
         self.sync()
 
@@ -272,16 +345,9 @@ class PatternTask(PatternControls):
         self.host.setProperty('patternSerial', int(self.host.property('patternSerial') or 0) + 1)
 
     def toggle_spacing(self, hidden):
-        # Pending controls affect only the preview. With no pending geometry the
-        # checkbox can still show/hide existing saved chains.
-        if self.ready and not self.edit_group and not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
-            self.sketch.Document.openTransaction('Hide pattern spacing chain' if hidden else 'Show pattern spacing chain')
-            try:
-                pattern.set_chain_hidden(self.sketch, hidden)
-                self.sketch.Document.commitTransaction()
-            except Exception:
-                self.sketch.Document.abortTransaction()
-                raise
+        # Advanced options are a draft until Apply; Cancel must not mutate a
+        # previously saved pattern, including when the collector is empty.
+        pass
 
     def activate_pick(self, field):
         if self.active_pick is not None:
@@ -399,7 +465,7 @@ class PatternTask(PatternControls):
         if options is not None:
             try:
                 ids = self.geometry_ids()
-                self._preview = pattern.preview(self.sketch, ids, options, self.lock.isChecked(),self._helper_preview)
+                self._preview = pattern.preview(self.sketch, ids, options, not self.linked and self.lock.isChecked(),self._helper_preview)
                 total = len(pattern.transforms(self.sketch, options)) + 1
                 self.summary.setText(str(total) + (' instances, including the original.' if self.apply.isEnabled() else ' instances previewed.'))
             except Exception as error:
@@ -446,7 +512,11 @@ class PatternTask(PatternControls):
     def apply_pattern(self):
         if not self.apply.isEnabled() or self.closed: return False
         try:
-            if self.edit_group:
+            if self.linked:
+                from . import sketch_pattern_linked as linked
+                self.updating=True;self.notify('preview')
+                linked.save(self.sketch,self.geometry_ids(),self.options(),self.edit_group or None)
+            elif self.edit_group:
                 from . import sketch_pattern_edit as editing
                 self.updating=True;self.notify('preview')
                 editing.update(self.sketch,self.edit_group,self.geometry_ids(),self.options(),self.lock.isChecked())
@@ -469,6 +539,16 @@ class PatternTask(PatternControls):
             self.status.setError(str(error)); self.status.show()
             return False
 
+    def detach_pattern(self):
+        try:
+            from . import sketch_pattern_linked as linked
+            self.updating=True;self.notify('preview')
+            linked.independent(self.sketch,self.edit_group)
+            self.reset_inputs()
+        except Exception as error:
+            self.updating=False;self.notify('preview')
+            self.status.setError(str(error));self.status.show()
+
     def finish_pattern(self):
         if self.closed: return
         if not self.items.count(): self.notify('finish')
@@ -482,6 +562,7 @@ class PatternTask(PatternControls):
         if self.closed: return
         self.ready=False; self.building=True
         self.edit_group='';self.edit_record=None;self.edit_error='';self.updating=False
+        self.linked=True;self.editing=False;self.refresh_behavior()
         self.items.clear()
         for field in self.references:
             self.references[field] = None; field.clear()
@@ -500,6 +581,8 @@ class PatternTask(PatternControls):
         self.sync()
 
     def detach(self):
+        if self.options_dialog.isVisible():self.options_dialog.reject()
+        if hasattr(self,'independent_dialog'):self.independent_dialog.reject()
         self.clear_helpers()
         self.closed = True
         self._preview = []
