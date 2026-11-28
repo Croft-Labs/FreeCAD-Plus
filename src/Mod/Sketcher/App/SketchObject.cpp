@@ -7553,7 +7553,11 @@ int SketchObject::addExternal(App::DocumentObject* Obj, const char* SubName, boo
         }
     }
 
-    if (shapeType != TopAbs_SHAPE) {
+    // Plus whole-source intersections must retain the source itself. Expanding
+    // only today's intersecting faces loses future intersections when the
+    // source or sketch plane changes. The rebuild path sections whole shapes.
+    const bool wholeIntersection = intersection && getPropertyByName("PlusIntersectionSources");
+    if (shapeType != TopAbs_SHAPE && !wholeIntersection) {
         std::string element = Part::TopoShape::shapeName(shapeType);
         std::size_t elementNameSize = element.size();
         int geometryCount = ExternalGeometry.getSize();
@@ -9171,6 +9175,12 @@ void processFace (const Rotation& invRot,
 
 void SketchObject::rebuildExternalGeometry(std::optional<ExternalToAdd> extToAdd)
 {
+    // Plus intersections can use an earlier feature in another Body of the
+    // same component. Their collector checks ownership and history order,
+    // while the section code below accounts for both parent frames.
+    if (getPropertyByName("PlusIntersectionSources")) {
+        ExternalGeometry.setScope(App::LinkScope::Global);
+    }
     Base::StateLocker lock(managedoperation, true); // no need to check input data validity as this is an sketchobject managed operation.
 
     int extGeoVersion = _ExternalGeoVersion.getValue();
@@ -9430,6 +9440,20 @@ void SketchObject::rebuildExternalGeometry(std::optional<ExternalToAdd> extToAdd
             int projSize = geos.size();
 
             if (intersection && !refSubShape.IsNull()) {
+                if (getPropertyByName("PlusIntersectionSources")) {
+                    // Component History can reference a finished feature in a
+                    // different internal Body. Section in the sketch parent's
+                    // frame, including both containers' placements.
+                    if (auto* feature = freecad_cast<const Part::Feature*>(resolvedObj)) {
+                        const Base::Placement sourceParent = App::GeoFeature::getGlobalPlacement(feature)
+                            * feature->Placement.getValue().inverse();
+                        const Base::Placement sketchParent = App::GeoFeature::getGlobalPlacement(this)
+                            * Placement.getValue().inverse();
+                        Part::TopoShape positioned(refSubShape);
+                        positioned.transformShape((sketchParent.inverse() * sourceParent).toMatrix(), true);
+                        refSubShape = positioned.getShape();
+                    }
+                }
                 FCBRepAlgoAPI_Section maker(refSubShape, sketchPlane);
                 maker.Approximation(Standard_True);
                 if (!maker.IsDone())

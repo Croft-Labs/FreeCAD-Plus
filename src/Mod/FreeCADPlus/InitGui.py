@@ -17,3 +17,5 @@ from freecad_plus import appearance_command
 appearance_command.install()
 from freecad_plus import reference_image_task
 reference_image_task.install()
+from freecad_plus import trim_task
+trim_task.install()

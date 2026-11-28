@@ -66,6 +66,7 @@ MODELING = (
         ('Split Features', 'small', ('Part_CompSplitFeatures',)),
         ('Check Geometry', 'small', ('Part_CheckGeometry',)),
         ('Defeaturing', 'small', ('Part_Defeaturing',)),
+        ('Trim Body', 'small', ('Plus_TrimBody',)),
     )),
     ('Other', (
         ('Delete Face / Defeaturing', 'medium', ('PartDesign_Defeaturing',)),

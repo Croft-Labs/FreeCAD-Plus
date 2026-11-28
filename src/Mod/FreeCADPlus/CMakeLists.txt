@@ -2,7 +2,22 @@
 set(FreeCADPlus_SRCS
     Init.py
     InitGui.py
+    TestShapeTransforms.py
+    TestApprovedNative.py
+    TestApprovedWorkflows.py
+    freecad_plus/transforms.py
+    freecad_plus/transform_ui.py
+    freecad_plus/transform_task.py
+    freecad_plus/shape_preview.py
     freecad_plus/clone_appearance.py
+    freecad_plus/intersections.py
+    freecad_plus/intersection_task.py
+    freecad_plus/mesh_shape.py
+    freecad_plus/mesh_ui.py
+    freecad_plus/mesh_task.py
+    freecad_plus/trim_body.py
+    freecad_plus/trim_ui.py
+    freecad_plus/trim_task.py
     TestPlusToolbars.py
     TestFilletWorkflow.py
     TestSketchSymmetry.py
@@ -260,4 +275,20 @@ install(FILES
     DESTINATION Mod/FreeCADPlus/freecad_plus
 )
 
-install(FILES freecad_plus/clone_appearance.py DESTINATION Mod/FreeCADPlus/freecad_plus)
+install(FILES
+    freecad_plus/transforms.py
+    freecad_plus/transform_ui.py
+    freecad_plus/transform_task.py
+    freecad_plus/shape_preview.py
+    freecad_plus/clone_appearance.py
+    freecad_plus/intersections.py
+    freecad_plus/intersection_task.py
+    freecad_plus/mesh_shape.py
+    freecad_plus/mesh_ui.py
+    freecad_plus/mesh_task.py
+    freecad_plus/trim_body.py
+    freecad_plus/trim_ui.py
+    freecad_plus/trim_task.py
+    DESTINATION Mod/FreeCADPlus/freecad_plus)
+install(FILES TestShapeTransforms.py DESTINATION Mod/FreeCADPlus)
+install(FILES TestApprovedNative.py TestApprovedWorkflows.py DESTINATION Mod/FreeCADPlus)

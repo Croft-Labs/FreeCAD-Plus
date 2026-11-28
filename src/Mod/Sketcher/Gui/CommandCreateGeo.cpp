@@ -31,6 +31,7 @@
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Selection/SelectionFilter.h>
@@ -1856,6 +1857,12 @@ CONSTRUCTION_UPDATE_ACTION(CmdSketcherIntersection, "Sketcher_Intersection")
 void CmdSketcherIntersection::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        ActivateHandler(getActiveGuiDocument(),
+                        std::make_unique<DrawSketchHandlerExternal>(false, true, true));
+        doCommand(Gui, "from freecad_plus import intersection_task; intersection_task.show()");
+        return;
+    }
     bool extGeoRef = Gui::WindowParameter::getDefaultParameter()
                          ->GetGroup("Mod/Sketcher/General")
                          ->GetBool("AlwaysExtGeoReference", false);

@@ -2525,6 +2525,11 @@ void CmdPartDesignMirrored::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Gui, "from freecad_plus import transform_task; transform_task.dispatch('Mirror')");
+        return;
+    }
+
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
@@ -2583,6 +2588,11 @@ CmdPartDesignLinearPattern::CmdPartDesignLinearPattern()
 void CmdPartDesignLinearPattern::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Gui, "from freecad_plus import transform_task; transform_task.dispatch('Linear pattern')");
+        return;
+    }
 
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
@@ -2652,6 +2662,11 @@ CmdPartDesignPolarPattern::CmdPartDesignPolarPattern()
 void CmdPartDesignPolarPattern::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Gui, "from freecad_plus import transform_task; transform_task.dispatch('Polar pattern')");
+        return;
+    }
 
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
@@ -2757,6 +2772,11 @@ CmdPartDesignMultiTransform::CmdPartDesignMultiTransform()
 void CmdPartDesignMultiTransform::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Gui, "from freecad_plus import transform_task; transform_task.dispatch('Multi-transform')");
+        return;
+    }
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {

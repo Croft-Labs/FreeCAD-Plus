@@ -1,5 +1,13 @@
 # Toolbars and buttons
 
+## Transformation routing — approved November 27, 2026
+
+All Plus document Mirror, Linear Pattern, Polar/Circular Pattern and Multi-transform
+buttons open the new whole-body/sheet task immediately, including native menu/toolbar
+actions. Do not show the Classic active-Body chooser first. Modeling > Boolean Tools
+also provides Trim Body. Classic documents retain their native command workflow.
+See [installed verification](../evidence/approved-workflows-20261127/README.md).
+
 ## Reference image on View — approved November 27, 2026
 
 The Plus View tab includes a large **Reference image** button in a **Reference**

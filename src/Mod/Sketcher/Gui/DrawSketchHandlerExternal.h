@@ -130,9 +130,10 @@ class DrawSketchHandlerExternal: public DrawSketchHandler
     Q_DECLARE_TR_FUNCTIONS(SketcherGui::DrawSketchHandlerExternal)
 
 public:
-    DrawSketchHandlerExternal(bool alwaysReference, bool intersection)
+    DrawSketchHandlerExternal(bool alwaysReference, bool intersection, bool collectOnly = false)
         : alwaysReference {alwaysReference}
         , intersection {intersection}
+        , collectOnly {collectOnly}
     {}
     ~DrawSketchHandlerExternal() override
     {
@@ -165,6 +166,11 @@ public:
 
     bool onSelectionChanged(const Gui::SelectionChanges& msg) override
     {
+        // The Plus task owns admission, the mixed list and one Apply transaction.
+        // Retain native sketch viewport picking without adding geometry on click.
+        if (collectOnly) {
+            return true;
+        }
         if (msg.Type == Gui::SelectionChanges::AddSelection) {
             const auto* original = &msg;
             while (original->pOriginalMsg) {
@@ -247,7 +253,9 @@ private:
 
         Gui::Selection().clearSelection();
         Gui::Selection().rmvSelectionGate();
-        Gui::Selection().addSelectionGate(new ExternalSelection(sketchgui->getObject()));
+        if (!collectOnly) {
+            Gui::Selection().addSelectionGate(new ExternalSelection(sketchgui->getObject()));
+        }
     }
 
     QString getCrosshairCursorSVGName() const override
@@ -263,10 +271,15 @@ private:
     {
         Q_UNUSED(sketchgui);
         setAxisPickStyle(true);
+        if (collectOnly) {
+            Gui::Command::doCommand(Gui::Command::Gui,
+                "from freecad_plus import intersection_task; intersection_task.handler_closed()");
+        }
     }
 
     bool alwaysReference;
     bool intersection;
+    bool collectOnly;
 
 public:
     std::list<Gui::InputHint> getToolHints() const override

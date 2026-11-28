@@ -160,9 +160,9 @@ def _restore(doc, definition, path):
         edit_unused(doc, definition)
 
 
-def context_path(doc):
+def context_path(doc, *, allow_native=False):
     root = validate(doc)
-    if Gui.getDocument(doc.Name).getInEdit():
+    if not allow_native and Gui.getDocument(doc.Name).getInEdit():
         raise ValueError("Finish the native feature editor first")
     unused = unused_context(doc)
     if unused is not None:

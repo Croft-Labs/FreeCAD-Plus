@@ -20,6 +20,9 @@ _icons = OrderedDict()
 
 def describe(obj):
     """Read supported saved operation contracts, never infer from a display name."""
+    if 'TrimSettings' in obj.PropertiesList:return 'Subtract', 'subtract'
+    if 'TransformKind' in obj.PropertiesList:
+        return 'New Solid', 'new body' if obj.Shape.Solids else 'new surface'
     for name in _ENGINES:
         version = getattr(obj, 'Plus' + name + 'Version', None)
         if version is None:

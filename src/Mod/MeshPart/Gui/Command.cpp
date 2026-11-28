@@ -32,6 +32,7 @@
 #include <Base/Converter.h>
 #include <Gui/Application.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Control.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
@@ -65,6 +66,13 @@ CmdMeshPartMesher::CmdMeshPartMesher()
 
 void CmdMeshPartMesher::activated(int)
 {
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        auto parameters = new MeshPartGui::Tessellation(Gui::getMainWindow());
+        parameters->setObjectName(QStringLiteral("PlusMeshParameters"));
+        parameters->hide();
+        doCommand(Gui, "from freecad_plus import mesh_task; mesh_task.dispatch()");
+        return;
+    }
     Gui::Control().showDialog(new MeshPartGui::TaskTessellation());
 }
 

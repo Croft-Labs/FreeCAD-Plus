@@ -1,31 +1,36 @@
 # Task panel
 
-## Intersection curve — owner selection clarification November 27, 2026
+## Approved geometry workflows — November 27, 2026
 
-Use one mixed source list without a Pick dropdown. Admit curves from earlier
-sketches, solid edges/faces, surfaces and whole results only when owned by the
-active component and preceding the active sketch in its History. Preserve exact
-picked topology, reject self/later/foreign geometry, and retain linked intersections.
-This supersedes the old mode-based proposal. Revised native Qt preview is pending
-implementation approval; see [contract and screenshots](../evidence/intersection-unified-20261127/README.md).
+Mirror, Linear Pattern, Polar/Circular Pattern and ordered Multi-transform collect
+complete finished bodies or sheets, including earlier cuts. A face/edge click selects
+its whole source. Merge touching copies; keep separated copies in one History item
+when Merge is enabled. Unmerged copies become separate results. Saved references and
+parameters reopen in the same task. Use bottom Done/Apply/Cancel with Apply/reset.
 
-## Clone appearance — requested November 27, 2026; preview pending
+Intersection curve has one mixed list and no Pick dropdown. Accept curves from earlier
+sketches, solid edges/faces, surfaces and whole results only when owned by the active
+component and preceding the edited sketch in History. Preserve exact topology; reject
+self/later/foreign sources. Linked solids/sheets create section curves and crossing
+curves create points. Done/Cancel leave the outer sketch editor open.
 
-Owner requests importing a child object's appearance when cloning its body or
-surface into the active part. Proposed creation-time copy preserves whole/per-face
-materials and transparency, with independently editable clone appearance afterward.
-The existing Clone panel remains unchanged. Native loss reproduction and a
-display-only comparison are ready; no functional implementation or installation.
-See [contract and direct screenshots](../evidence/clone-appearance-20261127/README.md).
+Mesh from Shape allows selection after opening, with solid/surface collection and
+native meshing settings. One application creates one combined mesh in component
+History. Empty lists stay empty; successful Apply resets and failures retain inputs.
+Source geometry remains. This approval resolves the combined-output preview assumption.
 
-## Mesh from Shape — requested November 27, 2026; preview pending
+Trim Body collects a target solid and either connected surfaces forming one combined
+boundary or a fundamental/created plane. Include offset and reverse. Finite tool
+surfaces must fully pass the target periphery; do not automatically extend short tools.
+Retain editable dependencies, one Undo step and the common Apply/reset workflow.
 
-Owner requests source selection after opening, one/many solids or surfaces in
-one operation, and correction of the Components panel failure after meshing.
-Proposed collector, preservation contract, direct screenshots and pending
-approval are recorded in [the preview evidence](../evidence/mesh-from-shape-20261127/README.md).
-The preview assumes one combined mesh; the output-count preference is not yet
-confirmed. No production implementation or installed update is claimed.
+Clone copies the child's whole/per-face appearance and transparency when creating the
+body/surface result. Later clone appearance edits remain independent. The existing
+Clone panel is unchanged. New components hide fundamental planes, while sketch and
+datum-plane creation temporarily show them and restore prior/manual visibility.
+
+All seven previews are approved and installed; see
+[delivery and bounded validation](../evidence/approved-workflows-20261127/README.md).
 
 ## Clone viewport picks and Appearance boundaries — approved November 27, 2026
 
