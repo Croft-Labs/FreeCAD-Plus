@@ -55,12 +55,12 @@ class TransformTask(QtCore.QObject):
     def load_step(self,step,value):
         step.reference.setCurrentIndex(value['axis']);step.ref=value.get('ref')
         if step.ref:step.pick.setText(step.ref[0].Label+'.'+step.ref[1])
-        if step.kind=='Mirror':step.offset.setValue(value['offset'])
+        if step.kind=='Mirror':step.offset.setValue(value.get('offset',0))
         else:
-            step.count.setValue(value['count']);step.measure.setCurrentIndex(value['measure'])
-            step.value.setValue(value['value']);step.reverse.setChecked(value['reverse'])
+            step.count.setValue(value['count']);step.measure.setCurrentIndex(value.get('measure',0))
+            step.value.setValue(value['value']);step.reverse.setChecked(value.get('reverse',False))
             if step.kind=='Polar pattern':
-                for widget,number in zip(step.center,value['center']):widget.setValue(number)
+                for widget,number in zip(step.center,value.get('center',(0,0,0))):widget.setValue(number)
 
     def settings(self):
         values=[]

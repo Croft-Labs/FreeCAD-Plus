@@ -10,7 +10,40 @@ import Part,Mesh,MeshPart
 from . import document,planes,modeling,derived_geometry
 
 
+def source(owner,ref,consumer=None):
+    obj,sub=planes.canonical(owner,[ref])[0]
+    if obj.TypeId=='PartDesign::Body':obj=obj.Tip
+    if obj is None or derived_geometry.object_kind(obj) not in ('body','surface'):
+        raise ValueError('Choose a solid, sheet or face, not a datum or sketch')
+    route=document.owned_path(owner,obj)
+    if not route or any(item.TypeId=='App::Link' for item in route):
+        raise ValueError('Choose geometry owned by the active component')
+    ref=(obj,sub);document.require_predecessors(owner,consumer,[ref])
+    shape=planes.shape(owner,ref)
+    if not shape.Faces or not shape.isValid():raise ValueError('Choose a valid solid, sheet or face')
+    return ref
+
+
+def covers(first,second):
+    if first[0]!=second[0]:return False
+    if not first[1] or first==second:return True
+    outer=first[0].getSubObject(first[1]);inner=second[0].getSubObject(second[1]) if second[1] else second[0].Shape
+    return bool(outer and inner and inner.Faces) and all(any(face.isSame(other) for other in outer.Faces) for face in inner.Faces)
+
+
+def normalize(owner,refs,consumer=None):
+    result=[]
+    for value in refs:
+        ref=source(owner,value,consumer)
+        if any(covers(old,ref) for old in result):continue
+        covered=[index for index,old in enumerate(result) if covers(ref,old)]
+        position=covered[0] if covered else len(result)
+        result=[old for old in result if not covers(ref,old)];result.insert(position,ref)
+    return result
+
+
 def compute(owner,refs,settings,cancel=None):
+    refs=normalize(owner,refs)
     if not refs:raise ValueError('Select solids, sheets or faces to mesh')
     shapes=[];colors=[]
     from .appearance import materials
@@ -20,8 +53,13 @@ def compute(owner,refs,settings,cancel=None):
         shapes.append(shape)
         obj,sub=ref
         values=materials(obj.Tip if obj.TypeId=='PartDesign::Body' else obj)
-        element=Part.splitSubname(sub)[2]
-        colors.extend([values[int(element[4:])-1].DiffuseColor] if element.startswith('Face') else [v.DiffuseColor for v in values])
+        if sub:
+            selected=obj.getSubObject(sub)
+            for face in selected.Faces:
+                index=next((i for i,full in enumerate(obj.Shape.Faces) if face.isSame(full)),None)
+                if index is None:raise ValueError('The selected mesh face correspondence changed')
+                colors.append(values[index].DiffuseColor)
+        else:colors.extend(v.DiffuseColor for v in values)
     shape=shapes[0] if len(shapes)==1 else Part.makeCompound(shapes);method=settings['method']
     if method==3:
         mesh=gmsh(shape,settings,cancel)
@@ -124,6 +162,7 @@ def save(doc,refs,settings,feature=None,cancel=None):
     import MeshGui  # Register the native mesh view provider before creation.
     owner,_=modeling._context(doc)
     if feature and derived_geometry.owner(feature)!=owner:raise ValueError('Edit a mesh in the active component')
+    refs=normalize(owner,refs,feature)
     document.require_predecessors(owner,feature,refs)
     value=compute(owner,refs,settings,cancel)
     current,_=modeling._context(doc)

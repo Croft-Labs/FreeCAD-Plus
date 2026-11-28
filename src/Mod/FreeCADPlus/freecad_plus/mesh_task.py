@@ -3,7 +3,7 @@
 import math
 import FreeCAD as App,FreeCADGui as Gui
 from PySide6 import QtCore,QtWidgets
-from . import document,modeling,planes,transforms,mesh_shape,panel,selection_scope
+from . import document,modeling,planes,mesh_shape,panel,selection_scope
 from .selection_list import removing
 from .mesh_ui import MeshForm
 _active=None
@@ -19,7 +19,6 @@ class MeshTask(QtCore.QObject):
         self.form.destination.setText('Add to: '+self.owner.Label);self.form.sources.installEventFilter(self)
         self.form.remove.clicked.connect(self.remove);self.form.clear.clicked.connect(self.clear)
         self.form.done.clicked.connect(self.accept);self.form.apply.clicked.connect(self.apply);self.form.cancel.clicked.connect(self.reject)
-        self.form.surface.toggled.connect(self.domain)
         self.form.tess.findChild(QtWidgets.QPushButton,'killButton').clicked.connect(self.cancel_mesh)
         if feature:
             import json
@@ -47,23 +46,16 @@ class MeshTask(QtCore.QObject):
             settings.update(executable=self.widget('fileChooser').property('fileName'),algorithm=int(self.widget('method').currentData()),min_size=self.number('minSize'),max_size=self.number('maxSize'))
         # Preserve every native control, including inactive engine settings,
         # to reopen this same task without silently changing the recipe.
-        state={}
-        for w in self.form.tess.findChildren(QtWidgets.QWidget):
-            if isinstance(w,QtWidgets.QCheckBox):state[w.objectName()]=['checked',w.isChecked()]
-            elif isinstance(w,QtWidgets.QComboBox):state[w.objectName()]=['currentIndex',w.currentIndex()]
-            elif isinstance(w,QtWidgets.QAbstractSpinBox):state[w.objectName()]=['value',self.number(w.objectName())]
-        settings['controls']=state
+        self.form.validate_inputs()
+        settings['controls']=self.form.state()['controls']
         return settings
 
     def restore_settings(self,settings):
-        for name,(prop,value) in settings.get('controls',{}).items():
-            widget=self.widget(name)
-            if widget:widget.setProperty(prop,value)
-        self.form.method.setCurrentIndex(settings['method'])
-        if settings.get('executable'):self.widget('fileChooser').setProperty('fileName',settings['executable'])
+        self.form.restore(settings)
+        self.form.render_fields()
 
     def domain(self,*args):
-        self.form.sources.setProperty('FreeCADPlusPickDomain','surface' if self.form.surface.isChecked() else None)
+        self.form.sources.setProperty('FreeCADPlusPickDomain',None)
         selection_scope.changed()
     def fields(self):
         self.form.sources.clear()
@@ -86,14 +78,9 @@ class MeshTask(QtCore.QObject):
         self.busy=True
         try:
             self.check();ref=(App.getDocument(doc).getObject(name),sub)
-            ref=planes.canonical(self.owner,[ref])[0] if self.form.surface.isChecked() else transforms.source(self.owner,ref,self.feature)
-            shape=planes.shape(self.owner,ref)
-            if not shape.Faces:raise ValueError('Choose geometry with faces')
-            if self.form.solid.isChecked() and not shape.Solids:raise ValueError('Switch to Surface to add a sheet or face')
-            if self.form.surface.isChecked() and shape.Solids:raise ValueError('Choose an individual face or a whole sheet')
-            document.require_predecessors(self.owner,self.feature,[ref])
+            ref=mesh_shape.source(self.owner,ref,self.feature)
             if removing():self.refs=[r for r in self.refs if r!=ref]
-            elif ref not in self.refs:self.refs.append(ref)
+            else:self.refs=mesh_shape.normalize(self.owner,[*self.refs,ref],self.feature)
             Gui.Selection.removeSelection(doc,name,sub);self.fields()
         except Exception as exc:self.form.status.setError(str(exc))
         finally:self.busy=False
@@ -101,10 +88,10 @@ class MeshTask(QtCore.QObject):
     def apply(self):
         if self.busy:return False
         try:
-            self.check();self.busy=True;self.cancelled=False
+            self.check();settings=self.settings();self.busy=True;self.cancelled=False;self.form.set_busy(True)
             self.widget('killButton').setEnabled(self.form.method.currentIndex()==3)
             self.form.status.setText('Meshing selected geometry…')
-            self.result=mesh_shape.save(self.doc,self.refs,self.settings(),self.feature,lambda:self.cancelled or self.closed)
+            self.result=mesh_shape.save(self.doc,self.refs,settings,self.feature,lambda:self.cancelled or self.closed)
             self.feature=None;self.refs=[];self.form.reset();self.fields();self.domain()
             self.form.status.setText('Mesh created. Select sources for another mesh.')
             if panel._panel:panel._panel.refresh()
@@ -114,7 +101,9 @@ class MeshTask(QtCore.QObject):
             return False
         finally:
             self.busy=False
-            if not self.closed:self.widget('killButton').setEnabled(False)
+            if not self.closed:
+                self.widget('killButton').setEnabled(False);self.form.set_busy(False)
+                self.form.apply.setEnabled(bool(self.refs))
             if self.cancelled:self.reject()
     def accept(self):
         if not self.refs or self.apply():return self.reject()
@@ -123,6 +112,7 @@ class MeshTask(QtCore.QObject):
         global _active
         if self.busy:self.cancelled=True;return False
         if self.closed:return True
+        if self.form.advanced_dialog.isVisible():self.form.advanced_dialog.reject()
         self.closed=True;Gui.Selection.removeObserver(self);App.removeDocumentObserver(self)
         self.form.sources.setProperty('FreeCADPlusPickDomain',None)
         if _active is self:_active=None;Gui.Control.closeDialog()

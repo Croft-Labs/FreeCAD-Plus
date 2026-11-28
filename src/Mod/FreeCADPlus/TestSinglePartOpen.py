@@ -90,6 +90,8 @@ class TestSinglePartOpen(unittest.TestCase):
 
     def test_repeated_single_definition_does_not_choose_arbitrary_instance(self):
         hierarchy.add_instance(self.root, self.part, App.Placement(App.Vector(50, 0, 0), App.Rotation()))
+        # Without a saved active occurrence, retain the ambiguity-safe fallback.
+        editing.edit_file(self.doc)
         path = self.save_close()
         doc = self.reopened(path)
         root = document.validate(doc)
@@ -98,6 +100,8 @@ class TestSinglePartOpen(unittest.TestCase):
 
     def test_multiple_definitions_remain_at_file_level(self):
         hierarchy.create_definition(self.doc, 'Other part')
+        # This is the legacy/no-bookmark case; saved Edit contexts now restore.
+        editing.edit_file(self.doc)
         path = self.save_close()
         doc = self.reopened(path)
         self.assertEqual(self.widget._context(doc, Gui.activeDocument().activeView()), (None, ()))

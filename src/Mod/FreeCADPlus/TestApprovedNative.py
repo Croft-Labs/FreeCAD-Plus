@@ -36,9 +36,10 @@ class TestApprovedNative(unittest.TestCase):
         import MeshPartGui
         Gui.runCommand('MeshPart_Mesher');task=mesh_task._active
         self.assertIsNotNone(task);self.assertEqual(task.refs,[])
-        self.assertTrue(task.form.tess.isVisibleTo(task.form))
-        task.addSelection(self.doc.Name,self.box.Name,'Face1');self.assertEqual(task.refs,[(self.box,'')])
-        task.form.surface.setChecked(True);task.addSelection(self.doc.Name,self.box.Name,'Face2')
+        self.assertFalse(task.form.tess.isVisibleTo(task.form))
+        self.assertFalse(hasattr(task.form,'solid'))
+        task.addSelection(self.doc.Name,self.box.Name,'Face1');self.assertEqual(task.refs,[(self.box,'Face1')])
+        task.addSelection(self.doc.Name,self.box.Name,'Face2')
         self.assertEqual(len(task.refs),2)
         QtTest.QTest.qWait(100)
         (Path(os.environ['PLUS_TEST_DIR'])/'mesh-layout.txt').write_text(str({
@@ -46,7 +47,7 @@ class TestApprovedNative(unittest.TestCase):
             'tess':task.form.tess.size().toTuple(),'tess_minimum':task.form.tess.minimumSizeHint().toTuple()}))
         task.form.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'Mesh.png'))
         self.assertTrue(task.apply(),task.form.status.text());self.assertEqual(task.refs,[])
-        self.assertTrue(task.form.solid.isChecked());self.assertIn(task.result,self.owner.Group)
+        self.assertEqual(task.form.method.currentIndex(),0);self.assertIn(task.result,self.owner.Group)
         self.assertIn('Coloring',task.result.ViewObject.PropertiesList);document.validate(self.doc)
         feature=task.result;task.reject();mesh_task.show(feature);self.assertEqual(len(mesh_task._active.refs),2)
 

@@ -5,6 +5,8 @@ set(FreeCADPlus_SRCS
     TestShapeTransforms.py
     TestApprovedNative.py
     TestApprovedWorkflows.py
+    TestMeshSettings.py
+    TestActivePartBookmark.py
     freecad_plus/transforms.py
     freecad_plus/transform_ui.py
     freecad_plus/transform_task.py
@@ -292,3 +294,4 @@ install(FILES
     DESTINATION Mod/FreeCADPlus/freecad_plus)
 install(FILES TestShapeTransforms.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestApprovedNative.py TestApprovedWorkflows.py DESTINATION Mod/FreeCADPlus)
+install(FILES TestMeshSettings.py TestActivePartBookmark.py DESTINATION Mod/FreeCADPlus)

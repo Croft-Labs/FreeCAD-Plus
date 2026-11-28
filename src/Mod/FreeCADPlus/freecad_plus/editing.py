@@ -59,6 +59,8 @@ def edit(instance):
 
 def initialize_document(doc):
     """Initialize a newly opened file/view; never reapply on ordinary refresh."""
+    if restore_active_part(doc):
+        return context_path(doc, allow_native=True)[0]
     definitions = validate(doc).Definitions
     if len(definitions) != 1:
         return edit_file(doc)
@@ -69,6 +71,62 @@ def initialize_document(doc):
     # A catalog-only part still has History. Multiple instances share that same
     # definition, but none is an authoritative placement for editing on open.
     return edit_unused(doc, definition, detached=bool(paths))
+
+
+ACTIVE_PART_BOOKMARK = 'FreeCADPlus.ActivePart'
+
+
+def remember_active_part(doc):
+    """Save the most recent component view without changing geometry or Undo."""
+    import json
+    from .assembly import _reference
+    try:
+        root = validate(doc)
+        view = Gui.getDocument(doc.Name).activeView()
+        session = isolation.current(view)
+        if session:
+            part = session.definition()
+            data = dict(version=1, mode='isolated', part=_reference(part),
+                        anchor=_reference(session.anchor_definition()), detached=session.allow_placed,
+                        path=[_reference(isolation._resolve(ref)) for ref in session.edit_path])
+        else:
+            part, parent, sub = view.getActiveObject(_KEY, False)
+            if parent != root or not sub:
+                return  # File-level/hidden views do not erase the last active part.
+            resolved, path = hierarchy.resolve(doc, sub.rstrip('.').split('.'))
+            if resolved != part: return
+            data = dict(version=1, mode='placed', part=_reference(part), path=[_reference(obj) for obj in path])
+        value = json.dumps(data, sort_keys=True)
+        meta = dict(doc.Meta)
+        if meta.get(ACTIVE_PART_BOOKMARK) != value:
+            meta[ACTIVE_PART_BOOKMARK] = value
+            doc.Meta = meta
+    except (ValueError, AttributeError, RuntimeError, ReferenceError):
+        return  # An unavailable view must not prevent saving the document.
+
+
+def restore_active_part(doc):
+    import json
+    from . import assembly, external
+    try:
+        data = json.loads(doc.Meta.get(ACTIVE_PART_BOOKMARK, '{}'))
+        if data.get('version') != 1: return False
+        part = assembly._resolve_reference(data['part'])
+        if part is None or part not in external.available_definitions(validate(doc)): return False
+        path = tuple(assembly._resolve_reference(ref) for ref in data.get('path', ()))
+        if any(obj is None for obj in path): return False
+        if data['mode'] == 'placed':
+            if not path or hierarchy.resolve(doc, path)[0] != part: return False
+            edit(path)
+        elif data['mode'] == 'isolated':
+            anchor = assembly._resolve_reference(data['anchor'])
+            if anchor not in external.available_definitions(validate(doc)) or assembly.resolve(anchor, path) != part: return False
+            if path: edit_in_assembly(doc, anchor, path)
+            else: edit_unused(doc, part, detached=bool(data.get('detached')))
+        else: return False
+        return True
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, ReferenceError):
+        return False
 
 
 def edit_file(doc):
@@ -216,6 +274,17 @@ def edit_feature(doc, feature):
     definition, path = context_path(doc)
     if feature not in history(doc, definition):
         raise ValueError("The feature must belong to the edited component")
+    from . import transforms, trim_body, mesh_shape
+    proxy = getattr(feature, 'Proxy', None)
+    if isinstance(proxy, transforms.Transform):
+        from . import transform_task
+        return transform_task.show(feature=feature)
+    if isinstance(proxy, trim_body.Trim):
+        from . import trim_task
+        return trim_task.show(feature)
+    if isinstance(proxy, mesh_shape.Meshed):
+        from . import mesh_task
+        return mesh_task.show(feature)
     from . import reference_image
     if reference_image.is_image(feature):
         from . import reference_image_task

@@ -449,6 +449,8 @@ def save_document(doc, filename=None, *, label=None):
     if App.GuiUp:
         import FreeCADGui as Gui
         gui_doc = Gui.getDocument(doc.Name)
+        from . import editing
+        editing.remember_active_part(doc)
     old_filename, old_label = doc.FileName, root.Label
     try:
         doc.FileName = str(path)

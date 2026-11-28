@@ -961,6 +961,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         assembly.remember(binding[0], owner, route)
 
     def slotStartSaveDocument(self, doc, *args):
+        editing.remember_active_part(doc)
         # Save the current view's choice, including when the last explicit choice
         # was made in a different view of this file. Other files keep their bookmark.
         current = self._current()
