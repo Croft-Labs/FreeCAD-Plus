@@ -1,0 +1,11 @@
+test_edit_mode_rename_and_undo_refresh_without_accumulating_suffix (TestHistoryOperations.TestHistoryOperations.test_edit_mode_rename_and_undo_refresh_without_accumulating_suffix) ... ok
+test_icon_cache_and_untouched_coordinate_and_sketch_rows (TestHistoryOperations.TestHistoryOperations.test_icon_cache_and_untouched_coordinate_and_sketch_rows) ... ok
+test_native_additive_predecessor_subtractive_and_surface (TestHistoryOperations.TestHistoryOperations.test_native_additive_predecessor_subtractive_and_surface) ... ok
+test_real_extrusions_labels_icons_selection_and_visibility (TestHistoryOperations.TestHistoryOperations.test_real_extrusions_labels_icons_selection_and_visibility) ... ok
+test_save_reopen_keeps_raw_labels_and_derived_presentation (TestHistoryOperations.TestHistoryOperations.test_save_reopen_keeps_raw_labels_and_derived_presentation) ... ok
+test_supported_engine_schema_sheet_and_unknown_settings (TestHistoryOperations.TestHistoryOperations.test_supported_engine_schema_sheet_and_unknown_settings) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 6.925s
+
+OK

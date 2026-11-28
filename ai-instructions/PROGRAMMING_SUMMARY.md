@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## History operation display — installed November 27, 2026
+
+History modeling glyphs use yellow for New/Add and red for Subtract. Display-only
+operation suffixes retain saved names and object/reference identities. Supported
+Plus operation settings and explicit native predecessor/output contracts drive
+classification, with unknown features left unchanged. Icon copies are cached;
+source/toolbar icons are untouched. All 20 source and 20 installed checks pass,
+including real feature edit/Undo, save/reopen, selection and visibility behavior.
+Three installed payloads match. See [evidence](evidence/history-operations-20261127/README.md).
+
 ## Assembly visibility and selection fixes — installed November 27, 2026
 
 Inline child eyes preserve native triangles, indentation, selection and Edit

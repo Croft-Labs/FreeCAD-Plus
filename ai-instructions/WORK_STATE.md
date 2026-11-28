@@ -1,3 +1,13 @@
+# November 27: History operation colors and labels installed
+
+The approved palette correction is installed: yellow New/Add and red Subtract,
+with display-only `(new body)`, `(new surface)`, `(add)` and `(subtract)` suffixes.
+Saved names, native source/toolbar icons and History reference identities remain
+unchanged. All 20 source and 20 installed checks pass; three payload hashes match,
+owner settings/shortcut are unchanged. See [evidence](evidence/history-operations-20261127/README.md).
+Transformation workflow `57a9ef350816` and plane visibility `40f73afdef86` remain
+separately pending approval.
+
 # November 27: Assembly visibility, Clone picking and Appearance edges installed
 
 All three approved previews are implemented and installed. Assembly child eyes

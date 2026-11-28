@@ -1091,6 +1091,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 item.setText(0, row.label)
                 obj = lookup(row.ref)
                 item.setIcon(0, QtGui.QIcon(':/icons/freecad-plus.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
+                if index == 2 and row.kind == 'history':
+                    from .history_operations import presentation
+                    text, icon = presentation(obj, row.label, item.icon(0))
+                    item.setText(0, text)
+                    item.setIcon(0, icon)
                 if row.kind == 'history_group' and row.label in ('Axes', 'Planes') and row.children:
                     item.setIcon(0, lookup(row.children[0].ref).ViewObject.Icon)
                 if index == 2 and obj.TypeId == 'App::Point':

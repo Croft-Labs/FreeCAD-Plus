@@ -1,3 +1,13 @@
+# November 27: History operation display
+
+- [x] Use yellow New/Add and red Subtract glyphs in History only.
+- [x] Append operation/output suffixes without changing saved labels or identities.
+- [x] Refresh after feature edits, rename, Undo and reopening; retain History interactions.
+- [x] Build/install three Python payloads; pass 20 source and 20 installed checks.
+
+See [delivery evidence](evidence/history-operations-20261127/README.md).
+Whole-body transformations and default/task plane visibility remain pending approval.
+
 # November 27: Assembly visibility and selection fixes
 
 - [x] Place child visibility eyes between native triangle and component icon.

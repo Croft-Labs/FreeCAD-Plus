@@ -1,5 +1,21 @@
 # Component panel
 
+## History modeling operation display — approved November 27, 2026
+
+Modeling feature icons use **yellow for both New and Add**, and **red for Subtract**.
+This owner correction supersedes the earlier blue/green/red proposal. Retain the
+recognizable tool glyph, shading and outlines; keep normal row text color.
+Append the saved operation as a display-only suffix: `extrude001 (new body)`,
+`extrude002 (add)`, `extrude003 (subtract)`. New sheets use `(new surface)`.
+
+Apply to Plus Extrude, Revolve, Loft and Thicken and explicitly supported native
+modeling equivalents. Classify native additive features using their preceding
+solid, not their name. Refresh when operation/output or custom label changes.
+Do not alter stored Label/Name, source icons, toolbar icons or reference identities.
+Coordinates, sketches and features without a supported operation retain their
+presentation. History editing, selection, eyes, menus and reorder retain their
+existing behavior. See [delivery evidence](../evidence/history-operations-20261127/README.md).
+
 ## Assembly visibility eyes and row text — approved November 27, 2026
 
 The active assembly root has no visibility eye and remains visible. Its Hidden

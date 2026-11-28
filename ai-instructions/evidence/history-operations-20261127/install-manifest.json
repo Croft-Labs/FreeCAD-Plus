@@ -1,0 +1,27 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "de3ffd1b72009c7ebeb1fb9474dc6ba52f6314b5ec0762b5ae20e64597c2324e",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/TestHistoryOperations.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestHistoryOperations.py",
+      "before": null,
+      "installed": "709f262c23adc2cb830c79022deef26d7b732d1ec6b9fa3bb71556c93bf3db9a"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/history_operations.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\history_operations.py",
+      "before": null,
+      "installed": "5ac70af4dea6f0b28faae9586ed91604e35d67548803501149059a2cf561adfe"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+      "before": "663d1b23427c739017861496fbb4843f54ba775dd73d4550ff3baa15c54ba276",
+      "installed": "2d61135e5ff5225f05ea133e5410da5bba63e725a7b724c67a06ad05c8ba3a1f"
+    }
+  ]
+}

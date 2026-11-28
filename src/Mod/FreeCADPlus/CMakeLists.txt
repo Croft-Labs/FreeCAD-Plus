@@ -32,6 +32,7 @@ set(FreeCADPlus_SRCS
     TestDesignToolbarUpdate.py
     TestReferenceImage.py
     TestHistoryAppearance.py
+    TestHistoryOperations.py
     TestPendingWorkflows.py
     TestInstanceDisplay.py
     TestInstanceQuantity.py
@@ -98,6 +99,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/legacy_hierarchy.py
     freecad_plus/external.py
     freecad_plus/panel.py
+    freecad_plus/history_operations.py
     freecad_plus/appearance.py
     freecad_plus/appearance_command.py
     freecad_plus/reference_image.py

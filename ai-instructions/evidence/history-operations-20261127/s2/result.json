@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "modules": {
+    "history_operations": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\history_operations.py",
+    "panel": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  "tests": 6,
+  "errors": 0,
+  "failures": 0
+}
