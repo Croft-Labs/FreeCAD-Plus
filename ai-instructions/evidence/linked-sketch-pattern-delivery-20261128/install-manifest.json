@@ -1,0 +1,45 @@
+{
+  "verified_run": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s10",
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7f89d152f24106bd71e995a174475a78ace14191b24e72f84f8fece4c0b8f601",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "lib/Sketcher.pyd",
+      "before": "ce7b2f95cb509dcdcb1389bd3ab307c35068dafc1cd7e23eab54454111398584",
+      "installed": "80ba618183600be7d2dda00c9bd0983a2b508419d3d5639a71bca8f0354cd3ea"
+    },
+    {
+      "path": "lib/SketcherGui.pyd",
+      "before": "321aa6a4261ebcaa4b28cd296eb2f58addfe1202315f5477f7a0342718d3ed65",
+      "installed": "e247cefbfd5aea3e36976db3f94a555fddcf7f2fa7ec73abbee9f8f3c0e83238"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestLinkedSketchPattern.py",
+      "before": null,
+      "installed": "a89c2e17f0f4933dd97160794dee293eae4ca9013777ac0e006492a37f21b5b2"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestSketchPattern.py",
+      "before": "d9ad6d5d7763a53b35e90d0f081cc31d12050035b0fbb028c3e48153564c4b2c",
+      "installed": "4e91294f574a05efdc7a837ae0753901db6d04ac44d08f89cf6a014086d06254"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py",
+      "before": "2872eb8bc32ff28ce38051959505e319765ff449fc55e8852103aa11bc7ee492",
+      "installed": "147d60e8d02affd5aa71ef3e98972a72b4b0df43579ef823ca2be5f29c05d00c"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_linked.py",
+      "before": null,
+      "installed": "cb05f8dcccc4a4e817ae39f71ad4ece4212e181bee0282ed83abf58b0421616a"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py",
+      "before": "df5821a9e2ea2100bf9550b10700e9795821fceff4d4b769de1992e72baca97c",
+      "installed": "3b7ddf48449419b73a79957ea5644beb13bce48cc3fde76aac5b98b95e5f7b65"
+    }
+  ]
+}

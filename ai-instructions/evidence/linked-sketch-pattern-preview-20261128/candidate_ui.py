@@ -210,8 +210,10 @@ class PatternControls(InstalledPatternControls):
         self.make_independent=QtWidgets.QPushButton('Make independent…')
         self.make_independent.clicked.connect(self.confirm_independent)
         at=self.layout().indexOf(self.summary)
-        for offset,widget in enumerate((self.mode_note,self.advanced,self.make_independent)):
-            self.layout().insertWidget(at+offset,widget)
+        self.layout().insertWidget(at,self.mode_note)
+        actions=QtWidgets.QHBoxLayout()
+        actions.addWidget(self.advanced);actions.addWidget(self.make_independent)
+        self.layout().insertLayout(at+1,actions)
         self.refresh_behavior()
 
     def set_editing(self,linked=True):

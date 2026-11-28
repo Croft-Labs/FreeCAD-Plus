@@ -1,0 +1,13 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/15] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestLinkedSketchPattern.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestLinkedSketchPattern.py
+[2/15] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/8] Automatic MOC and UIC for target Sketcher
+[4/7] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchObjectPatterns.cpp.obj
+[5/7] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchObject.cpp.obj
+[6/7] Linking CXX shared library Mod\Sketcher\Sketcher.pyd

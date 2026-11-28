@@ -1,0 +1,20 @@
+[
+  {
+    "instances": 10,
+    "create_seconds": 0.004011600001831539,
+    "solve_seconds": 0.0005228000009083189,
+    "constraints": 0
+  },
+  {
+    "instances": 50,
+    "create_seconds": 0.010758199998235796,
+    "solve_seconds": 0.00138639999931911,
+    "constraints": 0
+  },
+  {
+    "instances": 100,
+    "create_seconds": 0.018522700003813952,
+    "solve_seconds": 0.002519699999538716,
+    "constraints": 0
+  }
+]

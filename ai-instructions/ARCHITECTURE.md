@@ -1,5 +1,35 @@
 # Component/document architecture
 
+## Associative sketch patterns — November 28, 2026
+
+`sketch_pattern_linked.py` extends version-1 `PatternDefinitions` with explicit
+`behavior=linked`; existing records keep their constraint behavior. Persistent
+geometry facade IDs and instance slots retain surviving output references.
+Generated geometry carries the serialized `PatternGenerated` geometry-mode flag.
+`Sketch::setUpSketch` puts those parameters in its fixed set without adding Block,
+coincidence, equality, dimension or other substitute solver constraints.
+
+`SketchObjectPatterns.cpp` invokes a synchronous dependency plan during native
+solve and drag. Driving constraints connect editable source components; generated
+copies and downstream components form an acyclic graph. Solve each editable phase,
+generate exact transformed curves, then solve dependent geometry. Retain native
+diagnostics and reference dimensions; commit geometry only after successful phases.
+Source/copy feedback and independent driving constraints on generated copies fail
+explicitly. Temporary drag regenerates from the saved origin each frame.
+
+The native Elements row uses the saved recipe. Viewport icons are display-only
+constraint facades; picking maps to actual generated edges and double-click opens
+the saved group. Display indices never enter constraint-edit commands. Removing a
+source, direction, partial group, or referenced instance is guarded before mutation.
+Whole-sketch consumers remain supported; deleting outputs used by explicit LinkSub
+consumers is conservatively refused. Legacy conversion and Make independent each
+use one Undo transaction and preserve original source constraints.
+
+Advanced options and Make independent share a horizontal action row. Advanced
+Cancel discards drafts; Apply resets picks and defaults to Linked. Old recipes are
+converted only on explicit mode choice and Apply. No document observer or iterative
+recompute feedback loop implements the geometry dependency.
+
 ## Plus icon and Windows association — November 25, 2026
 
 `freecad-plus.svg` is the approved lower-right green-plus overlay, separate from

@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 98, in plan
+    for node in nodes:level(node)
+                      ^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 96, in level
+    levels[node]=max((level(n)+1 for n in nodes[node]),default=0)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 96, in <genexpr>
+    levels[node]=max((level(n)+1 for n in nodes[node]),default=0)
+                      ^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 96, in level
+    levels[node]=max((level(n)+1 for n in nodes[node]),default=0)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 96, in <genexpr>
+    levels[node]=max((level(n)+1 for n in nodes[node]),default=0)
+                      ^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 94, in level
+    if node in visiting:raise ValueError('A pattern copy cannot constrain its source or direction: this creates a dependency cycle.')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: A pattern copy cannot constrain its source or direction: this creates a dependency cycle.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_linked.py", line 89, in plan
+    raise ValueError('Generated pattern curves cannot be independently constrained. Edit the source or make the pattern independent.')
+<class 'ValueError'>: Generated pattern curves cannot be independently constrained. Edit the source or make the pattern independent.
+NETGEN_2D failed on sub-shape #3 with error COMPERR_EXCEPTION
+NETGEN_2D failed on sub-shape #3 with error COMPERR_EXCEPTION

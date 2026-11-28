@@ -1,13 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
-## Linked sketch patterns — UI proposal November 28, 2026
+## Linked sketch patterns — installed November 28, 2026
 
-The owner requested associative sketch patterns that repeat solved source geometry
-without per-copy constraints. The native Qt proposal defaults to Linked, moves the
-existing constraint behavior into Advanced, and adds confirmed Make independent
-when editing. Eight UI-only checks pass. Production/installed code is unchanged;
-concrete preview approval, functional implementation and solver benchmarks remain
-pending. See [contract and direct screenshots](evidence/linked-sketch-pattern-preview-20261128/README.md).
+The approved linked sketch pattern workflow is implemented and installed. Advanced
+options and Make independent are side by side. New patterns generate exact copies
+of solved source geometry without per-copy constraints or independent solver
+unknowns; legacy mode remains in Advanced and existing files retain their behavior.
+
+All 35 final staged and 35 installed checks pass, plus the earlier 60-check
+geometry/legacy regression run. Seven source/build/app payload hashes match; owner
+settings and desktop shortcut are preserved. See
+[delivery evidence](evidence/linked-sketch-pattern-delivery-20261128/README.md).
 
 ## Approved mesh defaults and saved active part — installed November 27, 2026
 

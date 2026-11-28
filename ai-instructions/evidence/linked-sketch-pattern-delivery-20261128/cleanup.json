@@ -1,0 +1,26 @@
+{
+  "removed": [
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\b1",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\i1",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\runtime",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s1",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s10",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s2",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s3",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s4",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s5",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s6",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s7",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s8",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28-runtime\\s9",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28\\baseline",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\linked-pattern28\\candidate"
+  ],
+  "retained": [
+    "Reusable native build",
+    "Installed owner app",
+    "Owner profiles and desktop shortcut",
+    "linked-pattern28-runtime/rollback",
+    "Archived verification evidence"
+  ]
+}

@@ -1,5 +1,13 @@
 # Linked sketch pattern — native Qt UI proposal
 
+Owner follow-up approved the proposal with Advanced options and Make independent
+side by side, then explicitly instructed implementation. The corrected UI-only
+candidate was recaptured with fingerprint
+`bc2d8021b4c590d99afab26b46b8f4b56a68d75df8b55fb85f77986aeb5060d4`.
+No tool approval state was set on the owner's behalf. The original proposal record
+below is historical; [installed delivery](../linked-sketch-pattern-delivery-20261128/README.md)
+supersedes its pending statements.
+
 November 28, 2026. Owner requested implementing the suggested associative pattern
 workflow after reporting solver trouble with constraint-generated copies.
 The behavior is requested; approval of this concrete revised UI is pending under

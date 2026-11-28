@@ -1,0 +1,42 @@
+[
+  {
+    "path": "lib/Sketcher.pyd",
+    "build": "80ba618183600be7d2dda00c9bd0983a2b508419d3d5639a71bca8f0354cd3ea",
+    "installed": "80ba618183600be7d2dda00c9bd0983a2b508419d3d5639a71bca8f0354cd3ea"
+  },
+  {
+    "path": "lib/SketcherGui.pyd",
+    "build": "e247cefbfd5aea3e36976db3f94a555fddcf7f2fa7ec73abbee9f8f3c0e83238",
+    "installed": "e247cefbfd5aea3e36976db3f94a555fddcf7f2fa7ec73abbee9f8f3c0e83238"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestLinkedSketchPattern.py",
+    "build": "a89c2e17f0f4933dd97160794dee293eae4ca9013777ac0e006492a37f21b5b2",
+    "installed": "a89c2e17f0f4933dd97160794dee293eae4ca9013777ac0e006492a37f21b5b2",
+    "source": "a89c2e17f0f4933dd97160794dee293eae4ca9013777ac0e006492a37f21b5b2"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestSketchPattern.py",
+    "build": "4e91294f574a05efdc7a837ae0753901db6d04ac44d08f89cf6a014086d06254",
+    "installed": "4e91294f574a05efdc7a837ae0753901db6d04ac44d08f89cf6a014086d06254",
+    "source": "4e91294f574a05efdc7a837ae0753901db6d04ac44d08f89cf6a014086d06254"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py",
+    "build": "147d60e8d02affd5aa71ef3e98972a72b4b0df43579ef823ca2be5f29c05d00c",
+    "installed": "147d60e8d02affd5aa71ef3e98972a72b4b0df43579ef823ca2be5f29c05d00c",
+    "source": "147d60e8d02affd5aa71ef3e98972a72b4b0df43579ef823ca2be5f29c05d00c"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_linked.py",
+    "build": "cb05f8dcccc4a4e817ae39f71ad4ece4212e181bee0282ed83abf58b0421616a",
+    "installed": "cb05f8dcccc4a4e817ae39f71ad4ece4212e181bee0282ed83abf58b0421616a",
+    "source": "cb05f8dcccc4a4e817ae39f71ad4ece4212e181bee0282ed83abf58b0421616a"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py",
+    "build": "3b7ddf48449419b73a79957ea5644beb13bce48cc3fde76aac5b98b95e5f7b65",
+    "installed": "3b7ddf48449419b73a79957ea5644beb13bce48cc3fde76aac5b98b95e5f7b65",
+    "source": "3b7ddf48449419b73a79957ea5644beb13bce48cc3fde76aac5b98b95e5f7b65"
+  }
+]

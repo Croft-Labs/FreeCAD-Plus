@@ -1,6 +1,6 @@
 # Task panel
 
-## Linked sketch pattern — requested November 28, 2026
+## Linked sketch pattern — approved November 28, 2026
 
 Default new sketch patterns to generated copies linked to solved original curves,
 without duplicating internal constraints. Retain one editable group and existing
@@ -8,7 +8,8 @@ layout/dimension controls. Keep the old constraint-based behavior as an Advanced
 option; preserve old files until explicit conversion. Provide Make independent
 to detach generated curves at their current positions, with Undo and confirmation.
 Source geometry stays editable; generated copies cannot feed constraints back
-into their source. The concrete native UI proposal awaits preview approval;
+into their source. Place Advanced options and Make independent side by side.
+The owner explicitly approved this correction and implementation;
 see [contract and screenshots](../evidence/linked-sketch-pattern-preview-20261128/README.md).
 
 ## Mesh selection and defaults — approved and installed November 27, 2026

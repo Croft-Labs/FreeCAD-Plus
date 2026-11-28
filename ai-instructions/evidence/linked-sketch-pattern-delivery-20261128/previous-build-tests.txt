@@ -1,0 +1,11 @@
+test_list_reopens_populated_cancel_done_apply_and_undo (TestPatternEditing.TestPatternEditingTask.test_list_reopens_populated_cancel_done_apply_and_undo) ... ok
+test_viewport_icon_double_click (TestPatternEditing.TestPatternEditingTask.test_viewport_icon_double_click) ... ok
+test_grid12_spacing_equal_edits_undo_and_save (TestPatternBatching.TestPatternBatching.test_grid12_spacing_equal_edits_undo_and_save) ... ok
+test_grid20_circle_spacing_size_edits_and_undo (TestPatternBatching.TestPatternBatching.test_grid20_circle_spacing_size_edits_and_undo) ... ok
+test_radial_and_two_point_direction_with_mixed_construction (TestPatternBatching.TestPatternBatching.test_radial_and_two_point_direction_with_mixed_construction) ... ok
+test_redundancy_fallback_preserves_source_and_rejects_conflict (TestPatternBatching.TestPatternBatching.test_redundancy_fallback_preserves_source_and_rejects_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 55.995s
+
+OK
