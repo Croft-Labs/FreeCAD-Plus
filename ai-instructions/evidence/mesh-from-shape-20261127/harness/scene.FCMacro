@@ -1,0 +1,64 @@
+import os,sys,json,traceback,runpy,shutil
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,MeshPartGui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+module=runpy.run_path(str(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'mesh_ui.py'))
+
+def settle():Gui.updateGui();QtTest.QTest.qWait(100)
+
+def run():
+    result={'ok':False,'ui_prototype':module['PROPOSED']}
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1500,1050)
+        doc=App.newDocument('MeshPanelPreview')
+        obj=doc.addObject('Part::Feature','SampleBody');obj.Shape=Part.makeBox(30,20,12);doc.recompute()
+        before=(len(doc.Objects),doc.UndoCount,obj.Shape.Volume)
+        Gui.Selection.clearSelection();Gui.runCommand('MeshPart_Mesher');settle()
+        tess=win.findChild(QtWidgets.QWidget,'MeshPartGui__Tessellation');assert tess is not None
+        form=module['create_form'](tess)
+        # A standalone QWidget otherwise inherits Windows' dark Window palette
+        # while native FreeCAD Light task children use a light Base. Match the
+        # native task background consistently for both sides of this preview.
+        form.setObjectName('MeshPreviewSurface')
+        form.setStyleSheet('QWidget#MeshPreviewSurface { background: #efefef; color: #000000; }')
+        form.show();settle()
+        def shot(name):
+            settle();form.grab().save(str(out/(name+'.png')))
+        if module['PROPOSED']:
+            shot('empty')
+            form.add_source('Finished body','Solid');form.add_source('Support body','Solid')
+            form.surface.click();form.add_source('Curved sheet','Surface');shot('selected')
+            shutil.copyfile(out/'selected.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            form.add_source('Curved sheet','Surface');assert form.sources.count()==3
+            form.add_source('Support body','Solid',shift=True);assert form.sources.count()==2
+            form.add_source('Missing item','Solid',shift=True);assert form.sources.count()==2
+            form.set_error('The selected source has no faces. Select a solid, sheet or face.')
+            shot('invalid-source');assert not form.apply.isEnabled() and form.sources.count()==2
+            form.sync();form.sources.setCurrentRow(0);form.remove.click();assert form.sources.count()==1
+            form.clear.click();assert form.sources.count()==0
+            form.add_source('Delete test','Surface');form.sources.setCurrentRow(0)
+            QtTest.QTest.keyClick(form.sources,QtCore.Qt.Key_Delete);assert form.sources.count()==0
+            form.add_source('Finished body','Solid');form.surface.click()
+            form.tess.findChild(QtWidgets.QCheckBox,'relativeDeviation').setChecked(True)
+            form.apply.click();assert form.sources.count()==0 and form.solid.isChecked()
+            assert not form.tess.findChild(QtWidgets.QCheckBox,'relativeDeviation').isChecked()
+            assert not form.apply.isEnabled();shot('after-apply')
+            form.done.click();assert form.closed=='done'
+            form.add_source('Finished body','Solid');form.cancel.click();assert form.closed=='cancel'
+            assert before==(len(doc.Objects),doc.UndoCount,obj.Shape.Volume)
+            result['checks']=['empty collector','mixed solid and surface fixture rows','duplicate suppression','Shift removal only',
+                'invalid source retains list and blocks actions','Remove, Delete and Clear','Apply resets inputs and settings',
+                'empty Done closes','Cancel discards draft','no geometry or Undo changes']
+        else:
+            shot('current');shutil.copyfile(out/'current.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        form.close();Gui.Control.closeDialog();App.closeDocument(doc.Name);result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if Gui.Control.activeDialog():Gui.Control.closeDialog()
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

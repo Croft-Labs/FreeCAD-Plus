@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Baseline wrapper around the installed native Tessellation widget.
+PROPOSED = False
+from PySide6 import QtWidgets
+
+def create_form(tessellation):
+    form=QtWidgets.QWidget()
+    form.setWindowTitle('Mesh From Shape')
+    form.setAutoFillBackground(True)
+    layout=QtWidgets.QVBoxLayout(form)
+    buttons=QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Cancel)
+    layout.addWidget(buttons)
+    layout.addWidget(tessellation)
+    form.resize(460,760)
+    return form

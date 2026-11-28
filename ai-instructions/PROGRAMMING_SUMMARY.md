@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Mesh from Shape — pending preview November 27, 2026
+
+Native meshing creates an ownerless mesh and invalidates Plus panel projection.
+The proposed collector supports solids/surfaces after opening and routes results
+to component History. UI prototype only; implementation awaits approval. See
+[diagnosis and preview](evidence/mesh-from-shape-20261127/README.md).
+
 ## Part opening/activation camera correction — installed November 27, 2026
 
 Native fits now share the navigation animator, use a single exact camera target,

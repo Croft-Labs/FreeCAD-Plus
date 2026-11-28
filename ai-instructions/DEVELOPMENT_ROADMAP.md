@@ -1,3 +1,13 @@
+# November 27: Mesh from Shape
+
+- [x] Reproduce component ownership failure after native OK and fixture recovery.
+- [x] Render source-list task proposal and check its UI interactions.
+- [ ] Owner approval and combined/per-source output decision.
+- [ ] Implement component-owned meshing and verify geometry, History, Undo and persistence.
+- [ ] Install and verify the owner runtime after approval.
+
+[Diagnosis, preview and scope](evidence/mesh-from-shape-20261127/README.md).
+
 # November 27: Camera transition correction
 
 - [x] Reproduce mismatched fit endpoints, camera overwrite and origin-size feedback.

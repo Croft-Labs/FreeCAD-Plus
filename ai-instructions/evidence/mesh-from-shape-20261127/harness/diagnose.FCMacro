@@ -1,0 +1,66 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,editing,panel
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def settle():
+    Gui.updateGui();QtTest.QTest.qWait(180)
+
+def run():
+    result={'ok':False}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1500,1050)
+        doc=document.new_document('MeshShapeFixture');root=document.validate(doc);owner=root.Definitions[0]
+        body=owner.newObject('PartDesign::Body','Body');tip=body.newObject('PartDesign::Feature','FinishedBody')
+        tip.Shape=Part.makeBox(30,20,12);body.Tip=tip
+        sheet=owner.newObject('Part::Feature','Sheet');sheet.Shape=Part.makePlane(18,12,App.Vector(40,0,0))
+        doc.recompute();editing.edit((root.Group[0],))
+        widget=panel.show_panel();widget.refresh();widget.activate_assembly(owner);widget.tabs.setCurrentIndex(2)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();settle()
+        result['before_rows']=[t.topLevelItemCount() for t in widget.trees]
+        result['before_undo']=doc.UndoCount
+        import MeshPartGui
+        Gui.Selection.clearSelection();Gui.runCommand('MeshPart_Mesher');settle()
+        tess=next((w for w in win.findChildren(QtWidgets.QWidget) if 'Tessellation' in w.metaObject().className()),None)
+        result['tessellation_name']=tess.objectName() if tess else None
+        assert tess is not None
+        tess.grab().save(str(out/'current-panel.png'))
+        tree=widget.trees[2];tree.expandAll();settle()
+        item=next(item for item in widget._maps[2].values() if item.data(0,panel._ROLE).ref==panel.identity(tip))
+        tree.scrollToItem(item);settle()
+        QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,tree.visualItemRect(item).center())
+        result['history_click_after_open']=[{'object':s.ObjectName,'subnames':list(s.SubElementNames)} for s in Gui.Selection.getSelectionEx('',0)]
+        assert result['history_click_after_open']
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(body)
+        settle();result['selection_after_open']=[o.Name for o in Gui.Selection.getSelection()]
+        # Exercise the actual native OK path, not a replacement mesher.
+        buttons=[b.button(QtWidgets.QDialogButtonBox.Ok) for b in win.findChildren(QtWidgets.QDialogButtonBox)]
+        ok=next(b for b in buttons if b is not None and b.isVisible())
+        QtTest.QTest.mouseClick(ok,QtCore.Qt.LeftButton);settle();widget.refresh()
+        meshes=[o for o in doc.Objects if o.isDerivedFrom('Mesh::Feature')]
+        result['meshes']=[{'name':o.Name,'facets':o.Mesh.CountFacets,'owner':getattr(o.getParentGeoFeatureGroup(),'Name',None)} for o in meshes]
+        result['after_rows']=[t.topLevelItemCount() for t in widget.trees]
+        result['after_undo']=doc.UndoCount;result['task_closed']=not Gui.Control.activeDialog()
+        try:document.validate(doc);result['validation']='valid'
+        except ValueError as e:result['validation']=str(e)
+        widget.grab().save(str(out/'broken-components.png'))
+        # Probe recovery only in this disposable fixture; no production fix.
+        for mesh in meshes:owner.addObject(mesh)
+        doc.recompute();settle();document.validate(doc);widget.refresh()
+        result['recovered_rows']=[t.topLevelItemCount() for t in widget.trees]
+        result['mesh_in_history']=all(m in document.history(doc,owner) for m in meshes)
+        widget.grab().save(str(out/'fixture-ownership-recovery.png'))
+        result['ok']=bool(meshes) and result['validation']=='Document contains content outside component ownership'
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if Gui.Control.activeDialog():Gui.Control.closeDialog()
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

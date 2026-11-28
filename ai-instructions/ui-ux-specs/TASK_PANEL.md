@@ -1,5 +1,14 @@
 # Task panel
 
+## Mesh from Shape — requested November 27, 2026; preview pending
+
+Owner requests source selection after opening, one/many solids or surfaces in
+one operation, and correction of the Components panel failure after meshing.
+Proposed collector, preservation contract, direct screenshots and pending
+approval are recorded in [the preview evidence](../evidence/mesh-from-shape-20261127/README.md).
+The preview assumes one combined mesh; the output-count preference is not yet
+confirmed. No production implementation or installed update is claimed.
+
 ## Clone viewport picks and Appearance boundaries — approved November 27, 2026
 
 Clone accepts a viewport click on a body, surface or sketch of a direct child

@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "before_rows": [
+    1,
+    1,
+    4
+  ],
+  "before_undo": 1,
+  "tessellation_name": "MeshPartGui__Tessellation",
+  "history_click_after_open": [
+    {
+      "object": "File",
+      "subnames": [
+        "Part001Instance.Body.FinishedBody."
+      ]
+    }
+  ],
+  "selection_after_open": [
+    "Body"
+  ],
+  "meshes": [
+    {
+      "name": "Mesh",
+      "facets": 12,
+      "owner": null
+    }
+  ],
+  "after_rows": [
+    0,
+    1,
+    0
+  ],
+  "after_undo": 2,
+  "task_closed": true,
+  "validation": "Document contains content outside component ownership",
+  "recovered_rows": [
+    1,
+    1,
+    5
+  ],
+  "mesh_in_history": true
+}

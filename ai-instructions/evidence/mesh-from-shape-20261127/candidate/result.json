@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "checks": [
+    "empty collector",
+    "mixed solid and surface fixture rows",
+    "duplicate suppression",
+    "Shift removal only",
+    "invalid source retains list and blocks actions",
+    "Remove, Delete and Clear",
+    "Apply resets inputs and settings",
+    "empty Done closes",
+    "Cancel discards draft",
+    "no geometry or Undo changes"
+  ]
+}

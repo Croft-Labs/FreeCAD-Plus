@@ -1,3 +1,13 @@
+# November 27: Mesh from Shape diagnosis and preview — pending approval
+
+Reproduced native mesh creation outside component ownership, causing invalid
+document projection and empty/stale Components trees. Fixture-only ownership
+recovery restores History. Prepared a native Qt source-list prototype with
+post-open solid/surface picking and bottom Done/Apply/Cancel. Ten UI check groups
+pass; no backend changes or installation. Optional combined/per-source output
+question remains unanswered; preview assumes combined. See
+[evidence and contract](evidence/mesh-from-shape-20261127/README.md).
+
 # November 27: Part camera transitions corrected and installed
 
 Opening/activating parts no longer triggers competing camera restoration and fit
