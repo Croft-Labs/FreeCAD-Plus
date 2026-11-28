@@ -1,5 +1,6 @@
 from PySide6 import QtCore, QtWidgets
 from .task_status import TaskStatus
+from .quantity_fields import QuantityNumber
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
@@ -43,7 +44,7 @@ class Form(QtWidgets.QGroupBox):
         plane_note = QtWidgets.QLabel('Planes extend infinitely; their displayed rectangle does not limit the trim.')
         plane_note.setWordWrap(True);plane_layout.addRow(plane_note);root.addWidget(self.plane_group)
         row = QtWidgets.QFormLayout()
-        self.offset = QtWidgets.QDoubleSpinBox();self.offset.setRange(-100000,100000);self.offset.setDecimals(2)
+        self.offset = QuantityNumber();self.offset.setRange(-100000,100000);self.offset.setDecimals(2)
         self.offset.setSuffix(' mm');row.addRow('Offset',self.offset);root.addLayout(row)
         label('Positive offset follows the tool normal shown in the view.')
         self.reverse = QtWidgets.QCheckBox('Reverse — switch side to remove');root.addWidget(self.reverse)
@@ -96,5 +97,5 @@ class Form(QtWidgets.QGroupBox):
 
     def reset(self):
         self.valid_example=True;self.target.clear();self.surfaces.clear();self.mode.setCurrentIndex(0)
-        self.plane.setCurrentIndex(0);self.reference.clear();self.offset.setValue(0)
+        self.plane.setCurrentIndex(0);self.reference.clear();self.offset.setSuffix(' mm');self.offset.setValue(0)
         self.reverse.setChecked(False);self.preview.setChecked(True);self.sync()

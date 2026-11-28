@@ -8,6 +8,7 @@ set(FreeCADPlus_SRCS
     TestMeshSettings.py
     TestLinkedSketchPattern.py
     TestBodyPatternUnits.py
+    TestWorkflowUnits.py
     TestActivePartBookmark.py
     freecad_plus/transforms.py
     freecad_plus/transform_ui.py
@@ -301,3 +302,4 @@ install(FILES TestMeshSettings.py TestActivePartBookmark.py DESTINATION Mod/Free
 install(FILES freecad_plus/sketch_pattern_linked.py DESTINATION Mod/FreeCADPlus/freecad_plus)
 install(FILES TestLinkedSketchPattern.py DESTINATION Mod/FreeCADPlus)
 install(FILES TestBodyPatternUnits.py DESTINATION Mod/FreeCADPlus)
+install(FILES TestWorkflowUnits.py DESTINATION Mod/FreeCADPlus)

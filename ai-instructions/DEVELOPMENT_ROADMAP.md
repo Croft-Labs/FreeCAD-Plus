@@ -1,5 +1,12 @@
 # November 28: Body-pattern units delivered
 
+## Linear units across workflows — verified November 28, 2026
+
+Audited Plus length fields and repaired the remaining fixed-mm Trim Body offset.
+Inch entry, saved units and geometry pass all 24 installed checks; other audited
+length controls already support inches. See
+[workflow units evidence](evidence/workflow-units-20261128/README.md).
+
 Length fields now accept inches and preserve the entered unit when editing saved
 patterns. Ten installed checks pass; source/build/app hashes match. See
 [unit-entry repair evidence](evidence/body-pattern-units-20261128/README.md).

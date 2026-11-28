@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Linear units across workflows — verified November 28, 2026
+
+Audited Plus length fields and repaired the remaining fixed-mm Trim Body offset.
+Inch entry, saved units and geometry pass all 24 installed checks; other audited
+length controls already support inches. See
+[workflow units evidence](evidence/workflow-units-20261128/README.md).
+
 ## Body-pattern inch entry — fixed November 28, 2026
 
 Linear, Mirror, Polar origin and Multi-transform length fields now accept explicit

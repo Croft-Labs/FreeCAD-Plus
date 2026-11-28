@@ -1,0 +1,30 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "235cab2a2a63d70ef12cd31bf8dddcbf01e15c3dccee8f529d42808c6e5bc950",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "freecad_plus/trim_ui.py",
+      "before": "d6f015b4427be9cf8ba426f8905e9bb368c9a84f55061d09661b3a8456b4203d",
+      "source": "9025883e1b7300149c038ae7b8131854d90902d4de979caeebff36791d9806cc",
+      "build": "9025883e1b7300149c038ae7b8131854d90902d4de979caeebff36791d9806cc",
+      "installed": "9025883e1b7300149c038ae7b8131854d90902d4de979caeebff36791d9806cc"
+    },
+    {
+      "path": "freecad_plus/trim_task.py",
+      "before": "805f161a4507a533f3d75a533d753a4cb9e54d9378bd0c8af7d6ce0ad9e7f6c6",
+      "source": "d89d80013e479052f853e4e076f1554a579e366dcd6696bebfc0b595311fb776",
+      "build": "d89d80013e479052f853e4e076f1554a579e366dcd6696bebfc0b595311fb776",
+      "installed": "d89d80013e479052f853e4e076f1554a579e366dcd6696bebfc0b595311fb776"
+    },
+    {
+      "path": "TestWorkflowUnits.py",
+      "before": null,
+      "source": "9c8b3dfd17000042a3f1547d14cfb2cb6451fbcf7318790365943cf0a24bf354",
+      "build": "9c8b3dfd17000042a3f1547d14cfb2cb6451fbcf7318790365943cf0a24bf354",
+      "installed": "9c8b3dfd17000042a3f1547d14cfb2cb6451fbcf7318790365943cf0a24bf354"
+    }
+  ]
+}

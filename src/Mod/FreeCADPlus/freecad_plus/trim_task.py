@@ -24,11 +24,16 @@ class TrimTask(QtCore.QObject):
         self.form.preview.toggled.connect(self.schedule);self.form.reverse.toggled.connect(self.schedule)
         self.form.mode.currentIndexChanged.connect(self.schedule);self.form.plane.currentIndexChanged.connect(self.schedule)
         self.form.offset.editingFinished.connect(self.schedule)
+        self.form.offset.committed.connect(self.schedule)
         if feature:
             obj,subs=feature.TrimTarget;self.target=(obj,subs[0] if subs else '')
             values=json.loads(feature.TrimSettings);refs=planes.flatten(feature.TrimTools)
             self.form.mode.setCurrentIndex(values['mode']);self.form.plane.setCurrentIndex(values['plane'])
             self.form.offset.setValue(values['offset']);self.form.reverse.setChecked(values['reverse'])
+            unit=values.get('offset_unit','mm')
+            try:
+                if App.Units.Quantity('1 '+unit).Unit==self.form.offset._dimension:self.form.offset.setSuffix(unit)
+            except (ValueError,TypeError,RuntimeError):pass
             if values['mode']==1:self.plane_ref=refs[0] if refs else None
             else:self.refs=refs
             self.pick='tools'
@@ -77,7 +82,12 @@ class TrimTask(QtCore.QObject):
             Gui.Selection.removeSelection(doc,name,sub);self.fields()
         except Exception as exc:self.form.status.setError(str(exc))
         finally:self.busy=False
-    def settings(self):return dict(mode=self.form.mode.currentIndex(),plane=self.form.plane.currentIndex(),offset=self.form.offset.value(),reverse=self.form.reverse.isChecked())
+    def settings(self,commit=False):
+        if commit:
+            if not self.form.offset.hasAcceptableInput():raise ValueError('Enter a valid offset length, such as 0.25 in.')
+            self.form.offset.interpretText()
+        return dict(mode=self.form.mode.currentIndex(),plane=self.form.plane.currentIndex(),offset=self.form.offset.value(),
+                    offset_unit=self.form.offset._unit,reverse=self.form.reverse.isChecked())
     def tools(self):return ([self.plane_ref] if self.plane_ref else []) if self.form.mode.currentIndex()==1 else self.refs
     def schedule(self,*args):
         if not self.closed:self.timer.start(60)
@@ -100,7 +110,7 @@ class TrimTask(QtCore.QObject):
         try:
             self.check();self.busy=True;self.preview.clear();self.waste.clear()
             if self.target is None:raise ValueError('Choose a target body')
-            self.result=trim_body.save(self.doc,self.target,self.tools(),self.settings(),self.feature)
+            self.result=trim_body.save(self.doc,self.target,self.tools(),self.settings(commit=True),self.feature)
             self.feature=None;self.target=None;self.refs=[];self.plane_ref=None;self.pick='target';self.form.reset();self.fields()
             if panel._panel:panel._panel.refresh()
             return True

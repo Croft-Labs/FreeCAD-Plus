@@ -1792,3 +1792,13 @@ Each image appears in component History. Double-click and Edit reference image
 reopen its populated task. History offers Hide/Show and Delete, with native Undo.
 Images follow their attached planes after recompute and reopen. A missing plane
 can be replaced in the image task without making the Components panel disappear.
+
+### Linear-dimension entry across workflows — November 28, 2026
+
+Owner requires linear dimensions throughout Plus workflows to accept explicit
+inches (for example `0.25 in`), preserving correct physical values in previews,
+results and saved files. Apply must validate and commit pending input. Trim Body
+now follows the shared quantity-entry behavior, including saved presentation units,
+reset and legacy millimeter recipes. Angular fields, direction ratios and counts
+retain their existing dimensions. See the
+[audit and installed verification](../evidence/workflow-units-20261128/README.md).

@@ -1,0 +1,29 @@
+test_instance_positions_spacing_radius_and_movement_parser (TestWorkflowUnits.TestWorkflowUnits.test_instance_positions_spacing_radius_and_movement_parser) ... ok
+test_mesh_main_and_advanced_linear_fields (TestWorkflowUnits.TestWorkflowUnits.test_mesh_main_and_advanced_linear_fields) ... ok
+test_modeling_and_plane_task_length_controls (TestWorkflowUnits.TestWorkflowUnits.test_modeling_and_plane_task_length_controls) ... ok
+test_reference_image_and_sketch_pattern_fields (TestWorkflowUnits.TestWorkflowUnits.test_reference_image_and_sketch_pattern_fields) ... ok
+test_trim_offset_geometry_reset_undo_and_saved_edit (TestWorkflowUnits.TestWorkflowUnits.test_trim_offset_geometry_reset_undo_and_saved_edit) ... ok
+test_trim_pending_input_validation_and_legacy_settings (TestWorkflowUnits.TestWorkflowUnits.test_trim_pending_input_validation_and_legacy_settings) ... ok
+test_bare_number_uses_current_unit_and_invalid_is_rejected (TestSpacingUnits.TestQuantityControls.test_bare_number_uses_current_unit_and_invalid_is_rejected) ... ok
+test_existing_precision_and_compatible_expression (TestSpacingUnits.TestQuantityControls.test_existing_precision_and_compatible_expression) ... ok
+test_metadata_undo_copy_and_reopen (TestSpacingUnits.TestQuantityControls.test_metadata_undo_copy_and_reopen) ... ok
+test_six_decimals_units_and_steps (TestSpacingUnits.TestQuantityControls.test_six_decimals_units_and_steps) ... ok
+test_bound_native_property_retains_units (TestSpacingUnits.TestNativeUnits.test_bound_native_property_retains_units) ... ok
+test_invalid_units_do_not_create_result_and_legacy_recipes_load (TestBodyPatternUnits.TestBodyPatternUnits.test_invalid_units_do_not_create_result_and_legacy_recipes_load) ... ok
+test_linear_keyboard_precision_geometry_and_reset (TestBodyPatternUnits.TestBodyPatternUnits.test_linear_keyboard_precision_geometry_and_reset) ... ok
+test_mirror_polar_and_multi_transform_units_follow_steps (TestBodyPatternUnits.TestBodyPatternUnits.test_mirror_polar_and_multi_transform_units_follow_steps) ... ok
+test_overall_length_sheet_and_immediate_apply (TestBodyPatternUnits.TestBodyPatternUnits.test_overall_length_sheet_and_immediate_apply) ... ok
+test_saved_units_reopen_edit_and_cancel (TestBodyPatternUnits.TestBodyPatternUnits.test_saved_units_reopen_edit_and_cancel) ... ok
+test_defaults_cancel_apply_and_new_task (TestMeshSettings.TestMeshSettings.test_defaults_cancel_apply_and_new_task) ... ok
+test_mixed_exact_sources_and_duplicate_coverage (TestMeshSettings.TestMeshSettings.test_mixed_exact_sources_and_duplicate_coverage) ... ok
+test_modeling_ribbon_buttons_open_whole_shape_tasks (TestMeshSettings.TestMeshSettings.test_modeling_ribbon_buttons_open_whole_shape_tasks) ... ok
+test_nonstandard_fields_and_defaults_reset (TestMeshSettings.TestMeshSettings.test_nonstandard_fields_and_defaults_reset) ... ok
+test_old_quantity_recipe_and_invalid_saved_control (TestMeshSettings.TestMeshSettings.test_old_quantity_recipe_and_invalid_saved_control) ... ok
+test_promoted_sheet_preserves_face_material_and_transparency (TestMeshSettings.TestMeshSettings.test_promoted_sheet_preserves_face_material_and_transparency) ... ok
+test_saved_recipe_reopens_in_history_without_overwriting_defaults (TestMeshSettings.TestMeshSettings.test_saved_recipe_reopens_in_history_without_overwriting_defaults) ... ok
+test_transformation_and_trim_history_edit_routing (TestMeshSettings.TestMeshSettings.test_transformation_and_trim_history_edit_routing) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 19.527s
+
+OK
