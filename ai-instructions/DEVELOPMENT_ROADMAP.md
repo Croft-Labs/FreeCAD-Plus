@@ -1,3 +1,12 @@
+# November 27: Intersection curve selection revision
+
+- [x] Remove Pick modes in preview; specify one mixed, earlier component-history collector.
+- [x] Render revised form/error/reset states and verify nine UI check groups.
+- [ ] Owner implementation approval, linked intersections and whole-source update correction.
+- [ ] Native eligibility, geometry, persistence/Undo and installed validation.
+
+[Revised contract](evidence/intersection-unified-20261127/README.md).
+
 # November 27: Clone appearance
 
 - [x] Reproduce lost source materials and render the proposed body/surface result.

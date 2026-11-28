@@ -1,0 +1,55 @@
+import os,sys,json,traceback,runpy,shutil
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+module=runpy.run_path(str(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'intersection_ui.py'))
+
+def settle():Gui.updateGui();QtTest.QTest.qWait(100)
+
+def run():
+    result={'ok':False,'ui_only':True,'revised':module.get('REVISED',False)}
+    try:
+        Gui.activateWorkbench('SketcherWorkbench')
+        doc=App.newDocument('IntersectionUIFixture');sketch=doc.addObject('Sketcher::SketchObject','SectionSketch')
+        sketch.addGeometry(Part.LineSegment(App.Vector(-5,-5,0),App.Vector(5,-5,0)),False)
+        doc.recompute();Gui.activeDocument().setEdit(sketch.Name);settle()
+        before=(sketch.GeometryCount,repr(sketch.ExternalGeometry),len(doc.Objects),doc.UndoCount)
+        form=module['Form']();form.resize(500,form.sizeHint().height());form.show();settle()
+        def shot(name):settle();assert form.grab().save(str(out/(name+'.png')))
+        if result['revised']:
+            assert not form.findChildren(QtWidgets.QComboBox)
+            shot('empty')
+            sources=['Guide sketch  /  Edge3','Housing  /  Face2','Rib  /  Edge7','Curved sheet  /  whole surface']
+        else:sources=['Organizer body  /  whole body','Cover surface  /  Face1','Guide curve  /  Edge1']
+        for source in sources:form.add_source(source)
+        shot('panel');shutil.copyfile(out/'panel.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        form.add_source(sources[0]);assert form.sources.count()==len(sources)
+        form.add_source(sources[0],True);assert form.sources.count()==len(sources)-1
+        form.add_source('Absent source',True);assert form.sources.count()==len(sources)-1
+        form.add_source(sources[0]);form.preview.setChecked(False);form.apply.click()
+        assert form.sources.count()==0 and form.preview.isChecked() and not form.apply.isEnabled()
+        shot('after-apply')
+        if result['revised']:
+            form.add_source('Guide sketch  /  Edge3')
+            form.show_error('Choose geometry from an earlier History item in Wire organizer. The active sketch, later features and other components cannot be used.')
+            assert form.sources.count()==1 and not form.apply.isEnabled() and not form.done.isEnabled()
+            shot('ineligible-source')
+            form.add_source('Housing  /  Face2');assert form.apply.isEnabled() and form.done.isEnabled()
+            form.sources.setCurrentRow(0);QtTest.QTest.keyClick(form.sources,QtCore.Qt.Key_Delete);assert form.sources.count()==1
+        form.cancel.click();assert form.closed=='cancel' and form.sources.count()==0
+        form.done.click();assert form.closed=='done'
+        assert before==(sketch.GeometryCount,repr(sketch.ExternalGeometry),len(doc.Objects),doc.UndoCount)
+        assert Gui.activeDocument().getInEdit() is not None
+        result['checks']=['mixed fixture sources in one collector','duplicate and Shift behavior','Apply clears list and resets preview',
+            'Done/Cancel preserve outer sketch edit','unchanged sketch geometry/references/Undo']
+        if result['revised']:result['checks']+=['no Pick dropdown','ineligible-source error keeps list and blocks commit','error recovery','Delete removes row']
+        form.close();Gui.activeDocument().resetEdit();App.closeDocument(doc.Name);result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

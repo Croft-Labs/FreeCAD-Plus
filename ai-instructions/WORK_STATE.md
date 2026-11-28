@@ -1,3 +1,11 @@
+# November 27: Intersection curve selection revision — preview pending
+
+Owner removed Pick modes and restricted mixed input to earlier geometry owned by
+the active component. Revised native Qt preview passes nine UI check groups.
+Session `87ac16544d40` supersedes the old intersection selection proposal; native
+eligibility and whole-source associativity remain unimplemented. See
+[contract and evidence](evidence/intersection-unified-20261127/README.md).
+
 # November 27: Clone appearance — preview pending approval
 
 Reproduced material loss on native body/surface Clone creation. The proposed

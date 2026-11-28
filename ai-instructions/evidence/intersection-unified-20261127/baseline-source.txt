@@ -1,0 +1,98 @@
+from PySide6 import QtCore, QtWidgets
+
+PROPOSED = True
+
+class Form(QtWidgets.QGroupBox):
+    def __init__(self):
+        super().__init__('Intersection curve')
+        self.setAutoFillBackground(True)
+        self.setMinimumWidth(450)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(16, 18, 16, 16)
+        layout.setSpacing(12)
+        def label(text):
+            widget = QtWidgets.QLabel(text)
+            widget.setWordWrap(True)
+            layout.addWidget(widget)
+            return widget
+        label('<b>Sketch:</b> Section sketch<br><b>Plane:</b> Current sketch plane')
+        label('Select bodies, surfaces or curves to intersect with this sketch plane.')
+        row = QtWidgets.QHBoxLayout()
+        row.addWidget(QtWidgets.QLabel('Pick'))
+        self.pick = QtWidgets.QComboBox()
+        self.pick.addItems(['Body', 'Surface', 'Curve'])
+        row.addWidget(self.pick, 1)
+        layout.addLayout(row)
+        label('Sources')
+        self.sources = QtWidgets.QListWidget()
+        self.sources.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.sources.setMinimumHeight(150)
+        layout.addWidget(self.sources)
+        label('Click to add. Shift-click to remove. A Body pick uses the whole body; Surface and Curve use the picked geometry.')
+        row = QtWidgets.QHBoxLayout()
+        self.remove = QtWidgets.QPushButton('Remove selected')
+        self.clear = QtWidgets.QPushButton('Clear')
+        row.addWidget(self.remove); row.addWidget(self.clear)
+        layout.addLayout(row)
+        self.remove.clicked.connect(self.remove_selected)
+        self.clear.clicked.connect(self.reset_sources)
+        self.preview = QtWidgets.QCheckBox('Preview intersections')
+        self.preview.setChecked(True)
+        layout.addWidget(self.preview)
+        label('Results stay linked to their sources and update when the sources or sketch plane change.')
+        self.status = label('Select a source to begin.')
+        self.status.setMinimumHeight(50)
+        self.status.setStyleSheet('QLabel { background: #e8edf2; padding: 10px; border-radius: 3px; }')
+        label('Body / surface → section curves<br>Curve → points at every crossing')
+        row = QtWidgets.QHBoxLayout()
+        self.done = QtWidgets.QPushButton('Done')
+        self.apply = QtWidgets.QPushButton('Apply')
+        self.cancel = QtWidgets.QPushButton('Cancel')
+        for button in (self.done, self.apply, self.cancel): row.addWidget(button)
+        layout.addLayout(row)
+        self.apply.clicked.connect(self.apply_preview)
+        self.done.clicked.connect(self.finish)
+        self.cancel.clicked.connect(self.cancel_preview)
+        self.sources.itemSelectionChanged.connect(self.sync_buttons)
+        self.closed = None
+        self.sync_buttons()
+
+    def sync_buttons(self):
+        self.apply.setEnabled(self.sources.count() > 0)
+        self.remove.setEnabled(bool(self.sources.selectedItems()))
+        self.clear.setEnabled(self.sources.count() > 0)
+
+    def add_source(self, text, remove=False):
+        matches = self.sources.findItems(text, QtCore.Qt.MatchExactly)
+        if remove:
+            for item in matches: self.sources.takeItem(self.sources.row(item))
+        elif not matches:
+            self.sources.addItem(text)
+        self.status.setText('Preview: 4 curves + 2 points\n3 linked sources · no projection')
+        self.sync_buttons()
+
+    def remove_selected(self):
+        for item in self.sources.selectedItems(): self.sources.takeItem(self.sources.row(item))
+        self.sync_buttons()
+
+    def reset_sources(self):
+        self.sources.clear()
+        self.status.setText('Select a source to begin.')
+        self.sync_buttons()
+
+    def apply_preview(self):
+        if not self.sources.count(): return
+        self.reset_sources(); self.pick.setCurrentIndex(0); self.preview.setChecked(True)
+        self.status.setText('Intersections added. Select sources for the next set.')
+
+    def finish(self):
+        if self.sources.count(): self.apply_preview()
+        self.closed = 'done'
+
+    def cancel_preview(self):
+        self.reset_sources(); self.closed = 'cancel'
+
+    def show_error(self):
+        self.status.setText('Curve lies in the sketch plane. Select a curve that crosses the plane to create points.')
+        self.status.setStyleSheet('QLabel { background: #fff1dc; padding: 10px; border-radius: 3px; }')
+        self.apply.setEnabled(False)

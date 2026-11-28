@@ -1,5 +1,14 @@
 # Task panel
 
+## Intersection curve — owner selection clarification November 27, 2026
+
+Use one mixed source list without a Pick dropdown. Admit curves from earlier
+sketches, solid edges/faces, surfaces and whole results only when owned by the
+active component and preceding the active sketch in its History. Preserve exact
+picked topology, reject self/later/foreign geometry, and retain linked intersections.
+This supersedes the old mode-based proposal. Revised native Qt preview is pending
+implementation approval; see [contract and screenshots](../evidence/intersection-unified-20261127/README.md).
+
 ## Clone appearance — requested November 27, 2026; preview pending
 
 Owner requests importing a child object's appearance when cloning its body or

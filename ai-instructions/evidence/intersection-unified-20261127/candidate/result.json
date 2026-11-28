@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "revised": true,
+  "checks": [
+    "mixed fixture sources in one collector",
+    "duplicate and Shift behavior",
+    "Apply clears list and resets preview",
+    "Done/Cancel preserve outer sketch edit",
+    "unchanged sketch geometry/references/Undo",
+    "no Pick dropdown",
+    "ineligible-source error keeps list and blocks commit",
+    "error recovery",
+    "Delete removes row"
+  ]
+}
