@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "checks": [
+    "linked default; legacy constraints hidden; independent action only for saved patterns",
+    "Advanced Cancel restores draft behavior and options",
+    "advanced constraint mode enabled only by explicit choice",
+    "legacy edit starts with constraint behavior preserved",
+    "Make independent confirmation can cancel without changing group",
+    "circular angular/radial controls and existing eligibility retained",
+    "simulated Apply clears inputs and restores linked defaults",
+    "no CAD documents, geometry or solver changes"
+  ]
+}

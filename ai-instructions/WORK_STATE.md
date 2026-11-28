@@ -1,3 +1,12 @@
+# November 28: Linked sketch pattern preview ready
+
+The owner requested associative sketch patterns that repeat solved source geometry
+without per-copy constraints. The native Qt proposal defaults to Linked, moves the
+existing constraint behavior into Advanced, and adds confirmed Make independent
+when editing. Eight UI-only checks pass. Production/installed code is unchanged;
+concrete preview approval, functional implementation and solver benchmarks remain
+pending. See [contract and direct screenshots](evidence/linked-sketch-pattern-preview-20261128/README.md).
+
 # November 27: Revised mesh workflow and saved active part installed
 
 The approved revised Mesh From Shape workflow is implemented and installed: mixed

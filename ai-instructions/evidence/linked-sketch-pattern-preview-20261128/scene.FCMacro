@@ -1,0 +1,50 @@
+import os,sys,json,traceback,runpy
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+module=runpy.run_path(str(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'pattern_ui.py'))
+def settle():Gui.updateGui();QtTest.QTest.qWait(100)
+def run():
+    result={'ok':False,'ui_only':True}
+    try:
+        original=set(App.listDocuments())
+        host=QtWidgets.QGroupBox('Sketch Pattern');host.setWindowTitle('Sketch Pattern — UI preview')
+        layout=QtWidgets.QVBoxLayout(host);form=module['PatternControls'](host);layout.addWidget(form)
+        form.items.addItems(['Edge1','Edge2','Edge3','Edge4']);form.d1.reference.setText('X axis')
+        form.d1.value.setValue(15);form.d1.count.setValue(6);form.sync()
+        host.resize(440,host.sizeHint().height());host.show();settle()
+        host.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        if getattr(form,'linked_preview',False):
+            checks=[]
+            assert form.linked and not form.lock.isVisible() and not form.hide_spacing.isVisible()
+            assert not form.make_independent.isVisible();checks.append('linked default; legacy constraints hidden; independent action only for saved patterns')
+            form.advanced.click();settle();form.options_dialog.grab().save(str(out/'advanced-linked.png'))
+            assert not form.legacy.isEnabled()
+            form.constraint_radio.click();form.lock.setChecked(False);form.options_dialog.reject();settle()
+            assert form.linked and form.lock.isChecked();checks.append('Advanced Cancel restores draft behavior and options')
+            form.advanced.click();form.constraint_radio.click();settle()
+            form.options_dialog.grab().save(str(out/'advanced-constraints.png'))
+            form.accept_options();settle();assert not form.linked
+            checks.append('advanced constraint mode enabled only by explicit choice')
+            form.set_editing(False);form.advanced.click();settle();assert form.constraint_radio.isChecked();form.options_dialog.reject()
+            checks.append('legacy edit starts with constraint behavior preserved')
+            form.set_editing(True);settle();host.grab().save(str(out/'edit-linked.png'))
+            form.make_independent.click();settle();form.independent_dialog.grab().save(str(out/'make-independent.png'))
+            form.independent_dialog.reject();assert not form.independent;checks.append('Make independent confirmation can cancel without changing group')
+            form.mode.setCurrentText('Circular');form.layout_mode.setCurrentText('Angular + radial')
+            form.center.setText('Origin');form.radial.reference.setText('Edge1 · center');form.sync();host.adjustSize();settle()
+            host.grab().save(str(out/'circular-linked.png'));assert form.apply.isEnabled()
+            checks.append('circular angular/radial controls and existing eligibility retained')
+            form.apply.clicked.connect(form.reset_preview);form.apply.click();settle()
+            assert form.items.count()==0 and form.linked and form.mode.currentIndex()==0
+            assert not form.d1.reference.text() and form.d1.count.value()==5
+            checks.append('simulated Apply clears inputs and restores linked defaults')
+            assert original==set(App.listDocuments());checks.append('no CAD documents, geometry or solver changes')
+            result['checks']=checks
+        host.close();result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)
