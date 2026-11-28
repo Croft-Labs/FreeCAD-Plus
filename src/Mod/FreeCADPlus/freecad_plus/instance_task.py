@@ -8,6 +8,7 @@ from pivy import coin
 from . import component_add, document, editing, hierarchy, instance_patterns as patterns, panel
 from .instance_quantity_ui import InstanceForm
 from . import isolation
+from .quantity_fields import native_units, restore_native_units
 
 _active = None
 
@@ -92,11 +93,12 @@ class InstanceTask(QtCore.QObject):
         for key, value in values.items(): f.units[key].setProperty('rawValue', value)
         f.reverse.setChecked(config.get('reverse', False)); f.full.setChecked(config.get('full', True))
         f.orientation.setCurrentIndex(1 if config.get('rotate', False) else 0)
+        restore_native_units(f.units, config.get('units', {}))
 
     def configuration(self):
         f = self.form; mode = f.mode.currentText()
         config = dict(mode=mode, count=f.count.value(), position=[f.value(w) for w in f.positions[mode.lower()]],
-                      reference_keys=[], direction_choices={})
+                      reference_keys=[], direction_choices={}, units=native_units(f.units))
         refs = []
         def direction(key, name):
             choice = f.directions[key].currentText(); config['direction_choices'][key] = choice

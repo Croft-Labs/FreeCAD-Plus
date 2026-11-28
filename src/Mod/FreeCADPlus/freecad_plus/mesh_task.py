@@ -32,6 +32,7 @@ class MeshTask(QtCore.QObject):
     def checked(self,name):return self.widget(name).isChecked()
 
     def settings(self):
+        self.form.validate_inputs()
         method=self.form.method.currentIndex();p={}
         if method==0:
             p=dict(LinearDeflection=self.number('spinSurfaceDeviation'),AngularDeflection=math.radians(self.number('spinAngularDeviation')),Relative=self.checked('relativeDeviation'))
@@ -46,8 +47,8 @@ class MeshTask(QtCore.QObject):
             settings.update(executable=self.widget('fileChooser').property('fileName'),algorithm=int(self.widget('method').currentData()),min_size=self.number('minSize'),max_size=self.number('maxSize'))
         # Preserve every native control, including inactive engine settings,
         # to reopen this same task without silently changing the recipe.
-        self.form.validate_inputs()
-        settings['controls']=self.form.state()['controls']
+        state=self.form.state()
+        settings['controls']=state['controls'];settings['units']=state['units']
         return settings
 
     def restore_settings(self,settings):

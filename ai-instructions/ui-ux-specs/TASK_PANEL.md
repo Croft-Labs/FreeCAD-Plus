@@ -1802,3 +1802,12 @@ now follows the shared quantity-entry behavior, including saved presentation uni
 reset and legacy millimeter recipes. Angular fields, direction ratios and counts
 retain their existing dimensions. See the
 [audit and installed verification](../evidence/workflow-units-20261128/README.md).
+
+### Remember entered dimension units — November 28, 2026
+
+Owner requires editable workflows to reopen each dimension using the entered units.
+For example, 0.25 in must reopen as inches, including after saving and reopening the
+file. Save presentation metadata alongside native physical values, within the same
+Undo transaction. Preserve mixed units per field and Cancel behavior. Legacy files
+without metadata keep their prior defaults; do not guess previously entered units.
+See [verification and delivery](../evidence/unit-persistence-20261128/README.md).

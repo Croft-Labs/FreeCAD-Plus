@@ -96,7 +96,12 @@ class QuantityNumber(QtWidgets.QDoubleSpinBox):
 
 
 def restore(feature, fields):
-    units = getattr(feature, 'QuantityPresentationUnits', {})
+    restore_units(fields, getattr(feature, 'QuantityPresentationUnits', {}))
+
+
+def restore_units(fields, units):
+    """Restore optional presentation metadata without changing physical values."""
+    if not isinstance(units, dict): return
     for key, field in fields.items():
         unit = units.get(key)
         if unit:
@@ -109,6 +114,22 @@ def restore(feature, fields):
 
 def units(fields):
     return {key: field._unit for key, field in fields.items()}
+
+
+def native_units(fields):
+    return {key: field.property('presentationUnit') or '' for key, field in fields.items()}
+
+
+def restore_native_units(fields, values):
+    """Native unbound controls need their units saved by the owning task recipe."""
+    for key, field in fields.items():
+        unit = values.get(key, '') if isinstance(values, dict) else ''
+        try:
+            if unit and App.Units.Quantity('1 '+unit).Unit != App.Units.Quantity('1 '+field.property('unit')).Unit:
+                unit = ''
+        except (ValueError, TypeError, RuntimeError): unit = ''
+        field.setProperty('presentationUnit', unit)
+        field.setProperty('rawValue', field.property('rawValue'))
 
 
 def save(feature, values):

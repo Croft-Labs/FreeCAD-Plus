@@ -1,0 +1,2 @@
+Part::Feature: Link(s) to object(s) 'Part001' go out of the allowed scope 'Consumer'. Instead, the linked object(s) reside within 'N/A'.
+QWindowsWindow::setGeometry: Unable to set geometry 411x960+1440+684 (frame: 433x1016+1429+639) on QWidgetWindow/"QWidgetClassWindow" on "NS43DR620NA18". Resulting geometry: 411x1008+1440+684 (frame: 433x1064+1429+639) margins: 11, 45, 11, 11 minimum size: 268x640 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=424, y=1016)))

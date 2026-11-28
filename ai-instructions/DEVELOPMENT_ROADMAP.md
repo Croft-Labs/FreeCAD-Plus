@@ -1,5 +1,12 @@
 # November 28: Body-pattern units delivered
 
+## Entered-unit persistence — November 28, 2026
+
+Mesh settings, reference images, component-instance patterns and sketch-plane offsets
+now save and restore entered units when edited. Physical values stay unchanged.
+All 59 source checks plus 10 final mesh checks pass. See
+[unit persistence evidence](evidence/unit-persistence-20261128/README.md).
+
 ## Linear units across workflows — verified November 28, 2026
 
 Audited Plus length fields and repaired the remaining fixed-mm Trim Body offset.

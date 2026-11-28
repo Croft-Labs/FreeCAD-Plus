@@ -32,6 +32,8 @@ class SketchPlacementTask(plane_task.PlaneTask):
         self.axis_refs = planes.flatten(feature.AxisReferences)
         self.committed_offset = sketch_placement.saved_offset(feature)
         self.offset.setValue(self.committed_offset)
+        from .quantity_fields import restore
+        restore(feature, {'SketchPlaneOffset':self.offset})
         self.y_choice.setChecked(feature.DefinedAxis == 'Y')
         self.flip.setChecked(feature.FlipNormal)
 
@@ -78,14 +80,14 @@ class SketchPlacementTask(plane_task.PlaneTask):
                     'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
             if self.feature is not None:
                 self.result = sketch_placement.save(self.doc, *args, feature=self.feature, offset=self.committed_offset,
-                                                   normal_to_line=self.normal_to_line)
+                                                   normal_to_line=self.normal_to_line, quantity_units={'SketchPlaneOffset':self.offset._unit})
                 self.reject()
             else:
                 # Native drawing owns completion of the new-sketch transaction.
                 transaction_id = App.setActiveTransaction('Create a new sketch')
                 self.result = self.definition.newObject('Sketcher::SketchObject', 'Sketch')
                 sketch_placement.configure(self.result, *args, offset=self.committed_offset,
-                                           normal_to_line=self.normal_to_line)
+                                           normal_to_line=self.normal_to_line, quantity_units={'SketchPlaneOffset':self.offset._unit})
                 self.source_doc.recompute()
                 if 'Invalid' in self.result.State:
                     raise ValueError('The sketch could not be recomputed')

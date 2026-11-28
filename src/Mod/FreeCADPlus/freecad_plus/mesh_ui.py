@@ -123,7 +123,20 @@ class MeshForm(QtWidgets.QGroupBox):
     def native(self, name):
         return self.tess.findChild(QtWidgets.QWidget, name)
 
+    def unit_fields(self):
+        return {w.objectName(): w for w in self.tess.findChildren(QtWidgets.QAbstractSpinBox)
+                if self.numeric_property(w) == 'rawValue'}
+
+    def sync_numbers(self):
+        from .quantity_fields import native_units, restore_native_units
+        for name, spin in self.controls.items():
+            if not isinstance(spin, QtWidgets.QAbstractSpinBox): continue
+            native = self.native(name); prop = self.numeric_property(spin)
+            if prop == 'rawValue': restore_native_units({name: native}, native_units({name: spin}))
+            native.setProperty(prop, spin.property(prop))
+
     def state(self):
+        from .quantity_fields import native_units
         controls = {}
         for w in self.tess.findChildren(QtWidgets.QWidget):
             if isinstance(w, QtWidgets.QCheckBox):
@@ -136,7 +149,7 @@ class MeshForm(QtWidgets.QGroupBox):
             else:
                 continue
             controls[w.objectName()] = [prop, value]
-        return dict(version=1, method=self.method.currentIndex(), controls=controls)
+        return dict(version=1, method=self.method.currentIndex(), controls=controls, units=native_units(self.unit_fields()))
 
     def restore(self, state):
         index = state['method']
@@ -165,10 +178,15 @@ class MeshForm(QtWidgets.QGroupBox):
             pending.append((widget, prop, value))
         for widget, prop, value in sorted(pending, key=lambda item: item[1] not in ('currentIndex', 'checked')):
             widget.setProperty(prop, value)
+        from .quantity_fields import restore_native_units
+        restore_native_units(self.unit_fields(), state.get('units', {}))
         self.method.setCurrentIndex(index)
         self.radios[index].setChecked(True)
 
     def open_advanced(self):
+        try: self.validate_inputs()
+        except (ValueError, TypeError) as error:
+            self.status.setError(str(error)); return
         self.draft_before = self.state()
         self.path_before = self.native('fileChooser').property('fileName')
         self.radios[self.method.currentIndex()].setChecked(True)
@@ -206,9 +224,13 @@ class MeshForm(QtWidgets.QGroupBox):
         for key in ('minimum', 'maximum', 'singleStep'):
             spin.setProperty(key, native.property(key))
         spin.setProperty(prop, native.property(prop))
+        if prop == 'rawValue':
+            from .quantity_fields import native_units, restore_native_units
+            restore_native_units({name: spin}, native_units({name: native}))
         spin.setEnabled(native.isEnabled())
         spin.setToolTip(native.toolTip())
         spin.valueChanged.connect(lambda *unused: native.setProperty(prop, spin.property(prop)))
+        spin.editingFinished.connect(self.sync_numbers)
         self.controls[name] = spin
         self.fields.addRow(label, spin)
 
@@ -277,6 +299,7 @@ class MeshForm(QtWidgets.QGroupBox):
         for widget in widgets:
             if isinstance(widget, QtWidgets.QAbstractSpinBox) and widget.isEnabled() and (not widget.hasAcceptableInput()):
                 raise ValueError('Enter a valid meshing value with the required units')
+        if not advanced: self.sync_numbers()
 
     def set_busy(self, busy):
         for widget in (self.sources, self.remove, self.clear, self.basics, self.done, self.apply):

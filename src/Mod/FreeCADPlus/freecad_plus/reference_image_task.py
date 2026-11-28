@@ -9,6 +9,7 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from pivy import coin
 from . import document, editing, modeling, panel, reference_image as images
 from .reference_image_ui import Form
+from .quantity_fields import units, restore_units
 
 _active=None
 
@@ -73,12 +74,17 @@ class ImageTask(QtCore.QObject):
         if ref=='missing':raise ValueError('The attached plane was removed. Choose another plane or Free placement.')
         return panel.lookup(ref) if ref else None
 
+    def length_fields(self):
+        return dict(width=self.form.width,height=self.form.height,known=self.form.known,
+                    **dict(zip(('x','y','z'),self.form.positions)))
+
     def state(self):
         free=self.support() is None
         return dict(anchor=list(self.anchor),custom=self.form.custom.isChecked(),
                     position=[f.value() for f in self.form.positions],
                     rotation=[f.value() for f in self.form.rotations] if free else [0.,0.,self.form.angle.value()],
-                    flip=self.form.flip.isChecked(),aspect=self.form.aspect.isChecked())
+                    flip=self.form.flip.isChecked(),aspect=self.form.aspect.isChecked(),
+                    units=units(self.length_fields()),calibration_distance=self.form.known.value())
 
     def load(self,feature):
         state=images.settings(feature)
@@ -98,6 +104,8 @@ class ImageTask(QtCore.QObject):
         for f,v in zip(self.form.positions,state['position']):f.setValue(v)
         for f,v in zip(self.form.rotations,state['rotation']):f.setValue(v)
         self.form.angle.setValue(state['rotation'][2]);self.anchor=state['anchor']
+        self.form.known.setValue(state.get('calibration_distance',100))
+        restore_units(self.length_fields(),state.get('units',{}))
         self.form.custom.setChecked(state['custom']);self.form.preset.setChecked(not state['custom'])
         self.form.alpha.setValue(feature.ViewObject.Transparency)
         index=int(round((1-self.anchor[1])*2))*3+int(round(self.anchor[0]*2))
@@ -271,6 +279,9 @@ class ImageTask(QtCore.QObject):
     def commit(self):
         self.check()
         if not self.filename:raise ValueError('Choose an image first')
+        for field in self.length_fields().values():
+            if not field.hasAcceptableInput():raise ValueError('Enter a valid length, such as 0.25 in.')
+            field.interpretText()
         self.busy=True
         try:
             result=images.save(self.doc,self.filename,self.support(),self.form.width.value(),self.form.height.value(),self.state(),self.form.alpha.value(),self.feature)
@@ -285,6 +296,7 @@ class ImageTask(QtCore.QObject):
             self.feature=None;self.feature_id=None;self.revision=None;self.filename='';self.image=None;self.texture=None
             self.anchor=[.5,.5];self.points=[];self.form.points.clear();self.form.anchor_point.clear();self.form.file.clear();self.form.file.setToolTip('')
             self.populate_planes();self.form.aspect.setChecked(False);self.form.ratio=1
+            for field in self.length_fields().values():field.setSuffix('mm')
             self.form.width.setValue(100);self.form.height.setValue(100);self.form.aspect.setChecked(True)
             for field in [*self.form.positions,self.form.angle,*self.form.rotations]:field.setValue(0)
             self.form.flip.setChecked(False);self.form.preset.setChecked(True);self.form.anchor_buttons.button(4).setChecked(True)

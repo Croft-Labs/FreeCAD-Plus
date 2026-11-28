@@ -1,0 +1,15 @@
+test_advanced_length_models_keep_units_and_legacy_is_readable (TestUnitPersistence.TestMeshUnits.test_advanced_length_models_keep_units_and_legacy_is_readable) ... ok
+test_mesh_recipe_defaults_and_equal_value_unit_edit (TestUnitPersistence.TestMeshUnits.test_mesh_recipe_defaults_and_equal_value_unit_edit) ... ok
+test_defaults_cancel_apply_and_new_task (TestMeshSettings.TestMeshSettings.test_defaults_cancel_apply_and_new_task) ... ok
+test_mixed_exact_sources_and_duplicate_coverage (TestMeshSettings.TestMeshSettings.test_mixed_exact_sources_and_duplicate_coverage) ... ok
+test_modeling_ribbon_buttons_open_whole_shape_tasks (TestMeshSettings.TestMeshSettings.test_modeling_ribbon_buttons_open_whole_shape_tasks) ... ok
+test_nonstandard_fields_and_defaults_reset (TestMeshSettings.TestMeshSettings.test_nonstandard_fields_and_defaults_reset) ... ok
+test_old_quantity_recipe_and_invalid_saved_control (TestMeshSettings.TestMeshSettings.test_old_quantity_recipe_and_invalid_saved_control) ... ok
+test_promoted_sheet_preserves_face_material_and_transparency (TestMeshSettings.TestMeshSettings.test_promoted_sheet_preserves_face_material_and_transparency) ... ok
+test_saved_recipe_reopens_in_history_without_overwriting_defaults (TestMeshSettings.TestMeshSettings.test_saved_recipe_reopens_in_history_without_overwriting_defaults) ... ok
+test_transformation_and_trim_history_edit_routing (TestMeshSettings.TestMeshSettings.test_transformation_and_trim_history_edit_routing) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 9.650s
+
+OK
