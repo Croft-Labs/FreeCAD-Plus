@@ -1,5 +1,24 @@
 # Component panel
 
+## Assembly visibility eyes and row text — approved November 27, 2026
+
+The active assembly root has no visibility eye and remains visible. Its Hidden
+and Excluded actions are unavailable in Components menus. Choosing an assembly
+that was previously hidden temporarily exposes its route without rewriting its
+saved visibility setting.
+
+Children have an inline eye after the native expand/collapse triangle and before
+the component icon. The eye follows tree indentation; only assemblies have branch
+triangles. Condensed instance groups use a mixed state when needed and toggle all
+members in one Undo transaction. Excluded instances must change Part Type before
+they can be shown. Eye clicks preserve selection, Edit context and tree expansion.
+Nested/imported children update their actual defining parent's file. Visibility
+uses the existing saved display metadata, including its shared-definition scope.
+
+Children displayed under an isolated/unplaced assembly use normal text rather than
+the grey reserved for file occurrences outside the edited definition.
+See [delivery evidence](../evidence/assembly-selection-20261127/README.md).
+
 ## Active part on opening a one-part file — November 27, 2026
 
 Opening a file with exactly one local component definition makes that component

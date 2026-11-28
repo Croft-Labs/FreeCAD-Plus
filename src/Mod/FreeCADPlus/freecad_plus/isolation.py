@@ -129,6 +129,9 @@ class Isolation:
             raise
 
     def _apply_display(self, definition):
+        from .assembly_visibility import protection
+        if protection(self.doc, self.view)[0] == definition:
+            self.preview.whichChild = coin.SO_SWITCH_ALL
         if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
             display.apply_hidden(self.view, definition, display.unused_hidden_paths(definition), preview=True)
 

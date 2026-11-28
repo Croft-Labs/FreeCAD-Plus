@@ -24,6 +24,7 @@ set(FreeCADPlus_SRCS
     TestActiveAssembly.py
     TestComponentNavigation.py
     TestSinglePartOpen.py
+    TestAssemblyEyes.py
     TestPartsFiles.py
     TestAppearance.py
     TestDesignToolbarUpdate.py
@@ -106,6 +107,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/history_appearance_ui.py
     freecad_plus/assembly.py
     freecad_plus/assembly_ui.py
+    freecad_plus/assembly_visibility.py
     freecad_plus/file_actions.py
     freecad_plus/file_actions_ui.py
     freecad_plus/file_recovery.py

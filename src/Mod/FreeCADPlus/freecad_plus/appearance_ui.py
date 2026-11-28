@@ -34,12 +34,16 @@ def parts_menu(panel, tree, point, item, row):
         for submenu in (types, visibility):
             submenu.setEnabled(False);submenu.setToolTip(str(error))
     else:
+        from .assembly_visibility import protected
+        is_root = protected(panel, row)
+        if is_root:shown = True
         for title in display.TYPES:
             action = types.addAction(title); action.setCheckable(True); action.setChecked(title == part_type)
+            action.setEnabled(not (is_root and title == 'Excluded'))
             actions[action] = lambda r, value=title: panel.set_display(r, part_type=value, expected=expected)
         for title, value in (('Shown', True), ('Hidden', False)):
             action = visibility.addAction(title); action.setCheckable(True); action.setChecked(value == shown)
-            action.setEnabled(not (value and part_type == 'Excluded'))
+            action.setEnabled(not ((value and part_type == 'Excluded') or (not value and is_root)))
             actions[action] = lambda r, value=value: panel.set_display(r, shown=value, expected=expected)
     menu.addSeparator()
     from .file_actions_ui import run_action

@@ -5,6 +5,8 @@ from PySide6 import QtCore, QtWidgets
 
 
 def configure(panel, page, tree):
+    from .assembly_visibility import install_delegate
+    install_delegate(tree)
     panel._assembly_empty=None
     tree.setColumnCount(2);tree.header().setStretchLastSection(False)
     tree.header().setSectionResizeMode(0,QtWidgets.QHeaderView.Stretch)
@@ -122,8 +124,10 @@ def group_display(panel, group, *, part_type=None, shown=None):
     item=panel._maps[1].get(group.key)
     if item is None or item.data(0,_ROLE).children!=group.children:
         raise ValueError('The group changed; reopen its menu')
-    prepared=[display.prepare_state(*panel._display_target(row),part_type=part_type,shown=shown)
-              for row in group.children]
+    from .assembly_visibility import target, guard
+    for row in group.children:guard(panel, row, shown=shown, part_type=part_type)
+    prepared=[display.prepare_state(*(target(panel, row) if shown is not None else panel._display_target(row)),
+                                    part_type=part_type,shown=shown) for row in group.children]
     docs={root.Document for root,obj,value in prepared}
     if len(docs)!=1:raise ValueError('The group no longer belongs to one parent file')
     with document.transaction(next(iter(docs)),'Change grouped instance display'):

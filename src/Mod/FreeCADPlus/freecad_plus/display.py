@@ -98,7 +98,7 @@ def resolved(obj, *, direct=True):
     return effective, shown and effective != 'Excluded'
 
 
-def hidden_paths(doc, active=None, active_path=()):
+def hidden_paths(doc, active=None, active_path=(), *, protected_path=()):
     """Resolve explicit Hidden/Excluded and nested Reference for placed occurrences.
 
     Bodies Only hides construction/history content through the same native paths.
@@ -111,7 +111,7 @@ def hidden_paths(doc, active=None, active_path=()):
         raise ValueError('The active component occurrence changed')
     if active is not None and not active_path:
         return ()  # Unused-definition isolation owns its separate borrowed display.
-    return _hidden_paths(root, active, active_path)
+    return _hidden_paths(root, active, active_path, tuple(protected_path))
 
 
 def unused_hidden_paths(definition):
@@ -121,7 +121,7 @@ def unused_hidden_paths(definition):
     return _hidden_paths(definition, None, ())
 
 
-def _hidden_paths(root, active, active_path):
+def _hidden_paths(root, active, active_path, protected_path=()):
     from . import hierarchy
     hidden = []
     def visit(owner, path=(), kind='Full Component'):
@@ -134,6 +134,9 @@ def _hidden_paths(root, active, active_path):
                 kind, visible = resolved(active) if route == active_path else ('Full Component', True)
             else:
                 kind, visible = resolved(link, direct=(path == active_path))
+            if protected_path and protected_path[:len(route)] == route:
+                visible = True
+                if route != protected_path or kind == 'Excluded':kind = 'Full Component'
             if not visible:
                 hidden.append(hierarchy.subname(route))
             else:

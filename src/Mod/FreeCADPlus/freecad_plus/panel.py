@@ -501,6 +501,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._message(str(error))
 
     def eventFilter(self, watched, event):
+        if len(self.trees) > 1 and watched in (self.trees[1], self.trees[1].viewport()):
+            from .assembly_visibility import event as assembly_eye_event
+            if assembly_eye_event(self, watched, event):return True
         if (self.trees and watched in [tree.viewport() for tree in self.trees[::2]]
                 and event.type() == QtCore.QEvent.MouseButtonPress
                 and event.button() == QtCore.Qt.RightButton):
@@ -853,6 +856,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     state['window'].widget().setWindowTitle(label + ' [*]')
                 if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
+            self._assembly_eye_context = active, path
             self._history_eyes = active is not None
             self.trees[2].setColumnHidden(1, not self._history_eyes)
             self._updating = True
@@ -870,7 +874,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     item.setData(0, _ACTIVE, bool(is_active or is_file))
                     item.setData(0, _EDITED, bool(target and row.kind in ('occurrence', 'assembly') and row.path == target))
                     item.setBackground(0, QtGui.QBrush(fill) if is_active or is_file else QtGui.QBrush())
-                    dimmed = active is not None and not path and row.kind in ('file', 'occurrence')
+                    dimmed = (active is not None and not path and
+                              (row.kind == 'file' or (row.kind == 'occurrence' and not row.anchor)))
                     item.setForeground(0, QtGui.QBrush(QtGui.QColor(128, 128, 128))
                                        if dimmed else QtGui.QBrush())
                     if index == 1 and row.kind in ('occurrence', 'unused'):
@@ -1050,7 +1055,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 # Match the panel's file projection after an uninitialized or deleted
                 # Edit occurrence; never erase another view's rows for that context.
                 active, path = None, ()
-            hidden = display.hidden_paths(doc, active, path)
+            from .assembly_visibility import protection
+            _, protected_path = protection(doc, view)
+            hidden = display.hidden_paths(doc, active, path, protected_path=protected_path)
             # Native scene paths can change after recompute even with identical names.
             # Refresh is event-coalesced; there is no idle polling or property mutation.
             if isolation.current(view) is not None:
@@ -1106,6 +1113,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 if index == 2 and self._history_eyes and not coordinate_branch and row.kind == 'history':
                     flags |= QtCore.Qt.ItemIsDragEnabled
                 item.setFlags(flags)
+                if index == 1:
+                    from .assembly_visibility import refresh_item
+                    refresh_item(self, item, row)
                 if row.kind == 'instance_group':
                     item.setChildIndicatorPolicy(QtWidgets.QTreeWidgetItem.DontShowIndicator)
                     item.setToolTip(0, 'Right-click for Expand instances or component actions')
@@ -1410,7 +1420,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if part_type is not None:
             self._clipboard_guard()
             if Gui.Control.activeDialog(): raise ValueError('Finish the current task first')
-        owner, child = self._display_target(row)
+        from .assembly_visibility import guard, target
+        guard(self, row, shown=shown, part_type=part_type)
+        owner, child = target(self, row) if shown is not None else self._display_target(row)
         current = (identity(owner), identity(child) if child is not None else None)
         if expected is not None and current != expected:
             raise ValueError('The editing context changed; reopen the menu')
@@ -1522,6 +1534,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 paste = menu.addAction('Paste')
                 paste.setEnabled(bool(self._clipboard))
                 actions[paste] = self.paste_row
+        has_visibility = False
         try:
             if not component_row:
                 raise ValueError('No component setting for this row')
@@ -1531,6 +1544,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         else:
             expected = (identity(owner), identity(child) if child is not None else None)
             part_type, shown = display.state(child if child is not None else owner)
+            from .assembly_visibility import protected
+            is_root = protected(self, row)
+            if is_root:shown = True
             if group is not None:
                 from .assembly_ui import group_display
                 try:
@@ -1544,21 +1560,26 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 types.setEnabled(bool(group_states))
             for title in display.TYPES:
                 action = types.addAction(title); action.setCheckable(True); action.setChecked(title == part_type)
+                action.setEnabled(not (is_root and title == 'Excluded'))
                 actions[action] = lambda r, value=title: self.set_display(r, part_type=value, expected=expected)
                 if group is not None:
                     action.setChecked(all(kind == title for kind, visible in group_states))
                     actions[action] = lambda unused, value=title: group_display(self, group, part_type=value)
             visibility = menu.addMenu('Visibility')
+            has_visibility = True
             if group is not None:
                 visibility.setEnabled(bool(group_states))
             for title, value in (('Shown', True), ('Hidden', False)):
                 action = visibility.addAction(title); action.setCheckable(True); action.setChecked(value == shown)
-                action.setEnabled(not (value and part_type == 'Excluded'))
+                action.setEnabled(not ((value and part_type == 'Excluded') or (not value and is_root)))
                 actions[action] = lambda r, value=value: self.set_display(r, shown=value, expected=expected)
                 if group is not None:
                     action.setChecked(all(visible == value for kind, visible in group_states))
                     action.setEnabled(not value or all(kind != 'Excluded' for kind, visible in group_states))
                     actions[action] = lambda unused, value=value: group_display(self, group, shown=value)
+        if tree == self.trees[1] and not has_visibility and row is not None and row.kind in ('occurrence', 'assembly'):
+            from .assembly_visibility import add_menu
+            add_menu(self, menu, actions, group or row)
         if tree == self.trees[1] and row is not None and row.kind == 'occurrence':
             from .assembly_ui import add_group_action
             add_group_action(self, item, menu, actions)
