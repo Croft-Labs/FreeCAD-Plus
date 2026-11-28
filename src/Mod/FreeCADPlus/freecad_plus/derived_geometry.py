@@ -368,7 +368,7 @@ def save(doc, refs, operation='Clone', feature=None, *, join=False):
         joined_surface([value[2] for value in values])  # Reject before opening an Undo transaction.
     if feature is not None and values[0][1] != feature.GeometryKind:
         raise ValueError('Choose another ' + feature.GeometryKind + ' to preserve this result and its references')
-    result = []
+    result = []; appearances = []
     with document.transaction(definition.Document, ('Edit ' if feature else '') + operation + ' geometry'):
         root = document.validate(definition.Document); root.PlusSchema = max(root.PlusSchema,8)
         batches = [(refs, values)] if operation == 'Extract' and join else [([ref], [value]) for ref, value in zip(refs, values)]
@@ -384,6 +384,8 @@ def save(doc, refs, operation='Clone', feature=None, *, join=False):
                     obj = definition.newObject(typename,'Extract' if operation=='Extract' else 'Clone')
                 Derived(obj,operation,kind); ViewDerived(obj.ViewObject)
                 obj.Label = allocate_label(definition,label_for(kind,operation))
+                if operation == 'Clone' and kind in ('body', 'surface'):
+                    appearances.append((source, obj, ref))
             obj.Source = (ref[0],[ref[1]]); obj.SourceObject = source; obj.touch()
             if operation == 'Extract':
                 set_extract_sources(obj, batch_refs, [value[0] for value in batch_values], join)
@@ -392,4 +394,6 @@ def save(doc, refs, operation='Clone', feature=None, *, join=False):
         for obj in result:
             if obj.GeometryError or obj.Shape.isNull() or 'Invalid' in obj.State:
                 raise ValueError(obj.GeometryError or obj.Label + ' failed to recompute: ' + str(obj.State))
+        from .clone_appearance import copy
+        for source, obj, ref in appearances:copy(source, obj, ref)
     return result

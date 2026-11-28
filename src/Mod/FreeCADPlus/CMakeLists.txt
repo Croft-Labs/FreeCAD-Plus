@@ -2,6 +2,7 @@
 set(FreeCADPlus_SRCS
     Init.py
     InitGui.py
+    freecad_plus/clone_appearance.py
     TestPlusToolbars.py
     TestFilletWorkflow.py
     TestSketchSymmetry.py
@@ -258,3 +259,5 @@ install(FILES
     freecad_plus/document_import.py
     DESTINATION Mod/FreeCADPlus/freecad_plus
 )
+
+install(FILES freecad_plus/clone_appearance.py DESTINATION Mod/FreeCADPlus/freecad_plus)
