@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Linked solid trim by one complete, finite surface boundary or infinite plane."""
+from . import result_names
 import json
 import math
 import FreeCAD as App
@@ -93,7 +94,7 @@ class ViewTrim:
     def loads(self,state):pass
 
 
-def save(doc,target,refs,settings,feature=None):
+def save(doc,target,refs,settings,feature=None,result_name=None):
     owner,_=modeling._context(doc)
     if feature and derived_geometry.owner(feature)!=owner:raise ValueError('Edit a trim in the active component')
     evaluate(owner,target,refs,settings,feature)
@@ -103,6 +104,7 @@ def save(doc,target,refs,settings,feature=None):
             body=owner.newObject('PartDesign::Body','Body');body.AllowCompound=True
             feature=body.newObject('PartDesign::FeaturePython','TrimBody');Trim(feature);ViewTrim(feature.ViewObject)
             feature.Label='Trim body'
+        result_names.assign(feature,result_name)
         feature.TrimTarget=(target[0],[target[1]]);feature.TrimTools=planes.links(refs);feature.TrimSettings=json.dumps(settings)
         feature.touch();owner.Document.recompute()
         if feature.GeometryError:raise ValueError(feature.GeometryError)

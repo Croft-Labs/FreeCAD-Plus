@@ -1,0 +1,8 @@
+{
+  "installed_checks_passed": 58,
+  "product_failures": 0,
+  "payloads_verified": 30,
+  "protected_settings_and_shortcuts_unchanged": true,
+  "staged_and_installed_screenshots_identical": true,
+  "note": "Installed initial invocation had one invalid test-class selector; corrected five unit checks passed. Three older import fixtures also fail on unchanged baseline."
+}

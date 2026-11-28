@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Reference image task. Coin previews are independent of saved document objects."""
+from . import result_names
 import json
 import math
 import tempfile
@@ -30,6 +31,7 @@ class ImageTask(QtCore.QObject):
         self.temp=tempfile.TemporaryDirectory(prefix='freecad-plus-image-')
         self.texture=None;self.mask=None
         self.form=Form(self.owner)
+        self.names=result_names.add_before(self.form,self.owner,'Reference image',feature,self.form.status)
         self.timer=QtCore.QTimer(self);self.timer.setSingleShot(True);self.timer.timeout.connect(self.refresh)
         self.populate_planes()
         self.form.browse.clicked.connect(self.browse)
@@ -284,7 +286,7 @@ class ImageTask(QtCore.QObject):
             field.interpretText()
         self.busy=True
         try:
-            result=images.save(self.doc,self.filename,self.support(),self.form.width.value(),self.form.height.value(),self.state(),self.form.alpha.value(),self.feature)
+            result=images.save(self.doc,self.filename,self.support(),self.form.width.value(),self.form.height.value(),self.state(),self.form.alpha.value(),self.feature,result_name=self.names.value())
             self.restore_mask()
             if self.owner.Document!=self.doc:self.doc.recompute()
             return result
@@ -301,7 +303,7 @@ class ImageTask(QtCore.QObject):
             for field in [*self.form.positions,self.form.angle,*self.form.rotations]:field.setValue(0)
             self.form.flip.setChecked(False);self.form.preset.setChecked(True);self.form.anchor_buttons.button(4).setChecked(True)
             self.form.alpha.setValue(0);self.form.preview.setChecked(True);self.form.calibrate.setChecked(False);self.form.known.setValue(100)
-            self.form.setWindowTitle('Reference image');self.busy=False;self.refresh()
+            self.form.setWindowTitle('Reference image');self.names.reset();self.busy=False;self.refresh()
             if panel._panel:panel._panel.refresh()
             return True
         except (ValueError,RuntimeError,ReferenceError,TypeError) as error:

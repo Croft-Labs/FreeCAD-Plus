@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Component-owned, associative construction planes, without an internal Body."""
+from . import result_names
 import math
 
 import FreeCAD as App
@@ -260,7 +261,7 @@ class ViewPlane:
 
 
 def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None,
-         reversed_axis=False, normal_to_line=None, quantity_units=None):
+         reversed_axis=False, normal_to_line=None, quantity_units=None, result_name=None):
     if normal_to_line is None:normal_to_line = saved_normal_to_line(feature)
     definition, path = modeling._context(doc)
     refs, origin_refs, axis_refs = [canonical(definition, values) for values in (refs, origin_refs, axis_refs)]
@@ -276,6 +277,7 @@ def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=Fa
             feature = definition.newObject('Part::FeaturePython', 'Plane')
             Plane(feature)
             ViewPlane(feature.ViewObject)
+        result_names.assign(feature,result_name)
         feature.PlaneReferences = links(refs)
         feature.OriginPoint = links(origin_refs)
         feature.AxisReferences = links(axis_refs)

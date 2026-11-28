@@ -1,0 +1,17 @@
+test_immediate_commands_preserve_native_features (TestResultNames.TestResultNames.test_immediate_commands_preserve_native_features) ...
+  test_immediate_commands_preserve_native_features (TestResultNames.TestResultNames.test_immediate_commands_preserve_native_features) (command='Part_ExplodeCompound') ... FAIL
+test_task_target_colors_invalid_accept_and_numeric_commit (TestRevolveWorkflow.TestRevolveWorkflow.test_task_target_colors_invalid_accept_and_numeric_commit) ... ok
+test_linear_keyboard_precision_geometry_and_reset (TestBodyPatternUnits.TestBodyPatternUnits.test_linear_keyboard_precision_geometry_and_reset) ... ok
+
+======================================================================
+FAIL: test_immediate_commands_preserve_native_features (TestResultNames.TestResultNames.test_immediate_commands_preserve_native_features) (command='Part_ExplodeCompound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestResultNames.py", line 182, in test_immediate_commands_preserve_native_features
+    self.assertTrue(accepted,task.status.text() if not accepted else '')
+AssertionError: False is not true : The operation produced 2 results instead of 11. Reopen it to review their names. [('InputCompound_child0', 'Part::FeaturePython'), ('InputCompound_child1', 'Part::FeaturePython')]
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.696s
+
+FAILED (failures=1)

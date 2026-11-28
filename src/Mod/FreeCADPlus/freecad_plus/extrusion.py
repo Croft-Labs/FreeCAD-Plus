@@ -5,6 +5,7 @@ The evaluator owns a hidden, temporary document, never a transaction or an objec
 in the user's document. Preview and execution use exactly the same evaluator.
 Saved references are native links; the result retains its identity across edits.
 """
+from . import result_names
 import math
 import sys
 from contextlib import contextmanager
@@ -605,8 +606,9 @@ def save(doc, refs, links, values, feature=None):
 
 
 def save_feature(doc, refs, links, values, feature, engine):
+    result_name = values.get('_result_name')
     unit_values = values.get('_units', {})
-    values = {k:v for k,v in values.items() if k != '_units'}
+    values = {k:v for k,v in values.items() if k not in ('_units','_result_name')}
     definition, path = modeling._context(doc)
     refs, links, values = engine.validate(definition, refs, links, values, feature)
     engine.evaluate(definition, refs, links, values, feature)
@@ -638,6 +640,7 @@ def save_feature(doc, refs, links, values, feature, engine):
         if 'output' in engine.DEFAULTS and engine.PREFIX + 'output' not in feature.PropertiesList:
             feature.addProperty('App::PropertyString', engine.PREFIX + 'output', engine.NAME)
             feature.setEditorMode(engine.PREFIX + 'output', 2)
+        result_names.assign(feature,result_name)
         feature.ProfileReferences = planes.links(refs)
         for key, prop in engine.LINKS.items():
             setattr(feature, prop, planes.links([links[key]]) if key in links else [])

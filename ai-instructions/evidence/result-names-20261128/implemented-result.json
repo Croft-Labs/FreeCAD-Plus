@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "evidence": "Implemented native Qt workflows, exact runtime; no preview-only modules",
+  "runtime": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\\\",
+  "checks": [
+    "real automatic Extrude001",
+    "real part-based mesh default",
+    "real multiple-result fields"
+  ]
+}

@@ -1,0 +1,3 @@
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child0'. Instead, the linked object(s) reside within 'File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child1'. Instead, the linked object(s) reside within 'File Part001'.
+C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py(91): <unknown exception data>

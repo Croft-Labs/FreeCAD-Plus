@@ -1,5 +1,18 @@
 # Task panel
 
+## Result names in Preview — approved November 28, 2026
+
+Every operation that adds a feature to component History exposes an editable result
+name in Preview. Start with the existing automatic label; mesh defaults instead use
+`<Part_Name>_Mesh001`, then `002`, using the owning component's label. Multiple
+outputs expose one field per output. Preserve drafts through recomputation and
+input reorder; editing starts with the saved label. Done/Apply saves the name with
+the operation, Apply prepares the next default, and Cancel discards draft edits.
+Empty names retain the workflow and show inline feedback. Names change labels only;
+internal identities and links remain stable. Immediate feature commands first show
+name review before running their existing operation. Existing documents are not
+renamed retroactively. See [approval, screenshots and delivery evidence](../evidence/result-names-20261128/README.md).
+
 ## Linked sketch pattern — approved November 28, 2026
 
 Default new sketch patterns to generated copies linked to solved original curves,

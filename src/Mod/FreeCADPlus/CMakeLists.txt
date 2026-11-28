@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 set(FreeCADPlus_SRCS
     Init.py
+    freecad_plus/result_names.py
+    freecad_plus/operation_task.py
+    TestResultNames.py
     InitGui.py
     TestShapeTransforms.py
     TestApprovedNative.py

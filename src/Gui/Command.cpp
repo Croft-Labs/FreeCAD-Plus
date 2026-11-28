@@ -461,6 +461,30 @@ void Command::_invoke(int id, bool disablelog)
 
         // check if it really works NOW (could be a delay between click deactivation of the button)
         if (isActive()) {
+            // Immediate Part operations acquire the same draft result-name review
+            // as feature dialogs. Replay still runs the original command below.
+            const std::string resultCommand = sName;
+            const bool reviewResult = resultCommand == "Part_Cut" || resultCommand == "Part_Fuse"
+                || resultCommand == "Part_Common" || resultCommand == "Part_Section"
+                || resultCommand == "Part_Compound" || resultCommand == "Part_CompoundFilter"
+                || resultCommand == "Part_ExplodeCompound" || resultCommand == "Part_JoinConnect"
+                || resultCommand == "Part_JoinEmbed" || resultCommand == "Part_JoinCutout"
+                || resultCommand == "Part_Slice" || resultCommand == "Part_SliceApart"
+                || resultCommand == "Part_BooleanFragments" || resultCommand == "Part_XOR"
+                || resultCommand == "Part_Defeaturing";
+            bool componentResults = false;
+            if (reviewResult && App::GetApplication().getActiveDocument()) {
+                for (auto obj : App::GetApplication().getActiveDocument()->getObjects()) {
+                    componentResults |= obj->getPropertyByName("PlusFormat") != nullptr;
+                }
+            }
+            if (componentResults) {
+                Base::PyGILStateLocker lock;
+                Py::Module module(PyImport_ImportModule("freecad_plus.operation_task"), true);
+                if (module.callMemberFunction("dispatch", Py::TupleN(Py::String(sName))).isTrue()) {
+                    return;
+                }
+            }
             auto manager = getGuiApplication()->macroManager();
             auto editDoc = getGuiApplication()->editDocument();
 
@@ -497,6 +521,17 @@ void Command::_invoke(int id, bool disablelog)
                 }
             }
 
+            if (componentResults) {
+                Base::PyGILStateLocker lock;
+                try {
+                    Py::Module module(PyImport_ImportModule("freecad_plus.operation_task"), true);
+                    module.callMemberFunction("completed", Py::TupleN(Py::String(sName)));
+                }
+                catch (Py::Exception&) {
+                    App::GetApplication().closeActiveTransaction(true);
+                    throw;
+                }
+            }
             getMainWindow()->updateActions();
 
             // If this command starts an editing, let the transaction persist

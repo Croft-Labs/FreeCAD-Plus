@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Occurrence-aware native Clone/Extract task; previews never mutate documents."""
+from . import result_names
 import FreeCAD as App, FreeCADGui as Gui, Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
@@ -29,6 +30,9 @@ class GeometryTask(QtCore.QObject):
         self.refs=derived.saved_refs(feature) if feature else []
         self.closed=False;self.busy=False;self.collecting=True;self.overlay=None;self.pending=[]
         self.form=GeometryForm(self.definition,self.extract,feature)
+        self.names=result_names.Names(self.form.preview_layout,self.definition)
+        self.form.preview_layout.removeWidget(self.names);self.form.preview_layout.insertWidget(0,self.names)
+        self.names.changed.connect(self.name_changed)
         self.timer=QtCore.QTimer(self);self.timer.setSingleShot(True);self.timer.timeout.connect(self.refresh)
         self.pick_timer=QtCore.QTimer(self);self.pick_timer.setSingleShot(True);self.pick_timer.timeout.connect(self.deliver_picks)
         self.form.objects.activated.connect(self.activate)
@@ -67,6 +71,7 @@ class GeometryTask(QtCore.QObject):
         self.form.objects.clear()
         names={o.Label for o in self.owner_doc.Objects};joined=self.extract and self.form.join.isChecked()
         first_name=self.feature.Label if self.feature else None
+        entries=[]
         for index,ref in enumerate(self.refs):
             try:
                 source=derived.target(ref)
@@ -81,8 +86,16 @@ class GeometryTask(QtCore.QObject):
                 if index==0:first_name=name
             except (ValueError,RuntimeError,ReferenceError):
                 title='Missing source — remove this entry and choose a replacement';name=self.feature.Label if self.feature else ''
+            key=(ref[0].Document.Name,ref[0].ID,ref[1]) if ref[0] else ('missing',index)
+            if not joined or index==0:entries.append((key,'Result name' if joined else title,name))
             item=QtWidgets.QTreeWidgetItem(self.form.objects,[title,name]);item.setToolTip(0,title)
-        self.summary()
+        self.names.sync(entries);self.name_changed();self.summary()
+
+    def name_changed(self):
+        joined=self.extract and self.form.join.isChecked()
+        for i in range(self.form.objects.topLevelItemCount()):
+            key=self.names.keys[0 if joined else i]
+            self.form.objects.topLevelItem(i).setText(1,self.names.fields[key].text())
 
     def summary(self):
         joined=self.extract and self.form.join.isChecked()
@@ -236,9 +249,9 @@ class GeometryTask(QtCore.QObject):
 
     def accept(self):
         try:
-            self.check();self.busy=True
+            self.check();self.fields();names=self.names.values();self.busy=True
             self.results=derived.save(self.doc,self.refs,self.operation,self.feature,
-                                      join=self.extract and self.form.join.isChecked())
+                                      join=self.extract and self.form.join.isChecked(),result_labels=names)
             if self.definition.Document!=self.doc:self.doc.recompute()
         except (ValueError,RuntimeError,ReferenceError,TypeError,Part.OCCError) as error:
             self.form.status.setError(str(error));return False

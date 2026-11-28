@@ -1,0 +1,10 @@
+test_advanced_length_models_keep_units_and_legacy_is_readable (TestUnitPersistence.TestMeshUnits.test_advanced_length_models_keep_units_and_legacy_is_readable) ... ok
+test_mesh_recipe_defaults_and_equal_value_unit_edit (TestUnitPersistence.TestMeshUnits.test_mesh_recipe_defaults_and_equal_value_unit_edit) ... ok
+test_image_size_position_calibration_reopen_cancel_and_edit (TestUnitPersistence.TestImageUnits.test_image_size_position_calibration_reopen_cancel_and_edit) ... ok
+test_component_pattern_recipe_reopen_and_cancel (TestUnitPersistence.TestInstanceUnits.test_component_pattern_recipe_reopen_and_cancel) ... ok
+test_sketch_offset_task_save_reopen_and_undo (TestUnitPersistence.TestSketchOffsetUnits.test_sketch_offset_task_save_reopen_and_undo) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 5.658s
+
+OK

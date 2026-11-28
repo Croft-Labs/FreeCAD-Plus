@@ -1,0 +1,58 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+from freecad_plus import document,editing,ui_modes,extrude_task,extrusion,mesh_task,clone_task
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def settle():Gui.updateGui();QtTest.QTest.qWait(100)
+def run():
+    result={'ok':False,'evidence':'Implemented native Qt workflows, exact runtime; no preview-only modules'}
+    task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1000)
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        doc=document.new_document('ResultNamePreview');root=document.validate(doc);owner=root.Definitions[0];owner.Label='Bracket'
+        editing.edit((root.Group[0],))
+        sketch=owner.newObject('Sketcher::SketchObject','Profile');sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False)
+        doc.recompute()
+        body=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=10))
+        box=owner.newObject('Part::Feature','Housing');box.Shape=Part.makeBox(30,20,12);doc.recompute()
+        images=[];wrappers=[]
+        def snap(form,title,name):
+            surface=form
+            if not isinstance(form,QtWidgets.QGroupBox):
+                surface=QtWidgets.QGroupBox();surface.setAutoFillBackground(True)
+                wrap=QtWidgets.QVBoxLayout(surface);wrap.setContentsMargins(0,0,0,0);wrap.addWidget(form);wrappers.append(surface)
+            surface.setWindowFlags(QtCore.Qt.Window);surface.resize(460,surface.sizeHint().height());surface.show();settle()
+            img=surface.grab().toImage();img.setDevicePixelRatio(1);images.append((title,img));img.save(str(out/(name+'.png')))
+            surface.hide()
+        task=extrude_task.ExtrudeTask();task.refs=[(sketch,'')];task.changed()
+        assert task.names.value()=='Extrude001'
+        snap(task.form,'Extrude — automatic name','extrude');task.reject();task=None
+        Gui.Selection.clearSelection();task=mesh_task.show();task.refs=[(body,'')];task.fields()
+        assert task.names.value()=='Bracket_Mesh001'
+        snap(task.form,'Mesh From Shape — part-based name','mesh');task.reject();task=None
+        task=clone_task.GeometryTask(True);task.form.join.setChecked(False);task.refs=[(box,'Face1'),(box,'Face2')];task.fields()
+        assert task.names.values()==['extracted surface','extracted surface (2)']
+        snap(task.form,'Extract geometry — one name per result','extract');task.reject();task=None
+        width=sum(im.width() for _,im in images)+64;height=max(im.height() for _,im in images)+84
+        canvas=QtGui.QImage(width,height,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('#eef1f4'))
+        painter=QtGui.QPainter(canvas);font=painter.font();font.setPointSize(11);font.setBold(True);painter.setFont(font)
+        painter.setPen(QtGui.QColor('#243341'));painter.drawText(16,24,'IMPLEMENTED — editable result names in Preview')
+        x=16
+        for title,img in images:
+            painter.drawText(x,54,title);painter.drawImage(x,66,img);x+=img.width()+16
+        painter.end();canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result.update(ok=True,runtime=App.getHomePath(),checks=['real automatic Extrude001','real part-based mesh default','real multiple-result fields'])
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if task:
+        try:task.reject()
+        except Exception:pass
+    if Gui.Control.activeDialog():Gui.Control.closeDialog()
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

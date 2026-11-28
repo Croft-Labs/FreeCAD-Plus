@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Face-owned Shell requests, persisted as native PartDesign Thickness features."""
+from . import result_names
 from . import document, editing, modeling, planes
 
 
@@ -42,7 +43,7 @@ def evaluate(owner, refs, values, feature=None):
     return result
 
 
-def save(doc, refs, values, feature=None):
+def save(doc, refs, values, feature=None, result_name=None):
     unit_values = values.get('_units', {})
     values = {k:v for k,v in values.items() if k != '_units'}
     owner, path = modeling._context(doc)
@@ -63,6 +64,7 @@ def save(doc, refs, values, feature=None):
             old_body.Tip = previous
             previous.Visibility = True
             body.addObject(feature)
+        result_names.assign(feature,result_name)
         feature.Base = (base, [sub for _, sub in refs])
         for key, value in values.items():
             setattr(feature, key, value)

@@ -1,0 +1,248 @@
+test_blank_name_rejects_without_transaction (TestResultNames.TestResultNames.test_blank_name_rejects_without_transaction) ... ok
+test_datum_native_name_cancel (TestResultNames.TestResultNames.test_datum_native_name_cancel) ... ok
+test_default_preview_matches_native_allocation (TestResultNames.TestResultNames.test_default_preview_matches_native_allocation) ... ok
+test_extrude_name_undo_edit_cancel_and_save (TestResultNames.TestResultNames.test_extrude_name_undo_edit_cancel_and_save) ... ok
+test_mesh_prefix_sequence_and_custom_edit (TestResultNames.TestResultNames.test_mesh_prefix_sequence_and_custom_edit) ... ok
+test_multi_extract_names_follow_sources (TestResultNames.TestResultNames.test_multi_extract_names_follow_sources) ... ok
+test_native_boolean_dialog_names (TestResultNames.TestResultNames.test_native_boolean_dialog_names) ... ok
+test_native_fillet_field_accept_and_cancel (TestResultNames.TestResultNames.test_native_fillet_field_accept_and_cancel) ... ok
+test_native_immediate_boolean_review_and_undo (TestResultNames.TestResultNames.test_native_immediate_boolean_review_and_undo) ... ok
+test_plane_and_sketch_name_fields (TestResultNames.TestResultNames.test_plane_and_sketch_name_fields) ... ok
+test_transform_per_result_labels_and_apply_reset (TestResultNames.TestResultNames.test_transform_per_result_labels_and_apply_reset) ... ok
+test_trim_name_is_atomic_and_resets (TestResultNames.TestResultNames.test_trim_name_is_atomic_and_resets) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+test_defaults_cancel_apply_and_new_task (TestMeshSettings.TestMeshSettings.test_defaults_cancel_apply_and_new_task) ... ok
+test_mixed_exact_sources_and_duplicate_coverage (TestMeshSettings.TestMeshSettings.test_mixed_exact_sources_and_duplicate_coverage) ... ok
+test_modeling_ribbon_buttons_open_whole_shape_tasks (TestMeshSettings.TestMeshSettings.test_modeling_ribbon_buttons_open_whole_shape_tasks) ... ok
+test_nonstandard_fields_and_defaults_reset (TestMeshSettings.TestMeshSettings.test_nonstandard_fields_and_defaults_reset) ... ok
+test_old_quantity_recipe_and_invalid_saved_control (TestMeshSettings.TestMeshSettings.test_old_quantity_recipe_and_invalid_saved_control) ... ok
+test_promoted_sheet_preserves_face_material_and_transparency (TestMeshSettings.TestMeshSettings.test_promoted_sheet_preserves_face_material_and_transparency) ... ok
+test_saved_recipe_reopens_in_history_without_overwriting_defaults (TestMeshSettings.TestMeshSettings.test_saved_recipe_reopens_in_history_without_overwriting_defaults) ... ok
+test_transformation_and_trim_history_edit_routing (TestMeshSettings.TestMeshSettings.test_transformation_and_trim_history_edit_routing) ... ok
+test_add_subtract_identity_and_target_routing (TestExtrudeWorkflow.TestExtrudeWorkflow.test_add_subtract_identity_and_target_routing) ... ok
+test_context_and_pending_transaction_rejection (TestExtrudeWorkflow.TestExtrudeWorkflow.test_context_and_pending_transaction_rejection) ... ok
+test_external_extrude_is_source_owned_and_persistent (TestExtrudeWorkflow.TestExtrudeWorkflow.test_external_extrude_is_source_owned_and_persistent) ... ERROR
+test_external_unused_result_is_owned_and_undone_in_source (TestExtrudeWorkflow.TestExtrudeWorkflow.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestExtrudeWorkflow.TestExtrudeWorkflow.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_holes_curves_and_open_profile_errors (TestExtrudeWorkflow.TestExtrudeWorkflow.test_holes_curves_and_open_profile_errors) ... ok
+test_independent_results_do_not_reuse_active_body (TestExtrudeWorkflow.TestExtrudeWorkflow.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestExtrudeWorkflow.TestExtrudeWorkflow.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_operation_rerouting_and_cycles_preserve_identity (TestExtrudeWorkflow.TestExtrudeWorkflow.test_operation_rerouting_and_cycles_preserve_identity) ... ok
+test_preview_is_read_only_and_new_result_is_associative (TestExtrudeWorkflow.TestExtrudeWorkflow.test_preview_is_read_only_and_new_result_is_associative) ... ok
+test_preview_result_does_not_change_visibility_or_undo (TestExtrudeWorkflow.TestExtrudeWorkflow.test_preview_result_does_not_change_visibility_or_undo) ... ok
+test_real_commands_and_in_place_accept (TestExtrudeWorkflow.TestExtrudeWorkflow.test_real_commands_and_in_place_accept) ... ok
+test_reference_start_end_and_saved_limit_follow (TestExtrudeWorkflow.TestExtrudeWorkflow.test_reference_start_end_and_saved_limit_follow) ... ok
+test_region_picker_keeps_holes_and_native_edge_references (TestExtrudeWorkflow.TestExtrudeWorkflow.test_region_picker_keeps_holes_and_native_edge_references) ... ok
+test_rejection_is_atomic (TestExtrudeWorkflow.TestExtrudeWorkflow.test_rejection_is_atomic) ... ok
+test_save_reopen_fixture_with_downstream (TestExtrudeWorkflow.TestExtrudeWorkflow.test_save_reopen_fixture_with_downstream) ... ok
+test_shared_task_prefill_blur_manual_and_cancel (TestExtrudeWorkflow.TestExtrudeWorkflow.test_shared_task_prefill_blur_manual_and_cancel) ... ok
+test_sketch_without_body_and_undo (TestExtrudeWorkflow.TestExtrudeWorkflow.test_sketch_without_body_and_undo) ... ok
+test_start_offsets_symmetric_and_independent_sides (TestExtrudeWorkflow.TestExtrudeWorkflow.test_start_offsets_symmetric_and_independent_sides) ... ok
+test_taper_and_custom_direction_measurement (TestExtrudeWorkflow.TestExtrudeWorkflow.test_taper_and_custom_direction_measurement) ... ok
+test_target_body_transform_and_native_pattern_polarity (TestExtrudeWorkflow.TestExtrudeWorkflow.test_target_body_transform_and_native_pattern_polarity) ... ok
+test_task_cleanup_on_document_close (TestExtrudeWorkflow.TestExtrudeWorkflow.test_task_cleanup_on_document_close) ... ok
+test_through_all_first_last_and_shape (TestExtrudeWorkflow.TestExtrudeWorkflow.test_through_all_first_last_and_shape) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_closed_curves_are_uncapped_and_mode_edits_keep_identity (TestExtrudeWorkflow.TestSheetExtrude.test_closed_curves_are_uncapped_and_mode_edits_keep_identity) ... ok
+test_curve_visibility_and_revolve_scope (TestExtrudeWorkflow.TestSheetExtrude.test_curve_visibility_and_revolve_scope) ... ok
+test_edge_and_face_inputs_and_new_only_boundary (TestExtrudeWorkflow.TestSheetExtrude.test_edge_and_face_inputs_and_new_only_boundary) ... ok
+test_existing_features_without_output_remain_solid (TestExtrudeWorkflow.TestSheetExtrude.test_existing_features_without_output_remain_solid) ... ok
+test_limits_taper_and_degenerate_profile (TestExtrudeWorkflow.TestSheetExtrude.test_limits_taper_and_degenerate_profile) ... ok
+test_line_sheet_preview_save_edit_undo_and_associativity (TestExtrudeWorkflow.TestSheetExtrude.test_line_sheet_preview_save_edit_undo_and_associativity) ... ok
+test_multiple_curves_and_open_taper (TestExtrudeWorkflow.TestSheetExtrude.test_multiple_curves_and_open_taper) ... ok
+test_offsets_reverse_symmetric_two_sides_and_direction (TestExtrudeWorkflow.TestSheetExtrude.test_offsets_reverse_symmetric_two_sides_and_direction) ... ok
+test_task_switching_cancel_accept_and_edit (TestExtrudeWorkflow.TestSheetExtrude.test_task_switching_cancel_accept_and_edit) ... ok
+test_tilted_limit_start_reference_and_rotated_sketch (TestExtrudeWorkflow.TestSheetExtrude.test_tilted_limit_start_reference_and_rotated_sketch) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_add_subtract_and_invalid_tools (TestRevolveWorkflow.TestRevolveWorkflow.test_add_subtract_and_invalid_tools) ... ok
+test_angles_offset_reverse_symmetric_and_two_sides (TestRevolveWorkflow.TestRevolveWorkflow.test_angles_offset_reverse_symmetric_and_two_sides) ... ok
+test_axis_references_and_transformed_sketch (TestRevolveWorkflow.TestRevolveWorkflow.test_axis_references_and_transformed_sketch) ... ok
+test_cycles_rerouting_and_downstream_references (TestRevolveWorkflow.TestRevolveWorkflow.test_cycles_rerouting_and_downstream_references) ... ok
+test_external_source_ownership_and_recompute (TestRevolveWorkflow.TestRevolveWorkflow.test_external_source_ownership_and_recompute) ... ERROR
+test_face_profile_and_invalid_axis (TestRevolveWorkflow.TestRevolveWorkflow.test_face_profile_and_invalid_axis) ... ok
+test_real_commands_shared_edit_history_and_cancel (TestRevolveWorkflow.TestRevolveWorkflow.test_real_commands_shared_edit_history_and_cancel) ... ok
+test_reference_start_and_face_limit (TestRevolveWorkflow.TestRevolveWorkflow.test_reference_start_and_face_limit) ... ok
+test_save_edit_identity_undo_and_reopen (TestRevolveWorkflow.TestRevolveWorkflow.test_save_edit_identity_undo_and_reopen) ... ok
+test_selection_list_five_rows_long_names_font_and_scrolling (TestRevolveWorkflow.TestRevolveWorkflow.test_selection_list_five_rows_long_names_font_and_scrolling) ... ok
+test_task_target_colors_invalid_accept_and_numeric_commit (TestRevolveWorkflow.TestRevolveWorkflow.test_task_target_colors_invalid_accept_and_numeric_commit) ... FAIL
+test_closed_profile_switches_and_legacy_default (TestRevolveWorkflow.TestSheetRevolve.test_closed_profile_switches_and_legacy_default) ... ok
+test_edges_faces_and_multiple_curves (TestRevolveWorkflow.TestSheetRevolve.test_edges_faces_and_multiple_curves) ... ok
+test_native_task_switch_accept_and_edit (TestRevolveWorkflow.TestSheetRevolve.test_native_task_switch_accept_and_edit) ... ok
+test_open_line_angles_sides_and_preview_is_read_only (TestRevolveWorkflow.TestSheetRevolve.test_open_line_angles_sides_and_preview_is_read_only) ... ok
+test_reference_start_limit_and_selected_axis (TestRevolveWorkflow.TestSheetRevolve.test_reference_start_limit_and_selected_axis) ... ok
+test_rejections_and_new_only_evaluator (TestRevolveWorkflow.TestSheetRevolve.test_rejections_and_new_only_evaluator) ... ok
+test_save_edit_identity_undo_reopen_and_associativity (TestRevolveWorkflow.TestSheetRevolve.test_save_edit_identity_undo_reopen_and_associativity) ... ok
+test_sheet_clears_target_and_preserves_hidden_curve_visibility (TestRevolveWorkflow.TestSheetRevolve.test_sheet_clears_target_and_preserves_hidden_curve_visibility) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_add_subtract_invalid_contact_and_active_body_independence (TestLoftWorkflow.TestLoftWorkflow.test_add_subtract_invalid_contact_and_active_body_independence) ... ok
+test_boolean_edit_preserves_target_identity_and_other_solid (TestLoftWorkflow.TestLoftWorkflow.test_boolean_edit_preserves_target_identity_and_other_solid) ... ok
+test_classic_and_plus_task_entries_for_multiple_sections (TestLoftWorkflow.TestLoftWorkflow.test_classic_and_plus_task_entries_for_multiple_sections) ... ok
+test_closed_sheet_sequence (TestLoftWorkflow.TestLoftWorkflow.test_closed_sheet_sequence) ... ok
+test_external_component_recompute_outside_edit_context (TestLoftWorkflow.TestLoftWorkflow.test_external_component_recompute_outside_edit_context) ... ERROR
+test_hidden_target_valid_invalid_colors_and_cancel (TestLoftWorkflow.TestLoftWorkflow.test_hidden_target_valid_invalid_colors_and_cancel) ... ok
+test_invalid_input_and_later_reference_are_atomic (TestLoftWorkflow.TestLoftWorkflow.test_invalid_input_and_later_reference_are_atomic) ... ok
+test_native_and_plus_command_dispatch_no_active_body (TestLoftWorkflow.TestLoftWorkflow.test_native_and_plus_command_dispatch_no_active_body) ... ok
+test_open_and_closed_sheet_profiles (TestLoftWorkflow.TestLoftWorkflow.test_open_and_closed_sheet_profiles) ... ok
+test_other_component_sources_and_targets_rejected (TestLoftWorkflow.TestLoftWorkflow.test_other_component_sources_and_targets_rejected) ... ok
+test_planar_face_sections_and_vertex_endpoint (TestLoftWorkflow.TestLoftWorkflow.test_planar_face_sections_and_vertex_endpoint) ... ok
+test_profile_reference_retains_section_order_same_object (TestLoftWorkflow.TestLoftWorkflow.test_profile_reference_retains_section_order_same_object) ... ok
+test_save_edit_undo_recompute_and_reopen (TestLoftWorkflow.TestLoftWorkflow.test_save_edit_undo_recompute_and_reopen) ... ok
+test_section_picking_error_recovery_and_sole_target (TestLoftWorkflow.TestLoftWorkflow.test_section_picking_error_recovery_and_sole_target) ... ok
+test_solid_ruled_holes_and_read_only_preview (TestLoftWorkflow.TestLoftWorkflow.test_solid_ruled_holes_and_read_only_preview) ... ok
+test_task_output_order_edit_cancel_and_manual_preview (TestLoftWorkflow.TestLoftWorkflow.test_task_output_order_edit_cancel_and_manual_preview) ... ok
+test_transformed_target_and_downstream_face_reference (TestLoftWorkflow.TestLoftWorkflow.test_transformed_target_and_downstream_face_reference) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_add_subtract_and_invalid_tool (TestThickenWorkflow.TestThickenWorkflow.test_add_subtract_and_invalid_tool) ... ok
+test_boolean_save_edit_keeps_predecessor (TestThickenWorkflow.TestThickenWorkflow.test_boolean_save_edit_keeps_predecessor) ... ok
+test_curved_sheet_and_connected_faces (TestThickenWorkflow.TestThickenWorkflow.test_curved_sheet_and_connected_faces) ... ok
+test_invalid_inputs_and_sequential_edit_are_atomic (TestThickenWorkflow.TestThickenWorkflow.test_invalid_inputs_and_sequential_edit_are_atomic) ... ok
+test_migrated_profile_commands_ignore_active_body_for_owned_sketches (TestThickenWorkflow.TestThickenWorkflow.test_migrated_profile_commands_ignore_active_body_for_owned_sketches) ... ok
+test_modeling_surface_layout_and_classic_native_access (TestThickenWorkflow.TestThickenWorkflow.test_modeling_surface_layout_and_classic_native_access) ... ok
+test_planar_directions_and_read_only_preview (TestThickenWorkflow.TestThickenWorkflow.test_planar_directions_and_read_only_preview) ... ok
+test_save_edit_undo_associativity_and_reopen (TestThickenWorkflow.TestThickenWorkflow.test_save_edit_undo_associativity_and_reopen) ... ok
+test_sheet_face_collector_and_error_recovery (TestThickenWorkflow.TestThickenWorkflow.test_sheet_face_collector_and_error_recovery) ... ok
+test_shell_empty_selection_never_uses_active_body (TestThickenWorkflow.TestThickenWorkflow.test_shell_empty_selection_never_uses_active_body) ... ok
+test_shell_invalid_entry_and_valid_native_task (TestThickenWorkflow.TestThickenWorkflow.test_shell_invalid_entry_and_valid_native_task) ... ok
+test_shell_rejected_empty_task_has_no_transaction (TestThickenWorkflow.TestThickenWorkflow.test_shell_rejected_empty_task_has_no_transaction) ... ok
+test_shell_selected_first_body_accept_and_undo (TestThickenWorkflow.TestThickenWorkflow.test_shell_selected_first_body_accept_and_undo) ... ok
+test_shell_selected_first_body_cancel_without_active_body (TestThickenWorkflow.TestThickenWorkflow.test_shell_selected_first_body_cancel_without_active_body) ... ok
+test_task_create_edit_cancel_numeric_and_hidden_target (TestThickenWorkflow.TestThickenWorkflow.test_task_create_edit_cancel_numeric_and_hidden_target) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_actual_viewport_face_pick_after_clear (TestShellWorkflow.TestShellWorkflow.test_actual_viewport_face_pick_after_clear) ... ok
+test_empty_curve_and_sheet_entry_are_recoverable (TestShellWorkflow.TestShellWorkflow.test_empty_curve_and_sheet_entry_are_recoverable) ... ok
+test_history_restore_eyes_and_scrollable_list (TestShellWorkflow.TestShellWorkflow.test_history_restore_eyes_and_scrollable_list) ... ok
+test_implicit_owner_rejects_mixed_solids_until_cleared (TestShellWorkflow.TestShellWorkflow.test_implicit_owner_rejects_mixed_solids_until_cleared) ... ok
+test_later_input_rejected_when_editing (TestShellWorkflow.TestShellWorkflow.test_later_input_rejected_when_editing) ... ok
+test_list_delete_remove_clear_and_parameter_focus (TestShellWorkflow.TestShellWorkflow.test_list_delete_remove_clear_and_parameter_focus) ... ok
+test_native_accept_edit_cancel_undo_and_save (TestShellWorkflow.TestShellWorkflow.test_native_accept_edit_cancel_undo_and_save) ... ok
+test_native_dressup_list_focus_and_duplicate_add (TestShellWorkflow.TestShellWorkflow.test_native_dressup_list_focus_and_duplicate_add) ... ok
+test_preview_controls_and_blur_commit (TestShellWorkflow.TestShellWorkflow.test_preview_controls_and_blur_commit) ... ok
+test_defaults_cancel_apply_and_new_task (TestMeshSettings.TestMeshSettings.test_defaults_cancel_apply_and_new_task) ... ok
+test_mixed_exact_sources_and_duplicate_coverage (TestMeshSettings.TestMeshSettings.test_mixed_exact_sources_and_duplicate_coverage) ... ok
+test_modeling_ribbon_buttons_open_whole_shape_tasks (TestMeshSettings.TestMeshSettings.test_modeling_ribbon_buttons_open_whole_shape_tasks) ... ok
+test_nonstandard_fields_and_defaults_reset (TestMeshSettings.TestMeshSettings.test_nonstandard_fields_and_defaults_reset) ... ok
+test_old_quantity_recipe_and_invalid_saved_control (TestMeshSettings.TestMeshSettings.test_old_quantity_recipe_and_invalid_saved_control) ... ok
+test_promoted_sheet_preserves_face_material_and_transparency (TestMeshSettings.TestMeshSettings.test_promoted_sheet_preserves_face_material_and_transparency) ... ok
+test_saved_recipe_reopens_in_history_without_overwriting_defaults (TestMeshSettings.TestMeshSettings.test_saved_recipe_reopens_in_history_without_overwriting_defaults) ... ok
+test_transformation_and_trim_history_edit_routing (TestMeshSettings.TestMeshSettings.test_transformation_and_trim_history_edit_routing) ... ok
+test_instance_positions_spacing_radius_and_movement_parser (TestWorkflowUnits.TestWorkflowUnits.test_instance_positions_spacing_radius_and_movement_parser) ... ok
+test_mesh_main_and_advanced_linear_fields (TestWorkflowUnits.TestWorkflowUnits.test_mesh_main_and_advanced_linear_fields) ... ok
+test_modeling_and_plane_task_length_controls (TestWorkflowUnits.TestWorkflowUnits.test_modeling_and_plane_task_length_controls) ... ok
+test_reference_image_and_sketch_pattern_fields (TestWorkflowUnits.TestWorkflowUnits.test_reference_image_and_sketch_pattern_fields) ... ok
+test_trim_offset_geometry_reset_undo_and_saved_edit (TestWorkflowUnits.TestWorkflowUnits.test_trim_offset_geometry_reset_undo_and_saved_edit) ... ok
+test_trim_pending_input_validation_and_legacy_settings (TestWorkflowUnits.TestWorkflowUnits.test_trim_pending_input_validation_and_legacy_settings) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+test_invalid_units_do_not_create_result_and_legacy_recipes_load (TestBodyPatternUnits.TestBodyPatternUnits.test_invalid_units_do_not_create_result_and_legacy_recipes_load) ... ok
+test_linear_keyboard_precision_geometry_and_reset (TestBodyPatternUnits.TestBodyPatternUnits.test_linear_keyboard_precision_geometry_and_reset) ... FAIL
+test_mirror_polar_and_multi_transform_units_follow_steps (TestBodyPatternUnits.TestBodyPatternUnits.test_mirror_polar_and_multi_transform_units_follow_steps) ... ok
+test_overall_length_sheet_and_immediate_apply (TestBodyPatternUnits.TestBodyPatternUnits.test_overall_length_sheet_and_immediate_apply) ... ok
+test_saved_units_reopen_edit_and_cancel (TestBodyPatternUnits.TestBodyPatternUnits.test_saved_units_reopen_edit_and_cancel) ... ok
+
+======================================================================
+ERROR: test_external_extrude_is_source_owned_and_persistent (TestExtrudeWorkflow.TestExtrudeWorkflow.test_external_extrude_is_source_owned_and_persistent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestExtrudeWorkflow.py", line 389, in test_external_extrude_is_source_owned_and_persistent
+    external.import_file(self.doc,source);App.setActiveDocument(self.doc.Name)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_source_ownership_and_recompute (TestRevolveWorkflow.TestRevolveWorkflow.test_external_source_ownership_and_recompute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestRevolveWorkflow.py", line 303, in test_external_source_ownership_and_recompute
+    document.save_document(source,self.output/'Source.cadprt');external.import_file(self.doc,source)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_component_recompute_outside_edit_context (TestLoftWorkflow.TestLoftWorkflow.test_external_component_recompute_outside_edit_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestLoftWorkflow.py", line 217, in test_external_component_recompute_outside_edit_context
+    document.save_document(source,self.output/'Source.cadprt');external.import_file(self.doc,source)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_task_target_colors_invalid_accept_and_numeric_commit (TestRevolveWorkflow.TestRevolveWorkflow.test_task_target_colors_invalid_accept_and_numeric_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestRevolveWorkflow.py", line 269, in test_task_target_colors_invalid_accept_and_numeric_commit
+    task.reverse.setFocus();QtTest.QTest.qWait(50);self.assertEqual(task.values[field],90)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 360 != 90
+
+======================================================================
+FAIL: test_linear_keyboard_precision_geometry_and_reset (TestBodyPatternUnits.TestBodyPatternUnits.test_linear_keyboard_precision_geometry_and_reset)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestBodyPatternUnits.py", line 34, in test_linear_keyboard_precision_geometry_and_reset
+    self.type_length(task,step.value,text,expected)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestBodyPatternUnits.py", line 29, in type_length
+    self.assertAlmostEqual(field.value(),expected,places=9)
+AssertionError: 12.7 != 0.79375 within 9 places (11.90625 difference)
+
+----------------------------------------------------------------------
+Ran 170 tests in 125.522s
+
+FAILED (failures=2, errors=3)

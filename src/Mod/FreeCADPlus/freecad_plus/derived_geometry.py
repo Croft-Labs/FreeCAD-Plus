@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Associative whole-object promotion and parent-owned face extraction."""
+from . import result_names
 import FreeCAD as App
 import Part
 from . import document, display, hierarchy
@@ -354,7 +355,7 @@ class ViewDerived:
     def loads(self, state): pass
 
 
-def save(doc, refs, operation='Clone', feature=None, *, join=False):
+def save(doc, refs, operation='Clone', feature=None, *, join=False, result_labels=None):
     from . import modeling
     definition, _ = modeling._context(doc)
     refs = list(dict.fromkeys(refs))
@@ -372,6 +373,7 @@ def save(doc, refs, operation='Clone', feature=None, *, join=False):
     with document.transaction(definition.Document, ('Edit ' if feature else '') + operation + ' geometry'):
         root = document.validate(definition.Document); root.PlusSchema = max(root.PlusSchema,8)
         batches = [(refs, values)] if operation == 'Extract' and join else [([ref], [value]) for ref, value in zip(refs, values)]
+        if result_labels is not None and len(result_labels)!=len(batches):raise ValueError('Review the name of each result.')
         for index, (batch_refs, batch_values) in enumerate(batches):
             ref = batch_refs[0];source, kind, shape = batch_values[0]
             obj = feature if index == 0 else None
@@ -386,6 +388,7 @@ def save(doc, refs, operation='Clone', feature=None, *, join=False):
                 obj.Label = allocate_label(definition,label_for(kind,operation))
                 if operation == 'Clone' and kind in ('body', 'surface'):
                     appearances.append((source, obj, ref))
+            if result_labels is not None:result_names.assign(obj,result_labels[index])
             obj.Source = (ref[0],[ref[1]]); obj.SourceObject = source; obj.touch()
             if operation == 'Extract':
                 set_extract_sources(obj, batch_refs, [value[0] for value in batch_values], join)

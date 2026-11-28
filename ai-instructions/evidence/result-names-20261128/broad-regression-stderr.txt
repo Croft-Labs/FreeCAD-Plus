@@ -1,0 +1,10 @@
+Pad: Wire is not closed.
+Pad: Wire is not closed.
+Pad: Wire is not closed.
+Evaluation: Revolve axis intersects the sketch
+Pad: Wire is not closed.
+Pad: Wire is not closed.
+Pad: Wire is not closed.
+Fillet: Fillet not possible on selected shapes
+Chamfer: No edges specified
+QWindowsWindow::setGeometry: Unable to set geometry 411x1002+1440+684 (frame: 433x1058+1429+639) on QWidgetWindow/"QWidgetClassWindow" on "NS43DR620NA18". Resulting geometry: 411x1050+1440+684 (frame: 433x1106+1429+639) margins: 11, 45, 11, 11 minimum size: 268x668 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=424, y=1058)))

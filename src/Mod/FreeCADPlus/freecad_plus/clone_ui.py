@@ -61,8 +61,9 @@ class GeometryForm(QtWidgets.QGroupBox):
         else:
             note('Clicking a face or edge selects its whole source object. Use Extract geometry for individual faces.')
             note('Source construction history stays in the child. Parent features can modify the cloned result or combine it with a parent body.')
-        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);layout.addWidget(self.preview)
-        self.update=QtWidgets.QCheckBox('Recompute on update');self.update.setChecked(True);layout.addWidget(self.update)
+        group=QtWidgets.QGroupBox('Preview');self.preview_layout=QtWidgets.QVBoxLayout(group);layout.addWidget(group)
+        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);self.preview_layout.addWidget(self.preview)
+        self.update=QtWidgets.QCheckBox('Recompute on update');self.update.setChecked(True);self.preview_layout.addWidget(self.update)
         self.update.setToolTip('Automatically refresh the preview. Saved results always retain their source association.')
         note('Updates from the selected faces on the parent-owned object.' if extract else
              'Updates from the source in the parent coordinate system.')

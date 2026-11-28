@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Approved New Plane task; model changes occur only on acceptance."""
+from . import result_names
 import math
 from .selection_list import removing, reference_key
 import FreeCAD as App
@@ -73,6 +74,7 @@ def number(layout, title, value=0, suffix=' mm'):
 
 class PlaneTask(QtCore.QObject):
     reference_guidance = True
+    result_base = 'Plane'
 
     def __init__(self, feature=None):
         super().__init__()
@@ -155,6 +157,7 @@ class PlaneTask(QtCore.QObject):
         self.frame.layout.addWidget(self.flip)
         self.frame.layout.addWidget(label('Z is normal to the plane; the remaining axis is derived.'))
         self.preview = Section('Preview'); layout.addWidget(self.preview)
+        self.names = result_names.Names(self.preview.layout,self.definition,self.result_base,feature)
         self.visible = QtWidgets.QCheckBox('Show preview'); self.visible.setChecked(True)
         self.automatic = QtWidgets.QCheckBox('Recompute on update'); self.automatic.setChecked(True)
         self.preview.layout.addWidget(self.visible); self.preview.layout.addWidget(self.automatic)
@@ -485,7 +488,7 @@ class PlaneTask(QtCore.QObject):
                                      self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y',
                                      self.flip.isChecked(), self.feature,
                                      reversed_axis=self.reverse_axis.isChecked(), normal_to_line=self.normal_to_line,
-                                     quantity_units={'Offset':self.offset._unit})
+                                     quantity_units={'Offset':self.offset._unit}, result_name=self.names.value())
             self.reject()
             return True
         except Exception as exc:

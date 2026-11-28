@@ -35,10 +35,13 @@
 #include <FCConfig.h>
 
 #include <App/Document.h>
+#include <Base/Interpreter.h>
+#include <Base/PyObjectBase.h>
 #include <Gui/ActionFunction.h>
 #include <Gui/Application.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
+#include <Gui/PythonWrapper.h>
 #include <Gui/ViewProviderDocumentObject.h>
 
 #include "TaskView.h"
@@ -53,6 +56,45 @@
 
 using namespace Gui::TaskView;
 namespace sp = std::placeholders;
+
+namespace {
+// Native feature tasks share the Plus result-name editor. Ordinary documents and
+// Python tasks with their own draft names retain their existing behavior.
+bool resultNames(TaskDialog* dialog, const char* action, App::DocumentObject* feature = nullptr)
+{
+    auto doc = App::GetApplication().getActiveDocument();
+    if (!dialog || !doc) {
+        return true;
+    }
+    bool component = false;
+    for (auto obj : doc->getObjects()) {
+        component |= obj->getPropertyByName("PlusFormat") != nullptr;
+    }
+    if (!component) {
+        return true;
+    }
+    Base::PyGILStateLocker lock;
+    try {
+        Gui::PythonWrapper wrapper;
+        Py::List widgets;
+        for (auto widget : dialog->getDialogContent()) {
+            widgets.append(wrapper.fromQWidget(widget));
+        }
+        Py::Module module(PyImport_ImportModule("freecad_plus.result_names"), true);
+        if (std::string(action) == "native_open") {
+            module.callMemberFunction(action, Py::TupleN(widgets,
+                feature ? Py::Object(feature->getPyObject(), true) : Py::None()));
+            return true;
+        }
+        return module.callMemberFunction(action, Py::TupleN(widgets)).isTrue();
+    }
+    catch (Py::Exception&) {
+        Base::PyException error;
+        error.reportException();
+        return false;
+    }
+}
+}
 
 
 //**************************************************************************
@@ -496,9 +538,11 @@ void TaskView::slotActiveDocument(const App::Document& doc)
 
 void TaskView::slotInEdit(const Gui::ViewProviderDocumentObject& vp)
 {
-    Q_UNUSED(vp);
     if (!ActiveDialog) {
         updateWatcher();
+    }
+    else {
+        resultNames(ActiveDialog, "native_open", vp.getObject());
     }
 }
 
@@ -665,6 +709,13 @@ void TaskView::showDialog(TaskDialog* dlg)
     ActiveDialog = dlg;
 
     ActiveDialog->open();
+
+    // setEdit can finish after showDialog; slotInEdit supplies that exact object.
+    QTimer::singleShot(0, this, [this, guard = QPointer<TaskDialog>(dlg)] {
+        if (guard && ActiveDialog == guard) {
+            resultNames(guard, "native_open");
+        }
+    });
 
     saveCurrentWidth();
     getMainWindow()->updateActions();
@@ -913,6 +964,10 @@ void TaskView::accept()
         return;
     }
 
+    if (!resultNames(ActiveDialog, "native_accept")) {
+        return;
+    }
+
     // Make sure that if 'accept' calls 'closeDialog' the deletion is postponed until
     // the dialog leaves the 'accept' method
     ActiveDialog->setProperty("taskview_accept_or_reject", true);
@@ -948,6 +1003,9 @@ void TaskView::helpRequested()
 void TaskView::clicked(QAbstractButton* button)
 {
     int id = ActiveCtrl->buttonBox->standardButton(button);
+    if (id == QDialogButtonBox::Apply && !resultNames(ActiveDialog, "native_accept")) {
+        return;
+    }
     ActiveDialog->clicked(id);
 }
 

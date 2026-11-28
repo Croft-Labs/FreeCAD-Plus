@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
+from . import result_names
 import json
 import FreeCAD as App,FreeCADGui as Gui
 from PySide6 import QtCore,QtWidgets
@@ -15,6 +16,7 @@ class TrimTask(QtCore.QObject):
         super().__init__();self.doc=Gui.activeDocument().Document;self.owner,self.path=modeling._context(self.doc)
         self.view=Gui.activeDocument().activeView();self.feature=feature;self.target=None;self.refs=[];self.plane_ref=None
         self.closed=False;self.busy=False;self.pick='target';self.form=Form(self.owner)
+        self.names=result_names.add_before(self.form,self.owner,'Trim body',feature,self.form.preview)
         self.preview=ShapePreview(self.view);self.waste=ShapePreview(self.view)
         self.timer=QtCore.QTimer(self);self.timer.setSingleShot(True);self.timer.timeout.connect(self.refresh)
         for widget in (self.form.target,self.form.reference,self.form.surfaces):widget.installEventFilter(self)
@@ -110,8 +112,8 @@ class TrimTask(QtCore.QObject):
         try:
             self.check();self.busy=True;self.preview.clear();self.waste.clear()
             if self.target is None:raise ValueError('Choose a target body')
-            self.result=trim_body.save(self.doc,self.target,self.tools(),self.settings(commit=True),self.feature)
-            self.feature=None;self.target=None;self.refs=[];self.plane_ref=None;self.pick='target';self.form.reset();self.fields()
+            self.result=trim_body.save(self.doc,self.target,self.tools(),self.settings(commit=True),self.feature,result_name=self.names.value())
+            self.feature=None;self.target=None;self.refs=[];self.plane_ref=None;self.pick='target';self.form.reset();self.names.reset();self.fields()
             if panel._panel:panel._panel.refresh()
             return True
         except Exception as exc:self.form.status.setError(str(exc));return False

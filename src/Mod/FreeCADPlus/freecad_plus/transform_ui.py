@@ -98,10 +98,10 @@ class Form(QtWidgets.QGroupBox):
         self.merge=QtWidgets.QCheckBox('Merge into one result');self.merge.setChecked(True);form.addWidget(self.merge)
         self.hint=label('Touching copies fuse. Separated copies stay together in one body or sheet object.');form.addWidget(self.hint)
         self.merge.toggled.connect(lambda yes:self.hint.setText('Touching copies fuse. Separated copies stay together in one body or sheet object.' if yes else 'Create separate bodies or sheet objects for the copies.'))
-        names=QtWidgets.QFormLayout();self.name=QtWidgets.QLineEdit(kind);names.addRow('Result name',self.name);form.addLayout(names)
         form.addWidget(label('Keeps an editable link to the complete source shape.'))
         layout.addWidget(result)
-        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);layout.addWidget(self.preview)
+        group=QtWidgets.QGroupBox('Preview');self.preview_layout=QtWidgets.QVBoxLayout(group);layout.addWidget(group)
+        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);self.preview_layout.addWidget(self.preview)
         self.status=TaskStatus('Ready. One editable History result.');layout.addWidget(self.status)
         footer=QtWidgets.QHBoxLayout();self.done=QtWidgets.QPushButton('Done');self.apply=QtWidgets.QPushButton('Apply');self.cancel=QtWidgets.QPushButton('Cancel')
         for button in (self.done,self.apply,self.cancel):footer.addWidget(button)
@@ -121,7 +121,7 @@ class Form(QtWidgets.QGroupBox):
         step=self.steps.pop(index);self.steps.insert(dest,step);self.stack.removeWidget(step);self.stack.insertWidget(dest,step);self.order.setCurrentRow(dest)
 
     def reset(self):
-        self.objects.clear();self.merge.setChecked(True);self.name.setText(self.kind);self.preview.setChecked(True)
+        self.objects.clear();self.merge.setChecked(True);self.preview.setChecked(True)
         if self.kind=='Multi-transform':
             while self.order.count():self.order.setCurrentRow(0);self.remove_step()
         else:self.steps[0].reset()

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Embedded native image planes with versioned Plus task state and native attachment."""
+from . import result_names
 import json
 import math
 from pathlib import Path
@@ -97,7 +98,7 @@ def structural_check(owner,feature):
         if refs and any(refs[0][1]):raise ValueError('Reference images attach to whole planes')
 
 
-def save(doc,filename,support,width,height,state,transparency=0,feature=None):
+def save(doc,filename,support,width,height,state,transparency=0,feature=None,result_name=None):
     owner,path=modeling._context(doc)
     root=document.validate(owner.Document)
     read_image(filename);state=checked_state(state)
@@ -115,6 +116,7 @@ def save(doc,filename,support,width,height,state,transparency=0,feature=None):
             feature.addProperty('App::PropertyInteger','PlusImageVersion','Reference image').PlusImageVersion=1
             feature.addProperty('App::PropertyString','ImageSettings','Reference image')
             feature.addProperty('App::PropertyString','ImageName','Reference image')
+        result_names.assign(feature,result_name)
         if str(feature.ImageFile)!=str(filename):
             feature.ImageFile=str(filename);feature.ImageName=Path(filename).name
         feature.XSize=width;feature.YSize=height

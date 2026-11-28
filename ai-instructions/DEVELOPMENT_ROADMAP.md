@@ -1,3 +1,10 @@
+# November 28: Feature result naming delivered
+
+Approved editable result names are installed in Preview throughout component History
+workflows. Automatic names remain, with part-prefixed numbered mesh defaults and one
+field per output. All 58 executed installed checks pass; native binaries and Python
+payload hashes match. See [delivery evidence](evidence/result-names-20261128/README.md).
+
 # November 28: Body-pattern units delivered
 
 ## Entered-unit persistence — November 28, 2026

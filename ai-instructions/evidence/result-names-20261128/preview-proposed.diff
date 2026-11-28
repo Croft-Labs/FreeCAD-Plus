@@ -1,0 +1,50 @@
+diff --git a/clone_ui.py b/clone_ui.py
+index e7e12f0..82eac04 100644
+--- a/clone_ui.py
++++ b/clone_ui.py
+@@ -61,8 +61,12 @@ class GeometryForm(QtWidgets.QGroupBox):
+         else:
+             note('Clicking a face or edge selects its whole source object. Use Extract geometry for individual faces.')
+             note('Source construction history stays in the child. Parent features can modify the cloned result or combine it with a parent body.')
+-        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);layout.addWidget(self.preview)
+-        self.update=QtWidgets.QCheckBox('Recompute on update');self.update.setChecked(True);layout.addWidget(self.update)
++        preview_group=QtWidgets.QGroupBox('Preview');preview_layout=QtWidgets.QVBoxLayout(preview_group)
++        preview_layout.addWidget(QtWidgets.QLabel('Result names'))
++        self.result_names=QtWidgets.QFormLayout();preview_layout.addLayout(self.result_names)
++        layout.addWidget(preview_group)
++        self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);preview_layout.addWidget(self.preview)
++        self.update=QtWidgets.QCheckBox('Recompute on update');self.update.setChecked(True);preview_layout.addWidget(self.update)
+         self.update.setToolTip('Automatically refresh the preview. Saved results always retain their source association.')
+         note('Updates from the selected faces on the parent-owned object.' if extract else
+              'Updates from the source in the parent coordinate system.')
+diff --git a/extrude_task.py b/extrude_task.py
+index 9f3a080..05fdc1b 100644
+--- a/extrude_task.py
++++ b/extrude_task.py
+@@ -111,6 +111,10 @@ class ExtrudeTask(QtCore.QObject):
+         self.refine = QtWidgets.QCheckBox('Refine result'); self.refine.setChecked(True)
+         self.advanced.layout.addWidget(self.refine); self.refine.toggled.connect(self.changed)
+         self.preview = self.section(layout,'Preview')
++        name_row = QtWidgets.QFormLayout()
++        self.result_name = QtWidgets.QLineEdit()
++        name_row.addRow('Result name', self.result_name)
++        self.preview.layout.addLayout(name_row)
+         self.display = self.combo(self.preview.layout,'Show',['Tool volume','Result'])
+         row = QtWidgets.QHBoxLayout()
+         self.visible = QtWidgets.QCheckBox('Show preview'); self.visible.setChecked(True)
+diff --git a/mesh_ui.py b/mesh_ui.py
+index d214682..eecb878 100644
+--- a/mesh_ui.py
++++ b/mesh_ui.py
+@@ -54,6 +54,11 @@ class MeshForm(QtWidgets.QGroupBox):
+         output = QtWidgets.QLabel("Creates one combined mesh in the active component's History. Source geometry is kept.")
+         output.setWordWrap(True)
+         layout.addWidget(output)
++        preview = QtWidgets.QGroupBox('Preview')
++        names = QtWidgets.QFormLayout(preview)
++        self.result_name = QtWidgets.QLineEdit()
++        names.addRow('Result name', self.result_name)
++        layout.addWidget(preview)
+         self.status = TaskStatus()
+         layout.addWidget(self.status)
+         buttons = QtWidgets.QHBoxLayout()

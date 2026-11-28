@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Whole-shape transformation collector; no active native Body is required."""
+from . import result_names
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
@@ -21,6 +22,9 @@ class TransformTask(QtCore.QObject):
         self.view=Gui.activeDocument().activeView();self.feature=feature;self.kind=kind
         self.closed=False;self.busy=False;self.pick_step=None;self.refs=[]
         self.form=Form(kind,self.owner);self.preview=ShapePreview(self.view)
+        self.names=result_names.Names(self.form.preview_layout,self.owner)
+        self.form.preview_layout.removeWidget(self.names);self.form.preview_layout.insertWidget(0,self.names)
+        self.update_names(1)
         self.timer=QtCore.QTimer(self);self.timer.setSingleShot(True);self.timer.timeout.connect(self.refresh)
         self.form.objects.installEventFilter(self)
         self.form.objects.clicked.connect(lambda:self.choose_sources())
@@ -33,7 +37,6 @@ class TransformTask(QtCore.QObject):
             self.form.up.clicked.connect(self.schedule);self.form.down.clicked.connect(self.schedule)
         if feature:
             self.refs=planes.flatten(feature.TransformSources);self.form.merge.setChecked(feature.MergeResults)
-            self.form.name.setText(feature.Label)
             values=transforms.settings(feature)
             if kind=='Multi-transform':
                 for value in values:self.form.add_step(value['kind'])
@@ -136,6 +139,14 @@ class TransformTask(QtCore.QObject):
     slotChangedObject=schedule
     slotRecomputedDocument=schedule
 
+    def update_names(self,count):
+        old=sorted((o for o in self.owner.Document.Objects if self.feature and
+                    getattr(o,'TransformGroup',None)==self.feature.TransformGroup),key=lambda o:o.TransformIndex)
+        defaults=result_names.defaults(self.owner,[self.kind]*max(0,count-len(old)))
+        values=[old[i].Label if i<len(old) else defaults[i-len(old)] for i in range(count)]
+        self.names.sync([(i,'Result name' if count==1 else 'Result '+str(i+1),name) for i,name in enumerate(values)])
+        self.form.name=self.names.field  # Compatibility with existing task integrations.
+
     def refresh(self):
         if self.closed or self.busy:return
         self.preview.clear()
@@ -143,6 +154,7 @@ class TransformTask(QtCore.QObject):
             self.check()
             if not self.refs:self.form.status.setText('Select a body or sheet.');return
             shapes=transforms.evaluate(self.owner,self.refs,self.settings(),self.form.merge.isChecked(),self.feature)
+            self.update_names(len(shapes))
             if self.form.preview.isChecked():self.preview.show(shapes,editing.world_placement(self.doc,self.path))
             self.form.status.setText('Ready. One Undo step.')
         except Exception as exc:self.form.status.setError(str(exc))
@@ -151,8 +163,11 @@ class TransformTask(QtCore.QObject):
         if self.busy:return False
         try:
             self.check();self.busy=True;self.preview.clear()
-            self.results=transforms.save(self.doc,self.refs,self.settings(commit=True),self.form.merge.isChecked(),self.kind,self.form.name.text().strip(),self.feature)
-            self.feature=None;self.refs=[];self.form.reset()
+            settings=self.settings(commit=True)
+            shapes=transforms.evaluate(self.owner,self.refs,settings,self.form.merge.isChecked(),self.feature)
+            self.update_names(len(shapes))
+            self.results=transforms.save(self.doc,self.refs,settings,self.form.merge.isChecked(),self.kind,None,self.feature,result_labels=self.names.values())
+            self.feature=None;self.refs=[];self.form.reset();self.names.drafts.clear();self.update_names(1)
             for step in self.form.steps:step.ref=None
             self.pick_step=None;self.fields();self.form.status.setText('Applied. Select geometry for the next result.')
             if panel._panel:panel._panel.refresh()

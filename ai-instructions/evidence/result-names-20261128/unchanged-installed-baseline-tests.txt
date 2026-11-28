@@ -1,0 +1,62 @@
+test_external_extrude_is_source_owned_and_persistent (TestExtrudeWorkflow.TestExtrudeWorkflow.test_external_extrude_is_source_owned_and_persistent) ... ERROR
+test_external_source_ownership_and_recompute (TestRevolveWorkflow.TestRevolveWorkflow.test_external_source_ownership_and_recompute) ... ERROR
+test_external_component_recompute_outside_edit_context (TestLoftWorkflow.TestLoftWorkflow.test_external_component_recompute_outside_edit_context) ... ERROR
+
+======================================================================
+ERROR: test_external_extrude_is_source_owned_and_persistent (TestExtrudeWorkflow.TestExtrudeWorkflow.test_external_extrude_is_source_owned_and_persistent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestExtrudeWorkflow.py", line 389, in test_external_extrude_is_source_owned_and_persistent
+    external.import_file(self.doc,source);App.setActiveDocument(self.doc.Name)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Assembly.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_source_ownership_and_recompute (TestRevolveWorkflow.TestRevolveWorkflow.test_external_source_ownership_and_recompute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestRevolveWorkflow.py", line 303, in test_external_source_ownership_and_recompute
+    document.save_document(source,self.output/'Source.cadprt');external.import_file(self.doc,source)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+
+======================================================================
+ERROR: test_external_component_recompute_outside_edit_context (TestLoftWorkflow.TestLoftWorkflow.test_external_component_recompute_outside_edit_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\TestLoftWorkflow.py", line 217, in test_external_component_recompute_outside_edit_context
+    document.save_document(source,self.output/'Source.cadprt');external.import_file(self.doc,source)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Part001" conflicts with "Part001" in Host.cadprt; the other component is in Source.cadprt. Names must be unique within this file and all imported files (Host.cadprt). Rename one component in its defining file.
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.829s
+
+FAILED (errors=3)

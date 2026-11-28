@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Approved shared Extrude creation/editing task; no model writes before OK."""
+from . import result_names
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -111,6 +112,7 @@ class ExtrudeTask(QtCore.QObject):
         self.refine = QtWidgets.QCheckBox('Refine result'); self.refine.setChecked(True)
         self.advanced.layout.addWidget(self.refine); self.refine.toggled.connect(self.changed)
         self.preview = self.section(layout,'Preview')
+        self.names = result_names.Names(self.preview.layout,self.owner,self.engine.NAME,feature)
         self.display = self.combo(self.preview.layout,'Show',['Tool volume','Result'])
         row = QtWidgets.QHBoxLayout()
         self.visible = QtWidgets.QCheckBox('Show preview'); self.visible.setChecked(True)
@@ -725,7 +727,7 @@ class ExtrudeTask(QtCore.QObject):
             self.clear_target()
             self.presentation.restore()
             from .quantity_fields import units
-            values = self.settings(); values['_units'] = units(self.quantity_fields())
+            values = self.settings(); values['_units'] = units(self.quantity_fields()); values['_result_name'] = self.names.value()
             self.result=self.engine.save(self.doc,self.refs,self.links,values,self.feature)
             self.reject()
             return True

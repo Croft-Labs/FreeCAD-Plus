@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Associative placement on native sketches; no auxiliary feature or Body."""
+from . import result_names
 import math
 import FreeCAD as App
 from . import document, planes
@@ -144,7 +145,7 @@ def recompute(feature):
 
 
 def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0,
-         normal_to_line=None, quantity_units=None):
+         normal_to_line=None, result_name=None, quantity_units=None):
     from . import modeling
     definition, _ = modeling._context(doc)
     if normal_to_line is None:normal_to_line = planes.saved_normal_to_line(feature)
@@ -152,6 +153,7 @@ def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, featu
     with document.transaction(definition.Document, 'Edit sketch placement' if feature else 'Create sketch'):
         if feature is None:
             feature = definition.newObject('Sketcher::SketchObject', 'Sketch')
+        result_names.assign(feature,result_name)
         configure(feature, refs, origin_refs, axis_refs, axis, flipped, offset, normal_to_line, quantity_units)
         definition.Document.recompute()
         if 'Invalid' in feature.State:

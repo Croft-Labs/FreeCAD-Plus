@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Shell collector: no model mutation until acceptance, no active Body authority."""
+from . import result_names
 from .selection_list import removing, reference_key
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -71,6 +72,7 @@ class ShellTask(extrude_task.ExtrudeTask):
         layout.addWidget(self.intersection); layout.addWidget(self.reverse)
         self.preview = QtWidgets.QWidget(); self.preview.setWindowTitle('Preview')
         options = QtWidgets.QVBoxLayout(self.preview)
+        self.names = result_names.Names(options,self.owner,'Shell',feature)
         self.final = QtWidgets.QCheckBox('Show final result')
         self.visible = QtWidgets.QCheckBox('Show preview overlay'); self.visible.setChecked(True)
         options.addWidget(self.final); options.addWidget(self.visible)
@@ -209,7 +211,7 @@ class ShellTask(extrude_task.ExtrudeTask):
             shell.evaluate(self.owner, self.refs, self.settings(), self.feature)
             self.clear_overlay(); self.clear_target(); self.presentation.restore()
             values = self.settings(); values['_units'] = {'Value':self.thickness._unit}
-            self.result = shell.save(self.doc, self.refs, values, self.feature)
+            self.result = shell.save(self.doc, self.refs, values, self.feature,result_name=self.names.value())
             self.reject(); return True
         except Exception as exc:
             self.presentation.apply(); self.render(); self.status.setError(str(exc)); return False

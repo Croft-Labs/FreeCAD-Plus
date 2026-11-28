@@ -2309,6 +2309,14 @@ void DlgPrimitives::tryCreatePrimitive(const QString& placement)
     Gui::Application::Instance->activeDocument()->openCommand(prim.toUtf8());
     Gui::Command::runCommand(Gui::Command::Doc, cmd.toUtf8());
     Gui::Command::runCommand(Gui::Command::Doc, getAutoGroupCommandStr(name).toUtf8());
+    for (auto object : doc->getObjects()) {
+        if (object->getPropertyByName("PlusFormat")) {
+            Gui::Command::doCommand(Gui::Command::Doc,
+                "from freecad_plus import result_names; result_names.native_created(App.ActiveDocument.getObject(%s))",
+                Base::Tools::quoted(name.toUtf8().constData()).c_str());
+            break;
+        }
+    }
     Gui::Application::Instance->activeDocument()->commitCommand();
     Gui::Command::runCommand(Gui::Command::Doc, "App.ActiveDocument.recompute()");
     Gui::Command::runCommand(Gui::Command::Gui, "Gui.SendMsgToActiveView(\"ViewFit\")");

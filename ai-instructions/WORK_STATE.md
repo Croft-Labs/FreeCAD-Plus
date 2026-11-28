@@ -1,3 +1,12 @@
+# November 28: Feature result names installed
+
+The approved Preview name fields cover component History feature workflows, with
+existing automatic defaults and `<Part_Name>_Mesh001` mesh defaults. Native create,
+edit, immediate-operation review and multi-output workflows are integrated. All 58
+executed installed checks pass. Source/build/app hashes match; settings and shortcuts
+are preserved. The pending committed unit-persistence update is also installed.
+See [delivery evidence](evidence/result-names-20261128/README.md).
+
 # November 28: Body-pattern inch entry fixed
 
 ## Entered-unit persistence — November 28, 2026

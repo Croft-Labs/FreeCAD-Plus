@@ -1,0 +1,23 @@
+test_blank_name_rejects_without_transaction (TestResultNames.TestResultNames.test_blank_name_rejects_without_transaction) ... ok
+test_datum_native_name_cancel (TestResultNames.TestResultNames.test_datum_native_name_cancel) ... ok
+test_default_preview_matches_native_allocation (TestResultNames.TestResultNames.test_default_preview_matches_native_allocation) ... ok
+test_extrude_name_undo_edit_cancel_and_save (TestResultNames.TestResultNames.test_extrude_name_undo_edit_cancel_and_save) ... ok
+test_immediate_commands_preserve_native_features (TestResultNames.TestResultNames.test_immediate_commands_preserve_native_features) ... ok
+test_mesh_prefix_sequence_and_custom_edit (TestResultNames.TestResultNames.test_mesh_prefix_sequence_and_custom_edit) ... ok
+test_multi_extract_names_follow_sources (TestResultNames.TestResultNames.test_multi_extract_names_follow_sources) ... ok
+test_native_boolean_dialog_names (TestResultNames.TestResultNames.test_native_boolean_dialog_names) ... ok
+test_native_fillet_field_accept_and_cancel (TestResultNames.TestResultNames.test_native_fillet_field_accept_and_cancel) ... ok
+test_native_immediate_boolean_review_and_undo (TestResultNames.TestResultNames.test_native_immediate_boolean_review_and_undo) ... ok
+test_native_primitive_name_create_and_reset (TestResultNames.TestResultNames.test_native_primitive_name_create_and_reset) ... ok
+test_plane_and_sketch_name_fields (TestResultNames.TestResultNames.test_plane_and_sketch_name_fields) ... ok
+test_transform_per_result_labels_and_apply_reset (TestResultNames.TestResultNames.test_transform_per_result_labels_and_apply_reset) ... ok
+test_trim_name_is_atomic_and_resets (TestResultNames.TestResultNames.test_trim_name_is_atomic_and_resets) ... ok
+test_commands_reject_reference_excluded_and_missing_edit_atomically (TestPartBooleanInputs.TestPartBooleanInputs.test_commands_reject_reference_excluded_and_missing_edit_atomically) ... ok
+test_compound_rejection_preserves_state (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_rejection_preserves_state) ... ok
+test_section_command_rejection_preserves_state (TestPartBooleanInputs.TestPartBooleanInputs.test_section_command_rejection_preserves_state) ... ok
+test_split_join_rejection_is_atomic (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_rejection_is_atomic) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 25.749s
+
+OK

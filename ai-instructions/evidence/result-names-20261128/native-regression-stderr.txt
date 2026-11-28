@@ -1,0 +1,88 @@
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child0'. Instead, the linked object(s) reside within 'Part001 File'.
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child1'. Instead, the linked object(s) reside within 'Part001 File'.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 22, in dispatch
+    _active=OperationTask(command);Gui.Control.showDialog(_active)
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 58, in __init__
+    geometry.require_part_boolean_inputs(self.doc,[(o,s) for o,subs in self.selection for s in subs or ('',)])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 271, in require_part_boolean_inputs
+    require_modeling_inputs(active, inputs)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 242, in require_modeling_inputs
+    require_access(doc, obj, sub, active=active, active_path=path)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 88, in require_access
+    check_type(child, route)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 77, in check_type
+    raise ValueError('Clone the whole object before using Reference geometry')
+<class 'ValueError'>: Clone the whole object before using Reference geometry
+edit: editing failed
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 22, in dispatch
+    _active=OperationTask(command);Gui.Control.showDialog(_active)
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 58, in __init__
+    geometry.require_part_boolean_inputs(self.doc,[(o,s) for o,subs in self.selection for s in subs or ('',)])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 271, in require_part_boolean_inputs
+    require_modeling_inputs(active, inputs)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 242, in require_modeling_inputs
+    require_access(doc, obj, sub, active=active, active_path=path)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 88, in require_access
+    check_type(child, route)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 77, in check_type
+    raise ValueError('Clone the whole object before using Reference geometry')
+<class 'ValueError'>: Clone the whole object before using Reference geometry
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 22, in dispatch
+    _active=OperationTask(command);Gui.Control.showDialog(_active)
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 58, in __init__
+    geometry.require_part_boolean_inputs(self.doc,[(o,s) for o,subs in self.selection for s in subs or ('',)])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 271, in require_part_boolean_inputs
+    require_modeling_inputs(active, inputs)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 242, in require_modeling_inputs
+    require_access(doc, obj, sub, active=active, active_path=path)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 88, in require_access
+    check_type(child, route)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 77, in check_type
+    raise ValueError('Clone the whole object before using Reference geometry')
+<class 'ValueError'>: Clone the whole object before using Reference geometry
+Part::Section: Link(s) to object(s) 'SectionBase SectionPlane' go out of the allowed scope 'Section'. Instead, the linked object(s) reside within 'LegacyPart LegacyPart'.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 30, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 46, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 1. Reopen it to review their names.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 30, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 46, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 1. Reopen it to review their names.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 30, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 46, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 3. Reopen it to review their names.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 22, in dispatch
+    _active=OperationTask(command);Gui.Control.showDialog(_active)
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 58, in __init__
+    geometry.require_part_boolean_inputs(self.doc,[(o,s) for o,subs in self.selection for s in subs or ('',)])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 271, in require_part_boolean_inputs
+    require_modeling_inputs(active, inputs)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 242, in require_modeling_inputs
+    require_access(doc, obj, sub, active=active, active_path=path)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 88, in require_access
+    check_type(child, route)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\freecad_plus\geometry.py", line 77, in check_type
+    raise ValueError('Clone the whole object before using Reference geometry')
+<class 'ValueError'>: Clone the whole object before using Reference geometry

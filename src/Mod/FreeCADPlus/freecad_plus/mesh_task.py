@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native mesher controls with a post-open mixed source collector."""
+from . import result_names
 import math
 import FreeCAD as App,FreeCADGui as Gui
 from PySide6 import QtCore,QtWidgets
@@ -16,6 +17,7 @@ class MeshTask(QtCore.QObject):
         super().__init__();self.doc=Gui.activeDocument().Document;self.owner,self.path=modeling._context(self.doc)
         self.view=Gui.activeDocument().activeView();self.feature=feature;self.refs=planes.flatten(feature.MeshSources) if feature else []
         self.closed=False;self.busy=False;self.cancelled=False;self.form=MeshForm(tess)
+        self.names = result_names.add_before(self.form,self.owner,'Mesh',feature,self.form.status,style='mesh')
         self.form.destination.setText('Add to: '+self.owner.Label);self.form.sources.installEventFilter(self)
         self.form.remove.clicked.connect(self.remove);self.form.clear.clicked.connect(self.clear)
         self.form.done.clicked.connect(self.accept);self.form.apply.clicked.connect(self.apply);self.form.cancel.clicked.connect(self.reject)
@@ -89,11 +91,11 @@ class MeshTask(QtCore.QObject):
     def apply(self):
         if self.busy:return False
         try:
-            self.check();settings=self.settings();self.busy=True;self.cancelled=False;self.form.set_busy(True)
+            self.check();settings=self.settings();name=self.names.value();self.busy=True;self.cancelled=False;self.form.set_busy(True)
             self.widget('killButton').setEnabled(self.form.method.currentIndex()==3)
             self.form.status.setText('Meshing selected geometry…')
-            self.result=mesh_shape.save(self.doc,self.refs,settings,self.feature,lambda:self.cancelled or self.closed)
-            self.feature=None;self.refs=[];self.form.reset();self.fields();self.domain()
+            self.result=mesh_shape.save(self.doc,self.refs,settings,self.feature,lambda:self.cancelled or self.closed,result_name=name)
+            self.feature=None;self.refs=[];self.form.reset();self.names.reset();self.fields();self.domain()
             self.form.status.setText('Mesh created. Select sources for another mesh.')
             if panel._panel:panel._panel.refresh()
             return True

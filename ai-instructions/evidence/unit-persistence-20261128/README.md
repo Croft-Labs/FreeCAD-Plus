@@ -42,4 +42,7 @@ Changes were prepared in an isolated sparse checkout because another task was ed
 result-name controls in the main checkout. Integration preserves those uncommitted
 edits; they are not included in the unit-persistence commit or payload.
 
-Installation is pending closure of the owner FreeCAD session. No running owner app files were replaced.
+Installation initially waited for closure of the owner FreeCAD session. The committed
+payload was subsequently installed with the approved feature-result naming update;
+all five installed persistence checks pass. No running owner app files were replaced.
+See [installation evidence](../result-names-20261128/README.md).

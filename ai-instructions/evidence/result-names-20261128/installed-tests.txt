@@ -1,0 +1,64 @@
+test_blank_name_rejects_without_transaction (TestResultNames.TestResultNames.test_blank_name_rejects_without_transaction) ... ok
+test_datum_native_name_cancel (TestResultNames.TestResultNames.test_datum_native_name_cancel) ... ok
+test_default_preview_matches_native_allocation (TestResultNames.TestResultNames.test_default_preview_matches_native_allocation) ... ok
+test_extrude_name_undo_edit_cancel_and_save (TestResultNames.TestResultNames.test_extrude_name_undo_edit_cancel_and_save) ... ok
+test_immediate_commands_preserve_native_features (TestResultNames.TestResultNames.test_immediate_commands_preserve_native_features) ... ok
+test_mesh_prefix_sequence_and_custom_edit (TestResultNames.TestResultNames.test_mesh_prefix_sequence_and_custom_edit) ... ok
+test_multi_extract_names_follow_sources (TestResultNames.TestResultNames.test_multi_extract_names_follow_sources) ... ok
+test_native_boolean_dialog_names (TestResultNames.TestResultNames.test_native_boolean_dialog_names) ... ok
+test_native_fillet_field_accept_and_cancel (TestResultNames.TestResultNames.test_native_fillet_field_accept_and_cancel) ... ok
+test_native_immediate_boolean_review_and_undo (TestResultNames.TestResultNames.test_native_immediate_boolean_review_and_undo) ... ok
+test_native_primitive_name_create_and_reset (TestResultNames.TestResultNames.test_native_primitive_name_create_and_reset) ... ok
+test_plane_and_sketch_name_fields (TestResultNames.TestResultNames.test_plane_and_sketch_name_fields) ... ok
+test_transform_per_result_labels_and_apply_reset (TestResultNames.TestResultNames.test_transform_per_result_labels_and_apply_reset) ... ok
+test_trim_name_is_atomic_and_resets (TestResultNames.TestResultNames.test_trim_name_is_atomic_and_resets) ... ok
+test_commands_preserve_input_ownership_undo_history_and_save (TestPartBooleanInputs.TestPartBooleanInputs.test_commands_preserve_input_ownership_undo_history_and_save) ... ok
+test_commands_reject_reference_excluded_and_missing_edit_atomically (TestPartBooleanInputs.TestPartBooleanInputs.test_commands_reject_reference_excluded_and_missing_edit_atomically) ... ok
+test_compound_legacy_parenting_and_policy_bypass (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_legacy_parenting_and_policy_bypass) ... ok
+test_compound_links_drop_rejection_and_cleanup (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_drop_rejection_and_cleanup) ... ok
+test_compound_links_drop_undo_save (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_drop_undo_save) ... ok
+test_compound_links_legacy_bypass (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_legacy_bypass) ... ok
+test_compound_links_multi_property_edit_is_atomic (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_multi_property_edit_is_atomic) ... ok
+test_compound_links_property_dialog_reject_continue_remove (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_property_dialog_reject_continue_remove) ... ok
+test_compound_links_replace_admission_and_undo (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_links_replace_admission_and_undo) ... ok
+test_compound_ownership_order_undo_and_save (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_ownership_order_undo_and_save) ... ok
+test_compound_rejection_preserves_state (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_rejection_preserves_state) ... ok
+test_compound_unused_single_input (TestPartBooleanInputs.TestPartBooleanInputs.test_compound_unused_single_input) ... ok
+test_dialog_apply_rejects_foreign_input_then_accepts_owned_geometry (TestPartBooleanInputs.TestPartBooleanInputs.test_dialog_apply_rejects_foreign_input_then_accepts_owned_geometry) ... ok
+test_legacy_commands_and_dialog_bypass_component_policy (TestPartBooleanInputs.TestPartBooleanInputs.test_legacy_commands_and_dialog_bypass_component_policy) ... ok
+test_section_command_ownership_undo_and_save (TestPartBooleanInputs.TestPartBooleanInputs.test_section_command_ownership_undo_and_save) ... ok
+test_section_command_rejection_preserves_state (TestPartBooleanInputs.TestPartBooleanInputs.test_section_command_rejection_preserves_state) ... ok
+test_section_dialog_apply_and_undo (TestPartBooleanInputs.TestPartBooleanInputs.test_section_dialog_apply_and_undo) ... ok
+test_section_legacy_parenting_and_policy_bypass (TestPartBooleanInputs.TestPartBooleanInputs.test_section_legacy_parenting_and_policy_bypass) ... ok
+test_split_join_core_ownership_undo_save (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_core_ownership_undo_save) ... ok
+test_split_join_legacy_bypass_and_slice_group (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_legacy_bypass_and_slice_group) ... ok
+test_split_join_native_abort_rolls_back (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_native_abort_rolls_back) ... ok
+test_split_join_rejection_is_atomic (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_rejection_is_atomic) ... ok
+test_split_join_slice_apart_ownership_undo_save (TestPartBooleanInputs.TestPartBooleanInputs.test_split_join_slice_apart_ownership_undo_save) ... ok
+test_split_property_all_inputs_reject_then_accept_undo_save (TestPartBooleanInputs.TestPartBooleanInputs.test_split_property_all_inputs_reject_then_accept_undo_save) ... ok
+test_split_property_context_rejection_cleanup_and_multi_atomic (TestPartBooleanInputs.TestPartBooleanInputs.test_split_property_context_rejection_cleanup_and_multi_atomic) ... ok
+test_split_property_excluded_and_full_component_rejection (TestPartBooleanInputs.TestPartBooleanInputs.test_split_property_excluded_and_full_component_rejection) ... ok
+test_split_property_legacy_and_unrelated_python_bypass (TestPartBooleanInputs.TestPartBooleanInputs.test_split_property_legacy_and_unrelated_python_bypass) ... ok
+TestUnitPersistence (unittest.loader._FailedTest.TestUnitPersistence) ... ERROR
+test_defaults_cancel_apply_and_new_task (TestMeshSettings.TestMeshSettings.test_defaults_cancel_apply_and_new_task) ... ok
+test_mixed_exact_sources_and_duplicate_coverage (TestMeshSettings.TestMeshSettings.test_mixed_exact_sources_and_duplicate_coverage) ... ok
+test_modeling_ribbon_buttons_open_whole_shape_tasks (TestMeshSettings.TestMeshSettings.test_modeling_ribbon_buttons_open_whole_shape_tasks) ... ok
+test_nonstandard_fields_and_defaults_reset (TestMeshSettings.TestMeshSettings.test_nonstandard_fields_and_defaults_reset) ... ok
+test_old_quantity_recipe_and_invalid_saved_control (TestMeshSettings.TestMeshSettings.test_old_quantity_recipe_and_invalid_saved_control) ... ok
+test_promoted_sheet_preserves_face_material_and_transparency (TestMeshSettings.TestMeshSettings.test_promoted_sheet_preserves_face_material_and_transparency) ... ok
+test_saved_recipe_reopens_in_history_without_overwriting_defaults (TestMeshSettings.TestMeshSettings.test_saved_recipe_reopens_in_history_without_overwriting_defaults) ... ok
+test_transformation_and_trim_history_edit_routing (TestMeshSettings.TestMeshSettings.test_transformation_and_trim_history_edit_routing) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+
+======================================================================
+ERROR: TestUnitPersistence (unittest.loader._FailedTest.TestUnitPersistence)
+----------------------------------------------------------------------
+AttributeError: module 'TestUnitPersistence' has no attribute 'TestUnitPersistence'
+
+----------------------------------------------------------------------
+Ran 54 tests in 118.574s
+
+FAILED (errors=1)

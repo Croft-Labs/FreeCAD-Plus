@@ -504,10 +504,15 @@ void DlgBooleanOperation::accept()
         Gui::Command::doCommand(Gui::Command::Doc, "bp = BOPFeatures.BOPFeatures(App.activeDocument())");
         Gui::Command::doCommand(
             Gui::Command::Doc,
-            "bp.%s([%s])",
+            "__boolean_result = bp.%s([%s])",
             method.c_str(),
             Base::Tools::joinList(names).c_str()
         );
+        if (PartGui::isComponentBooleanDocument(activeDoc)) {
+            Gui::Command::doCommand(Gui::Command::Doc,
+                "from freecad_plus import result_names; result_names.native_created(__boolean_result)");
+        }
+        Gui::Command::doCommand(Gui::Command::Doc, "del __boolean_result");
         activeDoc->commitTransaction();
         activeDoc->recompute();
     }

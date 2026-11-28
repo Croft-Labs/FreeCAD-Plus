@@ -1,0 +1,2 @@
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child0'. Instead, the linked object(s) reside within 'Part001 File'.
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child1'. Instead, the linked object(s) reside within 'Part001 File'.

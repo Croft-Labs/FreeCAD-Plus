@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Associative transformations of complete, component-owned solids and sheets."""
+from . import result_names
 import json
 import math
 import uuid
@@ -154,11 +155,12 @@ class ViewTransform:
     def loads(self, state):pass
 
 
-def save(doc, refs, steps, merge=True, kind='Linear pattern', label=None, feature=None):
+def save(doc, refs, steps, merge=True, kind='Linear pattern', label=None, feature=None, result_labels=None):
     owner, _ = modeling._context(doc)
     if feature and derived_geometry.owner(feature) != owner:
         raise ValueError('Edit a transformation in the active component')
     shapes = evaluate(owner, refs, steps, merge, feature)
+    if result_labels is not None and len(result_labels)!=len(shapes):raise ValueError('Review the name of each result.')
     old = sorted((o for o in owner.Document.Objects if feature and
                   getattr(o, 'TransformGroup', None) == feature.TransformGroup and
                   derived_geometry.owner(o) == owner), key=lambda o:o.TransformIndex)
@@ -186,7 +188,9 @@ def save(doc, refs, steps, merge=True, kind='Linear pattern', label=None, featur
             obj.TransformKind=kind;obj.TransformGroup=group;obj.TransformIndex=i
             obj.TransformSources=planes.links(refs);obj.TransformReferences=planes.links(references)
             obj.TransformSteps=json.dumps(encoded);obj.MergeResults=merge
-            obj.Label=label or kind;obj.touch();results.append(obj)
+            if result_labels is not None:result_names.assign(obj,result_labels[i])
+            else:obj.Label=label or kind
+            obj.touch();results.append(obj)
         for obj in old[len(shapes):]:
             parent=obj.getParentGeoFeatureGroup();owner.Document.removeObject(obj.Name)
             if parent.TypeId=='PartDesign::Body':owner.Document.removeObject(parent.Name)

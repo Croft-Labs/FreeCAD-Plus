@@ -1,0 +1,39 @@
+{
+  "status": "Awaiting owner approval; no production changes",
+  "review": "7010d6170aa0",
+  "sourceCommit": "c7d6d188c676a1b2cdd25a43aa38010d5ebdbb20",
+  "spec": "Result names for all feature operations producing component History entries. Exact current UI snapshot from FreeCAD-Plus c7d6d188c676a1b2cdd25a43aa38010d5ebdbb20; original has unrelated untracked project.previewfirst.json, preserved. Add editable Result name at top of Preview; add Preview group where missing. Default to each operation's existing automatic history label; only mesh defaults change to [Part_Name]_Mesh001, 002 etc using owning part. Preserve typed names during recalculation/input changes; editing preloads current label. Multiple outputs get one name per result with input mapping; keep existing source-list result columns consistent. Done/Apply saves labels atomically with operation, Apply prepares next defaults, Cancel leaves saved names untouched; blank name gives existing prominent inline feedback and retains draft. Keep internal Name IDs, links, geometry, order, operation suffixes, coordinate graphics, other controls and legacy documents. Scope after approval: Plus and native feature/task adapters that produce component history, name allocation and transaction integration, focused tests and owning docs. No component definition rename or retroactive renaming. Native UI prototype only: fixture defaults and editing, no allocation/persistence implemented. Candidate files only, no original/installed edits. Review direct screenshots in chat. Do not mark approval.",
+  "preview": {
+    "fingerprint": "06f01b3b959576fcecd3a7f4ff1ced1fca9d09866071c02a0320f2d12f03f410",
+    "captured": 1795883069.6901596,
+    "baseline": {
+      "file": "baseline-871a844a.png",
+      "sha256": "0e81e1d256fc4f7285fee7728aedea388b8e901a4977e26d2273d9df8e518e13",
+      "renderer": "command-image",
+      "side": "baseline",
+      "worktree": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\7010d6170aa0\\baseline",
+      "note": "Custom runtime adapter. Operator is responsible for source provenance and faithful rendering."
+    },
+    "candidate": {
+      "file": "candidate-28a19c37.png",
+      "sha256": "24d6f4c73641947b65f76c5e24a213efd3b7113d2ec2caa15f5be584092f5b2e",
+      "renderer": "command-image",
+      "side": "candidate",
+      "worktree": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\7010d6170aa0\\candidate",
+      "note": "Custom runtime adapter. Operator is responsible for source provenance and faithful rendering."
+    }
+  },
+  "valid": true,
+  "approved": false,
+  "checks": [
+    "Native Qt baseline and candidate rendered",
+    "Custom text editable in fixture",
+    "No fixture document objects or labels changed"
+  ],
+  "limitations": [
+    "Default names are fixture values, allocation and persistence are not implemented",
+    "Three representative forms demonstrate shared treatment; remaining feature adapters require implementation after approval",
+    "Original checkout acquired unrelated Trim/unit-test edits during preview; preserved",
+    "AGENTS legacy GAMING-PC validation path is inaccessible; used established dgium external validation directory"
+  ]
+}

@@ -1,0 +1,28 @@
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child0'. Instead, the linked object(s) reside within 'File Part001'.
+Part::FeaturePython: Link(s) to object(s) 'InputCompound' go out of the allowed scope 'InputCompound_child1'. Instead, the linked object(s) reside within 'File Part001'.
+edit: editing failed
+Part::Section: Link(s) to object(s) 'SectionPlane SectionBase' go out of the allowed scope 'Section'. Instead, the linked object(s) reside within 'LegacyPart LegacyPart'.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 35, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 51, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 1. Reopen it to review their names.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 35, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 51, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 1. Reopen it to review their names.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 35, in completed
+    try:finish(task)
+        ^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\operation_task.py", line 51, in finish
+    if len(objects)!=len(task.labels):raise ValueError('The operation produced '+str(len(objects))+' results instead of '+str(len(task.labels))+'. Reopen it to review their names.')
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<class 'ValueError'>: The operation produced 0 results instead of 3. Reopen it to review their names.

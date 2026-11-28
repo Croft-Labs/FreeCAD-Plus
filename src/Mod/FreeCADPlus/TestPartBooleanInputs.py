@@ -21,6 +21,15 @@ class TestPartBooleanInputs(unittest.TestCase):
     control = TestComponentReferences.control
     task_button = TestComponentInputEditors.task_button
 
+    def run_feature(self, command):
+        """Confirm the result-name review added to component feature commands."""
+        from freecad_plus import operation_task
+        Gui.runCommand(command);settle()
+        task=operation_task._active
+        if task:
+            accepted=task.accept()
+            if not accepted:task.reject()
+
     def boxes(self, owner=None):
         Gui.activateWorkbench('PartWorkbench')
         owner = owner or self.child
@@ -47,12 +56,12 @@ class TestPartBooleanInputs(unittest.TestCase):
             for command in ('Part_Cut','Part_Common','Part_Fuse'):
                 self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
                 before=self.snapshot()
-                with messages() as errors:Gui.runCommand(command);settle()
+                with messages() as errors:self.run_feature(command);settle()
                 self.assertTrue(any(kind in e for e in errors),(command,errors))
                 self.assertEqual(self.snapshot(),before);document.validate(self.doc)
         editing.edit_file(self.doc);self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
         before=self.snapshot()
-        with messages() as errors:Gui.runCommand('Part_Cut');settle()
+        with messages() as errors:self.run_feature('Part_Cut');settle()
         self.assertTrue(any('Edit a component' in e for e in errors),errors)
         self.assertEqual(self.snapshot(),before)
 
@@ -61,7 +70,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         for command,kind,volume in [('Part_Cut','Part::Cut',32),('Part_Common','Part::MultiCommon',32),('Part_Fuse','Part::MultiFuse',96)]:
             a,b=self.boxes();before_ids={o.Name:o.ID for o in self.doc.Objects}
             self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
-            with messages() as errors:Gui.runCommand(command);settle()
+            with messages() as errors:self.run_feature(command);settle()
             self.assertFalse(errors,errors)
             result=next(o for o in self.doc.Objects if o.Name not in before_ids)
             self.assertEqual(result.TypeId,kind);self.assertTrue(result.Shape.isValid())
@@ -91,7 +100,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         a,b=self.boxes();source=hierarchy.create_definition(self.doc,'Reference catalog')
         foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
         display.set_state(self.child,link,part_type='Reference');settle()
-        Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+        Gui.Selection.clearSelection();self.run_feature('Part_Boolean');settle()
         self.choose('firstShape',a);self.choose('secondShape',foreign)
         before=self.snapshot()
         with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
@@ -111,11 +120,11 @@ class TestPartBooleanInputs(unittest.TestCase):
             for command,volume in [('Part_Cut',32),('Part_Common',32),('Part_Fuse',96)]:
                 a,b=self.boxes(legacy);before=set(legacy.Objects)
                 self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
-                with messages() as errors:Gui.runCommand(command);settle()
+                with messages() as errors:self.run_feature(command);settle()
                 self.assertFalse(errors,errors)
                 result=next(o for o in legacy.Objects if o not in before)
                 self.assertAlmostEqual(result.Shape.Volume,volume)
-            a,b=self.boxes(legacy);Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+            a,b=self.boxes(legacy);Gui.Selection.clearSelection();self.run_feature('Part_Boolean');settle()
             self.choose('firstShape',a);self.choose('secondShape',b)
             self.control(QtWidgets.QRadioButton,'interButton').setChecked(True);before=set(legacy.Objects)
             with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
@@ -144,19 +153,19 @@ class TestPartBooleanInputs(unittest.TestCase):
             display.set_state(self.child,link,part_type=kind);settle()
             self.select(b);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
             before=self.snapshot()
-            with messages() as errors:Gui.runCommand('Part_Section');settle()
+            with messages() as errors:self.run_feature('Part_Section');settle()
             self.assertTrue(any(kind in error for error in errors),errors)
             self.assertEqual(self.snapshot(),before)
         editing.edit_file(self.doc);self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
         before=self.snapshot()
-        with messages() as errors:Gui.runCommand('Part_Section');settle()
+        with messages() as errors:self.run_feature('Part_Section');settle()
         self.assertTrue(any('Edit a component' in error for error in errors),errors)
         self.assertEqual(self.snapshot(),before)
 
     def test_section_command_ownership_undo_and_save(self):
         a,b=self.section_shapes();ids={o.Name:o.ID for o in self.doc.Objects}
         self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
-        with messages() as errors:Gui.runCommand('Part_Section');settle()
+        with messages() as errors:self.run_feature('Part_Section');settle()
         self.assertFalse(errors,errors)
         result=next(o for o in self.doc.Objects if o.Name not in ids)
         self.assertEqual(result.TypeId,'Part::Section');self.assertTrue(result.Shape.isValid())
@@ -176,7 +185,7 @@ class TestPartBooleanInputs(unittest.TestCase):
             'definition':self.child.Name,'result':name,'base':a.Name,'tool':b.Name}))
 
     def test_section_dialog_apply_and_undo(self):
-        a,b=self.section_shapes();Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+        a,b=self.section_shapes();Gui.Selection.clearSelection();self.run_feature('Part_Boolean');settle()
         self.choose('firstShape',a);self.choose('secondShape',b)
         self.control(QtWidgets.QRadioButton,'sectionButton').setChecked(True)
         ids={o.Name:o.ID for o in self.doc.Objects}
@@ -194,7 +203,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         a,b=self.section_shapes(owner);before=set(legacy.Objects)
         self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
         with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
-            with messages() as errors:Gui.runCommand('Part_Section');settle()
+            with messages() as errors:self.run_feature('Part_Section');settle()
         self.assertFalse(errors,errors)
         result=next(o for o in legacy.Objects if o not in before)
         self.assertTrue(a in owner.Group and b in owner.Group)
@@ -212,13 +221,13 @@ class TestPartBooleanInputs(unittest.TestCase):
             display.set_state(self.child,link,part_type=kind);settle()
             self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
             before=self.snapshot()
-            with messages() as errors:Gui.runCommand('Part_Compound');settle()
+            with messages() as errors:self.run_feature('Part_Compound');settle()
             expected=kind if kind!='Full Component' else 'owned by the edited component'
             self.assertTrue(any(expected in error for error in errors),errors)
             self.assertEqual(self.snapshot(),before);document.validate(self.doc)
         editing.edit_file(self.doc);self.select(a)
         before=self.snapshot()
-        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        with messages() as errors:self.run_feature('Part_Compound');settle()
         self.assertTrue(any('Edit a component' in error for error in errors),errors)
         self.assertEqual(self.snapshot(),before)
 
@@ -228,7 +237,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         self.select(self.root,path+b.Name+'.Face1')
         Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+b.Name+'.Face2')
         Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+a.Name+'.')
-        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        with messages() as errors:self.run_feature('Part_Compound');settle()
         self.assertFalse(errors,errors)
         result=next(o for o in self.doc.Objects if o.Name not in ids)
         self.assertEqual(result.TypeId,'Part::Compound');self.assertEqual(result.Links,[b,a])
@@ -252,7 +261,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         editing.edit_unused(self.doc,self.unused)
         a,_=self.boxes(self.unused);ids={o.Name:o.ID for o in self.doc.Objects}
         self.select(a)
-        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        with messages() as errors:self.run_feature('Part_Compound');settle()
         self.assertFalse(errors,errors)
         result=next(o for o in self.doc.Objects if o.Name not in ids)
         self.assertEqual(result.Links,[a]);self.assertTrue(result.Shape.isValid())
@@ -266,7 +275,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         legacy=App.newDocument('LegacyCompound');a,b=self.boxes(legacy)
         before=set(legacy.Objects);self.select(b);Gui.Selection.addSelection(legacy.Name,a.Name)
         with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
-            with messages() as errors:Gui.runCommand('Part_Compound');settle()
+            with messages() as errors:self.run_feature('Part_Compound');settle()
         self.assertFalse(errors,errors)
         result=next(o for o in legacy.Objects if o not in before)
         self.assertEqual(result.TypeId,'Part::Compound');self.assertEqual(result.Links,[b,a])
@@ -441,14 +450,14 @@ class TestPartBooleanInputs(unittest.TestCase):
             for command in commands:
                 self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
                 before=self.snapshot()
-                with messages() as errors:Gui.runCommand(command);settle()
+                with messages() as errors:self.run_feature(command);settle()
                 expected=kind if kind!='Full Component' else 'owned by the edited component'
                 self.assertTrue(any(expected in e for e in errors),(command,errors))
                 self.assertEqual(self.snapshot(),before);document.validate(self.doc)
         editing.edit_file(self.doc)
         for command in commands:
             self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name);before=self.snapshot()
-            with messages() as errors:Gui.runCommand(command);settle()
+            with messages() as errors:self.run_feature(command);settle()
             self.assertTrue(any('Edit a component' in e for e in errors),(command,errors))
             self.assertEqual(self.snapshot(),before)
 
@@ -459,7 +468,7 @@ class TestPartBooleanInputs(unittest.TestCase):
             path=hierarchy.subname((self.second,self.nested))
             self.select(self.root,path+a.Name+'.')
             Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+b.Name+'.')
-            with messages() as errors:Gui.runCommand(command);settle()
+            with messages() as errors:self.run_feature(command);settle()
             self.assertFalse(errors,(command,errors));self.doc.recompute()
             result=next(o for o in self.doc.Objects if o.Name not in ids)
             self.assertEqual(result.TypeId,'Part::FeaturePython');self.assertTrue(result.Shape.isValid())
@@ -482,7 +491,7 @@ class TestPartBooleanInputs(unittest.TestCase):
     def test_split_join_slice_apart_ownership_undo_save(self):
         a,b=self.boxes();ids={o.Name:o.ID for o in self.doc.Objects}
         self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
-        with messages() as errors:Gui.runCommand('Part_SliceApart');settle()
+        with messages() as errors:self.run_feature('Part_SliceApart');settle()
         self.assertFalse(errors,errors)
         created=[o for o in self.doc.Objects if o.Name not in ids]
         self.assertEqual(len(created),3)
@@ -518,8 +527,12 @@ class TestPartBooleanInputs(unittest.TestCase):
                     seen.append(modal.text());modal.button(QtWidgets.QMessageBox.Abort).click()
             timer.timeout.connect(abort);timer.start(25)
             try:
+                from freecad_plus import operation_task
+                Gui.runCommand(command);settle()
+                task=operation_task._active;self.assertIsNotNone(task)
                 with patch.object(module,method,side_effect=RuntimeError('Focused abort probe')):
-                    Gui.runCommand(command);settle()
+                    self.assertFalse(task.accept());settle()
+                task.reject()
             finally:timer.stop();timer.deleteLater()
             self.assertTrue(any('Focused abort probe' in error for error in seen),(command,seen))
             self.assertEqual(self.snapshot(),before);document.validate(self.doc)
@@ -530,7 +543,7 @@ class TestPartBooleanInputs(unittest.TestCase):
             for command,volume,solids in self.split_join_cases:
                 a,b=self.boxes(legacy);before=set(legacy.Objects)
                 self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
-                with messages() as errors:Gui.runCommand(command);settle()
+                with messages() as errors:self.run_feature(command);settle()
                 self.assertFalse(errors,(command,errors));legacy.recompute()
                 result=next(o for o in legacy.Objects if o not in before)
                 self.assertIsNone(result.getParentGeoFeatureGroup())
@@ -538,7 +551,7 @@ class TestPartBooleanInputs(unittest.TestCase):
                 self.assertEqual(len(result.Shape.Solids),solids)
             a,b=self.boxes(legacy);before=set(legacy.Objects)
             self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
-            with messages() as errors:Gui.runCommand('Part_SliceApart');settle()
+            with messages() as errors:self.run_feature('Part_SliceApart');settle()
             self.assertFalse(errors,errors)
             created=[o for o in legacy.Objects if o not in before]
             group=next(o for o in created if o.TypeId=='App::DocumentObjectGroup')

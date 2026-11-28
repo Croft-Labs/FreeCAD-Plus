@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Feature result names — installed November 28, 2026
+
+Component History workflows now expose editable names in Preview, including native
+feature tasks and immediate operation review. Existing default names are preserved;
+meshes default to `<Part_Name>_Mesh001`. Multi-output fields, edit/Cancel and atomic
+Undo are verified. All 58 executed installed checks pass. This delivery also installs
+the previously committed unit-persistence payload. See
+[naming evidence and screenshot](evidence/result-names-20261128/README.md).
+
 ## Entered-unit persistence — November 28, 2026
 
 Mesh settings, reference images, component-instance patterns and sketch-plane offsets

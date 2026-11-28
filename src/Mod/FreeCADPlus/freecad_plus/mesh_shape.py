@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """One associative mesh of owned solid/surface references."""
+from . import result_names
 import json
 import math
 import subprocess
@@ -158,10 +159,11 @@ class ViewMeshed:
     def loads(self,state):pass
 
 
-def save(doc,refs,settings,feature=None,cancel=None):
+def save(doc,refs,settings,feature=None,cancel=None,result_name=None):
     import MeshGui  # Register the native mesh view provider before creation.
     owner,_=modeling._context(doc)
     if feature and derived_geometry.owner(feature)!=owner:raise ValueError('Edit a mesh in the active component')
+    if feature is None and result_name is None:result_name=result_names.defaults(owner,['Mesh'],style='mesh')[0]
     refs=normalize(owner,refs,feature)
     document.require_predecessors(owner,feature,refs)
     value=compute(owner,refs,settings,cancel)
@@ -171,6 +173,7 @@ def save(doc,refs,settings,feature=None,cancel=None):
         root=document.validate(owner.Document);root.PlusSchema=max(root.PlusSchema,8)
         if feature is None:
             feature=owner.newObject('Mesh::FeaturePython','Mesh');Meshed(feature);ViewMeshed(feature.ViewObject)
+        result_names.assign(feature,result_name)
         persisted=dict(settings);persisted.pop('executable',None)
         feature.MeshSources=planes.links(refs);feature.MeshSettings=json.dumps(persisted)
         feature.Proxy.pending=value;feature.touch();owner.Document.recompute()

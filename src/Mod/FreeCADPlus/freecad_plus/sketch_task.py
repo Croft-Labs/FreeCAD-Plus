@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Approved shared creation/placement task for native sketches."""
+from . import result_names
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -12,6 +13,7 @@ _active = None
 class SketchPlacementTask(plane_task.PlaneTask):
     # Plane refinements are approved independently of the Sketch placement UI.
     reference_guidance = False
+    result_base = 'Sketch'
 
     def __init__(self, feature=None):
         self.origin_visibility = None
@@ -74,18 +76,20 @@ class SketchPlacementTask(plane_task.PlaneTask):
             self.offset.interpretText()
             self.committed_offset = self.offset.value()
             self.placement()
+            name = self.names.value()
             # Automatic visibility must not enter the sketch's native transaction.
             self.origin_visibility.restore()
             args = (self.refs, self.origin_refs, self.axis_refs,
                     'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
             if self.feature is not None:
                 self.result = sketch_placement.save(self.doc, *args, feature=self.feature, offset=self.committed_offset,
-                                                   normal_to_line=self.normal_to_line, quantity_units={'SketchPlaneOffset':self.offset._unit})
+                                                   normal_to_line=self.normal_to_line,result_name=name, quantity_units={'SketchPlaneOffset':self.offset._unit})
                 self.reject()
             else:
                 # Native drawing owns completion of the new-sketch transaction.
                 transaction_id = App.setActiveTransaction('Create a new sketch')
                 self.result = self.definition.newObject('Sketcher::SketchObject', 'Sketch')
+                result_names.assign(self.result,name)
                 sketch_placement.configure(self.result, *args, offset=self.committed_offset,
                                            normal_to_line=self.normal_to_line, quantity_units={'SketchPlaneOffset':self.offset._unit})
                 self.source_doc.recompute()
