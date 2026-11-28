@@ -1,0 +1,74 @@
+import os,sys,json,re,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest,QtOpenGLWidgets
+from freecad_plus import document,editing,ui_modes,panel
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def settle():Gui.updateGui();QtTest.QTest.qWait(250)
+
+def run():
+    result={'ok':False,'preview_only':True}
+    try:
+        source=(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'src/Gui/MainWindow.cpp').read_text()
+        positions=re.findall(r'd->mdiArea->setTabPosition\(QTabWidget::(South|North)\)',source)
+        assert len(positions)==1
+        position=positions[0];result['source_position']=position
+        win=Gui.getMainWindow();win.showNormal();win.resize(1500,1000)
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes();settle()
+        docs=[]
+        for name,height in [('Bracket',14),('Cover',3)]:
+            doc=document.new_document(name);root=document.validate(doc);owner=root.Definitions[0];owner.Label=name
+            body=owner.newObject('PartDesign::Body','Body');feature=body.newObject('PartDesign::Feature','FinishedBody')
+            shape=Part.makeBox(60,36,height)
+            for x in (8,52):
+                for y in (8,28):shape=shape.cut(Part.makeCylinder(2.5,height+2,App.Vector(x,y,-1)))
+            feature.Shape=shape;body.Tip=feature;doc.recompute();editing.edit((root.Group[0],))
+            view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();docs.append(doc)
+        App.setActiveDocument(docs[0].Name);widget=panel.show_panel();widget.refresh();settle()
+        mdi=win.centralWidget();assert isinstance(mdi,QtWidgets.QMdiArea)
+        bar=mdi.findChild(QtWidgets.QTabBar,'mdiAreaTabBar');assert bar and bar.count()>=2
+        before={doc.Name:(tuple((o.Name,o.ID) for o in doc.Objects),doc.UndoCount) for doc in docs}
+        labels=[bar.tabText(i) for i in range(bar.count())]
+        # UI-only equivalent of the proposed one-line native constructor change.
+        mdi.setTabPosition(getattr(QtWidgets.QTabWidget,position))
+        # Qt recreates its tab bar when this is changed after initialization.
+        # Reproduce the unchanged constructor statements following this setting.
+        bar=mdi.findChild(QtWidgets.QTabBar)
+        bar.setTabsClosable(True);bar.setExpanding(False);bar.setObjectName('mdiAreaTabBar')
+        settle()
+        assert [bar.tabText(i) for i in range(bar.count())]==labels
+        indices=[next(i for i,label in enumerate(labels) if name in label) for name in ('Cover','Bracket')]
+        for i in indices:
+            QtTest.QTest.mouseClick(bar,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,bar.tabRect(i).center());settle()
+            assert bar.currentIndex()==i
+        assert before=={doc.Name:(tuple((o.Name,o.ID) for o in doc.Objects),doc.UndoCount) for doc in docs}
+        assert mdi.tabsMovable() and bar.tabsClosable()
+        result.update(tab_count=bar.count(),tabs=labels,tab_y=bar.mapTo(mdi,QtCore.QPoint()).y(),viewer_height=mdi.height(),
+                      checks=['requested edge placement','tab order retained','native tab switching','movable and closable retained','document identities and Undo unchanged'])
+        assert (result['tab_y']<10) if position=='North' else (result['tab_y']>mdi.height()-bar.height()-10)
+        Gui.activeDocument().activeView().fitAll();settle()
+        # Windows widget/framebuffer grabs corrupt this OpenGL region. Use the
+        # native viewer's offscreen renderer at the same size/camera and bounds.
+        gl=mdi.activeSubWindow().widget().findChild(QtOpenGLWidgets.QOpenGLWidget)
+        assert gl is not None
+        def capture(target,filename):
+            screen=target.grab().toImage();ratio=screen.devicePixelRatio();screen.setDevicePixelRatio(1)
+            model=out/'native-viewport.png'
+            Gui.activeDocument().activeView().saveImage(str(model),round(gl.width()*ratio),round(gl.height()*ratio),'Current')
+            frame=QtGui.QImage(str(model));frame.setDevicePixelRatio(1)
+            point=gl.mapTo(target,QtCore.QPoint())
+            painter=QtGui.QPainter(screen)
+            painter.drawImage(QtCore.QRect(round(point.x()*ratio),round(point.y()*ratio),round(gl.width()*ratio),round(gl.height()*ratio)),frame)
+            painter.end();screen.save(str(filename))
+        capture(win,out/'window.png');capture(mdi,os.environ['PLUS_PREVIEW_IMAGE'])
+        result['capture']='Native widget capture plus same-state native viewer offscreen render at exact viewport bounds'
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

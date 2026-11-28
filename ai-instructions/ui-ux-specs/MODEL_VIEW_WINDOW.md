@@ -1,5 +1,12 @@
 # Model view window
 
+## Document tabs at top — requested November 27, 2026; preview pending
+
+Owner requests file/document tabs above the central viewer, directly below the
+toolbars. Preserve tab names, order, close/switch behavior and surrounding docks.
+Native one-line placement preview and checks are ready; no installed change yet.
+See [preview evidence](../evidence/document-tabs-20261127/README.md).
+
 Implementation tracking: domestic/external unused-model isolation, native picking
 and Sketch/Pad editor display have bounded native-build validation in
 [WORK_STATE](../WORK_STATE.md). Component file tabs reuse native views and preserve

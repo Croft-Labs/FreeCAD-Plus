@@ -1,3 +1,10 @@
+# November 27: Document tabs at top — preview pending approval
+
+Prepared the one-line MainWindow South-to-North tab-placement change in an isolated
+review. Native preview switching, order, controls and unchanged object/Undo checks
+pass. Source/build/install remain pending approval. See
+[direct screenshots and evidence](evidence/document-tabs-20261127/README.md).
+
 # November 27: Mesh from Shape diagnosis and preview — pending approval
 
 Reproduced native mesh creation outside component ownership, causing invalid

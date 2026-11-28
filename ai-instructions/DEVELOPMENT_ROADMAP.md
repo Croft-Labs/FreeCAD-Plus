@@ -1,3 +1,10 @@
+# November 27: Document tab placement
+
+- [x] Preview document tabs at the top and verify native switching/preservation.
+- [ ] Owner approval, one-line production change, native build and installed check.
+
+[Preview evidence](evidence/document-tabs-20261127/README.md).
+
 # November 27: Mesh from Shape
 
 - [x] Reproduce component ownership failure after native OK and fixture recovery.

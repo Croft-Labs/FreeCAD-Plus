@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "preview_only": true,
+  "source_position": "South",
+  "tab_count": 3,
+  "tabs": [
+    "Start",
+    "Bracket : 1*",
+    "Cover : 1*"
+  ],
+  "tab_y": 706,
+  "viewer_height": 736,
+  "checks": [
+    "requested edge placement",
+    "tab order retained",
+    "native tab switching",
+    "movable and closable retained",
+    "document identities and Undo unchanged"
+  ],
+  "capture": "Native widget capture plus same-state native viewer offscreen render at exact viewport bounds"
+}
