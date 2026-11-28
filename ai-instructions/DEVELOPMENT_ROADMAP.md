@@ -1,3 +1,9 @@
+# November 28: Body-pattern units delivered
+
+Length fields now accept inches and preserve the entered unit when editing saved
+patterns. Ten installed checks pass; source/build/app hashes match. See
+[unit-entry repair evidence](evidence/body-pattern-units-20261128/README.md).
+
 # November 28: Linked sketch patterns delivered
 
 The approved linked sketch pattern workflow is implemented and installed. Advanced

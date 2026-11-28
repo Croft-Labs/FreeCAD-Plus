@@ -3,6 +3,7 @@
 from PySide6 import QtCore, QtWidgets
 from .task_status import TaskStatus
 from .selection_list import SelectionList
+from .quantity_fields import QuantityNumber
 
 KINDS=('Mirror','Linear pattern','Polar pattern','Multi-transform')
 
@@ -13,7 +14,8 @@ def combo(values):
     item=QtWidgets.QComboBox();item.addItems(values);return item
 
 def number(value,suffix='',minimum=-100000,maximum=100000,decimals=2):
-    item=QtWidgets.QDoubleSpinBox();item.setDecimals(decimals);item.setRange(minimum,maximum)
+    item=QuantityNumber() if suffix.strip()=='mm' else QtWidgets.QDoubleSpinBox()
+    item.setDecimals(decimals);item.setRange(minimum,maximum)
     item.setSuffix(suffix);item.setValue(value);return item
 
 class Step(QtWidgets.QGroupBox):
@@ -49,7 +51,13 @@ class Step(QtWidgets.QGroupBox):
             self.reverse=QtWidgets.QCheckBox('Reverse direction');layout.addRow(self.reverse)
         layout.addRow(label('References and distances use the active component.'))
 
+    def length_fields(self):
+        if self.kind=='Mirror':return {'offset':self.offset}
+        if self.kind=='Linear pattern':return {'value':self.value}
+        return dict(zip(('center_x','center_y','center_z'),self.center))
+
     def reset(self):
+        for field in self.length_fields().values():field.setSuffix(' mm')
         self.reference.setCurrentIndex(0 if self.kind=='Mirror' else (2 if self.kind=='Polar pattern' else 0));self.pick.clear()
         if self.kind=='Mirror':self.offset.setValue(0)
         else:

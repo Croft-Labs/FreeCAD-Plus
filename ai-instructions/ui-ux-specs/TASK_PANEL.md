@@ -28,6 +28,13 @@ coverage removes duplicate face coverage. See the
 
 ## Approved geometry workflows — November 27, 2026
 
+November 28 unit-entry correction: whole-shape pattern length fields accept explicit
+units such as `0.5 in`, preserving exact native lengths and the chosen display unit
+when editing saved patterns. This covers linear spacing/overall length, mirror
+offset, polar axis origins and Multi-transform steps. Keep the existing layout,
+counts, angles and Apply/reset defaults. See
+[installed verification](../evidence/body-pattern-units-20261128/README.md).
+
 Mirror, Linear Pattern, Polar/Circular Pattern and ordered Multi-transform collect
 complete finished bodies or sheets, including earlier cuts. A face/edge click selects
 its whole source. Merge touching copies; keep separated copies in one History item

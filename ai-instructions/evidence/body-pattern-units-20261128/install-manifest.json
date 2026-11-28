@@ -1,0 +1,30 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "235cab2a2a63d70ef12cd31bf8dddcbf01e15c3dccee8f529d42808c6e5bc950",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "freecad_plus/transform_ui.py",
+      "before": "6210f13c8e0aaab0e9c96a30c66fc48410333ba2f954f902f64c8f4ee70ac1c1",
+      "source": "f93c7f2cdc838bdfb09e7d310bd86a1d053fc5fd05adeba85640543a359f64bb",
+      "build": "f93c7f2cdc838bdfb09e7d310bd86a1d053fc5fd05adeba85640543a359f64bb",
+      "installed": "f93c7f2cdc838bdfb09e7d310bd86a1d053fc5fd05adeba85640543a359f64bb"
+    },
+    {
+      "path": "freecad_plus/transform_task.py",
+      "before": "09602106481b4f5bcfc7d13abc77c2abf9658796de8f58449ca2678bfcf4fe4d",
+      "source": "1dc877e365c0e613f1142150e40dcca465a7e9156ea868a1304b1d0fdc3a7b39",
+      "build": "1dc877e365c0e613f1142150e40dcca465a7e9156ea868a1304b1d0fdc3a7b39",
+      "installed": "1dc877e365c0e613f1142150e40dcca465a7e9156ea868a1304b1d0fdc3a7b39"
+    },
+    {
+      "path": "TestBodyPatternUnits.py",
+      "before": null,
+      "source": "df03c0b32decb2eabdadaf4d9e8a04a053f8261a42a306c609fc7c6664c96122",
+      "build": "df03c0b32decb2eabdadaf4d9e8a04a053f8261a42a306c609fc7c6664c96122",
+      "installed": "df03c0b32decb2eabdadaf4d9e8a04a053f8261a42a306c609fc7c6664c96122"
+    }
+  ]
+}

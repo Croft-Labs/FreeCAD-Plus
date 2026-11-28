@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "typed": "0.5 in",
+  "display": "0.5 mm",
+  "stored_mm": 0.5,
+  "widget": "QDoubleSpinBox"
+}

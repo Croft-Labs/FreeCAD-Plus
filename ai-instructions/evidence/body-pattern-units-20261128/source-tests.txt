@@ -1,0 +1,14 @@
+test_invalid_units_do_not_create_result_and_legacy_recipes_load (TestBodyPatternUnits.TestBodyPatternUnits.test_invalid_units_do_not_create_result_and_legacy_recipes_load) ... ok
+test_linear_keyboard_precision_geometry_and_reset (TestBodyPatternUnits.TestBodyPatternUnits.test_linear_keyboard_precision_geometry_and_reset) ... ok
+test_mirror_polar_and_multi_transform_units_follow_steps (TestBodyPatternUnits.TestBodyPatternUnits.test_mirror_polar_and_multi_transform_units_follow_steps) ... ok
+test_overall_length_sheet_and_immediate_apply (TestBodyPatternUnits.TestBodyPatternUnits.test_overall_length_sheet_and_immediate_apply) ... ok
+test_saved_units_reopen_edit_and_cancel (TestBodyPatternUnits.TestBodyPatternUnits.test_saved_units_reopen_edit_and_cancel) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 7.318s
+
+OK

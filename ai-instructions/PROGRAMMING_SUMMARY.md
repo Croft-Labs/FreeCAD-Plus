@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+## Body-pattern inch entry — fixed November 28, 2026
+
+Linear, Mirror, Polar origin and Multi-transform length fields now accept explicit
+units and preserve their display on reopening. Ten installed checks pass. See
+[repair evidence](evidence/body-pattern-units-20261128/README.md).
+
 ## Linked sketch patterns — installed November 28, 2026
 
 The approved linked sketch pattern workflow is implemented and installed. Advanced

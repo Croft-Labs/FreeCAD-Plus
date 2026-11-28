@@ -7,6 +7,7 @@ from . import transforms, planes, modeling, editing, panel, document
 from .transform_ui import Form
 from .selection_list import removing, reference_key
 from .shape_preview import ShapePreview
+from .quantity_fields import units
 
 _active = None
 
@@ -49,6 +50,7 @@ class TransformTask(QtCore.QObject):
             step.connected=True;step.ref=getattr(step,'ref',None);step.pick.installEventFilter(self)
             for widget in step.findChildren(QtWidgets.QComboBox):widget.currentIndexChanged.connect(self.schedule)
             for widget in step.findChildren(QtWidgets.QAbstractSpinBox):widget.editingFinished.connect(self.schedule)
+            for widget in step.length_fields().values():widget.committed.connect(self.schedule)
             for widget in step.findChildren(QtWidgets.QCheckBox):widget.toggled.connect(self.schedule)
         self.schedule()
 
@@ -61,11 +63,22 @@ class TransformTask(QtCore.QObject):
             step.value.setValue(value['value']);step.reverse.setChecked(value.get('reverse',False))
             if step.kind=='Polar pattern':
                 for widget,number in zip(step.center,value.get('center',(0,0,0))):widget.setValue(number)
+        for name,field in step.length_fields().items():
+            unit=value.get('units',{}).get(name)
+            if unit:
+                try:
+                    if App.Units.Quantity('1 '+unit).Unit==field._dimension:field.setSuffix(unit)
+                except Exception:pass
 
-    def settings(self):
+    def settings(self,commit=False):
         values=[]
         for step in self.form.steps:
+            if commit:
+                for field in step.length_fields().values():
+                    if not field.hasAcceptableInput():raise ValueError('Enter a valid length with compatible units, such as 0.5 in.')
+                    field.interpretText()
             value=dict(kind=step.kind,axis=step.reference.currentIndex())
+            value['units']=units(step.length_fields())
             if value['axis']==3:value['ref']=step.ref
             if step.kind=='Mirror':value['offset']=step.offset.value()
             else:
@@ -138,7 +151,7 @@ class TransformTask(QtCore.QObject):
         if self.busy:return False
         try:
             self.check();self.busy=True;self.preview.clear()
-            self.results=transforms.save(self.doc,self.refs,self.settings(),self.form.merge.isChecked(),self.kind,self.form.name.text().strip(),self.feature)
+            self.results=transforms.save(self.doc,self.refs,self.settings(commit=True),self.form.merge.isChecked(),self.kind,self.form.name.text().strip(),self.feature)
             self.feature=None;self.refs=[];self.form.reset()
             for step in self.form.steps:step.ref=None
             self.pick_step=None;self.fields();self.form.status.setText('Applied. Select geometry for the next result.')
