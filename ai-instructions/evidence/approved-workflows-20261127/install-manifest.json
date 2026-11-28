@@ -1,0 +1,206 @@
+{
+  "verified_run": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\approved-batch27\\s17",
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7f89d152f24106bd71e995a174475a78ace14191b24e72f84f8fece4c0b8f601",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "bin/FreeCADApp.dll",
+      "before": "5c1de34e607bf1047b5090d6304bdb87a3700e615aa102e348fffea422a9f32d",
+      "installed": "52a8eea04972741fc30c5fa33f66faf274c786bbfd3c36f56900e41b80ae1b63"
+    },
+    {
+      "path": "bin/FreeCADBase.dll",
+      "before": "7b1aa0345a490e7f476dbc994d533f7edb5ae1b00a172383338079ed49953aa7",
+      "installed": "218cb8e274f993617a9ba338f5043a4824038865af9a8e9b64319afa2bb731cb"
+    },
+    {
+      "path": "bin/FreeCADGui.dll",
+      "before": "cc7f216d028ff2c3173ad8f7edc88e75c83c3118d8bf7007f82a2cc2253bc4c6",
+      "installed": "08728c7cd3913672d852ad8746fc8fd21f1a017b5ae0f03561b6d81037a13a27"
+    },
+    {
+      "path": "lib/PartDesignGui.pyd",
+      "before": "51939c935ad5a619dc23104b4e9c781db78c5d1200628e1d1cc1be8641cd11ec",
+      "installed": "5d95eaf04c12ff7174464ffe1152603905298fe2d5352ef49f4c396a7403fab6"
+    },
+    {
+      "path": "lib/_PartDesign.pyd",
+      "before": "d269cd814d850225b97ee444d4f4dc0ad6e6549624e258865d0fc4efbb75433d",
+      "installed": "ed15f2f0ec3181bcd2c51bd6ce7b73a8d85d3a3bebe2f3a7618e3ad58a67dd85"
+    },
+    {
+      "path": "lib/Sketcher.pyd",
+      "before": "4da7d105e2397ca7f3f3cf3a5773eceaa0cf96aa7400962ceb2e8a7d45878806",
+      "installed": "ce7b2f95cb509dcdcb1389bd3ab307c35068dafc1cd7e23eab54454111398584"
+    },
+    {
+      "path": "lib/SketcherGui.pyd",
+      "before": "00ea2656892ba3d3e9fc5ac29dae31bffd0543a9a407405a56629100558a9dde",
+      "installed": "321aa6a4261ebcaa4b28cd296eb2f58addfe1202315f5477f7a0342718d3ed65"
+    },
+    {
+      "path": "lib/flatmesh.pyd",
+      "before": "d3933a7602209998985d4740f3fc6193ff42c808ca5c6a45a5da443df0d8fbe5",
+      "installed": "89c46e8b801b06f9fcc17c9eafc2782317e604bfee967fc86e0a029d5c8bc1a6"
+    },
+    {
+      "path": "lib/MeshPart.pyd",
+      "before": "0bed7dad0cd5e3f663e06dd3bff6074293d37d26613ea17aac4ee0870257492d",
+      "installed": "09797f42bdaa777b83a7addd2c0ea4d9689b6f217d87835cb284f5287fc0c6ea"
+    },
+    {
+      "path": "lib/MeshPartGui.pyd",
+      "before": "eddedb0c1768a7b9128af30e7b0e5ee973a5dc0cbe1a0c2612d836693136c4cd",
+      "installed": "316a6e082548a466401353d916563c9d22bbcab9d83a8f2b873b8ab1065e4de7"
+    },
+    {
+      "path": "lib/Mesh.pyd",
+      "before": "885fc061495eb5753249a4322856935890f2e4e4ebfc0eaa9146235ec53443a1",
+      "installed": "fe6ef1697d76644bc414918c63366a370bcaff34b9cc5bccd2b6eceff5a90c32"
+    },
+    {
+      "path": "lib/MeshGui.pyd",
+      "before": "228a9987ede34ac434f4f14bb225ba357b7119706fbf1249edc494b9dde80c24",
+      "installed": "dca6ebdedb5e2ac868c1a3e2b51a62140325fefb40e8faf8da18b71c5ee6254f"
+    },
+    {
+      "path": "lib/PartGui.pyd",
+      "before": "494ab0f36e7e6acaea8b78d75917c63c61f75ee17e3261c56936875d0cfadc9e",
+      "installed": "8bc8e2decc5be371f6a7366aee73fb258333c7fae705182ba55258c876dcd5e8"
+    },
+    {
+      "path": "lib/MatGui.pyd",
+      "before": "36c357e2720a8559a6a061d8805a62b04589b589697eb4298d59b11baf88169e",
+      "installed": "b57d16452649be5eb939d7ad7b2c2731362ed4c21dc6699fed40cd4dbeab7d7d"
+    },
+    {
+      "path": "Mod/FreeCADPlus/InitGui.py",
+      "before": "225b4b5565831cc2b074454e95b91fed7e04731d185583aead2e090d8f143d3f",
+      "installed": "d161646ca9064314016cd80268aa396b9e6118467e0eee295706befb99b2d23f"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestApprovedNative.py",
+      "before": null,
+      "installed": "3a3e66c62ed40b8179f8c1236464cf04f5f5117740e220205be10b2d81815932"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestApprovedWorkflows.py",
+      "before": null,
+      "installed": "899c1d582d9769809eb6f1b1809a660b105c008c4bb47e817a94771f5905146e"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestShapeTransforms.py",
+      "before": null,
+      "installed": "3ea0cfcd71ea05b2e35d6474ac23115f4fa7a54086d2f2ee9b780ae6d53347f7"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_appearance.py",
+      "before": null,
+      "installed": "2c0264cfdd0f013891d0bf7926566dad235bd4e8af71ec961b61062e8cfea61e"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/derived_geometry.py",
+      "before": "b95cf5aadbfa4d0cac4dfd9a8c50c864d13123306dd4e33d3180eabae83927e4",
+      "installed": "13406421586961f0bbda416f5fb6d5126deb05f07f54f826fcf31cbcb23b16ac"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+      "before": "cdb7ebd202be78ee6031b0798b1bda547b9677ce5f04ff285f9a91a815698be1",
+      "installed": "0579596964e926e70f6303e901fc9ede1bade2620602208beab58cfea534ce00"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+      "before": "cd7e51eada7d3ff6d9e1770fcfee8f6b4a8489b52867fc7912f6346762874965",
+      "installed": "02fe4f51640cec9823068c7b3e10f6a39125f520a7f311f61405b4948b8abc14"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/history_operations.py",
+      "before": "5ac70af4dea6f0b28faae9586ed91604e35d67548803501149059a2cf561adfe",
+      "installed": "730ee7d8307e46a799883ea040d4f70b66a610d720923f97b127742ec3199612"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/intersections.py",
+      "before": null,
+      "installed": "c47fa171ff8f40871e1171843257876a78ab92286662dcd3ffb79bc383560c18"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/intersection_task.py",
+      "before": null,
+      "installed": "128d9a0a86a9feffb8fe12e8d70687eb257ec1c87faf301502e36942e7b0bbe9"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/mesh_shape.py",
+      "before": null,
+      "installed": "e040a839eb6a88e7b4d5a63497bac061d6702aac22e21156a3f927b77bfc3fb9"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/mesh_task.py",
+      "before": null,
+      "installed": "7b01b299ae828c768a9bbcbc26c89535f92d77261f87e78714a6052876563f0a"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/mesh_ui.py",
+      "before": null,
+      "installed": "bce61884a317c7d25088e63e3611c8b0e905137b0d7851048970164db80c2a5d"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+      "before": "2d61135e5ff5225f05ea133e5410da5bba63e725a7b724c67a06ad05c8ba3a1f",
+      "installed": "1f452cb6c5ddd7fe5cb597a92df893ba5ec83744ccec3fb466aae372e5d84eaa"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/plane_task.py",
+      "before": "f3079cc8250bf7e860b9acb17a4d160ca035f0f73a5fcd4fb3aa56070bddc69b",
+      "installed": "cd9a30e7a9696f6f17079d442b8e7b80a6da4d0360edcb01e441d5bc16aa99d0"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/selection_list.py",
+      "before": "eae8eac06abe6892ab6080bf1c2ba7342c26a5c81c0146602bd9e51b8878c7ee",
+      "installed": "5e9dea203aacd13c021407718f47d7d7ec50d49625c38aaaf9c425c9ddb04173"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/shape_preview.py",
+      "before": null,
+      "installed": "c0c9734ffd753528880a3479078ad1e07788d797827e5e41ef50ba5e6e0cb791"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/toolbar_layout.py",
+      "before": "48d245356c455ac5a213f0596b10255ac1b730927e8579daa4a2cddd81e794c4",
+      "installed": "76970f68f4225d017be0861f22a4aa01f6b97b0b5c9c2b36aa36e4f7c7a70faa"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/transforms.py",
+      "before": null,
+      "installed": "3c12050e5490c701e8f24a8d1bd21f1eea67232523d4f65e4101bc556b36a14c"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/transform_task.py",
+      "before": null,
+      "installed": "ab892ac186f87b74970103c2bfacd32dfebaa2df0604375394b7c353cd7d81d2"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/transform_ui.py",
+      "before": null,
+      "installed": "6210f13c8e0aaab0e9c96a30c66fc48410333ba2f954f902f64c8f4ee70ac1c1"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/trim_body.py",
+      "before": null,
+      "installed": "772aa932e9bfecbedcbaa031a4eca634548d45825e807f031b1b4c1d95a71d1f"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/trim_task.py",
+      "before": null,
+      "installed": "805f161a4507a533f3d75a533d753a4cb9e54d9378bd0c8af7d6ce0ad9e7f6c6"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/trim_ui.py",
+      "before": null,
+      "installed": "d6f015b4427be9cf8ba426f8905e9bb368c9a84f55061d09661b3a8456b4203d"
+    }
+  ],
+  "format_only_after_tests": "trim_ui.py blank lines normalized; AST identical to tested payload."
+}

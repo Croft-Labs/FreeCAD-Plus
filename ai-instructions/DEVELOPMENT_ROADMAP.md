@@ -1,36 +1,16 @@
-# November 27: Intersection curve selection revision
+# November 27: Approved workflow batch
 
-- [x] Remove Pick modes in preview; specify one mixed, earlier component-history collector.
-- [x] Render revised form/error/reset states and verify nine UI check groups.
-- [ ] Owner implementation approval, linked intersections and whole-source update correction.
-- [ ] Native eligibility, geometry, persistence/Undo and installed validation.
+- [x] Route all four native transformation buttons directly to whole-shape workflows.
+- [x] Implement unified earlier-history linked sketch intersections and native picking.
+- [x] Create one component-owned mesh from post-open solids/surface selection.
+- [x] Implement one-boundary Trim Body with finite-tool validity, offset and reverse.
+- [x] Inherit child clone appearance at creation; preserve later local edits.
+- [x] Move document tabs to the top and implement creation/task plane visibility.
+- [x] Build, verify staged/installed runtimes and preserve owner settings/shortcut.
 
-[Revised contract](evidence/intersection-unified-20261127/README.md).
-
-# November 27: Clone appearance
-
-- [x] Reproduce lost source materials and render the proposed body/surface result.
-- [ ] Owner approval, material-copy implementation and native functional validation.
-- [ ] Install after approval and verify owner runtime.
-
-[Diagnosis and preview](evidence/clone-appearance-20261127/README.md).
-
-# November 27: Document tab placement
-
-- [x] Preview document tabs at the top and verify native switching/preservation.
-- [ ] Owner approval, one-line production change, native build and installed check.
-
-[Preview evidence](evidence/document-tabs-20261127/README.md).
-
-# November 27: Mesh from Shape
-
-- [x] Reproduce component ownership failure after native OK and fixture recovery.
-- [x] Render source-list task proposal and check its UI interactions.
-- [ ] Owner approval and combined/per-source output decision.
-- [ ] Implement component-owned meshing and verify geometry, History, Undo and persistence.
-- [ ] Install and verify the owner runtime after approval.
-
-[Diagnosis, preview and scope](evidence/mesh-from-shape-20261127/README.md).
+[Approval, tests and installation evidence](evidence/approved-workflows-20261127/README.md).
+Netgen's unchanged native failure and unverified successful Gmsh execution are
+explicitly documented. Saved last-active-part bookmarks remain separately pending.
 
 # November 27: Camera transition correction
 
@@ -50,7 +30,7 @@ Five unrelated broader-suite failures reproduce on baseline; see
 - [x] Build/install three Python payloads; pass 20 source and 20 installed checks.
 
 See [delivery evidence](evidence/history-operations-20261127/README.md).
-Whole-body transformations and default/task plane visibility remain pending approval.
+Whole-body transformations and plane visibility are delivered in the approved batch above.
 
 # November 27: Assembly visibility and selection fixes
 

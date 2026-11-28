@@ -1,0 +1,25 @@
+{
+  "0": {
+    "parameters": {
+      "LinearDeflection": 0.1,
+      "AngularDeflection": 0.5235987755982988,
+      "Relative": false
+    },
+    "native_facets": 12
+  },
+  "1": {
+    "parameters": {
+      "MaxLength": 1.0
+    },
+    "native_facets": 2660
+  },
+  "2": {
+    "parameters": {
+      "SecondOrder": false,
+      "Optimize": true,
+      "AllowQuad": false,
+      "Fineness": 2
+    },
+    "native_facets": 0
+  }
+}

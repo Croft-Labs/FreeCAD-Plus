@@ -1,34 +1,18 @@
-# November 27: Intersection curve selection revision — preview pending
+# November 27: Approved workflows installed
 
-Owner removed Pick modes and restricted mixed input to earlier geometry owned by
-the active component. Revised native Qt preview passes nine UI check groups.
-Session `87ac16544d40` supersedes the old intersection selection proposal; native
-eligibility and whole-source associativity remain unimplemented. See
-[contract and evidence](evidence/intersection-unified-20261127/README.md).
+The owner's “Implement all” approved all seven fresh previews. All native Mirror,
+Linear Pattern, Polar/Circular Pattern and Multi-transform buttons now open the new
+whole-shape task directly. Unified linked sketch intersections, component-owned Mesh
+from Shape, Trim Body, clone appearance inheritance, top document tabs and temporary
+fundamental-plane visibility are implemented and installed.
 
-# November 27: Clone appearance — preview pending approval
-
-Reproduced material loss on native body/surface Clone creation. The proposed
-creation-time material copy preserves source colors/transparency and later local
-clone edits. Display-only native comparison is ready; no backend/install changes.
-See [diagnosis and preview](evidence/clone-appearance-20261127/README.md).
-
-# November 27: Document tabs at top — preview pending approval
-
-Prepared the one-line MainWindow South-to-North tab-placement change in an isolated
-review. Native preview switching, order, controls and unchanged object/Undo checks
-pass. Source/build/install remain pending approval. See
-[direct screenshots and evidence](evidence/document-tabs-20261127/README.md).
-
-# November 27: Mesh from Shape diagnosis and preview — pending approval
-
-Reproduced native mesh creation outside component ownership, causing invalid
-document projection and empty/stale Components trees. Fixture-only ownership
-recovery restores History. Prepared a native Qt source-list prototype with
-post-open solid/surface picking and bottom Done/Apply/Cancel. Ten UI check groups
-pass; no backend changes or installation. Optional combined/per-source output
-question remains unanswered; preview assumes combined. See
-[evidence and contract](evidence/mesh-from-shape-20261127/README.md).
+The exact staged runtime passed 36 checks; all 20 focused batch checks passed after
+scope corrections and in the installed application. The final native Sketcher scope
+update passed all eight native checks in both runtimes. All 39 payload hashes match;
+owner settings, documents and shortcut are preserved. Standard/Mefisto mesh engines
+passed; the existing native Netgen failure is handled atomically. Successful Gmsh
+execution remains unverified. See [delivery evidence](evidence/approved-workflows-20261127/README.md).
+Saved last-active-part bookmarks remain a separate pending item.
 
 # November 27: Part camera transitions corrected and installed
 
@@ -38,8 +22,7 @@ their graphics; fits animate to one exact target and saved Plus-file cameras are
 preserved. All 33 focused installed checks pass. Five broader legacy-suite failures
 reproduce unchanged on baseline; see [evidence](evidence/camera-transitions-20261127/README.md).
 Only FreeCADGui.dll and the new camera tests were installed, with settings/shortcut
-hashes preserved. Transformation, plane defaults, Intersection Curve and Trim Body
-previews remain independently pending approval.
+hashes preserved. The later approved workflow batch above supersedes the pending previews recorded here.
 
 # November 27: History operation colors and labels installed
 
@@ -48,8 +31,7 @@ with display-only `(new body)`, `(new surface)`, `(add)` and `(subtract)` suffix
 Saved names, native source/toolbar icons and History reference identities remain
 unchanged. All 20 source and 20 installed checks pass; three payload hashes match,
 owner settings/shortcut are unchanged. See [evidence](evidence/history-operations-20261127/README.md).
-Transformation workflow `57a9ef350816` and plane visibility `40f73afdef86` remain
-separately pending approval.
+Transformation and plane visibility delivery is recorded in the later approved batch above.
 
 # November 27: Assembly visibility, Clone picking and Appearance edges installed
 

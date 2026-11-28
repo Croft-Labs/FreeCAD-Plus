@@ -1,11 +1,20 @@
 # FreeCAD Plus: Programming Summary
 
-## Mesh from Shape — pending preview November 27, 2026
+## Approved workflow batch — installed November 27, 2026
 
-Native meshing creates an ownerless mesh and invalidates Plus panel projection.
-The proposed collector supports solids/surfaces after opening and routes results
-to component History. UI prototype only; implementation awaits approval. See
-[diagnosis and preview](evidence/mesh-from-shape-20261127/README.md).
+The owner's “Implement all” approved all seven fresh previews. All native Mirror,
+Linear Pattern, Polar/Circular Pattern and Multi-transform buttons now open the new
+whole-shape task directly. Unified linked sketch intersections, component-owned Mesh
+from Shape, Trim Body, clone appearance inheritance, top document tabs and temporary
+fundamental-plane visibility are implemented and installed.
+
+The exact staged runtime passed 36 checks; all 20 focused batch checks passed after
+scope corrections and in the installed application. The final native Sketcher scope
+update passed all eight native checks in both runtimes. All 39 payload hashes match;
+owner settings, documents and shortcut are preserved. Standard/Mefisto mesh engines
+passed; the existing native Netgen failure is handled atomically. Successful Gmsh
+execution remains unverified. See [delivery evidence](evidence/approved-workflows-20261127/README.md).
+Saved last-active-part bookmarks remain a separate pending item.
 
 ## Part opening/activation camera correction — installed November 27, 2026
 

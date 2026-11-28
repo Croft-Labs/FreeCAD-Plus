@@ -1,0 +1,13 @@
+test_all_native_buttons_bypass_classic_body_gate (TestApprovedNative.TestApprovedNative.test_all_native_buttons_bypass_classic_body_gate) ... ok
+test_available_native_mesh_engines (TestApprovedNative.TestApprovedNative.test_available_native_mesh_engines) ... ok
+test_document_tabs_at_top (TestApprovedNative.TestApprovedNative.test_document_tabs_at_top) ... ok
+test_intersection_body_frame (TestApprovedNative.TestApprovedNative.test_intersection_body_frame) ... ok
+test_intersection_native_viewport_pick (TestApprovedNative.TestApprovedNative.test_intersection_native_viewport_pick) ... ok
+test_intersection_task_keeps_sketch_edit (TestApprovedNative.TestApprovedNative.test_intersection_task_keeps_sketch_edit) ... ok
+test_mesh_button_post_open_selection_and_apply (TestApprovedNative.TestApprovedNative.test_mesh_button_post_open_selection_and_apply) ... ok
+test_whole_intersection_updates_plane_and_source (TestApprovedNative.TestApprovedNative.test_whole_intersection_updates_plane_and_source) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 9.229s
+
+OK

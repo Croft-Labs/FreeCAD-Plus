@@ -1,0 +1,41 @@
+test_all_native_buttons_bypass_classic_body_gate (TestApprovedNative.TestApprovedNative.test_all_native_buttons_bypass_classic_body_gate) ... ok
+test_available_native_mesh_engines (TestApprovedNative.TestApprovedNative.test_available_native_mesh_engines) ... ok
+test_document_tabs_at_top (TestApprovedNative.TestApprovedNative.test_document_tabs_at_top) ... ok
+test_intersection_body_frame (TestApprovedNative.TestApprovedNative.test_intersection_body_frame) ... ok
+test_intersection_native_viewport_pick (TestApprovedNative.TestApprovedNative.test_intersection_native_viewport_pick) ... ok
+test_intersection_task_keeps_sketch_edit (TestApprovedNative.TestApprovedNative.test_intersection_task_keeps_sketch_edit) ... ok
+test_mesh_button_post_open_selection_and_apply (TestApprovedNative.TestApprovedNative.test_mesh_button_post_open_selection_and_apply) ... ok
+test_whole_intersection_updates_plane_and_source (TestApprovedNative.TestApprovedNative.test_whole_intersection_updates_plane_and_source) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+test_clone_materials_preserved_and_local_edits_survive (TestApprovedWorkflows.TestApprovedWorkflows.test_clone_materials_preserved_and_local_edits_survive) ... ok
+test_combined_mesh_ownership_and_recompute (TestApprovedWorkflows.TestApprovedWorkflows.test_combined_mesh_ownership_and_recompute) ... ok
+test_intersection_mixed_and_history_boundary (TestApprovedWorkflows.TestApprovedWorkflows.test_intersection_mixed_and_history_boundary) ... ok
+test_mesh_colors_and_failed_compute_is_atomic (TestApprovedWorkflows.TestApprovedWorkflows.test_mesh_colors_and_failed_compute_is_atomic) ... ok
+test_plane_creation_defaults_and_scoped_visibility (TestApprovedWorkflows.TestApprovedWorkflows.test_plane_creation_defaults_and_scoped_visibility) ... ok
+test_trim_commit_edit_undo_and_panel (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_commit_edit_undo_and_panel) ... ok
+test_trim_finite_offset_reverse_and_invalid_boundary (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_finite_offset_reverse_and_invalid_boundary) ... ok
+test_trim_joined_and_curved_boundaries (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_joined_and_curved_boundaries) ... ok
+test_actual_viewport_face_click_adds_body_without_browser (TestClonePicking.TestClonePicking.test_actual_viewport_face_click_adds_body_without_browser) ... ok
+test_direct_child_boundary_and_excluded_guard_remain (TestClonePicking.TestClonePicking.test_direct_child_boundary_and_excluded_guard_remain) ... ok
+test_extract_still_requires_parent_owned_faces (TestClonePicking.TestClonePicking.test_extract_still_requires_parent_owned_faces) ... ok
+test_face_edge_picks_promote_whole_sources_and_deduplicate (TestClonePicking.TestClonePicking.test_face_edge_picks_promote_whole_sources_and_deduplicate) ... ok
+test_repeated_occurrence_keeps_placement_and_one_undo (TestClonePicking.TestClonePicking.test_repeated_occurrence_keeps_placement_and_one_undo) ... ok
+test_unplaced_assembly_text_and_relative_nested_edit (TestClonePicking.TestClonePicking.test_unplaced_assembly_text_and_relative_nested_edit) ... ok
+test_connected_chain_closed_shell_and_source_update (TestJoinedExtraction.TestJoinedExtraction.test_connected_chain_closed_shell_and_source_update) ... ok
+test_curved_faces_and_moved_body_coordinates (TestJoinedExtraction.TestJoinedExtraction.test_curved_faces_and_moved_body_coordinates) ... ok
+test_deleted_secondary_source_is_not_silently_dropped (TestJoinedExtraction.TestJoinedExtraction.test_deleted_secondary_source_is_not_silently_dropped) ... ok
+test_disconnected_point_contact_and_overlap_are_atomic (TestJoinedExtraction.TestJoinedExtraction.test_disconnected_point_contact_and_overlap_are_atomic) ... ok
+test_edit_join_split_identity_downstream_cancel_and_cycle (TestJoinedExtraction.TestJoinedExtraction.test_edit_join_split_identity_downstream_cancel_and_cycle) ... ok
+test_external_component_owns_join_and_repeated_occurrences (TestJoinedExtraction.TestJoinedExtraction.test_external_component_owns_join_and_repeated_occurrences) ... ok
+test_legacy_load_and_stale_source_guard (TestJoinedExtraction.TestJoinedExtraction.test_legacy_load_and_stale_source_guard) ... ok
+test_multiple_objects_placement_save_reopen_and_export (TestJoinedExtraction.TestJoinedExtraction.test_multiple_objects_placement_save_reopen_and_export) ... ok
+test_separate_history_and_undo_redo (TestJoinedExtraction.TestJoinedExtraction.test_separate_history_and_undo_redo) ... ok
+test_task_default_error_recovery_gestures_and_no_preview_writes (TestJoinedExtraction.TestJoinedExtraction.test_task_default_error_recovery_gestures_and_no_preview_writes) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 27.877s
+
+OK

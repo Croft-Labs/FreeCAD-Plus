@@ -1,0 +1,25 @@
+test_all_native_buttons_bypass_classic_body_gate (TestApprovedNative.TestApprovedNative.test_all_native_buttons_bypass_classic_body_gate) ... ok
+test_available_native_mesh_engines (TestApprovedNative.TestApprovedNative.test_available_native_mesh_engines) ... ok
+test_document_tabs_at_top (TestApprovedNative.TestApprovedNative.test_document_tabs_at_top) ... ok
+test_intersection_body_frame (TestApprovedNative.TestApprovedNative.test_intersection_body_frame) ... ok
+test_intersection_native_viewport_pick (TestApprovedNative.TestApprovedNative.test_intersection_native_viewport_pick) ... ok
+test_intersection_task_keeps_sketch_edit (TestApprovedNative.TestApprovedNative.test_intersection_task_keeps_sketch_edit) ... ok
+test_mesh_button_post_open_selection_and_apply (TestApprovedNative.TestApprovedNative.test_mesh_button_post_open_selection_and_apply) ... ok
+test_whole_intersection_updates_plane_and_source (TestApprovedNative.TestApprovedNative.test_whole_intersection_updates_plane_and_source) ... ok
+test_all_four_shapes (TestShapeTransforms.TestShapeTransforms.test_all_four_shapes) ... ok
+test_separate_results_and_invalid_input (TestShapeTransforms.TestShapeTransforms.test_separate_results_and_invalid_input) ... ok
+test_task_empty_preselection_apply_and_cancel (TestShapeTransforms.TestShapeTransforms.test_task_empty_preselection_apply_and_cancel) ... ok
+test_touching_fuses_and_undo_edit_save (TestShapeTransforms.TestShapeTransforms.test_touching_fuses_and_undo_edit_save) ... ok
+test_clone_materials_preserved_and_local_edits_survive (TestApprovedWorkflows.TestApprovedWorkflows.test_clone_materials_preserved_and_local_edits_survive) ... ok
+test_combined_mesh_ownership_and_recompute (TestApprovedWorkflows.TestApprovedWorkflows.test_combined_mesh_ownership_and_recompute) ... ok
+test_intersection_mixed_and_history_boundary (TestApprovedWorkflows.TestApprovedWorkflows.test_intersection_mixed_and_history_boundary) ... ok
+test_mesh_colors_and_failed_compute_is_atomic (TestApprovedWorkflows.TestApprovedWorkflows.test_mesh_colors_and_failed_compute_is_atomic) ... ok
+test_plane_creation_defaults_and_scoped_visibility (TestApprovedWorkflows.TestApprovedWorkflows.test_plane_creation_defaults_and_scoped_visibility) ... ok
+test_trim_commit_edit_undo_and_panel (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_commit_edit_undo_and_panel) ... ok
+test_trim_finite_offset_reverse_and_invalid_boundary (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_finite_offset_reverse_and_invalid_boundary) ... ok
+test_trim_joined_and_curved_boundaries (TestApprovedWorkflows.TestApprovedWorkflows.test_trim_joined_and_curved_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 13.950s
+
+OK
