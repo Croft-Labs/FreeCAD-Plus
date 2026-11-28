@@ -1,3 +1,11 @@
+# November 27: Simplified mesh settings
+
+- [x] Preview deviation-only main form and Advanced settings pop-up.
+- [x] Check dialog Cancel, value synchronization and simulated Apply/reset.
+- [ ] Obtain concrete preview approval; implement, validate and install.
+
+[Contract and screenshots](evidence/mesh-simple-20261127/README.md).
+
 # November 27: Approved workflow batch
 
 - [x] Route all four native transformation buttons directly to whole-shape workflows.

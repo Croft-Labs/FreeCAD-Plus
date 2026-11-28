@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "values": {
+    "visible": 0.05,
+    "native": "0.05 mm",
+    "minimum": "0.001"
+  },
+  "checks": [
+    "main fields only; native algorithms hidden",
+    "Cancel restores settings and Standard generator",
+    "advanced acceptance disables inapplicable deviation fields",
+    "Standard values return to main form",
+    "simulated Apply resets fields and advanced generator",
+    "no mesh, document or Undo mutation"
+  ]
+}

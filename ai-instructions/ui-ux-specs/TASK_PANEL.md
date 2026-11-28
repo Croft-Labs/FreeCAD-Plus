@@ -1,5 +1,13 @@
 # Task panel
 
+## Simplified meshing — requested November 27, 2026
+
+Keep only Linear deviation and Angular deviation on the main Mesh from Shape form,
+using Standard by default. Advanced settings opens a modal pop-up containing the
+other generators and extra settings. Main source collection and bottom task actions
+stay unchanged. Concrete native Qt preview approval is pending; see
+[workflow and screenshots](../evidence/mesh-simple-20261127/README.md).
+
 ## Approved geometry workflows — November 27, 2026
 
 Mirror, Linear Pattern, Polar/Circular Pattern and ordered Multi-transform collect

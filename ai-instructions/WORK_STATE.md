@@ -1,3 +1,9 @@
+# November 27: Simplified mesh settings — preview pending
+
+Native Qt main/Advanced screenshots are ready with six UI checks passing. The
+installed application is unchanged; concrete preview approval is pending. See
+[evidence and contract](evidence/mesh-simple-20261127/README.md).
+
 # November 27: Approved workflows installed
 
 The owner's “Implement all” approved all seven fresh previews. All native Mirror,

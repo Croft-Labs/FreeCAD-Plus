@@ -1,0 +1,47 @@
+import os,sys,json,traceback,runpy,shutil
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,MeshPartGui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+module=runpy.run_path(str(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'mesh_ui.py'))
+def settle():Gui.updateGui();QtTest.QTest.qWait(100)
+def run():
+    result={'ok':False,'ui_prototype':True}
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1000)
+        doc=App.newDocument('MeshSettingsPreview');obj=doc.addObject('Part::Feature','Body');obj.Shape=Part.makeBox(30,20,12);doc.recompute()
+        before=(len(doc.Objects),doc.UndoCount,obj.Shape.Volume)
+        Gui.runCommand('MeshPart_Mesher');settle()
+        tess=win.findChild(QtWidgets.QWidget,'MeshPartGui__Tessellation');assert tess
+        form=module['MeshForm'](tess);form.sources.addItems(['Finished body','Curved sheet'])
+        form.status.setText('Ready to create one combined mesh.');form.resize(500,form.sizeHint().height());form.show();settle()
+        form.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        if hasattr(form,'advanced'):
+            checks=[]
+            assert not tess.isVisibleTo(form);assert form.linear.isEnabled();checks.append('main fields only; native algorithms hidden')
+            form.advanced.click();settle();dialog=form.advanced_dialog
+            dialog.grab().save(str(out/'advanced-standard.png'))
+            initial=form.linear.value();form.native_linear.setProperty('rawValue',2.5);form.method.setCurrentIndex(1)
+            dialog.reject();settle();assert form.method.currentIndex()==0;assert abs(form.linear.value()-initial)<1e-8
+            checks.append('Cancel restores settings and Standard generator')
+            form.advanced.click();settle();form.method.setCurrentIndex(1);settle()
+            dialog.grab().save(str(out/'advanced-mefisto.png'));dialog.accept();settle()
+            assert not form.linear.isEnabled() and not form.angular.isEnabled();checks.append('advanced acceptance disables inapplicable deviation fields')
+            form.grab().save(str(out/'advanced-active.png'))
+            form.advanced.click();form.method.setCurrentIndex(0);form.native_linear.setProperty('rawValue',.05);dialog.accept();settle()
+            result['values']={'visible':form.linear.value(),'native':str(form.native_linear.property('value')),'minimum':str(form.native_linear.property('minimum'))}
+            assert abs(form.linear.value()-.05)<1e-8,result['values'];assert form.linear.isEnabled();checks.append('Standard values return to main form')
+            form.apply.clicked.connect(form.reset);form.apply.click();settle()
+            assert form.sources.count()==0 and form.method.currentIndex()==0 and form.linear.isEnabled();checks.append('simulated Apply resets fields and advanced generator')
+            assert before==(len(doc.Objects),doc.UndoCount,obj.Shape.Volume);checks.append('no mesh, document or Undo mutation')
+            form.grab().save(str(out/'reset.png'));result['checks']=checks
+        form.close();Gui.Control.closeDialog();App.closeDocument(doc.Name);result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if Gui.Control.activeDialog():Gui.Control.closeDialog()
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)
