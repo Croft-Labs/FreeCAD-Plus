@@ -1,3 +1,10 @@
+# November 27: Mixed mesh selection and defaults
+
+The revised native Qt preview removes picker modes, uses Advanced mesher radio
+buttons/defaults, and changes main fields by model. Seven UI checks pass. Concrete
+preview approval and functional implementation remain pending. This supersedes the
+initial simple-panel proposal below. See [revised contract](evidence/mesh-defaults-20261127/README.md).
+
 # November 27: Simplified mesh settings
 
 - [x] Preview deviation-only main form and Advanced settings pop-up.

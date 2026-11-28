@@ -1,5 +1,7 @@
 # Simplified mesh settings — preview pending November 27, 2026
 
+Superseded by the [mixed selection/defaults revision](../mesh-defaults-20261127/README.md).
+
 Owner requests a Standard-by-default Mesh from Shape task with only linear and
 angular deviation visible. Move other algorithms and extra settings behind an
 Advanced settings button opening a pop-up. This is the requested direction;

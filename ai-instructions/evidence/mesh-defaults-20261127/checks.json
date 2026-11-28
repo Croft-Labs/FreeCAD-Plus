@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "checks": [
+    "mixed collector with no picker filter and Standard fields initially",
+    "radio model selection; Cancel restores current settings without changing defaults",
+    "mefisto main settings replace irrelevant fields; accepted defaults retained",
+    "netgen main settings replace irrelevant fields; accepted defaults retained",
+    "gmsh main settings replace irrelevant fields; accepted defaults retained",
+    "main edits are temporary; simulated Apply restores saved defaults and clears sources",
+    "no document, geometry or Undo mutation"
+  ]
+}

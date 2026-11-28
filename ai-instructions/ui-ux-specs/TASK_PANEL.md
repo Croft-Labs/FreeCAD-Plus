@@ -1,12 +1,15 @@
 # Task panel
 
-## Simplified meshing — requested November 27, 2026
+## Mesh selection and defaults — revised request November 27, 2026
 
-Keep only Linear deviation and Angular deviation on the main Mesh from Shape form,
-using Standard by default. Advanced settings opens a modal pop-up containing the
-other generators and extra settings. Main source collection and bottom task actions
-stay unchanged. Concrete native Qt preview approval is pending; see
-[workflow and screenshots](../evidence/mesh-simple-20261127/README.md).
+Remove the Solid/Surface picker controls. Collect the solids/surfaces actually
+selected in one list. Advanced uses radio buttons for the meshing model and sets
+its default parameters. The main panel shows the controls available for that model,
+initially Standard linear/angular deviation. Proposed defaults apply to this mesh
+and future new meshes; main edits affect only this mesh. Keep existing feature
+recipes when editing. This supersedes the earlier disabled-field proposal.
+Concrete native Qt preview approval is pending; see
+[revised workflow and screenshots](../evidence/mesh-defaults-20261127/README.md).
 
 ## Approved geometry workflows — November 27, 2026
 
