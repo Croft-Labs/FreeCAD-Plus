@@ -1,3 +1,10 @@
+# November 27: Clone appearance — preview pending approval
+
+Reproduced material loss on native body/surface Clone creation. The proposed
+creation-time material copy preserves source colors/transparency and later local
+clone edits. Display-only native comparison is ready; no backend/install changes.
+See [diagnosis and preview](evidence/clone-appearance-20261127/README.md).
+
 # November 27: Document tabs at top — preview pending approval
 
 Prepared the one-line MainWindow South-to-North tab-placement change in an isolated

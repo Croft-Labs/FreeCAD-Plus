@@ -1,5 +1,14 @@
 # Task panel
 
+## Clone appearance — requested November 27, 2026; preview pending
+
+Owner requests importing a child object's appearance when cloning its body or
+surface into the active part. Proposed creation-time copy preserves whole/per-face
+materials and transparency, with independently editable clone appearance afterward.
+The existing Clone panel remains unchanged. Native loss reproduction and a
+display-only comparison are ready; no functional implementation or installation.
+See [contract and direct screenshots](../evidence/clone-appearance-20261127/README.md).
+
 ## Mesh from Shape — requested November 27, 2026; preview pending
 
 Owner requests source selection after opening, one/many solids or surfaces in

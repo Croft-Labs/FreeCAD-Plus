@@ -1,0 +1,73 @@
+import os,sys,json,traceback,runpy
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+from freecad_plus import document,hierarchy,editing,appearance,derived_geometry as derived
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+module=runpy.run_path(str(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'appearance_ui.py'))
+
+def settle():Gui.updateGui();QtTest.QTest.qWait(150)
+def values(obj):
+    return [{'color':[round(c,5) for c in m.DiffuseColor[:3]],'transparency':round(m.Transparency,5),'shininess':round(m.Shininess,5)} for m in appearance.materials(obj)]
+
+def run():
+    result={'ok':False,'display_prototype':module['PROPOSED']}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('CloneAppearanceFixture');root=document.validate(doc);owner=root.Definitions[0]
+        child=hierarchy.create_definition(doc,'Colored child');link=hierarchy.add_instance(owner,child)
+        with document.transaction(doc,'Fixture geometry'):
+            body=child.newObject('PartDesign::Body','Body');tip=body.newObject('PartDesign::Feature','FinishedBody')
+            tip.Shape=Part.makeBox(30,24,12);body.Tip=tip
+            sheet=child.newObject('Part::Feature','Sheet')
+            sheet.Shape=Part.makeShell([Part.makePlane(10,24,App.Vector(40,0,4)),Part.makePlane(10,24,App.Vector(50,0,4))])
+        tip.ViewObject.ShapeAppearance=[App.Material(DiffuseColor=((.12,.62,.27) if i==5 else (.12,.38,.8)),Transparency=.2,Shininess=.65) for i in range(6)]
+        sheet.ViewObject.ShapeAppearance=[App.Material(DiffuseColor=(.65,.2,.72),Transparency=.45,Shininess=.35),App.Material(DiffuseColor=(.95,.61,.1),Transparency=.1,Shininess=.35)]
+        tip.ViewObject.LineColor=(.05,.1,.2);sheet.ViewObject.LineColor=(.3,.08,.35)
+        source_values=[values(tip),values(sheet)]
+        editing.edit((root.Group[0],));settle()
+        refs=[(link,body.Name+'.'),(link,sheet.Name+'.')]
+        undo=doc.UndoCount;clones=derived.save(doc,refs);settle()
+        result['source']=source_values;result['actual_clone']=[values(obj) for obj in clones]
+        result['native_clone_loses_appearance']=source_values!=result['actual_clone']
+        assert result['native_clone_loses_appearance'] and doc.UndoCount==undo+1
+        assert source_values==[values(tip),values(sheet)]
+        assert len(clones[0].Shape.Faces)==6 and len(clones[1].Shape.Faces)==2
+        ids=tuple((o.Name,o.ID) for o in doc.Objects)
+        # Illustration copies use the actual native clone geometry/materials.
+        # Candidate changes only these display fixtures, never the source/clone.
+        scene=App.newDocument('AppearanceComparison')
+        displays=[scene.addObject('Part::Feature','BodyDisplay'),scene.addObject('Part::Feature','SheetDisplay')]
+        for display,clone in zip(displays,clones):display.Shape=clone.Shape.copy()
+        scene.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();settle()
+        snapshots=[]
+        for side,objects in [('source',(tip,sheet)),('clone',clones)]:
+            for display,obj in zip(displays,objects):
+                display.ViewObject.ShapeAppearance=[appearance.clone(m) for m in obj.ViewObject.ShapeAppearance]
+                display.ViewObject.LineColor=obj.ViewObject.LineColor
+            if side=='clone':module['style_fixture'](*displays)
+            settle();view.saveImage(str(out/(side+'.png')),800,530,'Current');snapshots.append(QtGui.QImage(str(out/(side+'.png'))))
+            if side=='clone':result['illustrated_result']=[values(obj) for obj in displays]
+        if module['PROPOSED']:assert result['illustrated_result']==source_values
+        assert result['actual_clone']==[values(obj) for obj in clones]
+        assert source_values==[values(tip),values(sheet)] and ids==tuple((o.Name,o.ID) for o in doc.Objects)
+        assert doc.UndoCount==undo+1
+        canvas=QtGui.QImage(1640,650,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('#f4f4f4'))
+        painter=QtGui.QPainter(canvas);painter.setPen(QtGui.QColor('#18232f'));painter.setFont(QtGui.QFont('Segoe UI',16,QtGui.QFont.Bold))
+        painter.drawText(20,35,'Source child: authored appearance')
+        painter.drawText(840,35,'Proposed clone: appearance retained' if module['PROPOSED'] else 'Current clone: default grey')
+        painter.drawImage(10,55,snapshots[0]);painter.drawImage(830,55,snapshots[1]);painter.setFont(QtGui.QFont('Segoe UI',11))
+        painter.drawText(20,610,'Body: blue + green face, 20% transparent. Sheet: purple/gold faces, 45% / 10% transparent.')
+        painter.drawText(20,637,'Native display-only proposal; cloning logic is unchanged.' if module['PROPOSED'] else 'Actual installed Clone output; child appearance is lost.')
+        painter.end();canvas.save(os.environ['PLUS_PREVIEW_IMAGE']);canvas.save(str(out/'comparison.png'))
+        result['checks']=['native two-source clone reproduces material loss','source appearance unchanged','one native Clone Undo transaction',
+            'body and surface face counts retained','display prototype does not change source or actual clones']
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

@@ -1,3 +1,11 @@
+# November 27: Clone appearance
+
+- [x] Reproduce lost source materials and render the proposed body/surface result.
+- [ ] Owner approval, material-copy implementation and native functional validation.
+- [ ] Install after approval and verify owner runtime.
+
+[Diagnosis and preview](evidence/clone-appearance-20261127/README.md).
+
 # November 27: Document tab placement
 
 - [x] Preview document tabs at the top and verify native switching/preservation.

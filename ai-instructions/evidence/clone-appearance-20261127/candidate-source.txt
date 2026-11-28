@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Fixed display fixture only: not a functional Clone material-copy implementation.
+PROPOSED=True
+import FreeCAD as App
+
+def style_fixture(body_display,sheet_display):
+    body_display.ViewObject.ShapeAppearance=[App.Material(DiffuseColor=((.12,.62,.27) if i==5 else (.12,.38,.8)),Transparency=.2,Shininess=.65) for i in range(6)]
+    sheet_display.ViewObject.ShapeAppearance=[App.Material(DiffuseColor=(.65,.2,.72),Transparency=.45,Shininess=.35),App.Material(DiffuseColor=(.95,.61,.1),Transparency=.1,Shininess=.35)]
+    body_display.ViewObject.LineColor=(.05,.1,.2)
+    sheet_display.ViewObject.LineColor=(.3,.08,.35)

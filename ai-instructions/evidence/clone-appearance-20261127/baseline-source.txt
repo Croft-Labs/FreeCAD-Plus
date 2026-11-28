@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Display-only fixture styling. Does not modify the Clone implementation.
+PROPOSED=False
+
+def style_fixture(body_display,sheet_display):
+    pass

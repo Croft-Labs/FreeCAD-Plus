@@ -1,0 +1,246 @@
+{
+  "ok": true,
+  "display_prototype": true,
+  "source": [
+    [
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.62,
+          0.27
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      }
+    ],
+    [
+      {
+        "color": [
+          0.65,
+          0.2,
+          0.72
+        ],
+        "transparency": 0.45,
+        "shininess": 0.35
+      },
+      {
+        "color": [
+          0.95,
+          0.61,
+          0.1
+        ],
+        "transparency": 0.1,
+        "shininess": 0.35
+      }
+    ]
+  ],
+  "actual_clone": [
+    [
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      }
+    ],
+    [
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      },
+      {
+        "color": [
+          0.67843,
+          0.7098,
+          0.74118
+        ],
+        "transparency": 0.0,
+        "shininess": 0.9
+      }
+    ]
+  ],
+  "native_clone_loses_appearance": true,
+  "illustrated_result": [
+    [
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.38,
+          0.8
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      },
+      {
+        "color": [
+          0.12,
+          0.62,
+          0.27
+        ],
+        "transparency": 0.2,
+        "shininess": 0.65
+      }
+    ],
+    [
+      {
+        "color": [
+          0.65,
+          0.2,
+          0.72
+        ],
+        "transparency": 0.45,
+        "shininess": 0.35
+      },
+      {
+        "color": [
+          0.95,
+          0.61,
+          0.1
+        ],
+        "transparency": 0.1,
+        "shininess": 0.35
+      }
+    ]
+  ],
+  "checks": [
+    "native two-source clone reproduces material loss",
+    "source appearance unchanged",
+    "one native Clone Undo transaction",
+    "body and surface face counts retained",
+    "display prototype does not change source or actual clones"
+  ]
+}
