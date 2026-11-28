@@ -1,0 +1,2 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/camera-activation-validation/scene.FCMacro:23: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+  v=Gui.activeDocument().activeView();c=v.getCameraNode()

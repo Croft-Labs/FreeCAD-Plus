@@ -1,5 +1,15 @@
 # Component panel
 
+## Opening and activation camera stability — corrected November 27, 2026
+
+Ordinary component activation preserves the current camera. Opening an additional
+isolated component view fits its geometry in one transition. Opening a Plus file
+restores its saved camera without a second automatic zoom. A new camera operation
+supersedes an older animation; normal navigation animation preferences remain in
+effect. Screen-sized coordinate graphics do not drive fit bounds, but retain
+their visibility, rendering and picking behavior. See
+[verification](../evidence/camera-transitions-20261127/README.md).
+
 ## History modeling operation display — approved November 27, 2026
 
 Modeling feature icons use **yellow for both New and Add**, and **red for Subtract**.

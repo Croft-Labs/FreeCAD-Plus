@@ -1,0 +1,27 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/23] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestCameraTransitions.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestCameraTransitions.py
+[2/23] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/21] Automatic MOC and UIC for target FreeCADGui
+[4/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Clipping.cpp.obj
+[5/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskDlgRelocation.cpp.obj
+[6/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\SceneInspector.cpp.obj
+[7/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DemoMode.cpp.obj
+[8/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadManager.cpp.obj
+[9/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\InputVector.cpp.obj
+[10/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Placement.cpp.obj
+[11/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TextureMapping.cpp.obj
+[12/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadItem.cpp.obj
+[13/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\VectorListEditor.cpp.obj
+[14/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Transform.cpp.obj
+[15/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\NetworkRetriever.cpp.obj
+[16/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DocumentRecovery.cpp.obj
+[17/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskElementColors.cpp.obj
+[18/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Widgets.cpp.obj
+[19/20] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\View3DInventorViewer.cpp.obj
+[20/20] Linking CXX shared library bin\FreeCADGui.dll

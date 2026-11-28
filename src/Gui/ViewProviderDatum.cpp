@@ -26,6 +26,7 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoMaterialBinding.h>
 #include <Inventor/nodes/SoScale.h>
+#include "Inventor/SoFCBoundingBox.h"
 #include <Inventor/nodes/SoSeparator.h>
 
 #include <App/Document.h>
@@ -132,7 +133,12 @@ void ViewProviderDatum::attach(App::DocumentObject* pcObject)
     soScale->setPart("shape", sep);
     resetTemporarySize();
 
-    highlight->addChild(soScale);
+    // Screen-sized origin graphics must not drive Fit All. Their world-space
+    // size changes on every redraw, otherwise fitting feeds back into itself.
+    // Keep the normal bounding box for picking and clipping outside a fit.
+    auto fitExcluded = new SoSkipBoundingGroup();
+    fitExcluded->addChild(soScale);
+    highlight->addChild(fitExcluded);
 
     addDisplayMaskMode(highlight, "Base");
 }

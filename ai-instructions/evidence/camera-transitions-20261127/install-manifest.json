@@ -1,0 +1,19 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "7f89d152f24106bd71e995a174475a78ace14191b24e72f84f8fece4c0b8f601",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "bin/FreeCADGui.dll",
+      "before": "be10201b3d154d15f73976c7f4ff421652ab673048ad2179d3463f13f0df2918",
+      "installed": "cc7f216d028ff2c3173ad8f7edc88e75c83c3118d8bf7007f82a2cc2253bc4c6"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestCameraTransitions.py",
+      "before": null,
+      "installed": "3c527def6f1a24f3ef9763a678c290fb2f1eeab4a6c76cc8129e7b093652329a"
+    }
+  ]
+}

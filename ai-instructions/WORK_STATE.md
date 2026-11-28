@@ -1,3 +1,14 @@
+# November 27: Part camera transitions corrected and installed
+
+Opening/activating parts no longer triggers competing camera restoration and fit
+transitions. Screen-sized origins are excluded from fit bounds without hiding
+their graphics; fits animate to one exact target and saved Plus-file cameras are
+preserved. All 33 focused installed checks pass. Five broader legacy-suite failures
+reproduce unchanged on baseline; see [evidence](evidence/camera-transitions-20261127/README.md).
+Only FreeCADGui.dll and the new camera tests were installed, with settings/shortcut
+hashes preserved. Transformation, plane defaults, Intersection Curve and Trim Body
+previews remain independently pending approval.
+
 # November 27: History operation colors and labels installed
 
 The approved palette correction is installed: yellow New/Add and red Subtract,

@@ -770,8 +770,12 @@ void Application::open(const char* FileName, const char* Module)
                 );
                 Gui::Command::runCommand(Gui::Command::App, code.c_str());
 
-                // ViewFit
-                if (sendHasMsgToActiveView("ViewFit")) {
+                // Native Plus archives restore their saved camera like FCStd.
+                // Re-fitting here starts a second transition after restoration.
+                const auto restored = activeDocument();
+                const bool restoredPlusCamera = File.hasExtension("cadprt") && restored
+                    && std::strlen(restored->getCameraSettings()) > 0;
+                if (!restoredPlusCamera && sendHasMsgToActiveView("ViewFit")) {
                     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
                         "User parameter:BaseApp/Preferences/View"
                     );

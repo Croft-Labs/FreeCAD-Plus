@@ -1,0 +1,476 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b1\\result.json",
+    "archive": "b1\\result.json.gz",
+    "source_sha256": "0fdc8ffae17a91c1db2a5fec3b9417237093e1bc462ecf2ec5b59b3d3fcc95c1",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b1\\stderr.txt",
+    "archive": "b1\\stderr.txt",
+    "source_sha256": "d154ca0fbb9ab5fe5bd31156dd2f26f1da9873a072f815d03ecefb74e3d4fbad",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b1\\stdout.txt",
+    "archive": "b1\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b2\\result.json",
+    "archive": "b2\\result.json.gz",
+    "source_sha256": "83bfd88d3ed35173efac906dc40cc4d503364b475a45a027aaae5ff50506d5a7",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b2\\stderr.txt",
+    "archive": "b2\\stderr.txt",
+    "source_sha256": "e869e9092439305f5915b0c4d7d37913b41d77db03043ac7c76b1ebe5c72e5da",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b2\\stdout.txt",
+    "archive": "b2\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b3\\result.json",
+    "archive": "b3\\result.json.gz",
+    "source_sha256": "1f0cecb486054af94d9602a5370140437981e8287518c5de04036154f644bd59",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b3\\stderr.txt",
+    "archive": "b3\\stderr.txt",
+    "source_sha256": "d154ca0fbb9ab5fe5bd31156dd2f26f1da9873a072f815d03ecefb74e3d4fbad",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b3\\stdout.txt",
+    "archive": "b3\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\result.json",
+    "archive": "b4\\result.json",
+    "source_sha256": "8d0f0a5e2459bd38312a1a178532da8d75da0df4e5bc1a882ff3c94e77311bf0",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\stderr.txt",
+    "archive": "b4\\stderr.txt",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\stdout.txt",
+    "archive": "b4\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\tests.txt",
+    "archive": "b4\\tests.txt",
+    "source_sha256": "d77658d2b94d0d1a8ea7c82c9d400534096e6cc1be40f4a4a5eba15758db49d7",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "archive": "b4\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "source_sha256": "54b0110791de2219507884a4e3d561674e9ec2af7c457987e78e354fe0ed015e",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "archive": "b4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json.gz",
+    "source_sha256": "07d6a815e6ada27da788b2af718573a3785d0befadf196b8273c76dd03a72cef",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "archive": "b4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "source_sha256": "43fff570abe868948f1bc64881df9d65fc8663620bfc50c4327e7aabad22d656",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json",
+    "archive": "b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json.gz",
+    "source_sha256": "a23c168d31292570013922eaaa26411e7506860012e9617de1c3c3782100b2f1",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json",
+    "archive": "b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json.gz",
+    "source_sha256": "b15b8a6aa3ff01bf3ecb04192dd421cb4d0403c55f4c21ebd5fa6677e7981956",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json",
+    "archive": "b4\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json.gz",
+    "source_sha256": "afe9b55ff2ce47b6a2ee78234bc6d7efb9770df735def9475a40e9e06eeb40c0",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_restore_camera_cancels_old_rotation\\restore.json",
+    "archive": "b4\\test_restore_camera_cancels_old_rotation\\restore.json",
+    "source_sha256": "748d524c3d2cffbeafbdf003b2afe0ea52aa667883a1b655ca156490001f35fd",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b4\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json",
+    "archive": "b4\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json.gz",
+    "source_sha256": "2fa7c5eb9619e38c19442b04c3c5f95226ce26f4788ba2e375fc02cd9116ed24",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b5\\result.json",
+    "archive": "b5\\result.json",
+    "source_sha256": "40e6a3c7ab5eab83dfeb3d33fd85f1fe5d05614beeacb91d89c5d84eb60f78bc",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b5\\stderr.txt",
+    "archive": "b5\\stderr.txt",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b5\\stdout.txt",
+    "archive": "b5\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\b5\\tests.txt",
+    "archive": "b5\\tests.txt",
+    "source_sha256": "0e46acbbb7f41c7ec4b7fcc1bc870d4c06e1be8d07cb13e9502615bb95cff020",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s1\\result.json",
+    "archive": "s1\\result.json.gz",
+    "source_sha256": "edf35fc2f5718174025185ea15261c6b3869e44cba0b7ad61670d47ea3fa1ed1",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s1\\stderr.txt",
+    "archive": "s1\\stderr.txt",
+    "source_sha256": "d154ca0fbb9ab5fe5bd31156dd2f26f1da9873a072f815d03ecefb74e3d4fbad",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s1\\stdout.txt",
+    "archive": "s1\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s2\\result.json",
+    "archive": "s2\\result.json.gz",
+    "source_sha256": "2513a3f53e74153b7c1f90524ed9d5c228c66b22ad16d6cc8c40b5da96c6415b",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s2\\stderr.txt",
+    "archive": "s2\\stderr.txt",
+    "source_sha256": "d154ca0fbb9ab5fe5bd31156dd2f26f1da9873a072f815d03ecefb74e3d4fbad",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s2\\stdout.txt",
+    "archive": "s2\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\result.json",
+    "archive": "s3\\result.json",
+    "source_sha256": "9b2984d713c1285c4b8496bb1c2e8584e79b42351f4500cb60d19696cfa8cb94",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\stderr.txt",
+    "archive": "s3\\stderr.txt",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\stdout.txt",
+    "archive": "s3\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\tests.txt",
+    "archive": "s3\\tests.txt",
+    "source_sha256": "3607458ab78c3434f00f6c0ad8a62d2af3e894b37b52fe97a0ea6f4203c91e7c",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "archive": "s3\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "source_sha256": "a1d195a1439eb145ee031d000c55500d482554a7989fa2350be15026cdd01c64",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "archive": "s3\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "source_sha256": "bc8104d6ffba6b14ed1381a4ec90e584926de7596ddc0f10b046b797411860f8",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "archive": "s3\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "source_sha256": "6bb11487f8bd2d8669cef9d63911ce0bd80f04a327e26fe009996a25238a82f1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "archive": "s3\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "source_sha256": "3137e462aaa5a380bad5963491d7e369bd2aa829857313633e631bbebd7bd012",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json",
+    "archive": "s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json.gz",
+    "source_sha256": "63e329677170090496ae963d80e18413631dd999189cb9bd22c351e9077a434f",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json",
+    "archive": "s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json.gz",
+    "source_sha256": "f1d95de9cd794d6c9e56e34a0a27e3d1d50d6b661246a0ae14de6007e50ea4ad",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json",
+    "archive": "s3\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json.gz",
+    "source_sha256": "9c6ffaf879bc8f17881e79159671797271171311b005946cabd416cf7d36b399",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_restore_camera_cancels_old_rotation\\restore.json",
+    "archive": "s3\\test_restore_camera_cancels_old_rotation\\restore.json.gz",
+    "source_sha256": "e121ee10283a0912f5fb6d9b36cd734fdadc35738d90f3eeac6367128be4f2e4",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s3\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json",
+    "archive": "s3\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json",
+    "source_sha256": "47c2de3894afecef68c557207fed5e0b4699b714bd8cd62e40df0b007885e44a",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\result.json",
+    "archive": "s4\\result.json",
+    "source_sha256": "354ed7701e360567a35c2f5b0225d28b4c87606e5884893dcc7922c7a5548aed",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\stderr.txt",
+    "archive": "s4\\stderr.txt",
+    "source_sha256": "ccfa55f5293e41ee078ef8f8d5ed01d20b53283f5635fa60968f65a54e7b53b8",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\stdout.txt",
+    "archive": "s4\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\tests.txt",
+    "archive": "s4\\tests.txt",
+    "source_sha256": "ffbb46d0ebd7fe113e75d3879777a98cf43687e867f8302f1763c85c320c450c",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_external_tab_edits_save_to_source_and_no_persistent_window_objects\\window-expected.json",
+    "archive": "s4\\test_external_tab_edits_save_to_source_and_no_persistent_window_objects\\window-expected.json",
+    "source_sha256": "01c5e017bde7d61767a45e268b400429f93aaecce21005303d960857663c5130",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_external_unused_result_is_owned_and_undone_in_source\\expected.json",
+    "archive": "s4\\test_external_unused_result_is_owned_and_undone_in_source\\expected.json",
+    "source_sha256": "37bf47d78410736d8f138beb5b7374d6b55c4fab87f1d4b3cef4f9b1d7b01772",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_extrusion_creates_body_atomically_and_recomputes\\expected.json",
+    "archive": "s4\\test_extrusion_creates_body_atomically_and_recomputes\\expected.json",
+    "source_sha256": "06aec19a72172f7acda497e300c62d3dd3f54092ee5f1063b7304b966da00506",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "archive": "s4\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "source_sha256": "3edaec602ac635e2c5b964688e040a31b7a6dd40ede333ebc7f5f375d6d569d4",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "archive": "s4\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "source_sha256": "21573d1af83dffb62a2f468124f661699d203e7009ca6089a2d0d3b9fb6759ac",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "archive": "s4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "source_sha256": "a88d2d6ad1c0d587c4eafccad9246504e1958bb3a1ef70a8a511300b03d96eb9",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "archive": "s4\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "source_sha256": "19bc599c6917be0012d5fac955bbc3f357bb42ddda95d3e3beb04837fe96c6ad",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json",
+    "archive": "s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json.gz",
+    "source_sha256": "3209e9ab2148f54b61d8e68e9dbe470476056452f29866626ab4dbc879347166",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json",
+    "archive": "s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json.gz",
+    "source_sha256": "36c4412369139baa021f0048d2444aa39cb50052b53626ccd8d866f99cb352d5",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json",
+    "archive": "s4\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json.gz",
+    "source_sha256": "bb7b9d88fa85374aef3e798619a37e0ea343a5601edf012a24a04a53747507e6",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_projection_switch_stops_old_fit\\projection-switch.json",
+    "archive": "s4\\test_projection_switch_stops_old_fit\\projection-switch.json.gz",
+    "source_sha256": "1eac99a33fe7cb414e900106963b815a28892585e90e3c97ea39119ed60250be",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_restore_camera_cancels_old_rotation\\restore.json",
+    "archive": "s4\\test_restore_camera_cancels_old_rotation\\restore.json.gz",
+    "source_sha256": "952be5c51e7425b3e5895c2bb658dddb998085190dbfc5b64ebc14cf8c61710d",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json",
+    "archive": "s4\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json.gz",
+    "source_sha256": "8715b0d1741870287cbc0c055a207321947d50c44da5520ec7f3516e0e37bfa6",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\s4\\test_scaled_fit_supersedes_pending_fit\\scaled-fit.json",
+    "archive": "s4\\test_scaled_fit_supersedes_pending_fit\\scaled-fit.json.gz",
+    "source_sha256": "1f51d08031f9ce27b6fd4415d5ac99b674876b1981cf96b4d6ca31f537c4825e",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\result.json",
+    "archive": "i1\\result.json",
+    "source_sha256": "739e23284d455176ed533adc6fc021dfa8f83bb017f95c0b96fca5994d772eb6",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\stderr.txt",
+    "archive": "i1\\stderr.txt",
+    "source_sha256": "525d1c1a1e80e904bf798c51b32e549c8750f7a45fb47347955467f083c0036e",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\stdout.txt",
+    "archive": "i1\\stdout.txt",
+    "source_sha256": "7511c57aca1c877bacd78a9aa495d1e1d8328fc0cd043181b11eecf610ed20e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\tests.txt",
+    "archive": "i1\\tests.txt",
+    "source_sha256": "6091333524a09fd5cf243b8f8883011d5d1ff85ff0506f5daa0c2dd2907aff4c",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "archive": "i1\\test_fit_has_no_nested_event_loop_and_reaches_one_target\\fit.json",
+    "source_sha256": "8e4bc43171864b63b934bcea362d70dd909d8eac2f93be15f546aa2e6a97e99a",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "archive": "i1\\test_new_component_view_has_stable_fit_and_preserves_source\\new-view.json",
+    "source_sha256": "26711815502010d19c8208846aa76db09fd3a7599b0d755b30d5ab914b3fe783",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "archive": "i1\\test_orientation_and_fit_share_final_pose_in_both_projections\\Orthographic.json",
+    "source_sha256": "cd5a687a1d95299fd057272db19d900d4d33cc9f23c6fc7705e44ace2568242f",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "archive": "i1\\test_orientation_and_fit_share_final_pose_in_both_projections\\Perspective.json",
+    "source_sha256": "81f960878318f215bafcf45d67072dd65330490ad3e1386740b58e55eba795e8",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json",
+    "archive": "i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Part001.json.gz",
+    "source_sha256": "63e329677170090496ae963d80e18413631dd999189cb9bd22c351e9077a434f",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json",
+    "archive": "i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-0-Shared child.json.gz",
+    "source_sha256": "b3ec579c6dc4e71f9f64c481dedbf264608f94e3459c54876718ed8622c2e7b6",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json",
+    "archive": "i1\\test_parts_and_assembly_double_click_preserve_camera\\activate-1-Shared child.json.gz",
+    "source_sha256": "9c6ffaf879bc8f17881e79159671797271171311b005946cabd416cf7d36b399",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_projection_switch_stops_old_fit\\projection-switch.json",
+    "archive": "i1\\test_projection_switch_stops_old_fit\\projection-switch.json.gz",
+    "source_sha256": "92a2cb192bfac29b65a310af5b1dc6a6c1ca705b31526d8dd3d764ce10d3874d",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_reopen_activates_single_part_and_populates_history_without_tab_switch\\reopened-history.png",
+    "archive": "i1\\test_reopen_activates_single_part_and_populates_history_without_tab_switch\\reopened-history.png",
+    "source_sha256": "94a041b5ef8a877e16f1ed6328355c6598363cc1122bdf5dfec06b5347da92e1",
+    "compressed": false
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_restore_camera_cancels_old_rotation\\restore.json",
+    "archive": "i1\\test_restore_camera_cancels_old_rotation\\restore.json.gz",
+    "source_sha256": "952be5c51e7425b3e5895c2bb658dddb998085190dbfc5b64ebc14cf8c61710d",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json",
+    "archive": "i1\\test_restore_interrupts_pending_fit_without_later_snap\\interrupt-fit.json.gz",
+    "source_sha256": "8715b0d1741870287cbc0c055a207321947d50c44da5520ec7f3516e0e37bfa6",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_scaled_fit_supersedes_pending_fit\\scaled-fit.json",
+    "archive": "i1\\test_scaled_fit_supersedes_pending_fit\\scaled-fit.json.gz",
+    "source_sha256": "1f51d08031f9ce27b6fd4415d5ac99b674876b1981cf96b4d6ca31f537c4825e",
+    "compressed": true
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\camera-activation27\\i1\\test_screen_sized_origins_do_not_change_fit_scale\\origin-visible-after-fit.png",
+    "archive": "i1\\test_screen_sized_origins_do_not_change_fit_scale\\origin-visible-after-fit.png",
+    "source_sha256": "32d413d37f64d66ac1c2a79dff70c653e29a6e0bacf7ed7c6aa7d64b08f8adfd",
+    "compressed": false
+  }
+]

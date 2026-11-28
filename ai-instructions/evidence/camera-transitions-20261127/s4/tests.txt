@@ -1,0 +1,111 @@
+test_fit_has_no_nested_event_loop_and_reaches_one_target (TestCameraTransitions.TestCameraTransitions.test_fit_has_no_nested_event_loop_and_reaches_one_target) ... ok
+test_gui_reopen_keeps_saved_camera_and_active_part (TestCameraTransitions.TestCameraTransitions.test_gui_reopen_keeps_saved_camera_and_active_part) ... ok
+test_new_component_view_has_stable_fit_and_preserves_source (TestCameraTransitions.TestCameraTransitions.test_new_component_view_has_stable_fit_and_preserves_source) ... ok
+test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) ... ok
+test_parts_and_assembly_double_click_preserve_camera (TestCameraTransitions.TestCameraTransitions.test_parts_and_assembly_double_click_preserve_camera) ... ok
+test_projection_switch_stops_old_fit (TestCameraTransitions.TestCameraTransitions.test_projection_switch_stops_old_fit) ... ok
+test_restore_camera_cancels_old_rotation (TestCameraTransitions.TestCameraTransitions.test_restore_camera_cancels_old_rotation) ... ok
+test_restore_interrupts_pending_fit_without_later_snap (TestCameraTransitions.TestCameraTransitions.test_restore_interrupts_pending_fit_without_later_snap) ... ok
+test_scaled_fit_supersedes_pending_fit (TestCameraTransitions.TestCameraTransitions.test_scaled_fit_supersedes_pending_fit) ... ok
+test_screen_sized_origins_do_not_change_fit_scale (TestCameraTransitions.TestCameraTransitions.test_screen_sized_origins_do_not_change_fit_scale) ... ok
+test_external_tab_edits_save_to_source_and_no_persistent_window_objects (TestComponentWindows.TestComponentWindows.test_external_tab_edits_save_to_source_and_no_persistent_window_objects) ... ok
+test_failed_open_rolls_back_only_new_view_and_panel_reopen_tracks_titles (TestComponentWindows.TestComponentWindows.test_failed_open_rolls_back_only_new_view_and_panel_reopen_tracks_titles) ... ok
+test_guards_reject_stale_menu_and_open_during_native_editor (TestComponentWindows.TestComponentWindows.test_guards_reject_stale_menu_and_open_during_native_editor) ... ok
+test_models_menu_preserves_original_context_camera_and_native_identity (TestComponentWindows.TestComponentWindows.test_models_menu_preserves_original_context_camera_and_native_identity) ... ok
+test_part_tree_menu_uses_exact_occurrence_and_relabels_without_polling (TestComponentWindows.TestComponentWindows.test_part_tree_menu_uses_exact_occurrence_and_relabels_without_polling) ... ok
+test_unused_windows_have_independent_isolation_and_close_cleanup (TestComponentWindows.TestComponentWindows.test_unused_windows_have_independent_isolation_and_close_cleanup) ... FAIL
+test_activation_retains_tab_and_parent_expansion (TestComponentNavigation.TestComponentNavigation.test_activation_retains_tab_and_parent_expansion) ... ok
+test_invalid_bookmark_does_not_fall_back_to_preference (TestComponentNavigation.TestComponentNavigation.test_invalid_bookmark_does_not_fall_back_to_preference) ... ok
+test_native_save_uses_active_view_and_preserves_geometry_undo (TestComponentNavigation.TestComponentNavigation.test_native_save_uses_active_view_and_preserves_geometry_undo) ... ok
+test_saved_choice_beats_later_unsaved_choice_and_preferences (TestComponentNavigation.TestComponentNavigation.test_saved_choice_beats_later_unsaved_choice_and_preferences) ... ok
+test_saved_loaded_foreign_assembly_restores_without_catalog_import (TestComponentNavigation.TestComponentNavigation.test_saved_loaded_foreign_assembly_restores_without_catalog_import) ... ok
+test_event_coalescing_idle_and_observer_cleanup (TestComponentPanel.TestComponentPanel.test_event_coalescing_idle_and_observer_cleanup) ... ok
+test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation) ... FAIL
+test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory) ... FAIL
+test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly) ... ERROR
+test_projection_ownership_and_history_without_body_rows (TestComponentPanel.TestComponentPanel.test_projection_ownership_and_history_without_body_rows) ... ok
+test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context) ... FAIL
+test_hidden_open_keeps_host_context_and_does_not_create_view (TestSinglePartOpen.TestSinglePartOpen.test_hidden_open_keeps_host_context_and_does_not_create_view) ... ok
+test_imported_file_new_window_activates_part_without_changing_old_view (TestSinglePartOpen.TestSinglePartOpen.test_imported_file_new_window_activates_part_without_changing_old_view) ... ok
+test_multiple_definitions_remain_at_file_level (TestSinglePartOpen.TestSinglePartOpen.test_multiple_definitions_remain_at_file_level) ... ok
+test_recovered_file_activates_sole_local_part_with_external_child (TestSinglePartOpen.TestSinglePartOpen.test_recovered_file_activates_sole_local_part_with_external_child) ... ok
+test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit (TestSinglePartOpen.TestSinglePartOpen.test_refresh_and_reopening_loaded_file_preserve_explicit_file_edit) ... ok
+test_reopen_activates_single_part_and_populates_history_without_tab_switch (TestSinglePartOpen.TestSinglePartOpen.test_reopen_activates_single_part_and_populates_history_without_tab_switch) ... ok
+test_reopen_preserves_geometry_visibility_and_metadata (TestSinglePartOpen.TestSinglePartOpen.test_reopen_preserves_geometry_visibility_and_metadata) ... ok
+test_repeated_single_definition_does_not_choose_arbitrary_instance (TestSinglePartOpen.TestSinglePartOpen.test_repeated_single_definition_does_not_choose_arbitrary_instance) ... ok
+test_unused_single_definition_opens_without_creating_occurrence (TestSinglePartOpen.TestSinglePartOpen.test_unused_single_definition_opens_without_creating_occurrence) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_clear_does_not_reselect_until_operation_entry (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_clear_does_not_reselect_until_operation_entry) ... ok
+test_direct_subtractive_launch_and_existing_selection (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_direct_subtractive_launch_and_existing_selection) ... ok
+test_edit_keeps_saved_predecessor_and_excludes_self_and_later (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_edit_keeps_saved_predecessor_and_excludes_self_and_later) ... ok
+test_hidden_sole_target_both_tools_both_operations_and_cancel (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_hidden_sole_target_both_tools_both_operations_and_cancel) ... ok
+test_history_delete_preserves_native_frame_and_visibility_controls (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_history_delete_preserves_native_frame_and_visibility_controls) ... ok
+test_invalid_target_clears_and_deleted_target_closes_safely (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_invalid_target_clears_and_deleted_target_closes_safely) ... ok
+test_native_frame_deletion_is_atomic_and_reopen_keeps_ids (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_native_frame_deletion_is_atomic_and_reopen_keeps_ids) ... ok
+test_owner_cascade_undo_redo_abort_and_custom_datums (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_owner_cascade_undo_redo_abort_and_custom_datums) ... ok
+test_zero_and_multiple_targets_highlight_without_popup (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_zero_and_multiple_targets_highlight_without_popup) ... ok
+
+======================================================================
+ERROR: test_nested_import_labels_and_external_edit_remain_in_assembly (TestComponentPanel.TestComponentPanel.test_nested_import_labels_and_external_edit_remain_in_assembly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestComponentPanel.py", line 176, in test_nested_import_labels_and_external_edit_remain_in_assembly
+    external.import_file(self.doc, source)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\validation\camera-activation27\runtime\Mod\FreeCADPlus\freecad_plus\external.py", line 163, in import_file
+    root, target = prepare_import(doc, source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\validation\camera-activation27\runtime\Mod\FreeCADPlus\freecad_plus\external.py", line 157, in prepare_import
+    naming.check_imports(doc, [target])
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\validation\camera-activation27\runtime\Mod\FreeCADPlus\freecad_plus\naming.py", line 78, in check_imports
+    _check([(part, part.Label, part.Document) for part in [*definitions, *incoming]], root.Document)
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\validation\camera-activation27\runtime\Mod\FreeCADPlus\freecad_plus\naming.py", line 55, in _check
+    raise ValueError(f'Component name "{label}" conflicts with "{previous[1]}" in '
+ValueError: Component name "Shared child" conflicts with "Shared child" in Assembly.cadprt; the other component is in Hardware.cadprt. Names must be unique within this file and all imported files (Assembly.cadprt). Rename one component in its defining file.
+
+======================================================================
+FAIL: test_unused_windows_have_independent_isolation_and_close_cleanup (TestComponentWindows.TestComponentWindows.test_unused_windows_have_independent_isolation_and_close_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestComponentWindows.py", line 128, in test_unused_windows_have_independent_isolation_and_close_cleanup
+    self.assertTrue(first.closed)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_file_origin_visibility_persistence_and_no_display_model_mutation (TestComponentPanel.TestComponentPanel.test_file_origin_visibility_persistence_and_no_display_model_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestComponentPanel.py", line 214, in test_file_origin_visibility_persistence_and_no_display_model_mutation
+    self.assertEqual(self.widget.trees[1].topLevelItemCount(), 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_mouse_selection_double_click_edit_and_model_occurrence_memory (TestComponentPanel.TestComponentPanel.test_mouse_selection_double_click_edit_and_model_occurrence_memory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestComponentPanel.py", line 112, in test_mouse_selection_double_click_edit_and_model_occurrence_memory
+    self.assertEqual(self.widget.tabs.currentIndex(), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_tab_guard_stale_rows_and_per_view_context (TestComponentPanel.TestComponentPanel.test_tab_guard_stale_rows_and_per_view_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestComponentPanel.py", line 145, in test_tab_guard_stale_rows_and_per_view_context
+    self.assertEqual(editing.context_path(self.doc)[1], (self.first, self.nested))
+AssertionError: Tuples differ: (<App::Link object>, <App::Link object>) != (<App::Link object>, <App::Link object>)
+
+First differing element 0:
+<App::Link object>
+<App::Link object>
+
+  (<App::Link object>, <App::Link object>)
+
+----------------------------------------------------------------------
+Ran 51 tests in 75.894s
+
+FAILED (failures=4, errors=1)

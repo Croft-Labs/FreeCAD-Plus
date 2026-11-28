@@ -1,3 +1,13 @@
+# November 27: Camera transition correction
+
+- [x] Reproduce mismatched fit endpoints, camera overwrite and origin-size feedback.
+- [x] Serialize native fits/restoration, preserve saved Plus cameras and navigation preferences.
+- [x] Verify Parts/Assembly activation, new component views and file reopening.
+- [x] Install checked native library and tests; all 33 focused installed checks pass.
+
+Five unrelated broader-suite failures reproduce on baseline; see
+[evidence](evidence/camera-transitions-20261127/README.md).
+
 # November 27: History operation display
 
 - [x] Use yellow New/Add and red Subtract glyphs in History only.

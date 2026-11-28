@@ -1,0 +1,81 @@
+test_fit_has_no_nested_event_loop_and_reaches_one_target (TestCameraTransitions.TestCameraTransitions.test_fit_has_no_nested_event_loop_and_reaches_one_target) ... FAIL
+test_gui_reopen_keeps_saved_camera_and_active_part (TestCameraTransitions.TestCameraTransitions.test_gui_reopen_keeps_saved_camera_and_active_part) ... FAIL
+test_new_component_view_has_stable_fit_and_preserves_source (TestCameraTransitions.TestCameraTransitions.test_new_component_view_has_stable_fit_and_preserves_source) ... FAIL
+test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) ... 
+  test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) (camera_type='Orthographic') ... FAIL
+  test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) (camera_type='Perspective') ... FAIL
+test_parts_and_assembly_double_click_preserve_camera (TestCameraTransitions.TestCameraTransitions.test_parts_and_assembly_double_click_preserve_camera) ... ok
+test_restore_camera_cancels_old_rotation (TestCameraTransitions.TestCameraTransitions.test_restore_camera_cancels_old_rotation) ... FAIL
+test_restore_interrupts_pending_fit_without_later_snap (TestCameraTransitions.TestCameraTransitions.test_restore_interrupts_pending_fit_without_later_snap) ... ok
+test_screen_sized_origins_do_not_change_fit_scale (TestCameraTransitions.TestCameraTransitions.test_screen_sized_origins_do_not_change_fit_scale) ... FAIL
+
+======================================================================
+FAIL: test_fit_has_no_nested_event_loop_and_reaches_one_target (TestCameraTransitions.TestCameraTransitions.test_fit_has_no_nested_event_loop_and_reaches_one_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 70, in test_fit_has_no_nested_event_loop_and_reaches_one_target
+    self.assertFalse(callback, 'Fit must not process unrelated activation/display callbacks reentrantly')
+AssertionError: [True] is not false : Fit must not process unrelated activation/display callbacks reentrantly
+
+======================================================================
+FAIL: test_gui_reopen_keeps_saved_camera_and_active_part (TestCameraTransitions.TestCameraTransitions.test_gui_reopen_keeps_saved_camera_and_active_part)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 139, in test_gui_reopen_keeps_saved_camera_and_active_part
+    self.same_frame(frame(Gui.activeDocument().activeView()), expected, 2e-3)
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 38, in same_frame
+    self.assertAlmostEqual(a, b, delta=tolerance, msg=key)
+AssertionError: 34.656707763671875 != 84.03987884521484 within 0.002 delta (49.38317108154297 difference) : position
+
+======================================================================
+FAIL: test_new_component_view_has_stable_fit_and_preserves_source (TestCameraTransitions.TestCameraTransitions.test_new_component_view_has_stable_fit_and_preserves_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 125, in test_new_component_view_has_stable_fit_and_preserves_source
+    self.same_frame(frame(new), settled, 2e-3)
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 38, in same_frame
+    self.assertAlmostEqual(a, b, delta=tolerance, msg=key)
+AssertionError: 2.1970508098602295 != 11.892213821411133 within 0.002 delta (9.695163011550903 difference) : position
+
+======================================================================
+FAIL: test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) (camera_type='Orthographic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 100, in test_orientation_and_fit_share_final_pose_in_both_projections
+    self.same_frame(frames[-1], expected, 2e-3)
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 38, in same_frame
+    self.assertAlmostEqual(a, b, delta=tolerance, msg=key)
+AssertionError: 13.599625587463379 != 21.95496368408203 within 0.002 delta (8.355338096618652 difference) : position
+
+======================================================================
+FAIL: test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) (camera_type='Perspective')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 100, in test_orientation_and_fit_share_final_pose_in_both_projections
+    self.same_frame(frames[-1], expected, 2e-3)
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 38, in same_frame
+    self.assertAlmostEqual(a, b, delta=tolerance, msg=key)
+AssertionError: 12.985203742980957 != 13.547343254089355 within 0.002 delta (0.5621395111083984 difference) : position
+
+======================================================================
+FAIL: test_restore_camera_cancels_old_rotation (TestCameraTransitions.TestCameraTransitions.test_restore_camera_cancels_old_rotation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 57, in test_restore_camera_cancels_old_rotation
+    self.same_frame(frame(self.view), expected)
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 38, in same_frame
+    self.assertAlmostEqual(a, b, delta=tolerance, msg=key)
+AssertionError: 53.52022171020508 != 101.22409057617188 within 0.0001 delta (47.7038688659668 difference) : position
+
+======================================================================
+FAIL: test_screen_sized_origins_do_not_change_fit_scale (TestCameraTransitions.TestCameraTransitions.test_screen_sized_origins_do_not_change_fit_scale)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestCameraTransitions.py", line 84, in test_screen_sized_origins_do_not_change_fit_scale
+    self.assertLess(max(scales) - min(scales), 1e-4, scales)
+AssertionError: 32.30764389038086 not less than 0.0001 : [39.92526626586914, 11.479073524475098, 7.617622375488281]
+
+----------------------------------------------------------------------
+Ran 8 tests in 23.317s
+
+FAILED (failures=7)

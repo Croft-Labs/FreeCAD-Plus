@@ -3410,6 +3410,9 @@ std::shared_ptr<NavigationAnimation> View3DInventorViewer::setCameraOrientation(
 
 void View3DInventorViewer::setCameraType(SoType type)
 {
+    if (navigation) {
+        navigation->stopAnimating();
+    }
     inherited::setCameraType(type);
 
     SoCamera* cam = this->getSoRenderManager()->getCamera();
@@ -3451,76 +3454,77 @@ void View3DInventorViewer::moveCameraTo(const SbRotation& orientation, const SbV
     camera->position.setValue(position);
 }
 
-void View3DInventorViewer::animatedViewAll(int steps, int ms)
+namespace
 {
-    SoCamera* cam = this->getSoRenderManager()->getCamera();
-    if (!cam) {
-        return;
+// Fit and orientation share the navigation animator, so only one operation owns
+// the camera. Compute the exact Coin fit once instead of animating to a sphere
+// approximation and snapping to a different fit after a nested event loop.
+class FitCameraAnimation final: public NavigationAnimation
+{
+public:
+    FitCameraAnimation(NavigationStyle* navigation, std::shared_ptr<SoCamera> target)
+        : NavigationAnimation(navigation), target(std::move(target))
+    {
+        setDuration(200);
+        setStartValue(0.0);
+        setEndValue(1.0);
+        setEasingCurve(QEasingCurve::InOutCubic);
     }
 
-    SbVec3f campos = cam->position.getValue();
-    SbRotation camrot = cam->orientation.getValue();
-    SbViewportRegion vp = this->getSoRenderManager()->getViewportRegion();
-    SbBox3f box = getBoundingBox();
-
-    float aspectRatio = vp.getViewportAspectRatio();
-
-    if (box.isEmpty()) {
-        return;
+    SbRotation getTargetOrientation() const override
+    {
+        return target->orientation.getValue();
     }
 
-    SbSphere sphere;
-    sphere.circumscribe(box);
-    if (sphere.getRadius() == 0) {
-        return;
-    }
+private:
+    std::shared_ptr<SoCamera> target;
+    SbVec3f position;
+    SbRotation orientation;
+    float focalDistance = 0;
+    float scale = 0;
 
-    SbVec3f direction;
-    SbVec3f pos(0.0F, 0.0F, 0.0F);
-    camrot.multVec(SbVec3f(0, 0, -1), direction);
-
-    bool isOrthographic = false;
-    float height = 0;
-    float diff = 0;
-
-    if (cam->isOfType(SoOrthographicCamera::getClassTypeId())) {
-        isOrthographic = true;
-        height = static_cast<SoOrthographicCamera*>(cam)->height.getValue();  // NOLINT
-        if (aspectRatio < 1.0F) {
-            diff = sphere.getRadius() * 2 - height * aspectRatio;
+    void initialize() override
+    {
+        auto camera = navigation->getCamera();
+        position = camera->position.getValue();
+        orientation = camera->orientation.getValue();
+        focalDistance = camera->focalDistance.getValue();
+        if (camera->isOfType(SoOrthographicCamera::getClassTypeId())) {
+            scale = static_cast<SoOrthographicCamera*>(camera)->height.getValue();
         }
-        else {
-            diff = sphere.getRadius() * 2 - height;
+        else if (camera->isOfType(SoPerspectiveCamera::getClassTypeId())) {
+            scale = static_cast<SoPerspectiveCamera*>(camera)->heightAngle.getValue();
         }
-        pos = (box.getCenter() - direction * sphere.getRadius());
-    }
-    else if (cam->isOfType(SoPerspectiveCamera::getClassTypeId())) {
-        // NOLINTBEGIN
-        float movelength = sphere.getRadius()
-            / float(tan(static_cast<SoPerspectiveCamera*>(cam)->heightAngle.getValue() / 2.0));
-        // NOLINTEND
-        pos = box.getCenter() - direction * movelength;
     }
 
-    QEventLoop loop;
-    QTimer timer;
-    timer.setSingleShot(true);
-    QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-    for (int i = 0; i < steps; i++) {
-        float par = float(i) / float(steps);
-
-        if (isOrthographic) {
-            float camHeight = height + diff * par;
-            static_cast<SoOrthographicCamera*>(cam)->height.setValue(camHeight);  // NOLINT
+    void update(const QVariant& value) override
+    {
+        auto camera = navigation->getCamera();
+        if (!camera || camera->getTypeId() != target->getTypeId()) {
+            return;
         }
-
-        SbVec3f curpos = campos * (1.0F - par) + pos * par;
-        cam->position.setValue(curpos);
-        timer.start(Base::clamp<int>(ms, 0, 5000));  // NOLINT
-        loop.exec(QEventLoop::ExcludeUserInputEvents);
+        const float t = value.toFloat();
+        camera->orientation = SbRotation::slerp(orientation, target->orientation.getValue(), t);
+        camera->position = position * (1.0F - t) + target->position.getValue() * t;
+        camera->focalDistance = focalDistance * (1.0F - t) + target->focalDistance.getValue() * t;
+        if (camera->isOfType(SoOrthographicCamera::getClassTypeId())) {
+            static_cast<SoOrthographicCamera*>(camera)->height = scale * (1.0F - t)
+                + static_cast<SoOrthographicCamera*>(target.get())->height.getValue() * t;
+        }
+        else if (camera->isOfType(SoPerspectiveCamera::getClassTypeId())) {
+            static_cast<SoPerspectiveCamera*>(camera)->heightAngle = scale * (1.0F - t)
+                + static_cast<SoPerspectiveCamera*>(target.get())->heightAngle.getValue() * t;
+        }
     }
-}
+
+    void onStop(bool finished) override
+    {
+        if (finished) {
+            update(1.0);
+        }
+    }
+};
+}  // namespace
 
 #if BUILD_VR
 extern View3DInventorRiftViewer* oculusStart(void);
@@ -3570,9 +3574,11 @@ void View3DInventorViewer::viewAll()
     sa.apply(this->getSoRenderManager()->getSceneGraph());
     const SoPathList& pathlist = sa.getPaths();
 
+    std::vector<int> previousModes;
     for (int i = 0; i < pathlist.getLength(); i++) {
         SoPath* path = pathlist[i];
         auto group = static_cast<SoSkipBoundingGroup*>(path->getTail());  // NOLINT
+        previousModes.push_back(group->mode.getValue());
         group->mode = SoSkipBoundingGroup::EXCLUDE_BBOX;
     }
 
@@ -3582,24 +3588,40 @@ void View3DInventorViewer::viewAll()
         SbSphere sphere;
         sphere.circumscribe(box);
         if (sphere.getRadius() != 0) {
-            // Set the height angle to 45 deg
-            SoCamera* cam = this->getSoRenderManager()->getCamera();
-
-            if (cam && cam->getTypeId().isDerivedFrom(SoPerspectiveCamera::getClassTypeId())) {
-                static_cast<SoPerspectiveCamera*>(cam)->heightAngle = (float)(std::numbers::pi
-                                                                              / 4.0);  // NOLINT
-            }
-
-            if (isAnimationEnabled()) {
-                animatedViewAll(10, 20);  // NOLINT
-            }
-
-            // make sure everything is visible
+            SoCamera* cam = getCamera();
             if (cam) {
-                cam->viewAll(
-                    getSoRenderManager()->getSceneGraph(),
-                    this->getSoRenderManager()->getViewportRegion()
-                );
+                auto copy = static_cast<SoCamera*>(cam->copy());
+                copy->ref();
+                std::shared_ptr<SoCamera> target(copy, [](SoCamera* node) { node->unref(); });
+                // A fit immediately following a standard-view command must keep
+                // that command's requested orientation, not an intermediate frame.
+                target->orientation = navigation->getTargetOrientation();
+                if (target->isOfType(SoPerspectiveCamera::getClassTypeId())) {
+                    static_cast<SoPerspectiveCamera*>(target.get())->heightAngle
+                        = float(std::numbers::pi / 4.0);
+                }
+                target->viewAll(getSoRenderManager()->getSceneGraph(),
+                                getSoRenderManager()->getViewportRegion());
+                auto animation = std::make_shared<FitCameraAnimation>(navigation, target);
+                if (isAnimationEnabled()) {
+                    navigation->startAnimating(animation);
+                }
+                else {
+                    navigation->stopAnimating();
+                    cam->orientation = target->orientation;
+                    cam->position = target->position;
+                    cam->focalDistance = target->focalDistance;
+                    cam->nearDistance = target->nearDistance;
+                    cam->farDistance = target->farDistance;
+                    if (cam->isOfType(SoOrthographicCamera::getClassTypeId())) {
+                        static_cast<SoOrthographicCamera*>(cam)->height
+                            = static_cast<SoOrthographicCamera*>(target.get())->height;
+                    }
+                    else if (cam->isOfType(SoPerspectiveCamera::getClassTypeId())) {
+                        static_cast<SoPerspectiveCamera*>(cam)->heightAngle
+                            = static_cast<SoPerspectiveCamera*>(target.get())->heightAngle;
+                    }
+                }
             }
         }
     }
@@ -3607,7 +3629,7 @@ void View3DInventorViewer::viewAll()
     for (int i = 0; i < pathlist.getLength(); i++) {
         SoPath* path = pathlist[i];
         auto group = static_cast<SoSkipBoundingGroup*>(path->getTail());  // NOLINT
-        group->mode = SoSkipBoundingGroup::INCLUDE_BBOX;
+        group->mode = previousModes[i];
     }
 }
 
@@ -3623,15 +3645,20 @@ void View3DInventorViewer::viewAll(float factor)
     }
 
     if (factor != 1.0F) {
+        const auto orientation = navigation->getTargetOrientation();
+        navigation->stopAnimating();
+        cam->orientation = orientation;
         SoSearchAction sa;
         sa.setType(SoSkipBoundingGroup::getClassTypeId());
         sa.setInterest(SoSearchAction::ALL);
         sa.apply(this->getSoRenderManager()->getSceneGraph());
         const SoPathList& pathlist = sa.getPaths();
 
+        std::vector<int> previousModes;
         for (int i = 0; i < pathlist.getLength(); i++) {
             SoPath* path = pathlist[i];
             auto group = static_cast<SoSkipBoundingGroup*>(path->getTail());  // NOLINT
+            previousModes.push_back(group->mode.getValue());
             group->mode = SoSkipBoundingGroup::EXCLUDE_BBOX;
         }
 
@@ -3647,7 +3674,7 @@ void View3DInventorViewer::viewAll(float factor)
         for (int i = 0; i < pathlist.getLength(); i++) {
             SoPath* path = pathlist[i];
             auto group = static_cast<SoSkipBoundingGroup*>(path->getTail());  // NOLINT
-            group->mode = SoSkipBoundingGroup::INCLUDE_BBOX;
+            group->mode = previousModes[i];
         }
 
         auto cube = new SoCube();

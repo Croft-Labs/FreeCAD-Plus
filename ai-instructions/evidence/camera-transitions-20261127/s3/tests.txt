@@ -1,0 +1,13 @@
+test_fit_has_no_nested_event_loop_and_reaches_one_target (TestCameraTransitions.TestCameraTransitions.test_fit_has_no_nested_event_loop_and_reaches_one_target) ... ok
+test_gui_reopen_keeps_saved_camera_and_active_part (TestCameraTransitions.TestCameraTransitions.test_gui_reopen_keeps_saved_camera_and_active_part) ... ok
+test_new_component_view_has_stable_fit_and_preserves_source (TestCameraTransitions.TestCameraTransitions.test_new_component_view_has_stable_fit_and_preserves_source) ... ok
+test_orientation_and_fit_share_final_pose_in_both_projections (TestCameraTransitions.TestCameraTransitions.test_orientation_and_fit_share_final_pose_in_both_projections) ... ok
+test_parts_and_assembly_double_click_preserve_camera (TestCameraTransitions.TestCameraTransitions.test_parts_and_assembly_double_click_preserve_camera) ... ok
+test_restore_camera_cancels_old_rotation (TestCameraTransitions.TestCameraTransitions.test_restore_camera_cancels_old_rotation) ... ok
+test_restore_interrupts_pending_fit_without_later_snap (TestCameraTransitions.TestCameraTransitions.test_restore_interrupts_pending_fit_without_later_snap) ... ok
+test_screen_sized_origins_do_not_change_fit_scale (TestCameraTransitions.TestCameraTransitions.test_screen_sized_origins_do_not_change_fit_scale) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 17.576s
+
+OK

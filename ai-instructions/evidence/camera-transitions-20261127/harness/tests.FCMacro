@@ -1,0 +1,23 @@
+import os,sys,json,traceback,unittest
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1500,1000)
+        if os.environ['PLUS_TEST_PHASE']!='installed':
+            sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name) for name in os.environ['PLUS_TEST_NAMES'].split(',') if name)
+        with (out/'tests.txt').open('w') as stream:r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=r.wasSuccessful(),tests=r.testsRun,failures=len(r.failures),errors=len(r.errors),runtime=App.getHomePath())
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

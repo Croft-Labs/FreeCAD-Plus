@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Part opening/activation camera correction — installed November 27, 2026
+
+Native fits now share the navigation animator, use a single exact camera target,
+and exclude screen-sized origin graphics from fitting. Explicit restoration and
+projection changes cancel stale animations; Plus archives retain saved cameras.
+All 33 focused installed checks pass, including 10 new camera regressions. Five
+broader legacy failures match the unchanged baseline. Owner settings/shortcut are
+preserved. See [evidence](evidence/camera-transitions-20261127/README.md).
+
 ## History operation display — installed November 27, 2026
 
 History modeling glyphs use yellow for New/Add and red for Subtract. Display-only

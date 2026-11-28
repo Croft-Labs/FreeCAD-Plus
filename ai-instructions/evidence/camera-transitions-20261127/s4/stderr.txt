@@ -1,0 +1,3 @@
+Pad: Wire is not closed.
+Evaluation: Revolve axis intersects the sketch
+Evaluation: Revolve axis intersects the sketch

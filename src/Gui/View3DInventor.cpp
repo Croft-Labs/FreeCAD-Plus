@@ -606,6 +606,10 @@ bool View3DInventor::setCamera(const char* pCamera)
     // this is to make sure to reliably delete the node
     CoinPtr<SoNode> camPtr {Cam};
 
+    // A restored file/component camera supersedes any in-flight navigation.
+    // Otherwise that animation continues writing over the restored pose.
+    _viewer->stopAnimating();
+
     // toggle between perspective and orthographic camera
     if (Cam->getTypeId() != CamViewer->getTypeId()) {
         _viewer->setCameraType(Cam->getTypeId());

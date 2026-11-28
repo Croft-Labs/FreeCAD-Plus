@@ -512,6 +512,11 @@ SoCamera* NavigationStyle::getCamera() const
     return this->viewer->getCamera();
 }
 
+SbRotation NavigationStyle::getTargetOrientation() const
+{
+    return animator->getTargetOrientation(getCamera()->orientation.getValue());
+}
+
 std::shared_ptr<NavigationAnimation> NavigationStyle::setCameraOrientation(
     const SbRotation& orientation,
     const SbBool moveToCenter

@@ -170,6 +170,7 @@ public:
     SbVec3f getFocalPoint() const;
 
     SoCamera* getCamera() const;
+    SbRotation getTargetOrientation() const;
     std::shared_ptr<NavigationAnimation> setCameraOrientation(
         const SbRotation& orientation,
         SbBool moveToCenter = false

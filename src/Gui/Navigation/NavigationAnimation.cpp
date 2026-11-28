@@ -44,6 +44,16 @@ void NavigationAnimation::updateCurrentValue(const QVariant& value)
 void NavigationAnimation::onStop([[maybe_unused]] bool finished)
 {}
 
+SbRotation NavigationAnimation::getTargetOrientation() const
+{
+    return navigation->getCamera()->orientation.getValue();
+}
+
+SbRotation FixedTimeAnimation::getTargetOrientation() const
+{
+    return targetOrientation;
+}
+
 FixedTimeAnimation::FixedTimeAnimation(
     NavigationStyle* navigation,
     const SbRotation& orientation,

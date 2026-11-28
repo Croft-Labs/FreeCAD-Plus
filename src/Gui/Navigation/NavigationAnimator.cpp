@@ -102,3 +102,8 @@ bool NavigationAnimator::isAnimating() const
 
     return false;
 }
+
+SbRotation NavigationAnimator::getTargetOrientation(const SbRotation& fallback) const
+{
+    return isAnimating() ? activeAnimation->getTargetOrientation() : fallback;
+}

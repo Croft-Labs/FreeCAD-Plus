@@ -523,7 +523,6 @@ protected:
     void renderScene();
     void renderFramebuffer();
     void renderGLImage();
-    void animatedViewAll(int steps, int ms);
     void actualRedraw() override;
     void setSeekMode(bool on) override;
     void afterRealizeHook() override;

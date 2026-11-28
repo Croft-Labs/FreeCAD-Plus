@@ -1,0 +1,58 @@
+import os,sys,json,traceback,time
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'traces':{}}
+    try:
+        from freecad_plus import document,editing,hierarchy,panel
+        import TestComponentPanel as fixtures
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1500,1000)
+        test=fixtures.TestComponentPanel();test.setUp()
+        doc=test.doc;view=Gui.activeDocument().activeView()
+        view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();QtTest.QTest.qWait(300)
+        view.setAnimationEnabled(True)
+        def trace(name,action):
+            samples=[];start=time.monotonic()
+            def sample():
+                try:
+                    v=Gui.activeDocument().activeView();c=v.getCameraNode()
+                    samples.append({'t':round((time.monotonic()-start)*1000,1),'height':float(c.height.getValue()) if hasattr(c,'height') else None,
+                        'focal':float(c.focalDistance.getValue()),'position':list(c.position.getValue().getValue()),
+                        'orientation':list(c.orientation.getValue().getValue()),'near':float(c.nearDistance.getValue()),'far':float(c.farDistance.getValue())})
+                except Exception:pass
+            timer=QtCore.QTimer();timer.timeout.connect(sample);timer.start(5);sample()
+            action();sample();QtTest.QTest.qWait(800);timer.stop();sample()
+            result['traces'][name]=samples
+        trace('activate-parent',lambda:test.widget.edit_row(test.model(test.parent).data(0,panel._ROLE)))
+        trace('activate-child',lambda:test.widget.edit_row(test.model(test.child).data(0,panel._ROLE)))
+        trace('isolate-child',lambda:editing.edit_unused(doc,test.child,detached=True))
+        trace('open-component-view',lambda:editing.open_component_view(doc,test.child,detached=True))
+        v=Gui.activeDocument().activeView();v.setAnimationEnabled(True)
+        trace('orientation-and-fit',lambda:(v.viewTop(),v.fitAll()))
+        trace('fit-settled-view',lambda:v.fitAll())
+        trace('fit-settled-view-again',lambda:v.fitAll())
+        saved=v.getCamera()
+        trace('restore-camera-during-animation',lambda:(v.viewBottom(),v.setCamera(saved)))
+        test.tearDown()
+        sole=document.new_document('SinglePartCamera');owner=document.validate(sole).Definitions[0]
+        body=owner.newObject('PartDesign::Body','Body');feature=body.newObject('PartDesign::Feature','FinishedBody')
+        feature.Shape=Part.makeBox(40,25,12);sole.recompute();v=Gui.activeDocument().activeView()
+        v.setAnimationEnabled(False);v.viewAxonometric();v.fitAll();QtTest.QTest.qWait(250)
+        filename=str(out/'camera-fixture.cadprt');document.save_document(sole,filename)
+        App.closeDocument(sole.Name)
+        trace('open-part-file',lambda:document.open_document(filename))
+        App.closeDocument(App.ActiveDocument.Name)
+        trace('gui-open-part-file',lambda:Gui.loadFile(filename,'freecad_plus.document_import'))
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):
+        try:App.closeDocument(name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,QtWidgets.QApplication.quit)
+QtCore.QTimer.singleShot(1800,run)

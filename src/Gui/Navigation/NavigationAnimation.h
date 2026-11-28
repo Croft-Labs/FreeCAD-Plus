@@ -38,6 +38,7 @@ class GuiExport NavigationAnimation: protected QVariantAnimation
 public:
     explicit NavigationAnimation(NavigationStyle* navigation);
     using QVariantAnimation::state;
+    virtual SbRotation getTargetOrientation() const;
 
 Q_SIGNALS:
     void interrupted();
@@ -59,6 +60,7 @@ private:
 class GuiExport FixedTimeAnimation: public NavigationAnimation
 {
 public:
+    SbRotation getTargetOrientation() const override;
     explicit FixedTimeAnimation(
         NavigationStyle* navigation,
         const SbRotation& orientation,

@@ -43,6 +43,7 @@ public:
     bool startAndWait(const std::shared_ptr<NavigationAnimation>& animation);
     void stop();
     bool isAnimating() const;
+    SbRotation getTargetOrientation(const SbRotation& fallback) const;
 
 private:
     std::shared_ptr<NavigationAnimation> activeAnimation;
