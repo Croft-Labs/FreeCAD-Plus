@@ -200,7 +200,7 @@ def show_new_component_frame(definition):
     if App.GuiUp:
         definition.Origin.Visibility = True
         for feature in definition.Origin.OriginFeatures:
-            feature.Visibility = True
+            feature.Visibility = feature.TypeId != "App::Plane"
 
 
 def new_document(name="Unnamed"):

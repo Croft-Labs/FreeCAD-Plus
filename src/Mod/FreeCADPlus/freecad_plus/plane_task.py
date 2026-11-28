@@ -187,6 +187,9 @@ class PlaneTask(QtCore.QObject):
         Gui.Selection.addObserver(self, 0)
         App.addDocumentObserver(self)
         editing.add_context_observer(self.context_changed)
+        if type(self) is PlaneTask:
+            from .sketch_visibility import Planes
+            self.origin_visibility = Planes(self.definition)
         self.refresh_fields()
         # Consume native preselection so the same reference can be picked again.
         for obj, sub in preselection:
@@ -492,6 +495,7 @@ class PlaneTask(QtCore.QObject):
         global _active
         if self.closed: return True
         self.closed = True
+        if getattr(self, 'origin_visibility', None):self.origin_visibility.restore()
         Gui.Selection.removeObserver(self)
         App.removeDocumentObserver(self)
         editing.remove_context_observer(self.context_changed)

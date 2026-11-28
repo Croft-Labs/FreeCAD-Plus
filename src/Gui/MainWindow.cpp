@@ -391,7 +391,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
     d->mdiArea = new QMdiArea();
     // Movable tabs
     d->mdiArea->setTabsMovable(true);
-    d->mdiArea->setTabPosition(QTabWidget::South);
+    d->mdiArea->setTabPosition(QTabWidget::North);
     d->mdiArea->setViewMode(QMdiArea::TabbedView);
     auto tab = d->mdiArea->findChild<QTabBar*>();
     if (tab) {

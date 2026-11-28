@@ -1,5 +1,13 @@
 # Default settings
 
+## Fundamental planes — approved November 27, 2026
+
+New parts hide fundamental planes by default while keeping axes and origin visible.
+Create Sketch and Create Datum Plane temporarily show the fundamental planes so they
+can be selected. Restore prior visibility when the workflow closes, retaining manual
+visibility choices made during the task. Do not migrate existing saved visibility.
+See [installed verification](../evidence/approved-workflows-20261127/README.md).
+
 ## FreeCAD Plus 2.0.0 branding — November 27, 2026
 
 Owner requests the product name **FreeCAD Plus**, version **2.0.0** in current

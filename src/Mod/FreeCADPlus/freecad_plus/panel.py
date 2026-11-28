@@ -426,8 +426,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def toggle_history_visibility(self, row):
         doc, obj = self._checked(row)
         definition, path = self._context(doc, self._binding[1])
-        from . import sketch_task, extrude_task
-        placement = sketch_task._active
+        from . import sketch_task, plane_task, extrude_task
+        placement = sketch_task._active or plane_task._active
         extrude = extrude_task._active
         if placement is not None:
             placement.check()
