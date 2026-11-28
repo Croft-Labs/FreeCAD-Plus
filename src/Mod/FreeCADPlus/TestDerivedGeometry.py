@@ -274,7 +274,7 @@ class TestDerivedGeometry(unittest.TestCase):
         with selection_list.pick_intent(True):Gui.Selection.addSelection(self.doc.Name,self.root.Name,sub)
         QtTest.QTest.qWait(100);self.assertEqual(task.refs,[])
         Gui.Selection.addSelection(self.doc.Name,self.root.Name,sub+'Face1');QtTest.QTest.qWait(100)
-        self.assertEqual(task.refs,[]);self.assertTrue(task.form.status.error)
+        self.assertEqual(task.refs,[self.ref(self.body)]);self.assertFalse(task.form.status.error)
         task.pick(self.link,self.ref(self.body)[1]);before=self.snapshot()
         editing.edit((self.top,self.link));QtTest.QTest.qWait(80)
         self.assertFalse(task.accept());self.assertEqual(self.snapshot(),before);task.reject()

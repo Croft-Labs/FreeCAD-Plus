@@ -96,7 +96,7 @@ class GeometryTask(QtCore.QObject):
 
     def activate(self):
         self.collecting=True
-        self.form.status.setText('Pick faces on parent-owned geometry.' if self.extract else 'Pick whole objects from direct children.')
+        self.form.status.setText('Pick faces on parent-owned geometry.' if self.extract else 'Click geometry in a direct child to select its whole source object.')
 
     def remove_inputs(self):
         indexes=sorted((self.form.objects.indexOfTopLevelItem(i) for i in self.form.objects.selectedItems()),reverse=True)

@@ -88,12 +88,32 @@ def canonical(doc, definition, edit_path, obj, sub, extract=False):
         local = sub[len(prefix):]
     elif obj == definition: local = sub
     else:
+        from . import editing, isolation
+        session = isolation.current(editing._view(doc))
+        if session and obj == session.anchor_definition() and session.definition() == definition:
+            prefix = hierarchy.subname(tuple(isolation._resolve(ref) for ref in session.edit_path))
+            if not sub.startswith(prefix):raise ValueError('Choose geometry within the edited component')
+            return canonical(doc, definition, edit_path, definition, sub[len(prefix):], extract)
         route = document.owned_path(definition, obj)
         if route is None: raise ValueError('Select the source through its component occurrence')
         local = ''.join(o.Name + '.' for o in route) + sub
     if not extract:
         name, _, tail = local.partition('.')
         link = next((o for o in definition.Group if o.Name == name), None)
+        object_path, mapped, element = Part.splitSubname(tail)
+        if element or mapped:
+            if not element.startswith(('Face', 'Edge', 'Vertex')):
+                raise ValueError('Pick geometry on a whole source object')
+            if link is None or link.TypeId != 'App::Link':
+                raise ValueError('Clone accepts objects from direct child occurrences only')
+            # Validate the actual picked topology before dropping its suffix.
+            picked = Part.getShape(link, tail, needSubElement=True)
+            if picked.isNull():raise ValueError('The picked source geometry is no longer available')
+            source = whole_source(definition, (link, object_path))
+            body = source.getParentGeoFeatureGroup()
+            if body is not None and body.TypeId == 'PartDesign::Body' and body.Tip == source:
+                object_path = ''.join(o.Name + '.' for o in document.owned_path(link.LinkedObject, body))
+            tail = object_path
         ref = (link, tail); whole_source(definition, ref)
         return ref
     resolved = definition.getSubObject(local, 1)

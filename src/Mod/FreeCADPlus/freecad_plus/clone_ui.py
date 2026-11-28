@@ -37,7 +37,7 @@ class GeometryForm(QtWidgets.QGroupBox):
         note('Editing component: '+definition.Label,True)
         if feature: note('Editing: '+feature.Label)
         note('Select faces on an object owned by '+definition.Label+'.' if extract else
-             'Select whole objects from direct child components.')
+             'Click a body, surface or sketch in a direct child component.')
         header=QtWidgets.QHBoxLayout();header.addWidget(QtWidgets.QLabel('Faces' if extract else 'Whole objects'));header.addStretch()
         self.browse=None
         if not extract:
@@ -59,7 +59,7 @@ class GeometryForm(QtWidgets.QGroupBox):
             self.join.toggled.connect(self.update_join_hint)
             self.update_join_hint()
         else:
-            note('Bodies, surfaces, sketches and planes are cloned as complete objects. Faces, edges and vertices are not Clone inputs.')
+            note('Clicking a face or edge selects its whole source object. Use Extract geometry for individual faces.')
             note('Source construction history stays in the child. Parent features can modify the cloned result or combine it with a parent body.')
         self.preview=QtWidgets.QCheckBox('Show preview');self.preview.setChecked(True);layout.addWidget(self.preview)
         self.update=QtWidgets.QCheckBox('Recompute on update');self.update.setChecked(True);layout.addWidget(self.update)
