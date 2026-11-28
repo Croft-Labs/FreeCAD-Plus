@@ -1,3 +1,13 @@
+# November 27: Assembly visibility and selection fixes
+
+- [x] Place child visibility eyes between native triangle and component icon.
+- [x] Protect the active assembly and omit its root eye; retain group Undo behavior.
+- [x] Correct grey anchored Assembly rows and normalize Clone viewport picks.
+- [x] Preserve Appearance fill preferences with contrasting true face boundaries.
+- [x] Install 14 checked Python payloads; pass all 63 installed regressions.
+
+See [delivery evidence](evidence/assembly-selection-20261127/README.md).
+
 # November 27: Single-part opening correction
 
 - [x] Activate the sole local part on opening and populate History without tab switching.

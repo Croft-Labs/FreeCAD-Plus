@@ -1,3 +1,13 @@
+# November 27: Assembly visibility, Clone picking and Appearance edges installed
+
+All three approved previews are implemented and installed. Assembly child eyes
+follow tree indentation, with no eye/hide action for the active root. Anchored
+assembly children use normal text. Clone accepts face/edge clicks as whole-source
+picks without Browse, preserving direct-child occurrence identity. Appearance
+selection/preselection retains its preference fill with contrasting true edges.
+All 63 installed checks pass; 14 source/build/app payload hashes match and owner
+settings/shortcut are unchanged. See [evidence](evidence/assembly-selection-20261127/README.md).
+
 # November 27: Single-part opening correction installed
 
 One-part files now activate their part and populate History when opened. The bug

@@ -33,13 +33,39 @@ def routes(task, owner, obj, face):
             from .editing import context_path
             active, path = context_path(task.host)
         except ValueError:active = None
-        hidden = display.hidden_paths(task.host, active, path)
+        from .assembly_visibility import protection
+        _, protected_path = protection(task.host, task.view)
+        hidden = display.hidden_paths(task.host, active, path, protected_path=protected_path)
     for path in paths:
         if any(not link.Visibility for link in path):continue
         sub = hierarchy.subname((*path, *owned)) + 'Face' + str(face)
         if any(sub.startswith(prefix) for prefix in hidden):continue
         yield root, sub
 
+
+def outline(shape, packed):
+    """Draw true face boundaries with contrast, without exposing triangle edges."""
+    rgb = tuple((packed >> shift & 255) / 255. for shift in (24, 16, 8))
+    linear = tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4 for c in rgb)
+    luminance = sum(c * w for c, w in zip(linear, (.2126, .7152, .0722)))
+    color = (0., 0., 0.) if luminance > .179 else (1., 1., 1.)
+    points, counts = [], []
+    tolerance = max(shape.BoundBox.DiagonalLength * .0005, .0001)
+    for edge in shape.Edges:
+        if edge.Length <= 0:continue
+        vertices = edge.discretize(Deflection=tolerance)
+        if len(vertices) < 2:continue
+        points.extend(tuple(v) for v in vertices);counts.append(len(vertices))
+    node = coin.SoSeparator();node.setName('FreeCADPlusAppearanceBoundary')
+    depth = coin.SoDepthBuffer();depth.test = True;depth.write = False
+    depth.function = coin.SoDepthBuffer.LEQUAL
+    depth.range = (0., .999999);node.addChild(depth)
+    material = coin.SoMaterial();material.diffuseColor = color
+    material.setOverride(True);node.addChild(material)
+    style = coin.SoDrawStyle();style.lineWidth = 2.;style.setOverride(True);node.addChild(style)
+    coords = coin.SoCoordinate3();coords.point.setValues(0, len(points), points);node.addChild(coords)
+    lines = coin.SoLineSet();lines.numVertices.setValues(0, len(counts), counts);node.addChild(lines)
+    return node
 
 class Highlights:
     def __init__(self, task):
@@ -60,11 +86,13 @@ class Highlights:
         node = coin.SoSeparator();node.setName('FreeCADPlusAppearanceHighlight')
         pick = coin.SoPickStyle();pick.style = coin.SoPickStyle.UNPICKABLE;node.addChild(pick)
         light = coin.SoLightModel();light.model = coin.SoLightModel.BASE_COLOR;node.addChild(light)
+        boundaries = []
         for obj, face, packed, hovered in values:
             for root, sub in routes(self.task, owner, obj, face):
                 shape = Part.getShape(root, sub, needSubElement=True)
                 if shape.isNull() or shape.ShapeType != 'Face':continue
                 branch = coin.SoSeparator()
+                depth = coin.SoDepthBuffer();depth.write = False;branch.addChild(depth)
                 offset = coin.SoPolygonOffset();offset.factor = -2 if hovered else -1
                 offset.units = -2 if hovered else -1;branch.addChild(offset)
                 material = coin.SoMaterial()
@@ -72,4 +100,6 @@ class Highlights:
                 material.setOverride(True);branch.addChild(material)
                 source = coin.SoInput();source.setBuffer(shape.writeInventor())
                 branch.addChild(coin.SoDB.readAll(source));node.addChild(branch)
+                boundaries.append(outline(shape, packed))
+        for boundary in boundaries:node.addChild(boundary)
         self.scene.addChild(node);self.node = node

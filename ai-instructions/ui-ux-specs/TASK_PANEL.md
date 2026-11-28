@@ -1,5 +1,21 @@
 # Task panel
 
+## Clone viewport picks and Appearance boundaries — approved November 27, 2026
+
+Clone accepts a viewport click on a body, surface or sketch of a direct child
+occurrence without requiring Browse direct children. A face/edge pick resolves to
+its whole source object; picking a Body's current Tip resolves to that Body.
+Repeated occurrences retain their exact placements and separate references.
+Duplicate picks, Shift removal, direct-child boundaries and Excluded validation
+remain in force. Extract geometry retains its separate face-selection contract.
+
+Appearance's selected and preselected faces retain the configured View preference
+fill colors and enable flags. Their true boundary edges, including holes, receive
+a contrasting black or white outline. Tessellation triangles are not outlined.
+These temporary, unpickable overlays preserve original materials and Undo state
+and disappear when targets are cleared or the task closes.
+See [delivery evidence](../evidence/assembly-selection-20261127/README.md).
+
 ## Shared Apply workflow — approved November 27, 2026
 
 The owner approved all pending previews together. Appearance, Move Components,

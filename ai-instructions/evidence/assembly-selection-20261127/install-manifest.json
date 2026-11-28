@@ -1,0 +1,93 @@
+{
+  "protected": {
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\system.cfg": "59a1f036a7e1f340dae49cdbb823638f826254a63c7c1d456aa512b834f156cc",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\profiles\\owner-test\\user.cfg": "1cf6af9109571bfc4942f22c90f267693a1e49d496f589c0c489ef6fc19de831",
+    "C:\\Users\\dgium\\Desktop\\FreeCAD Plus 2.0.0.lnk": "09e387cda7dfc9ceec6a82c728ade0cf1d48f7330d411690ca68b936db9d791b"
+  },
+  "files": [
+    {
+      "path": "Mod/FreeCADPlus/TestAssemblyEyes.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAssemblyEyes.py",
+      "before": null,
+      "installed": "e1713898cd010226df5c0104b20235033dfd1383f03703bd65047662b7f5d361"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestClonePicking.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestClonePicking.py",
+      "before": null,
+      "installed": "eca00cb26a739fc4c2d8aef2a2e8e20ac1ce462592309dfcc833da583b963a8c"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestAppearanceEdges.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestAppearanceEdges.py",
+      "before": null,
+      "installed": "3473114b8837ed572b0fb67f5681f9b0cab1648f1e0613758e4426705058c9e3"
+    },
+    {
+      "path": "Mod/FreeCADPlus/TestDerivedGeometry.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestDerivedGeometry.py",
+      "before": "17f3f3a1231521203687e5f890d3dc1c699b0f1a37e4055f007a82ea81a733a4",
+      "installed": "437348a3fdf655197ac34d6d3b7869dbb72712fa84448182580067829a566904"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/assembly_visibility.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\assembly_visibility.py",
+      "before": null,
+      "installed": "d55f862809e86c511be1798b15d1bc717cae12da4ca794de064704a3e47a2d7e"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/assembly_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\assembly_ui.py",
+      "before": "534eaa95e35fde9122bb8c47ffab4b785139006b6e4fe8ad30af2d40080b093d",
+      "installed": "71cb2087d76d5308fb7df3a3a248039b9f80becc5ca0f993b614031395b547c1"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+      "before": "ad669461a9e0e82f70bf3cf7ab6427578dd43eb3985a38ab01ad0f5ed3710e8b",
+      "installed": "663d1b23427c739017861496fbb4843f54ba775dd73d4550ff3baa15c54ba276"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/display.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\display.py",
+      "before": "4fb2f4c7ab23b855a518e5aa8828e79a786eaae9fb0f0cc88b9c35654c8ad7fc",
+      "installed": "a2ab370ee78d9eaa5884138a3bb0ae56b8823e6a3c2ff9db8877277c4ab3077f"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/isolation.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\isolation.py",
+      "before": "d693ee8c9c9155db97b6cf9da1ee6531863538a10ca6e5ea95861d0afa73ad6f",
+      "installed": "eac40bf6dfb98450ac8706a7583e45dbf8021451f3e3d15e1a3cc465d339a921"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_ui.py",
+      "before": "59454b80a87b8b79eae6331634f37c2c0f66f39f95b6142ea695b6920d3e98f4",
+      "installed": "bb9c873f4d1cf28a73eb434f72d70c6d3ddf6fc013d713b565455f500f9ea99c"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/appearance_highlight.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\appearance_highlight.py",
+      "before": "b6b7f6b4b3e2b60ba0814e7f063292758e78aca999f0da183c8aa2ffb1374de7",
+      "installed": "9a185fb326530bd4b673fc4b08db805c1c5facb674ae71473aa9e3e43c858623"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/derived_geometry.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\derived_geometry.py",
+      "before": "cd9feafc22e4a9711fd79dc5c7c1ea7041173b31807b08d620eb4ac4f06daab2",
+      "installed": "b95cf5aadbfa4d0cac4dfd9a8c50c864d13123306dd4e33d3180eabae83927e4"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_ui.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_ui.py",
+      "before": "681a1db7b6ce142086066e4fd058eb33dffe26408cd2e0fd8c9ffbf45a18740a",
+      "installed": "37e0bcd163925e0895036474e24278d0e81691338520d3db9eacb95ef4306e2a"
+    },
+    {
+      "path": "Mod/FreeCADPlus/freecad_plus/clone_task.py",
+      "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\clone_task.py",
+      "before": "e5be8272792dd90f161ac7cc94f80064f7d7a638716bcc1433af2fbc59406a5f",
+      "installed": "ee0959e50122812930b1961279b58f773f3a947fb3803e7be96ddc430eb8d1b2"
+    }
+  ]
+}

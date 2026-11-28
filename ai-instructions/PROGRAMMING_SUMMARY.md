@@ -1,5 +1,17 @@
 # FreeCAD Plus: Programming Summary
 
+## Assembly visibility and selection fixes — installed November 27, 2026
+
+Inline child eyes preserve native triangles, indentation, selection and Edit
+context. The active assembly stays visible and has no eye. Nested/imported eyes
+update the defining parent; condensed groups support atomic mixed-state toggles.
+Anchored assembly children no longer show misleading grey text. Clone normalizes
+viewport topology picks to whole direct-child sources with exact placements.
+Appearance overlays retain preference fills and contrast actual face boundaries,
+including holes, without changing stored materials or exposing triangle edges.
+All 63 installed regressions pass; 14 payloads match with preserved owner settings
+and shortcut. See [delivery evidence](evidence/assembly-selection-20261127/README.md).
+
 ## Single-part opening correction — installed November 27, 2026
 
 The opening path no longer forces file-level Edit for one-part files. It activates

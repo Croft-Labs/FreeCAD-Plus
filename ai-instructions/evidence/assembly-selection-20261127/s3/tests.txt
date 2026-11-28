@@ -1,0 +1,11 @@
+test_actual_viewport_face_click_adds_body_without_browser (TestClonePicking.TestClonePicking.test_actual_viewport_face_click_adds_body_without_browser) ... ok
+test_real_commands_unresolved_picks_and_stale_task (TestDerivedGeometry.TestDerivedGeometry.test_real_commands_unresolved_picks_and_stale_task) ... ok
+test_active_assembly_cannot_be_hidden_in_root_or_parts_menu (TestAssemblyEyes.TestAssemblyEyes.test_active_assembly_cannot_be_hidden_in_root_or_parts_menu) ... ok
+test_chosen_hidden_assembly_is_shown_without_rewriting_saved_setting (TestAssemblyEyes.TestAssemblyEyes.test_chosen_hidden_assembly_is_shown_without_rewriting_saved_setting) ... ok
+test_condensed_mixed_group_atomic_toggle_and_excluded_guard (TestAssemblyEyes.TestAssemblyEyes.test_condensed_mixed_group_atomic_toggle_and_excluded_guard) ... ok
+test_inline_eyes_toggle_without_selection_edit_or_expansion_changes (TestAssemblyEyes.TestAssemblyEyes.test_inline_eyes_toggle_without_selection_edit_or_expansion_changes) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 8.460s
+
+OK

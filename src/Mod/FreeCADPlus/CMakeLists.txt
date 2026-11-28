@@ -26,6 +26,7 @@ set(FreeCADPlus_SRCS
     TestSinglePartOpen.py
     TestAssemblyEyes.py
     TestClonePicking.py
+    TestAppearanceEdges.py
     TestPartsFiles.py
     TestAppearance.py
     TestDesignToolbarUpdate.py

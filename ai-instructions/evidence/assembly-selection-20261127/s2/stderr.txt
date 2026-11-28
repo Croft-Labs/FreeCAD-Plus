@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 310, in execute
+    raise ValueError('The original source is missing or replaced. Edit this feature to repair it.')
+<class 'ValueError'>: The original source is missing or replaced. Edit this feature to repair it.
+cloned surface: The original source is missing or replaced. Edit this feature to repair it.
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\derived_geometry.py", line 298, in execute
+    raise ValueError('The original source is missing or changed. Edit this feature to repair it.')
+<class 'ValueError'>: The original source is missing or changed. Edit this feature to repair it.
+extracted surface: The original source is missing or changed. Edit this feature to repair it.

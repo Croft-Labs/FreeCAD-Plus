@@ -1,0 +1,8 @@
+test_imported_nested_eye_changes_defining_parent_and_persists (TestAssemblyEyes.TestAssemblyEyes.test_imported_nested_eye_changes_defining_parent_and_persists) ... ok
+test_boundaries_use_actual_edges_and_contrast_not_triangle_lines (TestAppearanceEdges.TestAppearanceEdges.test_boundaries_use_actual_edges_and_contrast_not_triangle_lines) ... ok
+test_highlights_preferences_cleanup_and_materials_unchanged (TestAppearanceEdges.TestAppearanceEdges.test_highlights_preferences_cleanup_and_materials_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.125s
+
+OK
