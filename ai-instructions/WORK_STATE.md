@@ -1,15 +1,16 @@
-# November 27: Revised mesh settings preview ready
+# November 27: Revised mesh workflow and saved active part installed
 
-The revised native Qt preview removes picker modes, uses Advanced mesher radio
-buttons/defaults, and changes main fields by model. Seven UI checks pass. Concrete
-preview approval and functional implementation remain pending. This supersedes the
-initial simple-panel proposal below. See [revised contract](evidence/mesh-defaults-20261127/README.md).
+The approved revised Mesh From Shape workflow is implemented and installed: mixed
+exact solids/sheets/faces, no picker modes, Standard deviations, Advanced mesher
+radio buttons/defaults, dynamic main controls and Apply/reset. Saved recipes reopen
+through History; Mesh/Transform/Trim edit routing is explicit. Last-active-part
+metadata restores exact occurrences/isolation with safe legacy fallbacks.
 
-# November 27: Simplified mesh settings — preview pending
-
-Native Qt main/Advanced screenshots are ready with six UI checks passing. The
-installed application is unchanged; concrete preview approval is pending. See
-[evidence and contract](evidence/mesh-simple-20261127/README.md).
+All 48 exact staged and 48 installed checks pass, including the earlier intersections,
+whole-body patterns, actual Modeling ribbon buttons, clone appearance and Trim Body.
+Eleven source/build/app hashes match; owner settings and shortcut are preserved.
+The existing native Netgen failure and unverified successful Gmsh run remain bounded
+limitations. See [delivery evidence](evidence/mesh-settings-delivery-20261127/README.md).
 
 # November 27: Approved workflows installed
 
@@ -25,7 +26,7 @@ update passed all eight native checks in both runtimes. All 39 payload hashes ma
 owner settings, documents and shortcut are preserved. Standard/Mefisto mesh engines
 passed; the existing native Netgen failure is handled atomically. Successful Gmsh
 execution remains unverified. See [delivery evidence](evidence/approved-workflows-20261127/README.md).
-Saved last-active-part bookmarks remain a separate pending item.
+Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 # November 27: Part camera transitions corrected and installed
 
@@ -63,7 +64,7 @@ was unconditional file-level Edit, despite the separate sole-part active-assembl
 default. Normal opening, recovered files and sub-file windows share the correction.
 All 17 installed checks pass; source/build/installed payload hashes match. Owner
 settings and shortcut are unchanged. See [evidence](evidence/single-part-open-20261127/README.md).
-Saved active-part bookmarks for multi-part files remain pending separately.
+Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 # November 27: Reference image View button installed
 
@@ -96,7 +97,7 @@ Approved History menu and face-selection corrections are implemented, script-bui
 and installed. All 22 installed regressions pass; seven payload hashes match and
 owner settings/shortcut are preserved. See [delivery evidence](evidence/history-appearance-20261127/README.md).
 The single-part opening fallback is now delivered above. The separately previewed
-saved active-part restoration remains pending.
+Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 # November 27: Joined surface extraction installed
 

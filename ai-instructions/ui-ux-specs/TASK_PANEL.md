@@ -1,15 +1,18 @@
 # Task panel
 
-## Mesh selection and defaults — revised request November 27, 2026
+## Mesh selection and defaults — approved and installed November 27, 2026
 
 Remove the Solid/Surface picker controls. Collect the solids/surfaces actually
 selected in one list. Advanced uses radio buttons for the meshing model and sets
 its default parameters. The main panel shows the controls available for that model,
-initially Standard linear/angular deviation. Proposed defaults apply to this mesh
+initially Standard linear/angular deviation. Advanced OK defaults apply to this mesh
 and future new meshes; main edits affect only this mesh. Keep existing feature
 recipes when editing. This supersedes the earlier disabled-field proposal.
-Concrete native Qt preview approval is pending; see
-[revised workflow and screenshots](../evidence/mesh-defaults-20261127/README.md).
+Apply clears inputs and restores saved defaults. Advanced Cancel discards draft
+changes. Selected faces are not promoted to their whole body, and whole-source
+coverage removes duplicate face coverage. See the
+[approved preview](../evidence/mesh-defaults-20261127/README.md) and
+[installed verification](../evidence/mesh-settings-delivery-20261127/README.md).
 
 ## Approved geometry workflows — November 27, 2026
 

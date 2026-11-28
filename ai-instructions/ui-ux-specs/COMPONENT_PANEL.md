@@ -57,8 +57,12 @@ Apply this initialization to normal opening, recovered-file opening and the
 Parts sub-file menu's Open file in new window. Hidden imports do not change the
 host's active part. Preserve the current Components tab, native document data,
 Undo and active-assembly rules. Do not reapply the default on refresh or override
-an explicit file-level Edit in an already-open view. Multi-part files retain their
-current opening behavior; saved active-part restoration is a separate pending item.
+an explicit file-level Edit in an already-open view. A valid saved active-part
+bookmark takes precedence over these defaults. Save the exact occurrence or
+isolated definition/assembly context and restore it when opening the file, including
+multi-part files. Missing or invalid bookmarks use the safe default above; saved
+navigation does not create geometry dependencies or Undo records. See
+[persistence verification](../evidence/mesh-settings-delivery-20261127/README.md).
 See [correction evidence](../evidence/single-part-open-20261127/README.md).
 
 ## Reference image History — approved November 27, 2026

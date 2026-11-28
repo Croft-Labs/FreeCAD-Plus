@@ -1,5 +1,9 @@
 # Simplified mesh settings — preview pending November 27, 2026
 
+**Delivered:** The owner subsequently approved the revised mesh proposal. See
+[installed implementation and checks](../mesh-settings-delivery-20261127/README.md).
+The original preview record below is historical.
+
 Superseded by the [mixed selection/defaults revision](../mesh-defaults-20261127/README.md).
 
 Owner requests a Standard-by-default Mesh from Shape task with only linear and

@@ -1,5 +1,9 @@
 # Mixed mesh selection and mesher defaults — revised preview
 
+**Delivered:** The owner subsequently approved the revised mesh proposal. See
+[installed implementation and checks](../mesh-settings-delivery-20261127/README.md).
+The original preview record below is historical.
+
 November 27, 2026. Supersedes [the initial simple-panel proposal](../mesh-simple-20261127/README.md).
 Owner requested removal of Pick/Solid/Surface controls, radio-button mesher selection
 in Advanced, defaults there, and main-panel settings appropriate to the selected model.

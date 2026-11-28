@@ -2701,3 +2701,19 @@ Delete share this entry point; Delete on groups, roots or multiple selection is
 consumed safely. Other panel tabs retain their existing behavior. Selection routes
 outside the removed link are restored after commit. See
 [native acceptance and installed hashes](evidence/instance-removal-20261125/README.md).
+
+## Mesh defaults and saved active-part metadata — November 27, 2026
+
+Mesh recipes remain on `MeshSettings`; user defaults are separate JSON under
+`BaseApp/Preferences/FreeCADPlus/Meshing/Defaults`. Native control names/types/ranges
+are validated before restore. Gmsh executable selection remains a local preference,
+never a trusted saved document command. Mixed source normalization preserves exact
+topology and removes duplicate coverage, with active ownership and predecessor checks.
+
+`FreeCADPlus.ActivePart` in document Meta stores versioned definition identity,
+exact occurrence route and placed/isolated context. References use existing document
+UID/object name/object ID triples. Restore only resolves already-loaded registered
+definitions; stale or malformed identities fall back safely. Save captures the saved
+document's own GUI view, including background files, without geometry links/Undo.
+Hidden imports do not apply the opening context and ordinary refresh does not reapply it.
+See [native validation](evidence/mesh-settings-delivery-20261127/README.md).

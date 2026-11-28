@@ -1,5 +1,19 @@
 # FreeCAD Plus: Programming Summary
 
+## Approved mesh defaults and saved active part — installed November 27, 2026
+
+The approved revised Mesh From Shape workflow is implemented and installed: mixed
+exact solids/sheets/faces, no picker modes, Standard deviations, Advanced mesher
+radio buttons/defaults, dynamic main controls and Apply/reset. Saved recipes reopen
+through History; Mesh/Transform/Trim edit routing is explicit. Last-active-part
+metadata restores exact occurrences/isolation with safe legacy fallbacks.
+
+All 48 exact staged and 48 installed checks pass, including the earlier intersections,
+whole-body patterns, actual Modeling ribbon buttons, clone appearance and Trim Body.
+Eleven source/build/app hashes match; owner settings and shortcut are preserved.
+The existing native Netgen failure and unverified successful Gmsh run remain bounded
+limitations. See [delivery evidence](evidence/mesh-settings-delivery-20261127/README.md).
+
 ## Approved workflow batch — installed November 27, 2026
 
 The owner's “Implement all” approved all seven fresh previews. All native Mirror,
@@ -14,7 +28,7 @@ update passed all eight native checks in both runtimes. All 39 payload hashes ma
 owner settings, documents and shortcut are preserved. Standard/Mefisto mesh engines
 passed; the existing native Netgen failure is handled atomically. Successful Gmsh
 execution remains unverified. See [delivery evidence](evidence/approved-workflows-20261127/README.md).
-Saved last-active-part bookmarks remain a separate pending item.
+Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 ## Part opening/activation camera correction — installed November 27, 2026
 

@@ -1,17 +1,16 @@
-# November 27: Mixed mesh selection and defaults
+# November 27: Revised mesh workflow and saved active part delivered
 
-The revised native Qt preview removes picker modes, uses Advanced mesher radio
-buttons/defaults, and changes main fields by model. Seven UI checks pass. Concrete
-preview approval and functional implementation remain pending. This supersedes the
-initial simple-panel proposal below. See [revised contract](evidence/mesh-defaults-20261127/README.md).
+The approved revised Mesh From Shape workflow is implemented and installed: mixed
+exact solids/sheets/faces, no picker modes, Standard deviations, Advanced mesher
+radio buttons/defaults, dynamic main controls and Apply/reset. Saved recipes reopen
+through History; Mesh/Transform/Trim edit routing is explicit. Last-active-part
+metadata restores exact occurrences/isolation with safe legacy fallbacks.
 
-# November 27: Simplified mesh settings
-
-- [x] Preview deviation-only main form and Advanced settings pop-up.
-- [x] Check dialog Cancel, value synchronization and simulated Apply/reset.
-- [ ] Obtain concrete preview approval; implement, validate and install.
-
-[Contract and screenshots](evidence/mesh-simple-20261127/README.md).
+All 48 exact staged and 48 installed checks pass, including the earlier intersections,
+whole-body patterns, actual Modeling ribbon buttons, clone appearance and Trim Body.
+Eleven source/build/app hashes match; owner settings and shortcut are preserved.
+The existing native Netgen failure and unverified successful Gmsh run remain bounded
+limitations. See [delivery evidence](evidence/mesh-settings-delivery-20261127/README.md).
 
 # November 27: Approved workflow batch
 
@@ -25,7 +24,7 @@ initial simple-panel proposal below. See [revised contract](evidence/mesh-defaul
 
 [Approval, tests and installation evidence](evidence/approved-workflows-20261127/README.md).
 Netgen's unchanged native failure and unverified successful Gmsh execution are
-explicitly documented. Saved last-active-part bookmarks remain separately pending.
+explicitly documented. Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 # November 27: Camera transition correction
 
@@ -65,7 +64,7 @@ See [delivery evidence](evidence/assembly-selection-20261127/README.md).
 - [x] Build/install five payloads and pass all 17 focused installed checks.
 
 See [delivery evidence](evidence/single-part-open-20261127/README.md).
-Saved last-active-part bookmarks remain a separate pending implementation.
+Saved active-part restoration is delivered in the mesh/defaults batch above.
 
 # November 27: Reference image View button
 

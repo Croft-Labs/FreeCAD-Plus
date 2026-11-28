@@ -1,0 +1,68 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestActivePartBookmark.py",
+    "source": "5676cff988f688bab57fb324ddc8fc4be34d2d712417ef7a488b5ea453df5813",
+    "build": "5676cff988f688bab57fb324ddc8fc4be34d2d712417ef7a488b5ea453df5813",
+    "installed": "5676cff988f688bab57fb324ddc8fc4be34d2d712417ef7a488b5ea453df5813"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestApprovedNative.py",
+    "source": "2ca6310cad2373677206f90d0367aa191f4a6c60faad75591af76ba26b070edd",
+    "build": "2ca6310cad2373677206f90d0367aa191f4a6c60faad75591af76ba26b070edd",
+    "installed": "2ca6310cad2373677206f90d0367aa191f4a6c60faad75591af76ba26b070edd"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestMeshSettings.py",
+    "source": "a58996619485bfa41664f3690ab22b2440f8d2fcf111c8147f5bb4f2f2190a84",
+    "build": "a58996619485bfa41664f3690ab22b2440f8d2fcf111c8147f5bb4f2f2190a84",
+    "installed": "a58996619485bfa41664f3690ab22b2440f8d2fcf111c8147f5bb4f2f2190a84"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestSinglePartOpen.py",
+    "source": "abcd35be4ebafb605dc959eb7b27a55c49b0a1101c374740c80c9e435e22bf41",
+    "build": "abcd35be4ebafb605dc959eb7b27a55c49b0a1101c374740c80c9e435e22bf41",
+    "installed": "abcd35be4ebafb605dc959eb7b27a55c49b0a1101c374740c80c9e435e22bf41"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source": "31218346f58a80b2e260da4272095b126b6b243ef659df4ed0dcb77be8dcca4e",
+    "build": "31218346f58a80b2e260da4272095b126b6b243ef659df4ed0dcb77be8dcca4e",
+    "installed": "31218346f58a80b2e260da4272095b126b6b243ef659df4ed0dcb77be8dcca4e"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+    "source": "c25d9ba530425f121191c7c8e4109dfda8907f1e0a1c07528c03835d27f72812",
+    "build": "c25d9ba530425f121191c7c8e4109dfda8907f1e0a1c07528c03835d27f72812",
+    "installed": "c25d9ba530425f121191c7c8e4109dfda8907f1e0a1c07528c03835d27f72812"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/mesh_shape.py",
+    "source": "462e5678dfef4bfb5037b2762e53a08d0e7a6f9f0caeb4c6e1d27fc70224baad",
+    "build": "462e5678dfef4bfb5037b2762e53a08d0e7a6f9f0caeb4c6e1d27fc70224baad",
+    "installed": "462e5678dfef4bfb5037b2762e53a08d0e7a6f9f0caeb4c6e1d27fc70224baad"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/mesh_task.py",
+    "source": "a092b8d66df5f65788514655d6bc0c0031a4da2573fa4d319f65178f015bde5b",
+    "build": "a092b8d66df5f65788514655d6bc0c0031a4da2573fa4d319f65178f015bde5b",
+    "installed": "a092b8d66df5f65788514655d6bc0c0031a4da2573fa4d319f65178f015bde5b"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/mesh_ui.py",
+    "source": "bd65bda2b143d709b6516071f7ce45cfcf34f787877197d1c195b0c33e05c40d",
+    "build": "bd65bda2b143d709b6516071f7ce45cfcf34f787877197d1c195b0c33e05c40d",
+    "installed": "bd65bda2b143d709b6516071f7ce45cfcf34f787877197d1c195b0c33e05c40d"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source": "8ffcac1829720beb7498a8b518043d3024886dd58c5872c33498a0bb18ba42bc",
+    "build": "8ffcac1829720beb7498a8b518043d3024886dd58c5872c33498a0bb18ba42bc",
+    "installed": "8ffcac1829720beb7498a8b518043d3024886dd58c5872c33498a0bb18ba42bc"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/transform_task.py",
+    "source": "09602106481b4f5bcfc7d13abc77c2abf9658796de8f58449ca2678bfcf4fe4d",
+    "build": "09602106481b4f5bcfc7d13abc77c2abf9658796de8f58449ca2678bfcf4fe4d",
+    "installed": "09602106481b4f5bcfc7d13abc77c2abf9658796de8f58449ca2678bfcf4fe4d"
+  }
+]
